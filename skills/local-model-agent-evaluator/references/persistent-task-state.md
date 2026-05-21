@@ -48,3 +48,7 @@ Each phase must include:
 ## State Hygiene
 
 Do not paste full files, logs, transcripts, command output, or model reasoning into state files. Store summaries, paths, commands, evidence anchors, decisions, and validation results.
+
+## Canonical location
+
+Use `references/output-location.md`. For project work, place task state under `<project>/.agent-work/`. Treat `.agent-work/` as local operational state and suggest gitignoring it using `references/git-hygiene.md`.

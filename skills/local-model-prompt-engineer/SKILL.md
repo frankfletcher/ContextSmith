@@ -1,31 +1,31 @@
 ---
 name: local-model-prompt-engineer
-description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, or selecting model-specific prompt guidance from profiles.
+description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, loop-safety rules, Git/file safety, phased execution, Ralph-loop iteration, or selecting model-specific prompt guidance from profiles.
 metadata:
-  version: "1.3"
+  version: "1.4"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
 
 # Local Model Prompt Engineer
 
-Engineer prompts for local/open-weight models. Default to `generic-local` unless the user names a model. Use `qwen36`, `gemma4`, or `llama3` profiles only when requested or clearly applicable.
+Engineer prompt packages for local/open-weight models. Default to `generic-local` unless the user names a model. Use model profiles only when requested or clearly applicable.
 
 ## Priority Order
 
 1. Preserve the user's real objective.
-2. Select the right target model profile.
+2. Identify model, harness, domain, context risk, and side-effect risk.
 3. Make instructions literal, atomic, and testable.
-4. Avoid exposed chain-of-thought.
-5. Design context strategy when the prompt will handle long or file-based input.
-6. Add validation and test cases for reusable prompts.
-7. Teach the user what changed.
+4. Avoid exposed chain-of-thought; request assumptions, rationale, tests, diffs, or verification instead.
+5. Add context strategy, loop safety, Git/file safety, persistent state, or subagent delegation only when relevant.
+6. Validate with A-F rubrics; optionally run a bounded Ralph loop.
+7. Teach the user what was strong, weak, and improved.
 
 ## Clarification Policy
 
-Use the question-or-proceed rule from `references/interaction-modes.md`.
+Use `references/interaction-modes.md`.
 
-Ask at most three questions only when missing information materially changes target model, source mode, output format, safety boundaries, side effects, or validation criteria. Otherwise proceed with explicit assumptions.
+Ask at most three questions only when missing information materially changes target model/profile, source mode, output format, side effects, safety boundaries, validation, or artifact location. Otherwise proceed with explicit assumptions.
 
 ## Workflow
 
@@ -33,112 +33,97 @@ Ask at most three questions only when missing information materially changes tar
 
 Identify:
 
-- target model/profile
-- task domain and intent
+- target model/profile and harness, if known
+- domain and operational intent using `references/domain-intent.md`
 - source mode: short input, long text, files, repo, RAG, tool output, graph/index, multi-turn state
-- output type: prose, JSON, code, plan, agent prompt, instruction file, evaluation
-- risk level: low, medium, high
-- whether the prompt is one-shot, reusable, or agentic
-
-Use `references/domain-intent.md` for domain-sensitive safeguards.
+- side-effect tier using `references/side-effect-matrix.md`
+- output type: prompt, prompt package, plan, agent prompt, evaluator, JSON/schema, instruction file
+- whether this is one-shot, reusable, long-running, or agentic
 
 ### 2. Check Prompt-Control Feasibility
 
-Classify the failure or goal:
+Classify whether the requested improvement is prompt-controllable.
 
-Prompt-controllable:
+Prompt-controllable: unclear instructions, weak output format, missing examples, ambiguous task, poor context boundaries, missing validation criteria.
 
-- unclear instructions
-- weak output format
-- missing examples
-- ambiguous role/task
-- poor context boundaries
-- missing validation criteria
-
-Not fully prompt-controllable:
-
-- missing source data
-- stale retrieval
-- unavailable tools
-- model lacks capability
-- runtime cannot enforce schema
-- overloaded context window
-- sampling/runtime settings are unavailable
+Not fully prompt-controllable: missing data, stale retrieval, unavailable tools, model capability limits, runtime settings unavailable, overloaded context, weak harness support.
 
 If not fully prompt-controllable, improve the prompt and state the remaining dependency.
 
-### 3. Build the Prompt Package
+### 3. Select References
 
-Return a prompt package with these sections unless the user asks for a different format:
+Load only relevant references:
+
+- model profiles: `references/model-profiles/`
+- context and output location: `context-management.md`, `output-location.md`
+- long-running work: `phased-planning.md`, `persistent-task-state.md`, `phase-compression.md`
+- loop/tool safety: `loop-safety.md`, `git-safety.md`
+- domains: `domain-profiles/`
+- quality: `evaluation-rubrics.md`, `ralph-loop.md`, `small-model-atomicity.md`
+- existing instruction scan: `instruction-deduplication.md`
+
+### 4. Build the Prompt Package
+
+Return these sections unless the user requests otherwise:
 
 ```markdown
 ## Engineering Metadata
 ## Assumptions
-## Target Model Profile
+## Target Model and Harness Profile
 ## Domain and Intent
+## Prompt-Control Feasibility
 ## Context Strategy
+## Interaction Mode
 ## System Prompt
 ## User Prompt Template
-## Output Contract
-## Examples
-## Validation / Test Plan
-## Runtime Recommendations
-## Usage Notes
+## Examples, if needed
+## Validation and Test Plan
+## Loop/Git/File Safety, if relevant
+## Persistent Task State, if relevant
+## Subagent Delegation, if relevant
+## Runtime Recommendations, if requested or useful
+## Educational Change Report
 ```
 
-Omit irrelevant sections only when they truly do not apply. Runtime recommendations must be labeled as recommendations unless the agent can control runtime settings.
+Runtime settings are recommendations unless the harness exposes control.
 
-### 4. Add Context, Persistence, and Subagent Support When Needed
+### 5. Add Context, Phase, and Loop Controls When Needed
 
-For medium/high context-risk prompts, use `references/context-management.md`.
+For medium/high context tasks, specify source mode, reading order, chunking/summarization, evidence anchors, and final re-anchor.
 
-For long-running or multi-phase prompts, add persistent task state from `references/persistent-task-state.md` and phased planning from `references/phased-planning.md`.
+For long-running work, require phase plans with durable memory and phase closeout/debrief using `references/phased-planning.md`, `persistent-task-state.md`, and `phase-compression.md`.
 
-For large multi-file or validation-heavy tasks, add scoped subagent delegation from `references/subagent-delegation.md`.
+For tool-using prompts, add loop-safety rules. For coding/repo prompts, add Git/file safety and gitignore suggestions.
 
-### 5. Add Test-Driven Prompt Engineering
+### 6. Optional Ralph Loop
 
-For reusable or important prompts, include 3-7 tests:
+Use `references/ralph-loop.md` only when requested, reusable, high-risk, or likely to benefit. Save each iteration in the canonical location from `references/output-location.md`. Grade each iteration A-F using `references/evaluation-rubrics.md`.
 
-- normal case
-- edge case
-- missing-information case
-- adversarial/confusing case
-- long-context case when relevant
-- structured-output validation case when relevant
+### 7. Audit Before Delivery
 
-Each test needs input, expected behavior, and pass/fail criteria.
+Check:
 
-### 6. Run Prompt Audit
-
-Grade or check:
-
-- specificity
-- input/output contract
-- completeness
-- distinctiveness
-- conciseness
-- actionability
-- context safety
-- model compatibility
 - no exposed chain-of-thought
-- testability
-- domain fit
-- assumption control
-- small-model atomicity
+- model-specific assumptions are profile-bound
+- prompt is atomic enough for smaller models
+- output contract is testable
+- context strategy is sufficient
+- assumptions and side effects are explicit
+- loop/Git/file safeguards are present when relevant
+- instructions are de-duplicated and non-contradictory
+- validation/test plan exists for reusable prompts
+- educational report explains strengths, weaknesses, changes, and remaining risks
 
-Use `references/evaluation-rubrics.md`.
+## Required Output
 
-### 7. Optional Ralph Loop
+Deliver the optimized prompt package plus a concise report:
 
-Use `references/ralph-loop.md` only when requested, high-risk, or reusable. Write each iteration to numbered files and stop after the configured limit.
-
-## No Exposed Chain-of-Thought
-
-Never write prompts that request exposed chain-of-thought, scratchpads, hidden reasoning, or step-by-step internal deliberation. This applies regardless of runtime reasoning mode.
-
-Use concise alternatives: assumptions, brief rationale, final calculations, tests, decision criteria, semantic diff, or validation checklist.
-
-## Educational Report
-
-When modifying an existing prompt, include a concise report using `references/educational-report.md`: original strengths, original weaknesses, changes made, why the changes improve local-model reliability, and remaining risks.
+```markdown
+## Original Strengths
+## Original Weaknesses
+## Changes Made
+## Why This Improves Local-Model Reliability
+## A-F Quality Grades
+## Remaining Risks / Assumptions
+## Files Written, if any
+```

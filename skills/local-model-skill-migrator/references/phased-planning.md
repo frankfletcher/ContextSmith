@@ -1,34 +1,59 @@
-# Phased Planning for Limited Context
+# Phased Planning
 
-Large tasks need more than a short plan. The plan must support context churn, crashes, and resumption.
+Use phased planning for complex, long-running, multi-file, migration, porting, refactor, or validation-heavy tasks.
 
-## Phase Count Heuristic
+## Granularity Rule
 
-- 1-3 phases: short, one-artifact, low-risk tasks.
-- 4-7 phases: moderate multi-file tasks.
-- 8-12 phases: large ports, migrations, refactors, batch conversions, repo-level work.
-- 12+ phases: split into milestones/sprints.
+Phase count must scale with complexity. A three-phase plan is often too coarse for a large application port, repo migration, or multi-system refactor. Prefer 6–12 phases when the task has many unknowns, platforms, dependencies, or subsystems.
 
-## Required Phase Fields
+Each phase must include:
 
-Each phase should include:
+- goal
+- inputs
+- likely files/directories
+- explicit tasks
+- outputs/artifacts
+- validation checks
+- stop condition
+- handoff notes
 
-```markdown
-## Phase N — Name
-Goal:
-Inputs:
-Files/directories likely involved:
-Tasks:
-Outputs/artifacts:
-Validation checks:
-Stop condition:
-Handoff notes:
-```
+## Phase Memory
 
-## Memory Integration
+For long work, require persistent phase memory:
 
-For long plans, create task-state files from `persistent-task-state.md`. Update `STATUS.md`, `PHASE_LOG.md`, `ARTIFACTS.md`, and `NEXT_PROMPT.md` after each phase.
+- `TASK.md`
+- `PLAN.md`
+- `STATUS.md`
+- `DECISIONS.md`
+- `CONTEXT.md`
+- `CHECKLIST.md`
+- `ARTIFACTS.md`
+- `PHASE_LOG.md`
+- `NEXT_PROMPT.md`
 
-## Anti-Pattern
+Use `references/persistent-task-state.md`, `references/output-location.md`, and `references/phase-compression.md`.
 
-Do not compress a large complex project into three vague phases such as “analyze, implement, test.” That creates context churn and weak handoffs.
+## Phase Closeout
+
+At the end of each phase:
+
+1. Update `STATUS.md`.
+2. Check off `PLAN.md` items.
+3. Record durable decisions in `DECISIONS.md`.
+4. Record changed files/commands in `ARTIFACTS.md`.
+5. Add compact notes to `PHASE_LOG.md`.
+6. Write carry-forward and do-not-carry-forward notes.
+7. Update `NEXT_PROMPT.md`.
+
+## Ralph Evaluation for Plans
+
+Grade phase plans on:
+
+- phase granularity
+- small-model suitability
+- memory/documentation support
+- stop conditions
+- validation strength
+- context-risk handling
+- domain fit
+- human approval gates

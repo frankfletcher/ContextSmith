@@ -1,39 +1,38 @@
 # Package Spec
 
+Package: `local-model-agent-engineering`  
+Version: `1.1`
+
 ## Goal
 
-Provide a coherent toolkit for engineering agent-facing instructions for local/open-weight models.
+Provide a cohesive set of agent skills for engineering prompts, skills, migrations, evaluations, and repo instruction files for local/open-weight models.
 
 ## Non-Goals
 
-- Do not force one model family on all artifacts.
-- Do not automatically apply destructive changes.
-- Do not use exposed chain-of-thought prompting.
-- Do not turn persistent state into a junk drawer.
+- Do not guarantee model capability.
+- Do not bypass harness limitations.
+- Do not automate destructive Git, financial, external-write, or production actions without explicit approval.
+- Do not require every task to use Ralph loops, task state, or subagents.
 
-## Shared Components
+## Skills
 
-- model profiles
-- domain intent profiles
-- context management
-- persistent task state
-- subagent delegation
-- Ralph loop
-- evaluation rubrics
-- phased planning
-- engineering metadata
-- educational reporting
+- `local-model-prompt-engineer`
+- `local-model-skill-engineer`
+- `local-model-skill-migrator`
+- `local-model-instruction-engineer`
+- `local-model-agent-evaluator`
 
-## Versioning
+## Shared Principles
 
-- Existing generalized skills advance to v1.3.
-- Migrator advances to v1.1.
-- New instruction/evaluator skills start at v1.0.
-
-## Future Backlog
-
-- model profile builder
-- harness adapter for OpenCode/OpenClaw/Hermes/etc.
-- task-state manager
-- package sync script for shared references
-- richer examples and test fixtures
+- atomic small-model instructions
+- no exposed chain-of-thought
+- model and domain profiles
+- context engineering
+- loop prevention
+- Git/file safety
+- persistent task state for long work
+- phase compression and do-not-carry-forward notes
+- bounded Ralph improvement loop
+- educational change reports
+- progressive disclosure
+- standalone-installable skills

@@ -1,8 +1,8 @@
 ---
 name: local-model-skill-engineer
-description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving a source skill behavior while rewriting it, adding model profiles, optimizing references, adding context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, semantic diff validation, or skill-auditor-style quality checks.
+description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, or skill-auditor-style quality checks.
 metadata:
-  version: "1.3"
+  version: "1.4"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -14,103 +14,103 @@ Create, convert, improve, and audit SKILL.md-based skills for local/open-weight 
 ## Priority Order
 
 1. Preserve the source skill's behavioral contract.
-2. Identify domain intent and target model profile.
-3. Make instructions literal, atomic, testable, and context-aware.
+2. Identify target model/profile, harness, domain, context risk, and side-effect risk.
+3. Make instructions literal, atomic, testable, and small-model-friendly.
 4. Do not add exposed chain-of-thought.
 5. Optimize references when they are part of the skill contract.
-6. Validate mechanically and semantically.
-7. Teach the user what changed.
+6. Add loop/Git/file/context/persistence/subagent safeguards only when relevant and not already covered.
+7. Validate mechanically and semantically; teach the user what changed.
 
 ## Clarification Policy
 
-Use `references/interaction-modes.md`. Ask only when blocked or when the answer materially changes target profile, source path, output format, side effects, permission boundaries, or validation. Otherwise proceed with stated assumptions.
+Use `references/interaction-modes.md`. Ask only when blocked or when the answer materially changes target profile, source path, output format, side effects, permission boundaries, validation, or output location. Otherwise proceed with stated assumptions.
 
 ## Workflow
 
 ### 1. Determine Task Type
 
-Classify as create, convert, optimize, audit, repair, or package.
+Classify as create, convert, optimize, audit, repair, package, or evaluate.
 
-Identify target profiles. Default to `generic-local` unless the user specifies Qwen, Gemma, Llama, or another model.
+Identify model profile, harness, domain intent, side-effect tier, and whether the skill is coding/repo/tool-oriented.
 
 ### 2. Extract or Define the Skill Contract
 
 For existing skills, extract:
 
-- purpose
-- trigger conditions
-- inputs
-- outputs
+- purpose and trigger conditions
+- inputs and outputs
 - commands/tools/APIs
 - files/resources/references
-- permission boundaries
-- failure handling
+- side effects and permission boundaries
+- failure handling and validation
 - examples that encode behavior
-- validation requirements
 
 Preserve these unless a change is required for safety, compatibility, or explicit user instruction.
 
-### 3. Inventory Resources
+### 3. Inventory Existing Instructions and Resources
 
-Inspect `SKILL.md`, then referenced files. Inventory `references/`, `scripts/`, `assets/`, and `agents/`.
+Inspect `SKILL.md`, linked references, and relevant repo instruction files when available.
 
-Use `references/reference-optimization.md` if present. If not, apply this policy:
+Use `references/instruction-deduplication.md` to avoid duplicating existing loop, context, Git, task-state, or validation safeguards.
 
-- optimize behavioral references when they contain instructions the agent follows
-- preserve exact commands, schemas, APIs, paths, and examples
-- move bulky templates/failure tables into references when helpful
-- do not edit scripts/assets unless required or requested
-- list every modified reference in the audit
+Inventory `references/`, `scripts/`, `assets/`, and `agents/`. Use `references/reference-optimization.md`. Modify references only when they are behavioral, duplicated, stale, model-hostile, or needed for progressive disclosure.
 
 ### 4. Rewrite or Create the Skill
 
-Use a concise main `SKILL.md` with progressive disclosure. Keep core workflow, non-negotiable rules, and validation gates inline. Move long templates, examples, model profiles, runtime notes, and failure tables to references.
+Use a concise main `SKILL.md` with progressive disclosure. Keep core workflow, non-negotiable rules, and validation gates inline. Move long templates, examples, model profiles, runtime notes, failure tables, and detailed protocols to references.
 
-Add engineering metadata using `references/engineering-metadata.md` when supported.
+Add engineering metadata using `references/engineering-metadata.md`.
 
-### 5. Add Context-Aware Behavior When Relevant
+### 5. Add Domain and Safeguards When Relevant
 
-If the target skill may handle long docs, repos, files, logs, tool outputs, RAG, graph/index data, or multi-turn agent state, add context strategy from `references/context-management.md`.
+Use `references/domain-intent.md`, `side-effect-matrix.md`, and domain profiles.
 
-If the target skill supports long-running work, add persistent task state and phased planning from `references/persistent-task-state.md` and `references/phased-planning.md`.
+For tool-using skills, add loop safety from `loop-safety.md` unless equivalent safeguards already exist.
 
-If scoped review will reduce context pressure or improve validation, add subagent delegation from `references/subagent-delegation.md`.
+For coding/repo skills, add Git safety and coding standards using `git-safety.md`, `coding-standards.md`, `git-hygiene.md`, and `output-location.md`.
 
-### 6. Domain Intent Adaptation
+For AGENTS.md/instruction-related skills, add instruction scan/de-duplication.
 
-Use `references/domain-intent.md` to infer the domain and add domain-specific safeguards only when relevant. Do not overfit weak evidence.
+For data science/ML/AI skills, use `domain-profiles/data-science-ml.md` and `domain-profiles/ai-modalities.md` when relevant.
 
-### 7. Validate
+### 6. Add Context, Phase, and Memory Support
 
-Run these gates:
+If the skill may handle long docs, repos, files, logs, tool outputs, RAG, graph/index data, or multi-turn state, add context strategy from `context-management.md`.
 
-- YAML/frontmatter validity
-- description specificity and trigger quality
-- body present
-- references linked and existent
+If the skill supports long-running work, add phased planning, persistent task state, output location, and phase compression/debrief.
+
+If scoped review reduces context pressure or improves validation, add subagent delegation.
+
+### 7. Optional Ralph Loop
+
+For reusable/high-risk skills, or when requested, run the bounded Ralph loop. Save each iteration to the canonical task folder and grade A-F. Do not iterate for cosmetics.
+
+### 8. Validate
+
+Check:
+
+- frontmatter valid; only supported top-level keys
+- description specific, complete, and distinctive
 - source contract preserved
+- references exist and are linked with when-to-read guidance
 - no exposed chain-of-thought
-- commands/resources preserved or justified
-- permission boundaries preserved or justified
-- no invented thresholds/policies
-- context/persistence/subagent support included only when warranted
-- small-model atomicity sufficient
-- progressive disclosure appropriate
-- domain guardrails appropriate
-
-### 8. Optional Ralph Loop
-
-Use `references/ralph-loop.md` when requested or high-risk. Save numbered iterations and grade each iteration using `references/evaluation-rubrics.md`.
+- no invented thresholds or permission changes
+- loop/Git/context/persistence safeguards added only when warranted
+- duplicate/near-duplicate rules removed or consolidated
+- instructions atomic enough for smaller models
+- semantic diff and educational report included
 
 ## Required Output
 
-When changing a skill, return:
-
-1. changed files or download link
-2. original strengths
-3. original weaknesses
-4. changes made
-5. semantic diff summary
-6. target model/profile metadata
-7. validation result
-8. remaining risks/assumptions
+```markdown
+## Original Strengths
+## Original Weaknesses
+## Changes Made
+## Semantic Diff
+## Reference Changes
+## Safeguards Added / Reused / Skipped
+## A-F Quality Grades
+## Why This Improves Local-Model Reliability
+## Remaining Risks / Assumptions
+## Files Written
+```

@@ -1,8 +1,8 @@
 ---
 name: local-model-skill-migrator
-description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, semantic-diff validation, and explicit approval before applying changes.
+description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, loop/Git/context safeguards, semantic-diff validation, Ralph-loop quality review, and explicit approval before applying changes.
 metadata:
-  version: "1.1"
+  version: "1.2"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -29,7 +29,7 @@ Use `references/interaction-modes.md`.
 
 ### 1. Inventory
 
-Find valid skill folders with `SKILL.md`. Record line count, frontmatter, references, scripts, assets, agents metadata, and risk level.
+Find valid skill folders with `SKILL.md`. Record line count, frontmatter, references, scripts, assets, agents metadata, existing safeguards, and risk level.
 
 Risk:
 
@@ -37,9 +37,11 @@ Risk:
 - medium: references, commands, generated artifacts, moderate workflows
 - high: scripts, destructive actions, deployment, external services, credentials, production systems, purchasing, messaging, or complex side effects
 
-### 2. Plan
+### 2. Plan Workspace
 
-Create migration workspace:
+Use canonical output rules from `references/output-location.md`.
+
+Installed user skills:
 
 ```text
 ~/.agents/skill-migrations/<YYYY-MM-DD-short-slug>/
@@ -51,6 +53,8 @@ Create migration workspace:
 ├── MIGRATION_REPORT.md
 └── RESTORE.md
 ```
+
+Repo-local skill packages use `<project>/.agent-work/skill-migrations/<migration-id>/`.
 
 ### 3. Backup
 
@@ -64,32 +68,49 @@ Use local-model-skill-engineer principles per skill:
 - apply target profiles
 - add engineering metadata
 - optimize references conservatively
-- add context/persistence/subagent support only when warranted
+- scan existing safeguards and avoid duplication
+- add loop/Git/context/persistence/subagent support only when warranted
 - avoid exposed chain-of-thought
+- classify domain and side-effect risks
 
 ### 5. Validate
 
-For each staged skill, validate frontmatter, body, references, source contract, metadata, no exposed CoT, context-risk handling, and semantic diff.
+For each staged skill, validate:
+
+- frontmatter and metadata
+- source contract and semantic diff
+- references and linked files
+- no exposed CoT
+- safeguards reused/added/skipped
+- context-risk handling
+- Git/file safety for repo/coding skills
+- duplicate-rule and token-bloat guard
+- A-F quality grades
 
 High-risk skills require manual review before apply.
 
 ### 6. Report
 
-Write per-skill report and batch report with:
+Write per-skill and batch reports:
 
-- original strengths
-- original weaknesses
+- original strengths/weaknesses
 - changes made
-- validation grades
-- target profiles
-- modified files
-- manual review required
-- remaining risks
+- references modified
+- safeguards added/reused/skipped
+- token impact
+- A-F grades
+- manual review items
+- restore instructions
 
 ### 7. Apply or Restore
 
-Apply only after explicit approval. Restore only from a recorded backup and manifest.
+Apply only after explicit approval. Restore only from recorded backup manifest.
 
-## Optional Ralph Loop
+## Never
 
-Use `references/ralph-loop.md` for high-value batch migrations. Save each skill iteration under the migration workspace.
+- edit source in place before backup
+- silently delete files
+- modify scripts/assets without reason and report
+- apply staged changes with failed validation
+- run destructive Git operations without approval
+- duplicate existing safeguards instead of consolidating them

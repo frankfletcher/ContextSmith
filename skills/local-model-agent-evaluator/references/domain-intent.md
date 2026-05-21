@@ -1,37 +1,37 @@
 # Domain Intent Detection
 
-Before engineering a prompt, skill, or instruction file, classify what the artifact is meant to accomplish and which domain risks apply.
+Before engineering a prompt, skill, migration, or instruction file, infer what the user wants the agent to accomplish and which domain risks apply.
 
-## Domain Questions
+## Detect
 
-1. What does the user want the agent to accomplish?
-2. What domain is this in?
-3. What tools or external systems are involved?
-4. What can go wrong in this domain?
-5. What needs human approval?
-6. What evidence or validation is required?
+Identify:
 
-## Common Domains
+- domain: coding, data science/ML, research, writing, email, calendar, purchasing/tickets, travel, documents, automation, finance/legal/medical, personal knowledge, creative
+- side effects: read-only, local write, external write, financial, destructive, production
+- harness: coding agent, browser agent, email/calendar agent, shell agent, RAG/search agent, mixed
+- target model/profile and context risk
 
-- coding/software engineering
-- data analysis
-- research
-- writing/editing
-- email/communication
-- calendar/scheduling
-- shopping/purchasing/tickets
-- travel/reservations
-- personal knowledge management
-- finance/legal/medical high-stakes support
-- creative generation
-- document/file processing
-- workflow automation
+Use `references/side-effect-matrix.md` to choose interaction mode.
 
-## Domain Guardrails
+## Domain Defaults
 
-- **Email**: draft by default; send only with explicit approval; do not invent commitments.
-- **Purchasing/tickets**: never buy without explicit approval; surface total price, dates, refund rules, quantity, location, and fees.
-- **Research**: separate evidence from inference; cite sources; flag uncertainty.
-- **Coding**: inspect structure first; make narrow changes; run relevant tests; summarize changed files.
-- **Scheduling/calendar**: verify timezone, date, attendees, duration, and recurrence before creating or changing events.
-- **High-stakes domains**: include uncertainty, recommend professional review when appropriate, and avoid overclaiming.
+- Coding: inspect structure, protect Git/user changes, run narrow validation, avoid unrelated refactors.
+- Data science/ML: prevent leakage, preserve reproducibility, track metrics/artifacts, avoid committing large data/model files.
+- Email: draft by default; send only after explicit approval.
+- Purchasing/tickets: never purchase without explicit approval; show total price, fees, date, quantity, refund rules.
+- Research: cite evidence; separate source facts from inference.
+- Scheduling: confirm attendees, time zone, recurrence, and external invites before creating events.
+- Documents: preserve formatting and cite source sections when relevant.
+- High-stakes finance/legal/medical: use conservative guidance, cite sources when factual, and avoid definitive professional advice.
+
+## Report
+
+Include a compact domain report when useful:
+
+```markdown
+## Detected Domain and Intent
+- Domain:
+- Confidence:
+- Side-effect risk:
+- Safeguards applied:
+```

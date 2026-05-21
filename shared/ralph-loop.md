@@ -1,66 +1,58 @@
-# Optional Ralph Improvement Loop
+# Ralph Improvement Loop
 
-The Ralph loop is a bounded improve-after-validation loop. It exists because passing minimum validation does not mean an artifact is good enough for smaller/local models.
+The Ralph loop is an optional bounded improvement loop. It asks: “This passed minimum validation, but how can it be better for local/smaller models?”
 
 ## When to Use
 
-Use only when the user asks for extra quality, the artifact will be reused, the task is high-risk, or the output is likely to run on a smaller model with limited context.
+Use when the artifact is reusable, high-risk, long-running, user-requested, or will guide file/tool operations.
 
-Default maximum iterations: **2**. Hard maximum: **3** unless the user explicitly asks for more.
+Do not use for short one-off tasks unless requested.
 
-## Iteration Protocol
+## Iteration Limits
 
-For each iteration:
+- Default maximum: 2 iterations.
+- Hard maximum: 3 unless the user explicitly overrides.
+- Stop if all categories are B or better and no high-risk issue remains.
+- Stop if the next iteration would add bloat, semantic drift, or only cosmetic polishing.
 
-1. Write the candidate output to `iterations/iteration-NN/`.
-2. Run baseline validation.
-3. Grade the candidate using `evaluation-rubrics.md`.
-4. Answer:
-   - What is strong?
-   - What is weak?
-   - What is too abstract for a smaller model?
-   - What should be more atomic?
-   - What assumptions remain?
-   - What context, persistence, or subagent support is missing?
-   - What can be simplified without losing behavior?
-5. Produce another iteration only if it materially improves execution reliability, semantic preservation, context handling, validation strength, or domain fit.
-6. Write `ITERATION_REPORT.md` with grades and changes.
+## A-F End Evaluation
 
-## Output Layout
+At the end of each iteration, grade:
 
-For prompts:
+- Small-model atomicity
+- Instruction clarity
+- Output contract quality
+- Context strategy
+- Assumption control
+- Domain fit
+- Validation strength
+- Loop safety
+- Git/file safety, if applicable
+- Bloat / cognitive load
 
-```text
-iterations/
-├── iteration-01/prompt-package.md
-├── iteration-01/audit.md
-├── iteration-02/prompt-package.md
-├── iteration-02/audit.md
-└── FINAL.md
-```
+Ask:
 
-For skills:
+1. What is still too abstract for a smaller model?
+2. What assumption should be explicit?
+3. What loop, context, Git, or side-effect risk remains?
+4. What can be made more atomic without bloating the artifact?
+5. Is another iteration materially justified?
 
-```text
-iterations/
-├── iteration-01/SKILL.md
-├── iteration-01/references/
-├── iteration-01/audit.md
-├── iteration-02/SKILL.md
-├── iteration-02/references/
-└── FINAL/
-```
+## Canonical Iteration Storage
 
-For instruction files:
+Use `references/output-location.md`.
+
+For project-based work, write iterations under:
 
 ```text
-iterations/
-├── iteration-01/AGENTS.md
-├── iteration-01/audit.md
-├── iteration-02/AGENTS.md
-└── FINAL_AGENTS.md
+<project>/.agent-work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/iterations/
 ```
 
-## Stop Rules
+Each iteration folder should contain:
 
-Stop when maximum iterations are reached, no material improvement remains, validation requires user input, or further changes risk semantic drift.
+- generated artifact
+- `audit.md`
+- `ralph-report.md`
+- `changes.md`
+
+Never leave canonical Ralph outputs only in `/tmp`.

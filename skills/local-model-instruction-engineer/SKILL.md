@@ -1,8 +1,8 @@
 ---
 name: local-model-instruction-engineer
-description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, domain guardrails, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans.
+description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans.
 metadata:
-  version: "1.0"
+  version: "1.1"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -13,40 +13,52 @@ Create, optimize, audit, and maintain repository or agent instruction files such
 
 ## Priority Order
 
-1. Discern the user's operational intent and domain.
-2. Inspect the repository selectively.
-3. Produce atomic instructions suitable for local/smaller models.
-4. Define commands, boundaries, validation, and approval requirements.
-5. Avoid exposed chain-of-thought.
-6. Keep instruction files concise and maintainable.
-7. Teach the user what changed.
+1. Discern the user's operational intent, domain, model, and harness.
+2. Inspect the repository and existing instruction files selectively.
+3. Reuse, strengthen, and consolidate safeguards before adding new ones.
+4. Produce atomic instructions suitable for local/smaller models.
+5. Define commands, coding standards, validation, Git safety, loop safety, and approval requirements.
+6. Add phase memory and canonical output locations for long work.
+7. Keep instruction files concise and teach the user what changed.
 
 ## Workflow
 
 ### 1. Classify the Instruction Target
 
-Identify the file type, agent harness, target model profile, repo/domain, side effects, and whether instructions are root-level or subproject-specific.
+Identify file type, harness, target model profile, repo/domain, side-effect tier, and whether instructions are root-level or subproject-specific.
+
+Use `references/domain-intent.md` and `references/side-effect-matrix.md`.
 
 ### 2. Inspect Selectively
 
 Do not read the whole repo. Inspect:
 
-- existing instruction files
+- existing instruction files listed in `references/instruction-deduplication.md`
 - README / CONTRIBUTING / docs
-- package/build config files
-- test/lint/format config
-- scripts/Makefile/task runner
+- package/build/test/lint/format config
+- scripts/Makefile/task runner/CI
 - relevant subproject structure
+- Git status when edits are in scope
 
 Use Graphify/index if available, then verify against source files.
 
-### 3. Determine Interaction Mode
+### 3. Scan Existing Safeguards
 
-Use `references/interaction-modes.md`. For repo-wide instruction files, default to guided mode unless the user requests YOLO. Use review-gate for high side-effect domains.
+Before adding loop safety, Git safety, persistent state, subagent delegation, or validation rules, check whether equivalent safeguards already exist. Reuse clear rules, strengthen vague rules, consolidate duplicates, and add only missing concepts.
 
-### 4. Build the Instruction File
+### 4. Detect Coding and Domain Standards
 
-For `AGENTS.md`, prefer sections like:
+When the repo is a coding project, apply `references/coding-standards.md`, `git-safety.md`, `git-hygiene.md`, and `loop-safety.md` as relevant.
+
+When UI code exists, apply `references/ui-standards.md`.
+
+When data science/ML/AI work exists, apply `references/domain-profiles/data-science-ml.md` and `references/domain-profiles/ai-modalities.md`.
+
+Do not add irrelevant standards.
+
+### 5. Build or Edit Instruction File
+
+For `AGENTS.md`, prefer concise sections such as:
 
 ```markdown
 # AGENTS.md
@@ -56,42 +68,55 @@ For `AGENTS.md`, prefer sections like:
 ## Setup Commands
 ## Build, Test, and Lint Commands
 ## Development Workflow
-## Code Style
+## Coding Standards
 ## Testing Expectations
-## Security and Secrets
+## Domain-Specific Standards
+## UI Standards, if relevant
+## Data Science / ML Standards, if relevant
+## Git Safety
+## Agentic Loop Safety
 ## File and Directory Boundaries
 ## Context Management
 ## Persistent Task State
-## Subagent Delegation
 ## Validation Before Completion
 ## Human Approval Required
 ```
 
 Use nested instruction files only when subprojects have materially different commands, constraints, or ownership.
 
-### 5. Add Phase and Memory Support for Long Work
+### 6. Add Phase and Memory Support for Long Work
 
-For complex ports, migrations, refactors, or multi-phase work, add phased planning and persistent task state using `references/phased-planning.md` and `references/persistent-task-state.md`.
+For complex ports, migrations, refactors, or multi-phase work, add phased planning and persistent task state using `phased-planning.md`, `persistent-task-state.md`, `phase-compression.md`, and `output-location.md`.
 
-### 6. Validate
+Suggest `.agent-work/` entries for `.gitignore` using `git-hygiene.md`; do not modify `.gitignore` without approval.
+
+### 7. Validate
 
 Check:
 
 - commands exist or are clearly marked assumed
-- paths are correct
-- setup/build/test/lint instructions are actionable
-- generated/vendor/build directories are excluded where appropriate
-- security/secrets instructions are present
-- validation steps are explicit
-- instructions are atomic enough for smaller models
+- instruction files are not bloated or repetitive
+- existing safeguards were reused or strengthened instead of duplicated
+- coding standards match the repo stack
+- Git safety protects user work
+- loop-safety rules are present for tool-using agents
+- data science/ML safeguards are present when relevant
+- phase plans include memory, debrief, and do-not-carry-forward notes when relevant
 - no exposed chain-of-thought
-- domain guardrails are appropriate
-- human approval boundaries are clear
-
-### 7. Optional Ralph Loop
-
-Use bounded iteration from `references/ralph-loop.md` when creating reusable or high-value instruction files. Save each iteration.
+- no destructive actions without approval
 
 ## Required Output
 
-Return changed files plus educational report: original strengths, original weaknesses, changes made, why this improves local-model reliability, and remaining risks.
+```markdown
+## Detected Project Profile
+## Existing Instruction Scan
+## Original Strengths
+## Original Weaknesses
+## Changes Made
+## Safeguards Reused / Strengthened / Added
+## Domain-Specific Standards Added
+## Gitignore Suggestions
+## Validation Notes
+## Remaining Risks / Assumptions
+## Files Written
+```
