@@ -238,3 +238,22 @@ Implemented response:
 - [x] Each phase needs explicit goal, inputs, likely files, tasks, outputs, validation, stop condition, and handoff notes.
 - [x] Each phase needs debrief, carry-forward, and do-not-carry-forward notes.
 - [x] Durable task-state files should be created for long-running projects.
+
+
+## v1.3 Implemented
+
+- [x] Added CLI-style parameter support across all skills.
+- [x] Added `shared/control-parameters.md` with parsing, normalization, conflict handling, and skill-specific flags.
+- [x] Added help/describe/examples/modes/parameters/quickstart support across all skills.
+- [x] Added per-skill `references/help.md` pages.
+- [x] Updated README with CLI-style examples and a flag cheat sheet.
+- [x] Preserved natural-language control phrases while making flags first-class for repeatability.
+- [x] Added package spec notes explaining that flags are an instruction convention and future CLI/UI bridge.
+
+## Future Ideas Still Open
+
+- [ ] Build an actual `contextsmith` CLI around the same flags.
+- [ ] Build a local-first UI/workbench after CLI semantics stabilize.
+- [ ] Add harness profiles for OpenCode, Hermes, OpenClaw, Codex, Cursor, Aider, Continue.
+- [ ] Add package sync/release builder scripts for Option C shared-reference copying.
+- [ ] Add a tiny router skill only if users struggle to pick the correct specialized skill.

@@ -2,7 +2,7 @@
 name: local-model-instruction-engineer
 description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
 metadata:
-  version: "1.2"
+  version: "1.3"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -10,6 +10,25 @@ metadata:
 # Local Model Instruction Engineer
 
 Create, optimize, audit, and maintain repository or agent instruction files such as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursorrules`, OpenCode/Hermes/OpenClaw instructions, and project-specific agent guidance.
+
+
+## Help Mode
+
+If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not run the normal workflow.
+
+Return the requested usage guidance from `references/help.md` and `references/help-mode.md`.
+
+## Control Parameter Parsing
+
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
+
+Examples:
+
+```bash
+--mode deep --target-profile qwen36 --context-length 32k --domain coding --harness opencode --ralph 2 --output project-local --no-apply
+```
+
+When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
 ## Priority Order
 

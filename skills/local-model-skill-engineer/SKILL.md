@@ -2,7 +2,7 @@
 name: local-model-skill-engineer
 description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, targeted context length control, upstream artifact audits, skill interoperability handling, or skill-auditor-style quality checks.
 metadata:
-  version: "1.5"
+  version: "1.6"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -10,6 +10,25 @@ metadata:
 # Local Model Skill Engineer
 
 Create, convert, improve, and audit SKILL.md-based skills for local/open-weight models.
+
+
+## Help Mode
+
+If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not run the normal workflow.
+
+Return the requested usage guidance from `references/help.md` and `references/help-mode.md`.
+
+## Control Parameter Parsing
+
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
+
+Examples:
+
+```bash
+--mode deep --target-profile qwen36 --context-length 32k --domain coding --harness opencode --ralph 2 --output project-local --no-apply
+```
+
+When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
 ## Priority Order
 

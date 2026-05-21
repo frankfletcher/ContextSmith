@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.3
+
+**Released:** 2026-05-20
+
+### Added
+
+- Added CLI-style control parameters across all ContextSmith skills.
+- Added `shared/control-parameters.md` with flag parsing, aliases, normalization, conflict handling, and skill-specific flags.
+- Added `shared/help-mode.md` and `shared/usage-patterns.md`.
+- Added per-skill `references/help.md` files for `help`, `describe`, `examples`, `modes`, `parameters`, and `quickstart` invocations.
+- Added README sections for two control styles: natural language and CLI-style flags.
+- Added a CLI-style flag cheat sheet and additional detailed invocation examples.
+- Added package-spec guidance that CLI-style flags are an instruction convention and future-compatible path toward a real `contextsmith` CLI/UI.
+
+### Changed
+
+- Bumped skill versions: prompt engineer v1.6, skill engineer v1.6, skill migrator v1.4, instruction engineer v1.3, and agent evaluator v1.3.
+- Updated every `SKILL.md` to short-circuit normal workflow when help/describe/example/parameter modes are requested.
+- Updated every `SKILL.md` to parse CLI-style flags alongside natural-language control phrases.
+- Copied new shared references into each skill for standalone installation.
+
+### Notes
+
+- No UI behavior was added. UI handoff remains a future idea.
+- Natural-language controls remain supported. CLI-style flags are optional but recommended for repeatable workflows.
+
 ## v1.2
 
 **Released:** 2026-05-20

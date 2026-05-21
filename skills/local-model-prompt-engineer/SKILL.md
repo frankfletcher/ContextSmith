@@ -2,7 +2,7 @@
 name: local-model-prompt-engineer
 description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, loop-safety rules, Git/file safety, phased execution, Ralph-loop iteration, targeted context length control, upstream artifact audits, or selecting model-specific prompt guidance from profiles.
 metadata:
-  version: "1.5"
+  version: "1.6"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -10,6 +10,25 @@ metadata:
 # Local Model Prompt Engineer
 
 Engineer prompt packages for local/open-weight models. Default to `generic-local` unless the user names a model. Use model profiles only when requested or clearly applicable.
+
+
+## Help Mode
+
+If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not run the normal workflow.
+
+Return the requested usage guidance from `references/help.md` and `references/help-mode.md`.
+
+## Control Parameter Parsing
+
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
+
+Examples:
+
+```bash
+--mode deep --target-profile qwen36 --context-length 32k --domain coding --harness opencode --ralph 2 --output project-local --no-apply
+```
+
+When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
 ## Priority Order
 

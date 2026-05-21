@@ -36,3 +36,12 @@ Local and smaller open-weight models do best when instructions are explicit, sta
 ## Packaging
 
 Use Option C: canonical shared references plus copied per-skill references for standalone installation.
+
+
+## Parameterization and Help Mode
+
+All skills support both natural-language controls and CLI-style flags. The canonical parser reference is `shared/control-parameters.md`; user-facing discovery is provided by `shared/help-mode.md` and per-skill `references/help.md` files.
+
+Every skill must support: `help`, `describe`, `examples`, `modes`, `parameters`, and `quickstart`, plus CLI-style equivalents such as `--help` and `--examples`.
+
+CLI-style flags are not a separate runtime implementation. They are a compact instruction convention for agent skills and a future-compatible interface for a possible `contextsmith` CLI/UI.

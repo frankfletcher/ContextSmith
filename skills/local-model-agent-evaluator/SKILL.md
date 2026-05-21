@@ -2,7 +2,7 @@
 name: local-model-agent-evaluator
 description: Audit prompts, skills, AGENTS.md files, repo instructions, agent workflows, model profiles, migration outputs, and long-running plans for local/open-weight model reliability without modifying them by default. Use when the user wants grades, strengths, weaknesses, A-F rubric scoring, context-risk review, loop-safety review, Git/file safety review, data science/ML safeguard review, small-model atomicity review, no-chain-of-thought validation, or targeted context fit review, upstream artifact audits, skill interoperability grading, or recommendations before using an engineer or migrator skill.
 metadata:
-  version: "1.2"
+  version: "1.3"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -10,6 +10,25 @@ metadata:
 # Local Model Agent Evaluator
 
 Audit prompts, skills, AGENTS.md files, agent workflows, migration outputs, and instruction packages for local/open-weight model reliability without modifying them by default.
+
+
+## Help Mode
+
+If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not run the normal workflow.
+
+Return the requested usage guidance from `references/help.md` and `references/help-mode.md`.
+
+## Control Parameter Parsing
+
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
+
+Examples:
+
+```bash
+--mode deep --target-profile qwen36 --context-length 32k --domain coding --harness opencode --ralph 2 --output project-local --no-apply
+```
+
+When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
 ## Default Mode
 

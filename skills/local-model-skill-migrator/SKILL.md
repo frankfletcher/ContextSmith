@@ -2,7 +2,7 @@
 name: local-model-skill-migrator
 description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, loop/Git/context safeguards, semantic-diff validation, Ralph-loop quality review, and explicit approval before applying changes, targeted context length control, and upstream workflow collision checks.
 metadata:
-  version: "1.3"
+  version: "1.4"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -10,6 +10,25 @@ metadata:
 # Local Model Skill Migrator
 
 Safely migrate directories of skills to local/open-weight model engineering standards.
+
+
+## Help Mode
+
+If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not run the normal workflow.
+
+Return the requested usage guidance from `references/help.md` and `references/help-mode.md`.
+
+## Control Parameter Parsing
+
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
+
+Examples:
+
+```bash
+--mode deep --target-profile qwen36 --context-length 32k --domain coding --harness opencode --ralph 2 --output project-local --no-apply
+```
+
+When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
 ## Default Safety Posture
 
