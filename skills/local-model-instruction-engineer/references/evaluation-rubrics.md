@@ -1,31 +1,52 @@
 # Evaluation Rubrics
 
-Use A-F grading. Validation pass/fail is separate from quality.
+Use A-F grades to separate bare validation from practical quality.
 
 ## Core Dimensions
 
-| Dimension | A | C | F |
-|---|---|---|---|
-| Small-model atomicity | Instructions are concrete, ordered, and testable | Some abstraction remains | Requires large inference leaps |
-| Instruction clarity | Direct, unambiguous, scoped | Several vague rules | Conflicting or generic |
-| Output contract | Exact enough to validate | Partial format | No usable output definition |
-| Context strategy | Source mode, selection, compression, and re-anchor defined | Some strategy | Dumps or assumes all context |
-| Assumption control | Assumptions explicit and low-risk | Some hidden assumptions | Risky or invented assumptions |
-| Domain fit | Domain intent and side effects handled | Generic safeguards only | Domain risks ignored |
-| Validation strength | Evidence-backed tests/checks | Minimal validation | Claims without evidence |
-| Loop safety | Retry/stop rules prevent loops | Partial retry handling | Repeats or encourages loops |
-| Git/file safety | Protects user work and risky operations | Some protection | Can destroy or overwrite work |
-| Bloat/cognitive load | Concise, de-duplicated | Some repetition | Wall of repeated rules |
-| Progressive disclosure | Main file lean, refs clear | Some inlining | Monolithic and hard to load |
-| Testability | Pass/fail criteria present | Some checks | Not testable |
+- Small-model atomicity
+- Instruction clarity
+- Output contract quality
+- Context strategy
+- Targeted context fit
+- Assumption control
+- Domain fit
+- Loop safety
+- Git/file safety, when relevant
+- Validation strength
+- Skill interoperability
+- Bloat / cognitive load
 
-## Ralph Loop Iteration Rule
+## Grade Meanings
 
-Run another iteration only if at least one category is C or worse, or a B-grade issue is high-risk. Do not iterate for cosmetic polishing.
+- **A**: strong, concrete, low-risk, ready to use
+- **B**: good, minor weaknesses remain
+- **C**: usable but materially weak; iterate if important
+- **D**: risky or vague; do not ship without revision
+- **F**: fails the requirement or creates unacceptable risk
 
-## Final Recommendation Labels
+## Ralph Iteration Rule
 
-- `ship`: good enough; no high-risk gaps.
-- `iterate`: material improvement likely.
-- `ask-user`: blocked by missing requirement or approval.
-- `reject`: unsafe, semantically broken, or too vague to use.
+Create another iteration only if it materially improves a graded weakness, reduces risk, improves targeted context fit, improves small-model atomicity, fixes validation, or resolves interoperability conflict. Do not iterate for cosmetic polish.
+
+Run another iteration when any critical dimension is C or worse, or when a B-grade issue is high-risk. Stop when all critical dimensions are B or better and no high-risk issue remains.
+
+## Targeted Context Fit
+
+Grade whether the artifact is appropriate for the user's `targeted_context_length`:
+
+- phase granularity fits context budget
+- examples/templates are not too long
+- reports are compact enough
+- context strategy reserves enough room for tools/output
+- persistent task state and phase compression are used when context is tight
+
+## Skill Interoperability
+
+Grade whether the artifact handles upstream tool/skill contributions correctly:
+
+- distinguishes confirmed requirements from unsupported additions
+- rejects hallucinated libraries/frameworks/workflows
+- resolves workflow collisions
+- avoids duplicate safeguards
+- respects valid domain-specific artifacts

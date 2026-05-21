@@ -1,8 +1,8 @@
 ---
 name: local-model-agent-evaluator
-description: Audit prompts, skills, AGENTS.md files, repo instructions, agent workflows, model profiles, migration outputs, and long-running plans for local/open-weight model reliability without modifying them by default. Use when the user wants grades, strengths, weaknesses, A-F rubric scoring, context-risk review, loop-safety review, Git/file safety review, data science/ML safeguard review, small-model atomicity review, no-chain-of-thought validation, or recommendations before using an engineer or migrator skill.
+description: Audit prompts, skills, AGENTS.md files, repo instructions, agent workflows, model profiles, migration outputs, and long-running plans for local/open-weight model reliability without modifying them by default. Use when the user wants grades, strengths, weaknesses, A-F rubric scoring, context-risk review, loop-safety review, Git/file safety review, data science/ML safeguard review, small-model atomicity review, no-chain-of-thought validation, or targeted context fit review, upstream artifact audits, skill interoperability grading, or recommendations before using an engineer or migrator skill.
 metadata:
-  version: "1.1"
+  version: "1.2"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -14,6 +14,12 @@ Audit prompts, skills, AGENTS.md files, agent workflows, migration outputs, and 
 ## Default Mode
 
 Audit-only. Do not edit files unless the user explicitly asks.
+
+## Targeted Context and Interoperability Checks
+
+When evaluating an artifact, grade targeted context fit using `references/targeted-context-length.md` and skill interoperability using `references/skill-interoperability.md`.
+
+Check whether upstream tools or skills introduced unsupported requirements, duplicate workflows, conflicting instructions, or hallucinated dependencies. Recommend rejection or downgrade of unsupported additions.
 
 ## Workflow
 

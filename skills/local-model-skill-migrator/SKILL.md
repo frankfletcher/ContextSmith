@@ -1,8 +1,8 @@
 ---
 name: local-model-skill-migrator
-description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, loop/Git/context safeguards, semantic-diff validation, Ralph-loop quality review, and explicit approval before applying changes.
+description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, loop/Git/context safeguards, semantic-diff validation, Ralph-loop quality review, and explicit approval before applying changes, targeted context length control, and upstream workflow collision checks.
 metadata:
-  version: "1.2"
+  version: "1.3"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -24,6 +24,14 @@ Default to **stage, do not apply**. Never rewrite source skills in place before 
 - `restore`: restore from backup
 
 Use `references/interaction-modes.md`.
+
+## Targeted Context Length
+
+When the user provides a targeted context length, use it to set migration batch size, report size, Ralph-loop detail, subagent use, and phase granularity. For tiny/tight context, migrate in smaller batches and rely on compact per-skill reports plus manifests instead of loading many skills at once.
+
+## Upstream and Workflow Collision Handling
+
+During migration, detect skills or instruction files that already encode another tool's workflow, prompt optimizer output, frontend specs, or implementation plans. Use `references/skill-interoperability.md` and `references/instruction-precedence.md` to avoid clobbering valid workflows or preserving hallucinated requirements.
 
 ## Workflow
 

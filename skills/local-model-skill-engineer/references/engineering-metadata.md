@@ -1,38 +1,26 @@
 # Engineering Metadata
 
-Mark generated or modified artifacts so future agents can identify target model/profile and engineering policy.
+Mark generated or migrated artifacts so future users and tools know how they were targeted.
 
-## For SKILL.md Files
+Use YAML `metadata` when the target system accepts it. Otherwise add a compact body section.
 
-Use `metadata` frontmatter when the target skill system allows it:
+Recommended fields:
 
 ```yaml
 metadata:
-  version: "1.3"
-  engineered_by: local-model-skill-engineer
-  engineered_version: "1.3"
+  version: "..."
+  engineered_by: local-model-agent-engineering
+  engineered_version: "..."
   target_model_profiles:
     - generic-local
     - qwen36
+  targeted_context_length: "32k"
+  context_tier: tight
   optimization_scope: local-open-weight
+  source_artifact: "..."
   last_engineered: "YYYY-MM-DD"
 ```
 
-If frontmatter metadata is not allowed, add a compact body section instead.
+Do not add arbitrary top-level frontmatter keys. Prefer `metadata` or a human-readable `Engineering Metadata` section.
 
-## For Prompt Packages
-
-Include:
-
-```markdown
-## Engineering Metadata
-- Engineered by:
-- Engineer version:
-- Target model/profile:
-- Optimization scope:
-- Runtime settings controllable by this prompt: yes/no/unknown
-```
-
-## For Batch Migrations
-
-Record authoritative metadata in `MANIFEST.json`: source hash, converted hash, profile, status, risk, validation result, and modified files.
+Record targeted context length when the user provides it, because it materially affects phase granularity, verbosity, examples, report size, and context strategy.

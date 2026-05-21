@@ -1,8 +1,8 @@
 ---
 name: local-model-prompt-engineer
-description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, loop-safety rules, Git/file safety, phased execution, Ralph-loop iteration, or selecting model-specific prompt guidance from profiles.
+description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, loop-safety rules, Git/file safety, phased execution, Ralph-loop iteration, targeted context length control, upstream artifact audits, or selecting model-specific prompt guidance from profiles.
 metadata:
-  version: "1.4"
+  version: "1.5"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -26,6 +26,18 @@ Engineer prompt packages for local/open-weight models. Default to `generic-local
 Use `references/interaction-modes.md`.
 
 Ask at most three questions only when missing information materially changes target model/profile, source mode, output format, side effects, safety boundaries, validation, or artifact location. Otherwise proceed with explicit assumptions.
+
+## Targeted Context Length
+
+When the user provides `targeted context length`, `context length`, `ctx`, or equivalent, optimize for that budget instead of the model's advertised maximum. Load `references/targeted-context-length.md`.
+
+The targeted context length must materially affect the output: verbosity, phase count, example count, context strategy, persistent state, subagent use, and validation/report size.
+
+## Upstream Artifact Audit
+
+If the prompt was previously modified by another optimizer, skill, or generator, run `references/upstream-artifact-audit.md` before preserving upstream additions. Reject unsupported frameworks, libraries, workflows, dependencies, or requirements not supported by user request or project evidence.
+
+Use `references/instruction-precedence.md` when upstream artifacts conflict with user/project/model/domain requirements.
 
 ## Workflow
 

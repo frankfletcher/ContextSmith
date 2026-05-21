@@ -1,20 +1,18 @@
 # Package Spec
 
-Package: `local-model-agent-engineering`  
-Version: `1.1`
+## Name
 
-## Goal
+Local Model Agent Engineering Skills
 
-Provide a cohesive set of agent skills for engineering prompts, skills, migrations, evaluations, and repo instruction files for local/open-weight models.
+## Version
 
-## Non-Goals
+v1.2
 
-- Do not guarantee model capability.
-- Do not bypass harness limitations.
-- Do not automate destructive Git, financial, external-write, or production actions without explicit approval.
-- Do not require every task to use Ralph loops, task state, or subagents.
+## Thesis
 
-## Skills
+Local and smaller open-weight models do best when instructions are explicit, staged, validated, context-aware, loop-safe, and durable across interruptions. Artifacts must also be sized and structured for the user's targeted context length, not the model card maximum.
+
+## Core Skills
 
 - `local-model-prompt-engineer`
 - `local-model-skill-engineer`
@@ -24,15 +22,17 @@ Provide a cohesive set of agent skills for engineering prompts, skills, migratio
 
 ## Shared Principles
 
-- atomic small-model instructions
-- no exposed chain-of-thought
-- model and domain profiles
-- context engineering
-- loop prevention
-- Git/file safety
-- persistent task state for long work
-- phase compression and do-not-carry-forward notes
-- bounded Ralph improvement loop
-- educational change reports
-- progressive disclosure
-- standalone-installable skills
+- Preserve the user's real objective.
+- Optimize for the selected model profile and targeted context length.
+- Ask only when blocked or when the answer materially changes the output.
+- Detect upstream skill/tool artifacts and reject unsupported requirements.
+- Resolve conflicts using instruction precedence.
+- Prefer atomic instructions, checklists, and validation gates.
+- Avoid exposed chain-of-thought instructions.
+- Use context management, persistent state, subagents, and phase debriefs when complexity warrants them.
+- Avoid duplicated safeguards and token bloat.
+- Use review-gate mode for destructive, external, or batch actions.
+
+## Packaging
+
+Use Option C: canonical shared references plus copied per-skill references for standalone installation.

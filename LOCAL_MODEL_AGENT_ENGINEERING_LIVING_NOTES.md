@@ -5,7 +5,7 @@ Purpose: capture implemented features and future improvements so the package evo
 
 ## Package Thesis
 
-Local and smaller open-weight models perform best when agent instructions are explicit, staged, validated, context-aware, loop-safe, and durable across interruptions. The package helps users engineer prompts, skills, repo instruction files, and skill migrations that work reliably under limited context, imperfect reasoning, and varied agent harnesses.
+Local and smaller open-weight models perform best when agent instructions are explicit, staged, validated, context-aware, loop-safe, and durable across interruptions. The package helps users engineer prompts, skills, repo instruction files, and skill migrations that work reliably under limited context, imperfect reasoning, varied agent harnesses, and chained-skill workflows.
 
 ## Current Core Skills
 
@@ -19,6 +19,8 @@ Package structure:
 
 - [x] Option C: canonical shared references under `shared/` plus copied references inside each skill for standalone installation.
 - [x] README with install instructions.
+- [x] Detailed invocation examples per tool.
+- [x] Control phrases / keyword cheat sheet.
 - [x] Validation script.
 - [ ] Sync script for shared references.
 - [ ] Release builder script.
@@ -32,6 +34,7 @@ Package structure:
 - [x] Prompt-control feasibility checks.
 - [x] No exposed chain-of-thought rule.
 - [x] Context engineering / context-risk detection.
+- [x] Targeted context length as a first-class control.
 - [x] Persistent task state.
 - [x] Subagent delegation.
 - [x] Engineering metadata.
@@ -41,6 +44,9 @@ Package structure:
 - [x] Phased planning with durable memory.
 - [x] Phase compression and debrief.
 - [x] Do-not-carry-forward notes.
+- [x] Upstream artifact audit.
+- [x] Instruction precedence hierarchy.
+- [x] Skill interoperability / workflow collision handling.
 
 ## Top Reliability Improvements
 
@@ -54,8 +60,29 @@ Package structure:
 - [x] Interaction modes across the package.
 - [x] Instruction conflict detector.
 - [x] Package validation script.
+- [x] Upstream artifact audit for chained optimizers/skills.
+- [x] Instruction precedence and conflict resolution.
+- [x] `targeted_context_length` metadata and context-tier behavior.
+- [x] Phase compression/debrief and do-not-carry-forward guidance.
 
 ## Recent Implemented Ideas
+
+### Targeted Context Length
+
+- [x] Recognize `targeted context length: 32k`, `context length: 32k`, `ctx: 32k`, and related phrases.
+- [x] Normalize generated metadata to `metadata.targeted_context_length`.
+- [x] Derive context tier: tiny, tight, moderate, large, very-large.
+- [x] Make context length materially affect phase granularity, verbosity, example count, output budget, batching, persistent state, and subagent use.
+- [x] Add targeted context fit to A-F grading.
+
+### Upstream Artifact / Multi-Skill Safety
+
+- [x] Treat upstream skill/optimizer outputs as inputs to verify, not authoritative truth.
+- [x] Classify upstream additions as confirmed, likely, useful suggestion, unsupported, conflicting, or rejected.
+- [x] Reject hallucinated frameworks/libraries/dependencies when unsupported by user request or project evidence.
+- [x] Detect workflow collisions between external skill workflows and local-model workflows.
+- [x] Support bridge artifacts such as `WORKFLOW_ADAPTER.md` when workflows must be reconciled.
+- [x] Add skill interoperability grading.
 
 ### Loop and Tool Safety
 
@@ -136,17 +163,6 @@ Package structure:
 - [ ] Add `continue.md`.
 - [ ] Add `cli-only.md`.
 
-Harness profile fields:
-
-- tool-call format
-- file-edit behavior
-- approval model
-- subagent support
-- shell support
-- browser/web/search support
-- runtime/model parameter control
-- known failure modes
-
 ### Domain Profiles
 
 - [x] Coding.
@@ -170,6 +186,8 @@ Harness profile fields:
 - [x] A-F scoring.
 - [x] Ship / iterate / ask-user / reject labels.
 - [x] Regression-risk evaluation.
+- [x] Targeted context fit grading.
+- [x] Skill interoperability grading.
 - [ ] Token impact report with approximate word/token counts.
 - [ ] Automated duplicate-rule detector script.
 - [ ] Automated exposed-CoT phrase scanner.
@@ -209,46 +227,14 @@ Harness profile fields:
 Problem observed:
 
 - A prompt builder generated a nice three-phase plan for porting a large Windows/macOS application to Linux.
-- Three phases were too coarse for a small model.
+- Three phases were too coarse for a small model and tight context.
 - The task caused context churn.
 - The plan lacked durable memory/progress documentation.
 
 Implemented response:
 
-- [x] Phase granularity must scale with task complexity.
-- [x] Complex tasks should usually use 6–12 phases.
+- [x] Phase granularity must scale with task complexity and targeted context length.
+- [x] Complex tasks should usually use 6-12 phases, and tight context often needs more smaller phases.
 - [x] Each phase needs explicit goal, inputs, likely files, tasks, outputs, validation, stop condition, and handoff notes.
-- [x] Long plans require persistent phase memory.
-- [x] End-of-phase debrief and do-not-carry-forward notes are required for long tasks.
-
-Large porting/migration tasks should usually include phases such as:
-
-1. Repository inventory and build-system discovery
-2. Platform-dependency inventory
-3. Runtime/environment assumptions
-4. Build bootstrap on Linux
-5. Dependency replacement strategy
-6. Filesystem/path/process/shell compatibility
-7. UI/windowing/input/audio/network compatibility, if relevant
-8. Test harness setup
-9. Incremental port of core modules
-10. Incremental port of platform-specific modules
-11. Packaging/distribution work
-12. Validation, regression testing, and cleanup
-
-## Product / README Ideas
-
-- [x] README should explain why the toolkit exists.
-- [x] README should provide multiple invocation examples per tool.
-- [x] README should explain benefits without pushy sales copy.
-- [ ] Add screenshots or example before/after diffs.
-- [ ] Add a simple webpage later.
-- [ ] Add a “Which skill should I use?” decision tree.
-
-## Open Design Questions
-
-- [ ] Should harness profiles become first-class in v1.2?
-- [ ] Should the profile builder be its own skill or part of the skill engineer?
-- [ ] Should `.agent-work/` default sprint be `general` or inferred from repo/project name?
-- [ ] Should generated AGENTS.md files include a short “Local Model Notes” section or keep all local-model behavior implicit?
-- [ ] Should model profiles include user-observed empirical notes separately from public/official guidance?
+- [x] Each phase needs debrief, carry-forward, and do-not-carry-forward notes.
+- [x] Durable task-state files should be created for long-running projects.

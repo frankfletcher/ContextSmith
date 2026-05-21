@@ -1,8 +1,8 @@
 ---
 name: local-model-skill-engineer
-description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, or skill-auditor-style quality checks.
+description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, targeted context length control, upstream artifact audits, skill interoperability handling, or skill-auditor-style quality checks.
 metadata:
-  version: "1.4"
+  version: "1.5"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -24,6 +24,16 @@ Create, convert, improve, and audit SKILL.md-based skills for local/open-weight 
 ## Clarification Policy
 
 Use `references/interaction-modes.md`. Ask only when blocked or when the answer materially changes target profile, source path, output format, side effects, permission boundaries, validation, or output location. Otherwise proceed with stated assumptions.
+
+## Targeted Context Length
+
+When the user provides a targeted context length, use `references/targeted-context-length.md`. The context target must affect `SKILL.md` size, reference splitting, instruction atomicity, example count, phase granularity, and report verbosity.
+
+## Skill Interoperability
+
+When another skill, optimizer, scaffold, or planner contributed requirements, specs, plans, or workflow artifacts, load `references/skill-interoperability.md` and `references/upstream-artifact-audit.md`.
+
+Do not preserve unsupported upstream additions. Do not replace valid domain-specific workflows unless they conflict with safety, project evidence, or local-model reliability. If workflows collide, preserve the existing workflow in YOLO mode and add only missing safeguards; in guided/review-gate mode, ask whether to use, merge, replace, or bridge workflows.
 
 ## Workflow
 

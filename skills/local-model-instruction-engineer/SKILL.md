@@ -1,8 +1,8 @@
 ---
 name: local-model-instruction-engineer
-description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans.
+description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
 metadata:
-  version: "1.1"
+  version: "1.2"
   package: local-model-agent-engineering
   target: local-open-weight-models
 ---
@@ -20,6 +20,16 @@ Create, optimize, audit, and maintain repository or agent instruction files such
 5. Define commands, coding standards, validation, Git safety, loop safety, and approval requirements.
 6. Add phase memory and canonical output locations for long work.
 7. Keep instruction files concise and teach the user what changed.
+
+## Targeted Context Length
+
+When creating or editing repo instruction files, use `references/targeted-context-length.md`. Tight context requires shorter AGENTS.md instructions, more reliance on project-local task state, stronger phase debriefs, compact loop/Git safeguards, and fewer duplicated rules.
+
+## Upstream and Existing Instruction Safety
+
+Before adding safeguards or standards, scan existing instruction files and external-skill artifacts. Use `references/upstream-artifact-audit.md`, `references/skill-interoperability.md`, and `references/instruction-precedence.md`.
+
+Reject unsupported requirements from upstream tools, such as frontend libraries in a non-frontend project. Preserve valid domain-specific artifacts, but do not duplicate or clobber existing workflows.
 
 ## Workflow
 

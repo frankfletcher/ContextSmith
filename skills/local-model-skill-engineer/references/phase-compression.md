@@ -1,58 +1,51 @@
 # Phase Compression and Debrief
 
-Use this reference for long-running or multi-phase tasks.
+Use phase compression for long-running, multi-phase, or context-sensitive work. It helps the next run resume without reloading full history.
 
-## Phase Closeout
+## Required Phase Debrief
 
 At the end of each phase, write a compact debrief:
 
 ```markdown
-## Phase Closeout
+## Phase Debrief
 
-Phase completed:
-Evidence of completion:
-Files changed:
-Commands run:
-Validation result:
-Failed approaches:
-Decisions made:
-Carry forward:
-Do not carry forward:
-Next phase:
+### Completed
+- ...
+
+### Evidence
+- files changed, commands run, tests observed, reports produced
+
+### Blockers
+- ...
+
+### Decisions
+- ...
+
+### Carry Forward
+- facts, paths, decisions, risks, and next-phase constraints that remain relevant
+
+### Do Not Carry Forward
+- failed approaches, obsolete assumptions, irrelevant files, outdated hypotheses
+
+### Next Phase
+- next atomic phase goal and stop condition
 ```
 
-## Do Not Carry Forward
+## Compression Rules
 
-Record stale assumptions and failed approaches so the model does not repeat them.
+- Summarize; do not paste raw logs or full files.
+- Preserve exact paths, commands, errors, schemas, and decisions when needed.
+- Keep phase summaries short enough to load in tight context windows.
+- If `targeted_context_length` is tiny/tight, prefer more phases and stronger phase debriefs.
+- Update `STATUS.md`, `CONTEXT.md`, and `PHASE_LOG.md` at phase closeout.
 
-Examples:
+## Do-Not-Carry-Forward Notes
 
-```markdown
-## Do Not Carry Forward
-- Failed approach: using the Windows-only packaging script.
-- Obsolete assumption: app requires Electron 20.
-- Irrelevant files: old build output under `dist/`.
-```
+Use this section to prevent loops and repeated dead ends:
 
-## Active Context Manifest
+- failed approach and why it failed
+- obsolete assumption replaced by evidence
+- irrelevant files/directories to avoid
+- validation paths that produced no signal
 
-For long tasks, keep a small manifest of what should be loaded next:
-
-```markdown
-# Active Context Manifest
-
-Read these:
-- TASK.md
-- STATUS.md
-- CHECKLIST.md
-- DECISIONS.md
-
-Do not read unless needed:
-- archive/
-- old iterations/
-- raw logs/
-```
-
-## Compression Rule
-
-Carry forward only what affects the next phase: constraints, decisions, blockers, relevant files, validation status, and next actions. Do not carry raw logs or obsolete context.
+The next phase should read carry-forward notes, not the entire prior phase history.
