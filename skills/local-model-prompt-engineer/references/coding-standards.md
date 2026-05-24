@@ -56,3 +56,16 @@ Do not add abstractions unless they simplify the current task or protect an exis
 ## Validation Evidence
 
 Do not claim tests pass unless a test command was run and observed. If validation was not run, state the command and reason.
+## Phase Code Review and Test Quality
+
+For coding domains, implementation plans should include:
+
+- TDD when feasible.
+- Baseline tests for normal use cases.
+- Meaningful edge/failure tests.
+- Code review after each phase.
+- Narrow validation before broad validation.
+- Documentation updates when behavior changes.
+- Coverage awareness when the project tracks coverage.
+
+Do not add performative tests that only import code, assert no exception, or mock away the behavior under test.

@@ -2,8 +2,8 @@
 name: local-model-prompt-engineer
 description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, loop-safety rules, Git/file safety, phased execution, Ralph-loop iteration, targeted context length control, upstream artifact audits, or selecting model-specific prompt guidance from profiles.
 metadata:
-  version: "1.6"
-  package: local-model-agent-engineering
+  version: "1.7.0"
+  package: ContextSmith
   target: local-open-weight-models
 ---
 
@@ -57,6 +57,35 @@ The targeted context length must materially affect the output: verbosity, phase 
 If the prompt was previously modified by another optimizer, skill, or generator, run `references/upstream-artifact-audit.md` before preserving upstream additions. Reject unsupported frameworks, libraries, workflows, dependencies, or requirements not supported by user request or project evidence.
 
 Use `references/instruction-precedence.md` when upstream artifacts conflict with user/project/model/domain requirements.
+
+
+
+## Model Capability and Planner/Executor Profiles
+
+When the user provides `--target-capability`, `--planner-profile`, or `--executor-profile`, load `references/model-capability-tiers.md` and `references/planner-executor-workflows.md`.
+
+Use stronger/planner profiles for planning, audits, architecture, test strategy, and final review. Use smaller/executor profiles for atomic phase execution when the plan and task state are explicit.
+
+
+
+## Education Level and Artifact Verbosity
+
+If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
+
+Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
+
+
+
+## Implementation Plan, Test, and Phase Review Audits
+
+When generating or auditing coding plans, tests, or phase workflows, use:
+
+- `references/implementation-plan-audit.md`
+- `references/test-quality-audit.md`
+- `references/phase-code-review.md`
+- `references/small-context-workflows.md`
+
+For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
 
 ## Workflow
 
@@ -144,6 +173,12 @@ Check:
 - instructions are de-duplicated and non-contradictory
 - validation/test plan exists for reusable prompts
 - educational report explains strengths, weaknesses, changes, and remaining risks
+
+
+
+## Runtime Stability Notes
+
+If the user asks about local model loops, server settings, speculative decoding, KV cache precision, or long agentic coding instability, use `references/runtime-stability.md`. Treat runtime settings as experimental deployment guidance unless the harness can control them.
 
 ## Required Output
 

@@ -57,3 +57,10 @@ Grade phase plans on:
 - context-risk handling
 - domain fit
 - human approval gates
+## Implementation Plan Audit Integration
+
+For coding, migration, repo-porting, or long-running work, run the implementation plan audit from `implementation-plan-audit.md` before treating a plan as executable.
+
+Phase count must scale with `targeted_context_length`. For `targeted_context_length <= 32k`, prefer more smaller phases over fewer broad phases. A large Windows/macOS-to-Linux port should usually be closer to 8-15 phases than 3 broad phases.
+
+Every phase should end with phase compression/debrief and `Do Not Carry Forward` notes.

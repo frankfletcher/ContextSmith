@@ -2,8 +2,8 @@
 name: local-model-instruction-engineer
 description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
 metadata:
-  version: "1.3"
-  package: local-model-agent-engineering
+  version: "1.4.0"
+  package: ContextSmith
   target: local-open-weight-models
 ---
 
@@ -49,6 +49,35 @@ When creating or editing repo instruction files, use `references/targeted-contex
 Before adding safeguards or standards, scan existing instruction files and external-skill artifacts. Use `references/upstream-artifact-audit.md`, `references/skill-interoperability.md`, and `references/instruction-precedence.md`.
 
 Reject unsupported requirements from upstream tools, such as frontend libraries in a non-frontend project. Preserve valid domain-specific artifacts, but do not duplicate or clobber existing workflows.
+
+
+
+## Model Capability and Planner/Executor Profiles
+
+When the user provides `--target-capability`, `--planner-profile`, or `--executor-profile`, load `references/model-capability-tiers.md` and `references/planner-executor-workflows.md`.
+
+Use stronger/planner profiles for planning, audits, architecture, test strategy, and final review. Use smaller/executor profiles for atomic phase execution when the plan and task state are explicit.
+
+
+
+## Education Level and Artifact Verbosity
+
+If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
+
+Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
+
+
+
+## Implementation Plan, Test, and Phase Review Audits
+
+When generating or auditing coding plans, tests, or phase workflows, use:
+
+- `references/implementation-plan-audit.md`
+- `references/test-quality-audit.md`
+- `references/phase-code-review.md`
+- `references/small-context-workflows.md`
+
+For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
 
 ## Workflow
 
@@ -133,6 +162,12 @@ Check:
 - phase plans include memory, debrief, and do-not-carry-forward notes when relevant
 - no exposed chain-of-thought
 - no destructive actions without approval
+
+
+
+## Runtime Stability Notes
+
+If the user asks about local model loops, server settings, speculative decoding, KV cache precision, or long agentic coding instability, use `references/runtime-stability.md`. Treat runtime settings as experimental deployment guidance unless the harness can control them.
 
 ## Required Output
 

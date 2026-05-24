@@ -2,8 +2,8 @@
 name: local-model-skill-engineer
 description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, targeted context length control, upstream artifact audits, skill interoperability handling, or skill-auditor-style quality checks.
 metadata:
-  version: "1.6"
-  package: local-model-agent-engineering
+  version: "1.7.0"
+  package: ContextSmith
   target: local-open-weight-models
 ---
 
@@ -53,6 +53,22 @@ When the user provides a targeted context length, use `references/targeted-conte
 When another skill, optimizer, scaffold, or planner contributed requirements, specs, plans, or workflow artifacts, load `references/skill-interoperability.md` and `references/upstream-artifact-audit.md`.
 
 Do not preserve unsupported upstream additions. Do not replace valid domain-specific workflows unless they conflict with safety, project evidence, or local-model reliability. If workflows collide, preserve the existing workflow in YOLO mode and add only missing safeguards; in guided/review-gate mode, ask whether to use, merge, replace, or bridge workflows.
+
+
+
+## Model Capability and Planner/Executor Profiles
+
+When the user provides `--target-capability`, `--planner-profile`, or `--executor-profile`, load `references/model-capability-tiers.md` and `references/planner-executor-workflows.md`.
+
+Use stronger/planner profiles for planning, audits, architecture, test strategy, and final review. Use smaller/executor profiles for atomic phase execution when the plan and task state are explicit.
+
+
+
+## Education Level and Artifact Verbosity
+
+If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
+
+Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
 
 ## Workflow
 

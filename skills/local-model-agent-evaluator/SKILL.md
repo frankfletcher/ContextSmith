@@ -2,8 +2,8 @@
 name: local-model-agent-evaluator
 description: Audit prompts, skills, AGENTS.md files, repo instructions, agent workflows, model profiles, migration outputs, and long-running plans for local/open-weight model reliability without modifying them by default. Use when the user wants grades, strengths, weaknesses, A-F rubric scoring, context-risk review, loop-safety review, Git/file safety review, data science/ML safeguard review, small-model atomicity review, no-chain-of-thought validation, or targeted context fit review, upstream artifact audits, skill interoperability grading, or recommendations before using an engineer or migrator skill.
 metadata:
-  version: "1.3"
-  package: local-model-agent-engineering
+  version: "1.4.0"
+  package: ContextSmith
   target: local-open-weight-models
 ---
 
@@ -40,6 +40,35 @@ When evaluating an artifact, grade targeted context fit using `references/target
 
 Check whether upstream tools or skills introduced unsupported requirements, duplicate workflows, conflicting instructions, or hallucinated dependencies. Recommend rejection or downgrade of unsupported additions.
 
+
+
+## Model Capability and Planner/Executor Profiles
+
+When the user provides `--target-capability`, `--planner-profile`, or `--executor-profile`, load `references/model-capability-tiers.md` and `references/planner-executor-workflows.md`.
+
+Use stronger/planner profiles for planning, audits, architecture, test strategy, and final review. Use smaller/executor profiles for atomic phase execution when the plan and task state are explicit.
+
+
+
+## Education Level and Artifact Verbosity
+
+If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
+
+Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
+
+
+
+## Implementation Plan, Test, and Phase Review Audits
+
+When generating or auditing coding plans, tests, or phase workflows, use:
+
+- `references/implementation-plan-audit.md`
+- `references/test-quality-audit.md`
+- `references/phase-code-review.md`
+- `references/small-context-workflows.md`
+
+For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
+
 ## Workflow
 
 1. Identify artifact type: prompt, skill, instruction file, workflow, model profile, migration output, phase plan.
@@ -52,6 +81,12 @@ Check whether upstream tools or skills introduced unsupported requirements, dupl
 8. Grade each dimension A-F using `evaluation-rubrics.md`.
 9. Recommend improvements in priority order.
 10. State whether a Ralph loop, prompt engineer, skill engineer, instruction engineer, or migrator should be used next.
+
+
+
+## Runtime Stability Notes
+
+If the user asks about local model loops, server settings, speculative decoding, KV cache precision, or long agentic coding instability, use `references/runtime-stability.md`. Treat runtime settings as experimental deployment guidance unless the harness can control them.
 
 ## Required Output
 

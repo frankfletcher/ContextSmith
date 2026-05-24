@@ -25,3 +25,14 @@ Natural language task goes here.
 - `review-gate mode` prevents destructive or wide changes without approval.
 - `Ralph loop` improves quality after baseline validation, but only when materially useful.
 - `project-local output` preserves reports and iterations under `.agent-work/` instead of `/tmp`.
+## Strong Planner, Local Executor Pattern
+
+For large coding tasks, use a stronger model or deep-path ContextSmith run to create and audit the plan, then use a smaller/local model to execute atomic phases.
+
+Example:
+
+```bash
+/local-model-prompt-engineer   --mode deep   --planner-profile frontier-cloud   --executor-profile qwen36   --target-capability small-local   --context-length 32k
+```
+
+This pattern works because the executor model does not need to rediscover the architecture. It carries out well-scoped instructions with durable task state.

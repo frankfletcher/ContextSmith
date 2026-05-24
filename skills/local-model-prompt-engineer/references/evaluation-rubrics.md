@@ -50,3 +50,15 @@ Grade whether the artifact handles upstream tool/skill contributions correctly:
 - resolves workflow collisions
 - avoids duplicate safeguards
 - respects valid domain-specific artifacts
+## Additional v1.4.0 Rubrics
+
+Add these A-F categories when relevant:
+
+- Implementation plan executability
+- Test quality / regression-catching power
+- Phase code review quality
+- Education/report usefulness
+- Artifact verbosity fit
+- Model capability fit
+- Planner/executor split quality
+- Runtime stability awareness

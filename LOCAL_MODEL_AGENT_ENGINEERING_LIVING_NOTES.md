@@ -257,3 +257,30 @@ Implemented response:
 - [ ] Add harness profiles for OpenCode, Hermes, OpenClaw, Codex, Cursor, Aider, Continue.
 - [ ] Add package sync/release builder scripts for Option C shared-reference copying.
 - [ ] Add a tiny router skill only if users struggle to pick the correct specialized skill.
+
+## v1.4.0 Living Notes Update
+
+### Implemented in this pass
+
+- [x] Rewrite README to be more compelling and less AI-generic.
+- [x] Split long user-manual content into `docs/`.
+- [x] Add factual project status section.
+- [x] Add SemVer-style versioning policy going forward without backfilling/renumbering history.
+- [x] Add model capability tiers beyond small/local models.
+- [x] Add planner/executor workflow guidance.
+- [x] Add implementation plan audit rubric.
+- [x] Add small-context workflow documentation.
+- [x] Add test-quality audit rubric.
+- [x] Add phase code review loop.
+- [x] Add education-level and artifact-verbosity controls.
+- [x] Add runtime-stability diagnostic guidance for local agentic coding.
+
+### Future ideas retained
+
+- [ ] Build a real `contextsmith` CLI.
+- [ ] Build a local-first UI after CLI/workflows stabilize.
+- [ ] Add harness profiles for OpenCode, Codex, Cursor, Aider, OpenClaw, Hermes, and generic CLI agents.
+- [ ] Add optional UI handoff protocol once CLI/UI exists.
+- [ ] Add package sync/release scripts for shared reference propagation.
+- [ ] Add full behavioral test fixtures for prompts, skills, AGENTS.md files, plans, and test audits.
+- [ ] Consider a tiny router/help skill only if users struggle to choose the correct skill.

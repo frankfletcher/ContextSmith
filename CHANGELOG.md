@@ -1,5 +1,33 @@
 # Changelog
 
+## v1.4.0
+
+**Released:** 2026-05-22
+
+### Added
+
+- Added `docs/` manual split: user manual, control parameters, examples, small-context workflows, AGENTS.md guide, runtime stability, model profiles, implementation-plan audit, test-quality audit, phase code review, Ralph loop, skill migration, and versioning policy.
+- Added `shared/implementation-plan-audit.md` with A-F grading for phase granularity, atomicity, context fit, validation strength, task-state integration, handoff quality, test strategy, and small-model executability.
+- Added `shared/small-context-workflows.md` for fresh-session-per-phase workflows, compaction triggers, tight-context phase sizing, and phase handoff.
+- Added `shared/test-quality-audit.md` to evaluate baseline coverage, edge-case realism, assertion strength, regression-catching power, fixture realism, over-mocking, DS/ML tests, and LLM/RAG tests.
+- Added `shared/phase-code-review.md` for post-phase coding review, focused improvement passes, and phase-local review reports.
+- Added `shared/model-capability-tiers.md` for small-local, mid-local, large-local, frontier-cloud, reasoning-specialized, coding-specialized, and multimodal capabilities.
+- Added `shared/planner-executor-workflows.md` for strong-planner/local-executor workflows.
+- Added `shared/runtime-stability.md` for local agentic coding runtime diagnostics, including context, reasoning, speculative decoding, KV cache, sampling, and harness loop controls.
+- Added `shared/education-levels.md` separating human educational verbosity from model-facing artifact verbosity.
+- Added new control parameters: `--education-level`, `--artifact-verbosity`, `--phase-review`, `--code-review-iterations`, `--target-capability`, `--planner-profile`, `--executor-profile`, and `--focus`.
+
+### Changed
+
+- Rewrote `README.md` as a clearer landing page with stronger positioning, short quick-start examples, factual project status, and links to deeper docs.
+- Updated prompt, skill, instruction, migrator, and evaluator workflows to reference implementation-plan audit, test-quality audit, phase code review, education-level controls, model capability tiers, and planner/executor workflows when relevant.
+- Updated package philosophy from small-model-only to small-model-first, capability-aware agent instruction engineering.
+- Added SemVer-style versioning guidance going forward without renumbering historical releases.
+
+### Notes
+
+- Versioning is now `MAJOR.MINOR.PATCH` for package releases. Patch releases should be used for documentation, typo fixes, and small refinements; minor releases for backward-compatible capabilities; major releases for breaking changes.
+
 ## v1.3
 
 **Released:** 2026-05-20

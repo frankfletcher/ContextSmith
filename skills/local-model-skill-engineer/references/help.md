@@ -36,3 +36,14 @@ Convert this skill for local models. Preserve behavior and report all changes.
 ## Output
 
 Usually returns a revised skill or staged skill package, semantic diff, reference audit, metadata summary, validation checklist, and educational change report.
+
+## New v1.4.0 Controls
+
+- `--education-level none|brief|guided|deep|teaching`
+- `--artifact-verbosity compact|normal|detailed`
+- `--phase-review off|brief|standard|deep`
+- `--code-review-iterations 0|1|2`
+- `--target-capability small-local|mid-local|large-local|frontier-cloud|reasoning-specialized|coding-specialized|multimodal`
+- `--planner-profile <profile>`
+- `--executor-profile <profile>`
+- `--focus implementation-plan|test-quality|runtime-stability|agents-md|prompt|skill`

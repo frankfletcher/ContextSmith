@@ -104,3 +104,31 @@ Examples:
 --grade-only
 --recommend-fixes
 ```
+
+## Extended Parameters Added in v1.4.0
+
+These parameters are accepted in CLI-style or natural language form.
+
+| Parameter | Values | Purpose |
+|---|---|---|
+| `--education-level` | `none`, `brief`, `guided`, `deep`, `teaching` | Controls how much the tool explains its decisions to the user. |
+| `--artifact-verbosity` | `compact`, `normal`, `detailed` | Controls verbosity of generated artifacts separately from educational explanation. |
+| `--phase-review` | `off`, `brief`, `standard`, `deep` | Adds a post-phase code review gate for coding phases. |
+| `--code-review-iterations` | `0`, `1`, `2` | Bounds focused post-phase code review improvement passes. |
+| `--target-capability` | `small-local`, `mid-local`, `large-local`, `frontier-cloud`, `reasoning-specialized`, `coding-specialized`, `multimodal` | Selects a model capability tier when a specific model profile is not enough. |
+| `--planner-profile` | model/profile name | Model/profile intended for planning, audits, and high-level design. |
+| `--executor-profile` | model/profile name | Model/profile intended for carrying out atomic implementation phases. |
+| `--focus` | `implementation-plan`, `test-quality`, `runtime-stability`, `agents-md`, `prompt`, `skill` | Focuses evaluator or engineer behavior on a specific review dimension. |
+
+Aliases:
+
+- `education level: deep`
+- `explain level: guided`
+- `artifact verbosity: compact`
+- `phase review: standard`
+- `planner profile: frontier-cloud`
+- `executor profile: qwen36`
+- `target capability: small-local`
+
+Conflict rule: if `--education-level deep` conflicts with `--artifact-verbosity compact`, preserve compact artifacts and put educational detail in reports.
+

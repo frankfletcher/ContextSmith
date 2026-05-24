@@ -2,8 +2,8 @@
 name: local-model-skill-migrator
 description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, loop/Git/context safeguards, semantic-diff validation, Ralph-loop quality review, and explicit approval before applying changes, targeted context length control, and upstream workflow collision checks.
 metadata:
-  version: "1.4"
-  package: local-model-agent-engineering
+  version: "1.5.0"
+  package: ContextSmith
   target: local-open-weight-models
 ---
 
@@ -51,6 +51,22 @@ When the user provides a targeted context length, use it to set migration batch 
 ## Upstream and Workflow Collision Handling
 
 During migration, detect skills or instruction files that already encode another tool's workflow, prompt optimizer output, frontend specs, or implementation plans. Use `references/skill-interoperability.md` and `references/instruction-precedence.md` to avoid clobbering valid workflows or preserving hallucinated requirements.
+
+
+
+## Model Capability and Planner/Executor Profiles
+
+When the user provides `--target-capability`, `--planner-profile`, or `--executor-profile`, load `references/model-capability-tiers.md` and `references/planner-executor-workflows.md`.
+
+Use stronger/planner profiles for planning, audits, architecture, test strategy, and final review. Use smaller/executor profiles for atomic phase execution when the plan and task state are explicit.
+
+
+
+## Education Level and Artifact Verbosity
+
+If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
+
+Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
 
 ## Workflow
 

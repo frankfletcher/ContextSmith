@@ -36,3 +36,14 @@ Create or improve AGENTS.md. Scan existing instructions first. Add only relevant
 ## Output
 
 Returns or stages instruction files plus repo profile, detected domains, reused/strengthened safeguards, conflicts, validation steps, and educational change report.
+
+## New v1.4.0 Controls
+
+- `--education-level none|brief|guided|deep|teaching`
+- `--artifact-verbosity compact|normal|detailed`
+- `--phase-review off|brief|standard|deep`
+- `--code-review-iterations 0|1|2`
+- `--target-capability small-local|mid-local|large-local|frontier-cloud|reasoning-specialized|coding-specialized|multimodal`
+- `--planner-profile <profile>`
+- `--executor-profile <profile>`
+- `--focus implementation-plan|test-quality|runtime-stability|agents-md|prompt|skill`

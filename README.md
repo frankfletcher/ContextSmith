@@ -1,46 +1,51 @@
 # ContextSmith
 
-Local-model prompt, skill, and AGENTS.md engineering toolkit
+**Model-aware prompt, skill, and AGENTS.md engineering for real agent workflows.**
 
-A practical toolkit for making prompts, skills, repo instructions, and agent workflows work better with local/open-weight models such as Qwen, Gemma, Llama, Mistral, Phi, DeepSeek, and similar smaller models.
+> ContextSmith turns messy agent instructions into model-aware operating plans that local and smaller models can actually follow.
 
-Most agent instructions are written for frontier cloud models. Local models can be excellent, but they usually need more explicit instructions, tighter context control, safer tool use, and better recovery from loops or crashes. This package gives you reusable skills for that job.
+Local agents fail in boring ways: they loop, forget context, write weak tests, overwrite files, follow hallucinated requirements, and drown in oversized AGENTS.md files.
 
-## Why This Exists
+ContextSmith is built to prevent those boring failures.
 
-Local/smaller models often struggle with:
+It started with small local models, where instruction quality matters most. The same operational discipline now helps across the model spectrum: local/open-weight models, coding-specialized models, reasoning models, and stronger planner models.
 
-- vague instructions that require too much inference
-- overloaded or locally capped context windows
-- repeated failed tool calls
-- malformed tool output
-- generic plans that are too coarse
-- lost progress after a crash or context reset
-- accidental overwrite of user work
-- hallucinated requirements from chained prompt optimizers or other skills
-- bloated `AGENTS.md` files full of repetitive rules
+> The goal is not just better prompts.  
+> The goal is agent instructions that remain usable under context pressure, tool failures, long coding runs, and real project constraints.
 
-These skills help by adding:
+## Why ContextSmith exists
 
-- atomic instructions
-- model profiles
-- targeted context-length adaptation
-- domain-aware guardrails
-- phased execution and memory files
-- loop prevention
-- Git safety
-- context strategy
-- validation and A-F grading
-- upstream artifact audits
-- educational change reports
+Most prompt tools optimize text.
 
-## Included Skills
+ContextSmith optimizes the operating environment around the prompt:
 
-- `local-model-prompt-engineer` — create, optimize, audit, and test prompt packages.
-- `local-model-skill-engineer` — create, convert, audit, and package `SKILL.md`-based skills.
-- `local-model-skill-migrator` — safely migrate directories of skills with backup, staging, manifest, and reports.
-- `local-model-instruction-engineer` — create and improve `AGENTS.md`, `CLAUDE.md`, copilot instructions, `.cursorrules`, and related agent instruction files.
-- `local-model-agent-evaluator` — audit artifacts without modifying them.
+- model profile and capability tier
+- targeted context length
+- task phase size
+- AGENTS.md and repo instruction quality
+- loop and Git safety
+- persistent task memory
+- post-phase code review
+- test quality
+- implementation-plan audit
+- domain-specific guardrails
+- upstream artifact sanity checks
+
+The result is not just a prettier prompt. It is a more reliable agent workflow.
+
+> A bigger context window is not a strategy.
+>
+> ContextSmith optimizes for the context you actually have, not the context the model card promised.
+
+## Included skills
+
+| Skill | Use it for |
+|---|---|
+| `local-model-prompt-engineer` | Create, optimize, audit, and package prompts. |
+| `local-model-skill-engineer` | Create, convert, audit, and package `SKILL.md`-based skills. |
+| `local-model-skill-migrator` | Safely migrate skill directories with backup, staging, manifest, and reports. |
+| `local-model-instruction-engineer` | Create and improve `AGENTS.md`, `CLAUDE.md`, copilot instructions, `.cursorrules`, and related agent instruction files. |
+| `local-model-agent-evaluator` | Audit prompts, skills, tests, plans, workflows, and instruction files without modifying them. |
 
 ## Install
 
@@ -56,137 +61,15 @@ Install one skill:
 cp -r skills/local-model-prompt-engineer ~/.agents/skills/
 ```
 
-Recommended after cloning:
+Optional validation:
 
 ```bash
 python scripts/validate_skills.py
 ```
 
-## How To Drive These Skills
+## Quick start
 
-Use these control phrases naturally. They are the steering wheel for the package.
-
-| Control phrase | Meaning |
-|---|---|
-| `fast path` | Concise one-pass improvement with minimal questions and minimal reports. |
-| `deep path` | Stronger analysis, richer audit, optional Ralph loop, saved iterations when useful. |
-| `guided mode` | Ask 1-3 high-impact questions before major choices. |
-| `yolo mode` | Proceed with reasonable assumptions unless blocked. |
-| `review-gate mode` | Plan or stage first; ask before applying changes. |
-| `audit only` | Analyze and report; do not modify files. |
-| `stage only` | Write output to staging; do not overwrite originals. |
-| `apply` | Apply already-staged changes after validation and approval. |
-| `no ralph loop` | Disable iterative refinement. |
-| `ralph loop: 2` | Run up to two improvement iterations, saving each one. |
-| `target profile: qwen36` | Use a model-specific profile. |
-| `target profiles: generic-local, qwen36` | Optimize for a group of model profiles. |
-| `harness: opencode` | Adapt instructions to a known agent harness when supported. |
-| `domain: data-science-ml` | Apply domain-specific standards and safeguards. |
-| `targeted context length: 32k` | Optimize artifacts for the stated usable context budget. |
-| `project-local output` | Save durable reports and iterations under `<project>/.agent-work/`. |
-| `chat-only output` | Return the result in chat; avoid writing files unless required. |
-| `backup first` | Create backups before edits or migrations. |
-| `do not apply` | Do not overwrite originals or perform in-place changes. |
-
-
-## CLI-Style Flag Cheat Sheet
-
-| Flag | Example | Meaning |
-|---|---|---|
-| `--mode` | `--mode deep` | Select fast/deep/guided/yolo/review-gate/audit-only behavior. |
-| `--target-profile` | `--target-profile qwen36` | Use a model profile. |
-| `--target-profiles` | `--target-profiles generic-local,qwen36` | Optimize for multiple profiles. |
-| `--context-length` / `--ctx` | `--context-length 32k` | Set `targeted_context_length`; materially changes artifact design. |
-| `--domain` | `--domain coding,data-science-ml` | Apply domain-specific guardrails. |
-| `--harness` | `--harness opencode` | Apply harness-aware assumptions when known. |
-| `--ralph` | `--ralph 2` | Run bounded Ralph improvement iterations. |
-| `--output` | `--output project-local` | Choose chat, project-local, or staging output. |
-| `--backup` | `--backup` | Create backups before changes/migration. |
-| `--stage` | `--stage` | Write staged output without applying. |
-| `--no-apply` | `--no-apply` | Do not overwrite originals or apply changes. |
-| `--help` | `--help` | Show help page only. |
-
-### Why `targeted context length` matters
-
-A model may advertise 128k or 256k context, but your local runtime may be capped at 32k, 64k, or 100k. The skills optimize for the targeted context length you provide, not the model card.
-
-Example:
-
-```text
-target profile: qwen36
-targeted context length: 32k
-```
-
-This should produce shorter prompts, more granular phases, fewer examples, more persistent state, stricter output budgets, and more selective reading than the same task at 128k.
-
-
-## Two Ways to Control ContextSmith
-
-You can steer the skills in natural language or with CLI-style flags. Both styles are supported.
-
-### Natural language
-
-```text
-/local-model-prompt-engineer
-Deep path. Target profile: qwen36. Targeted context length: 32k. Ralph loop: 2. Project-local output.
-```
-
-### CLI-style flags
-
-```bash
-/local-model-prompt-engineer \
-  --mode deep \
-  --target-profile qwen36 \
-  --context-length 32k \
-  --domain coding,data-science-ml \
-  --harness opencode \
-  --ralph 2 \
-  --output project-local
-```
-
-CLI-style flags are easiest to copy, repeat, and eventually map to a real `contextsmith` CLI or UI. If flags and prose conflict, explicit prose wins or the skill asks one concise clarification question.
-
-## Built-In Help Pages
-
-Every skill supports help mode. Help mode returns usage guidance only; it does not run the normal workflow.
-
-```text
-/local-model-prompt-engineer help
-/local-model-prompt-engineer examples
-/local-model-prompt-engineer modes
-/local-model-prompt-engineer parameters
-/local-model-prompt-engineer quickstart
-```
-
-Equivalent CLI-style forms also work:
-
-```bash
-/local-model-prompt-engineer --help
-/local-model-skill-engineer --examples
-/local-model-instruction-engineer --parameters
-```
-
-## Best Practices
-
-1. Use `guided mode` for important reusable artifacts.
-2. Use `fast path` for small one-off improvements.
-3. Use `deep path` when the output will be reused, shared, or used by a coding agent.
-4. Use `review-gate mode` for batch migrations, Git-sensitive work, external side effects, or high-risk domains.
-5. Specify the target profile when you know it: `qwen36`, `gemma4`, `llama3`, or `generic-local`.
-6. Specify `targeted context length` when your local runtime context is capped.
-7. Specify the harness when relevant: `opencode`, `codex`, `cursor`, `aider`, `generic-agent`.
-8. Specify the domain when relevant: `coding`, `data-science-ml`, `email`, `research`, `document-processing`, etc.
-9. For project work, prefer project-local output under `.agent-work/`.
-10. Use `audit only` when you want diagnosis before modification.
-11. Use `stage only` when you want generated changes without overwriting originals.
-12. When chaining this package with other skills, ask for an upstream artifact audit to catch hallucinated requirements.
-
-## Quick Start Examples
-
-
-The examples below show both natural-language controls and CLI-style flags. Use the style that feels most comfortable.
-
-### CLI-style: important reusable prompt
+### Optimize a prompt for a tight local coding model
 
 ```bash
 /local-model-prompt-engineer \
@@ -196,31 +79,55 @@ The examples below show both natural-language controls and CLI-style flags. Use 
   --domain coding \
   --harness opencode \
   --ralph 2 \
+  --education-level guided \
+  --artifact-verbosity compact \
   --output project-local
-
-Optimize the prompt in ./prompt.md for a local coding agent. Add context strategy, loop safety, test cases, and validation.
 ```
 
-Benefit: flags make the local context budget and quality level unambiguous.
+Why it helps: compact model-facing prompt, stronger human-readable report, saved iterations, and explicit context strategy.
 
-### CLI-style: create AGENTS.md for a data-science repo
+### Create or improve AGENTS.md
 
 ```bash
 /local-model-instruction-engineer \
   --project . \
   --mode guided \
   --target-profile qwen36 \
-  --context-length 64k \
+  --context-length 32k \
   --domain coding,data-science-ml \
   --harness opencode \
-  --output project-local
-
-Create or improve AGENTS.md. Scan existing instructions first. Add only relevant safeguards and standards.
+  --phase-review standard
 ```
 
-Benefit: creates repo-aware agent instructions with ML leakage prevention, Git safety, loop safety, and validation without generic bloat.
+Why it helps: AGENTS.md is the backbone of an agentic coding project. This scans the repo, avoids duplicate safeguards, and asks for user input before locking in broad project instructions.
 
-### CLI-style: safe skill migration
+### Audit an implementation plan before giving it to a small model
+
+```bash
+/local-model-agent-evaluator \
+  --mode audit-only \
+  --focus implementation-plan \
+  --target IMPLEMENTATION_PLAN.md \
+  --executor-profile qwen36 \
+  --context-length 32k
+```
+
+Why it helps: catches plans that are too broad, too vague, missing task memory, or not executable by a smaller local model.
+
+### Audit tests for usefulness
+
+```bash
+/local-model-agent-evaluator \
+  --mode audit-only \
+  --focus test-quality \
+  --target tests/ \
+  --domain coding \
+  --education-level guided
+```
+
+Why it helps: passing tests can still be useless. This checks baseline coverage, edge-case realism, assertion strength, regression-catching power, and over-mocking.
+
+### Migrate installed skills safely
 
 ```bash
 /local-model-skill-migrator \
@@ -233,169 +140,91 @@ Benefit: creates repo-aware agent instructions with ML leakage prevention, Git s
   --no-apply
 ```
 
-Benefit: recursively stages local-model updates without risking in-place damage.
+Why it helps: backs up first, stages changes, writes reports, and avoids in-place overwrite.
 
+## Control parameters
 
-### 1. Optimize a seed prompt for Qwen3.6-27B
+ContextSmith accepts natural language and CLI-style flags.
 
-```text
-/local-model-prompt-engineer
-Guided mode. Target profile: qwen36. Targeted context length: 64k.
-Optimize this seed prompt. Make it literal and atomic, avoid exposed chain-of-thought, include a context strategy, and include 5 prompt test cases.
-
-Seed prompt:
-"Explain the Gini coefficient and Gini impurity to a high school data science student. Include math and a worked decision-tree example."
+```bash
+--mode fast|deep|guided|yolo|review-gate|audit-only
+--target-profile qwen36|gemma4|llama3|generic-local
+--target-capability small-local|mid-local|large-local|frontier-cloud|reasoning-specialized|coding-specialized|multimodal
+--planner-profile frontier-cloud
+--executor-profile qwen36
+--context-length 32k
+--domain coding,data-science-ml
+--harness opencode
+--ralph 2
+--education-level none|brief|guided|deep|teaching
+--artifact-verbosity compact|normal|detailed
+--phase-review off|brief|standard|deep
+--code-review-iterations 0|1|2
+--output chat|project-local|staging
+--backup --stage --no-apply
 ```
 
-Benefit: turns a loose request into a structured prompt package with model profile, assumptions, output format, examples if needed, and test cases.
+See [`docs/CONTROL_PARAMETERS.md`](docs/CONTROL_PARAMETERS.md) and [`docs/EXAMPLES.md`](docs/EXAMPLES.md) for the full manual.
 
-### 2. Build a long-running coding-agent prompt under tight context
+## Core ideas
 
-```text
-/local-model-prompt-engineer
-Deep path. Target profile: qwen36. Targeted context length: 32k.
-Create a prompt for a local coding agent to port a large Windows/macOS desktop app to Linux.
-Use 8-12 small phases, persistent task state, phase debriefs, do-not-carry-forward notes, loop safety, and Git safety.
-Project-local output. Ralph loop: 2.
-```
+> Strong models can write the plan. Smaller models can execute it — if the plan is atomic enough.
 
-Benefit: avoids the common failure where a huge port is compressed into a vague three-phase plan that causes context churn.
+- Use stronger models for planning, auditing, architecture, and test strategy when available.
+- Use smaller/local models for atomic phase execution.
+- Use `targeted_context_length` to size phases and artifacts for the context that is actually reliable.
+- Use project-local task state under `.agent-work/` for durable memory.
+- End phases with debriefs, carry-forward notes, and do-not-carry-forward notes.
+- Run post-phase code review and test-quality audits for coding work.
 
-### 3. Optimize a prompt that another optimizer already changed
+> Passing validation is not the same as being good.
 
-```text
-/local-model-prompt-engineer
-Audit and improve this prompt for generic local models.
-Another optimizer modified it first. Run an upstream artifact audit and reject unsupported requirements.
-The target project is an MCP server, not a frontend app.
-Targeted context length: 32k.
-```
+ContextSmith supports bounded Ralph loops and A-F rubrics so artifacts can improve beyond bare-minimum validation without turning into endless polish.
 
-Benefit: catches hallucinated dependencies such as React/Vite/Tailwind when they were never part of the project.
+## Project status
 
-### 4. Convert an existing skill for local models
+ContextSmith is early-stage and actively evolving.
 
-```text
-/local-model-skill-engineer
-Guided mode. Convert ./skills/find-skills/SKILL.md for generic local models and Qwen3.6.
-Targeted context length: 64k.
-Preserve behavior, optimize references if needed, add safeguards only if relevant, and write an educational report explaining what changed.
-```
+Current validation includes:
 
-Benefit: extracts and preserves the source contract instead of performing a generic rewrite.
+- `SKILL.md` frontmatter parsing
+- metadata/version checks
+- approximate line-count checks
+- reference-folder presence checks
+- packaging/layout sanity checks
 
-### 5. Create a new skill from scratch
+Not yet included:
 
-```text
-/local-model-skill-engineer
-Create a new skill named repo-port-planner.
-Target profiles: generic-local, qwen36. Targeted context length: 32k.
-It should help local coding agents plan large cross-platform ports.
-Include phase memory, Git safety, loop prevention, upstream artifact audit, and Ralph-loop review.
-```
+- full automated behavioral tests
+- integration tests across agent harnesses
+- benchmarked model comparisons
+- guaranteed compatibility with every skill runner
 
-Benefit: generates a full `SKILL.md` structure with progressive disclosure and local-model reliability patterns.
+Use `audit-only`, `stage`, or `review-gate` mode for important changes.
 
-### 6. Safely migrate all installed skills
+## Documentation
 
-```text
-/local-model-skill-migrator
-Review-gate mode. Audit and stage a migration for ~/.agents/skills.
-Target profiles: generic-local, qwen36. Targeted context length: 32k.
-Back everything up. Do not apply changes.
-Process in small batches if needed. Produce a manifest, per-skill reports, and mark high-risk skills for manual review.
-```
+- [`docs/USER_MANUAL.md`](docs/USER_MANUAL.md)
+- [`docs/CONTROL_PARAMETERS.md`](docs/CONTROL_PARAMETERS.md)
+- [`docs/EXAMPLES.md`](docs/EXAMPLES.md)
+- [`docs/SMALL_CONTEXT_WORKFLOWS.md`](docs/SMALL_CONTEXT_WORKFLOWS.md)
+- [`docs/AGENTS_MD_GUIDE.md`](docs/AGENTS_MD_GUIDE.md)
+- [`docs/RUNTIME_STABILITY.md`](docs/RUNTIME_STABILITY.md)
+- [`docs/MODEL_PROFILES.md`](docs/MODEL_PROFILES.md)
+- [`docs/IMPLEMENTATION_PLAN_AUDIT.md`](docs/IMPLEMENTATION_PLAN_AUDIT.md)
+- [`docs/TEST_QUALITY_AUDIT.md`](docs/TEST_QUALITY_AUDIT.md)
+- [`docs/PHASE_CODE_REVIEW.md`](docs/PHASE_CODE_REVIEW.md)
+- [`docs/VERSIONING.md`](docs/VERSIONING.md)
 
-Benefit: performs a safe batch pass without overwriting installed skills. Tight context changes batch sizing and report verbosity.
+## Versioning
 
-### 7. Apply a staged migration after review
+From v1.4.0 onward, ContextSmith follows a SemVer-style `MAJOR.MINOR.PATCH` policy. Patch releases are for docs/refinements, minor releases are for backward-compatible features, and major releases are reserved for breaking changes. Minor versions can grow past 9; `1.10.0` is a normal release, not a sign that v2 is imminent.
 
-```text
-/local-model-skill-migrator
-Apply the staged migration at ~/.agents/skill-migrations/2026-05-local-model-migration only if validation passed.
-Show me the files that will be overwritten first and ask for final approval.
-```
+## Philosophy
 
-Benefit: batch editing should never be fire-and-forget. This forces an approval gate before real changes.
+> The best AGENTS.md files are not generic manifestos.  
+> They are concise operating instructions for this repo, this harness, this model, and this risk profile.
 
-### 8. Create AGENTS.md for a coding repo
+> Speed optimizations are optional. Stability is the baseline.
 
-```text
-/local-model-instruction-engineer
-Guided mode. Create an AGENTS.md for this repo targeting OpenCode and Qwen3.6.
-Targeted context length: 32k. Domain: coding, data-science-ml.
-Scan the repo first. Include setup/build/test commands, coding standards, Git safety, loop prevention, context strategy, phase debriefs, and .agent-work gitignore suggestions.
-Do not use emojis.
-```
-
-Benefit: creates repo-aware instructions, not boilerplate. It adds only standards supported by the repo scan.
-
-### 9. Improve existing AGENTS.md without duplicating rules
-
-```text
-/local-model-instruction-engineer
-Improve the existing AGENTS.md for smaller local coding models.
-First scan AGENTS.md, CLAUDE.md, and .github/copilot-instructions.md.
-Reuse or strengthen existing safeguards instead of duplicating them.
-Add missing Git safety, loop prevention, targeted context-length handling, and validation rules only where needed.
-```
-
-Benefit: avoids token bloat from repeated guardrails.
-
-### 10. Add data science / ML standards to a repo
-
-```text
-/local-model-instruction-engineer
-Create or update AGENTS.md for this data science repo.
-Detect the stack first. Domain: data-science-ml, ai-modalities.
-Add Python, PEP 8, notebook, data handling, leakage prevention, evaluation, reproducibility, and artifact-handling instructions only if relevant.
-```
-
-Benefit: ML agents need domain safeguards for leakage, evaluation, seeds, model artifacts, and raw data handling.
-
-### 11. Evaluate an artifact before changing it
-
-```text
-/local-model-agent-evaluator
-Audit this AGENTS.md for local-model reliability. Do not edit it.
-Grade A-F for atomicity, targeted context fit, loop safety, Git safety, skill interoperability, context strategy, domain fit, validation strength, and bloat.
-Recommend whether to ship, iterate, ask the user, reject, or use the instruction engineer.
-```
-
-Benefit: gives diagnosis before mutation.
-
-### 12. Evaluate a phase plan
-
-```text
-/local-model-agent-evaluator
-Audit this implementation plan for a small local model.
-Targeted context length: 32k.
-Check whether phases are too coarse, durable memory files are included, stop conditions are clear, and phase debrief / do-not-carry-forward notes are required.
-```
-
-Benefit: catches big-project plans that are too broad for limited-context local models.
-
-## Recommended Defaults
-
-- Use `guided mode` for reusable artifacts.
-- Use `review-gate` for migrations, Git changes, external side effects, or high-risk domains.
-- Use Ralph loop only for important artifacts.
-- Keep `.agent-work/` local and gitignored by default.
-- Prefer one crisp safeguard over five similar reminders.
-- Provide `targeted context length` whenever local runtime context differs from the model card.
-
-## What This Will Not Do
-
-This package will not:
-
-- guarantee a small model can do any task
-- bypass harness limitations
-- make runtime settings controllable if the harness does not expose them
-- safely automate destructive Git operations without approval
-- replace tests, source verification, or human review
-- prevent all loops if the harness ignores instructions
-- make unsupported upstream skill requirements true
-
-## Package Layout
-
-This repo uses Option C: canonical shared references plus per-skill copied references. Each skill can be installed standalone, while `shared/` remains the canonical source for future syncing.
+> ContextSmith is small-model-first, but the operational discipline applies across the model spectrum.

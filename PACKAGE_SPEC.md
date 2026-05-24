@@ -45,3 +45,14 @@ All skills support both natural-language controls and CLI-style flags. The canon
 Every skill must support: `help`, `describe`, `examples`, `modes`, `parameters`, and `quickstart`, plus CLI-style equivalents such as `--help` and `--examples`.
 
 CLI-style flags are not a separate runtime implementation. They are a compact instruction convention for agent skills and a future-compatible interface for a possible `contextsmith` CLI/UI.
+
+## v1.4.0 Design Additions
+
+- Add implementation-plan audit as a first-class evaluation focus.
+- Add test-quality audit for agent-generated tests.
+- Add phase code review as a post-phase coding gate.
+- Add `education-level` and `artifact-verbosity` as separate controls.
+- Add model capability tiers and planner/executor profile split.
+- Add runtime stability guidance for long local agentic coding runs.
+- Rewrite README as a landing page and move the long manual into `docs/`.
+- Adopt SemVer-style versioning going forward without renumbering history.
