@@ -288,7 +288,7 @@ Implemented response:
 
 ## Documentation and Onboarding
 
-- [x] Keep README as a human-facing landing page instead of a full manual.
+- [x] Keep README as a project documentation landing page instead of a full manual.
 - [x] Use `Quick Start` as the entry section rather than growth-hacky wording like “first success.”
 - [x] Add `docs/QUICKSTART.md` for practical first-run workflows.
 - [x] Add `docs/WHICH_SKILL.md` to reduce tool-selection cognitive load.
@@ -298,3 +298,23 @@ Implemented response:
 - [x] Preserve strong project soundbites for README and eventual website copy.
 - [ ] Add screenshots or terminal-output examples once real usage examples are available.
 - [ ] Create a web page later using the README positioning and soundbites.
+
+
+## Documentation quality and voice
+
+- [x] Separate project documentation from agent references.
+- [x] Add documentation-quality audit for README/docs/user-facing explanations and educational reports.
+- [x] Add documentation style guide with tone, factuality, examples, and generated-writing-pattern checks.
+- [x] Avoid using third-party writing-assistant product names in ContextSmith package docs or generated artifacts.
+- [x] Replace “project documentation docs” wording with project documentation/user guides/reader-facing explanations as appropriate.
+- [x] Reorganize docs into workflows, concepts, reference, and contributing sections.
+- [x] Reduce repeated “not just X, but Y” contrast patterns in README-style copy.
+- [x] Use suggestive language in user docs where appropriate; keep agent references direct for safety-critical instructions.
+
+## Run configuration preview
+
+- [x] Add run configuration preview for guided, deep, review-gate, AGENTS.md, migration, and file-changing workflows.
+- [x] Show inferred parameters with short reasons.
+- [x] Call out low-confidence assumptions.
+- [x] Let users change one parameter instead of rewriting the request.
+- [x] Keep fast/yolo paths lightweight unless approval is required.

@@ -2,7 +2,7 @@
 name: local-model-instruction-engineer
 description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
 metadata:
-  version: "1.4.0"
+  version: "1.4.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -78,6 +78,13 @@ When generating or auditing coding plans, tests, or phase workflows, use:
 - `references/small-context-workflows.md`
 
 For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
+
+
+## Run Configuration Preview
+
+For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+
+The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
 
 ## Workflow
 
@@ -184,3 +191,8 @@ If the user asks about local model loops, server settings, speculative decoding,
 ## Remaining Risks / Assumptions
 ## Files Written
 ```
+
+
+## Documentation Quality
+
+When generating or editing README material, user guides, educational reports, AGENTS.md explanations, or other reader-facing documentation, use `references/documentation-quality.md`. Keep generated artifacts factual, practical, and easy to act on. Avoid overused generated-writing patterns, unsupported claims, and unnecessary imperatives in user documentation.

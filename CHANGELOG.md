@@ -1,12 +1,38 @@
 # Changelog
 
+## v1.4.2
+
+**Released:** 2026-05-22
+
+### Added
+
+- Added `shared/documentation-quality.md` for readability, style, factuality, repeated-phrasing, example usefulness, and generated-writing-pattern checks.
+- Added `shared/run-configuration-preview.md` so skills can show inferred parameters, assumptions, and planned approach before important guided/review-gate work.
+- Added `--review-config` / `--preview-config` and `--no-review-config` control guidance.
+- Added `--focus documentation-quality` guidance for the evaluator.
+- Added `docs/contributing/documentation-style.md` and `docs/contributing/documentation-review-checklist.md`.
+- Added `docs/workflows/`, `docs/concepts/`, and `docs/reference/` organization with index files.
+
+### Changed
+
+- Rewrote `README.md` to reduce generated-sounding contrast patterns, remove “project documentation” wording, and keep the tone practical, factual, and reader-centered.
+- Reorganized detailed docs into workflow, concept, reference, and contributing sections.
+- Updated user documentation to prefer advisory wording where appropriate, while keeping safety-critical agent references direct.
+- Updated all skills to reference run configuration previews and documentation-quality checks when relevant.
+- Updated package spec terminology from “project documentation docs” to “project documentation.”
+
+### Notes
+
+- This release keeps the product name restriction: no references to third-party writing-assistant product names are included in package docs, skills, references, README, changelog, or generated artifacts.
+
+
 ## v1.4.1
 
 **Released:** 2026-05-22
 
 ### Changed
 
-- Reworked the documentation as a human-facing onboarding release rather than only agent-facing reference material.
+- Reworked the documentation as a project documentation onboarding release rather than only agent-facing reference material.
 - Rewrote `README.md` to be a clearer project front door with stronger positioning, a lower-friction Quick Start, fewer dense manual sections, and factual project status language.
 - Added `docs/QUICKSTART.md` with practical paths for prompt engineering, AGENTS.md generation, implementation-plan audit, test-quality audit, single-skill conversion, and safe skill migration.
 - Added `docs/WHICH_SKILL.md` so users can quickly choose the right ContextSmith skill.

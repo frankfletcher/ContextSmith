@@ -2,7 +2,7 @@
 name: local-model-skill-engineer
 description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, targeted context length control, upstream artifact audits, skill interoperability handling, or skill-auditor-style quality checks.
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -69,6 +69,13 @@ Use stronger/planner profiles for planning, audits, architecture, test strategy,
 If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
 
 Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
+
+
+## Run Configuration Preview
+
+For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+
+The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
 
 ## Workflow
 
@@ -159,3 +166,8 @@ Check:
 ## Remaining Risks / Assumptions
 ## Files Written
 ```
+
+
+## Documentation Quality
+
+When generating or editing README material, user guides, educational reports, AGENTS.md explanations, or other reader-facing documentation, use `references/documentation-quality.md`. Keep generated artifacts factual, practical, and easy to act on. Avoid overused generated-writing patterns, unsupported claims, and unnecessary imperatives in user documentation.

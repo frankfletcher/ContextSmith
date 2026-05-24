@@ -2,7 +2,7 @@
 name: local-model-skill-migrator
 description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, loop/Git/context safeguards, semantic-diff validation, Ralph-loop quality review, and explicit approval before applying changes, targeted context length control, and upstream workflow collision checks.
 metadata:
-  version: "1.5.0"
+  version: "1.5.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -67,6 +67,13 @@ Use stronger/planner profiles for planning, audits, architecture, test strategy,
 If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
 
 Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
+
+
+## Run Configuration Preview
+
+For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+
+The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
 
 ## Workflow
 
@@ -157,3 +164,8 @@ Apply only after explicit approval. Restore only from recorded backup manifest.
 - apply staged changes with failed validation
 - run destructive Git operations without approval
 - duplicate existing safeguards instead of consolidating them
+
+
+## Documentation Quality
+
+When generating or editing README material, user guides, educational reports, AGENTS.md explanations, or other reader-facing documentation, use `references/documentation-quality.md`. Keep generated artifacts factual, practical, and easy to act on. Avoid overused generated-writing patterns, unsupported claims, and unnecessary imperatives in user documentation.

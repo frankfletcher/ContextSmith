@@ -6,7 +6,7 @@ Local Model Agent Engineering Skills
 
 ## Version
 
-v1.2
+v1.4.2
 
 ## Thesis
 
@@ -57,11 +57,20 @@ CLI-style flags are not a separate runtime implementation. They are a compact in
 - Rewrite README as a landing page and move the long manual into `docs/`.
 - Adopt SemVer-style versioning going forward without renumbering history.
 
-## Human Documentation vs Agent References
+## Project Documentation vs Agent References
 
 ContextSmith keeps two documentation layers:
 
-- `docs/` contains human-facing onboarding, guides, examples, and explanations.
-- `shared/` and `skills/*/references/` contain terse agent-facing reference material used by the skills.
+- `docs/` contains project documentation: onboarding, guides, examples, concepts, workflow guides, and reference material for users.
+- `shared/` and `skills/*/references/` contain concise agent reference material used by the skills.
 
 The README should remain a project landing page and quick orientation path, not a complete manual. Detailed usage belongs in `docs/`.
+
+
+## v1.4.2 Design Additions
+
+- Add run configuration previews so generated skills can show inferred parameters before important work.
+- Add documentation-quality review for user guides, README updates, AGENTS.md explanations, and educational reports.
+- Keep project documentation warm, practical, and factual while keeping agent references concise and operational.
+- Organize docs into `workflows/`, `concepts/`, `reference/`, and `contributing/` sections where appropriate.
+- Avoid overused AI-sounding contrast patterns and avoid language that implies the user needs hand-holding.

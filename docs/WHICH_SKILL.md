@@ -17,7 +17,7 @@ Good for:
 - adding context strategy
 - adding test cases
 - making a prompt usable by Qwen, Gemma, Llama, or a generic local model
-- separating model-facing brevity from human-facing explanation
+- separating model-facing brevity from reader-facing explanation
 
 Example:
 

@@ -55,7 +55,7 @@ ContextSmith should materially change the output:
 
 This is one of the main reasons ContextSmith exists.
 
-## Model-facing artifact vs human-facing explanation
+## Model-facing artifact vs reader-facing explanation
 
 A common mistake is making the prompt or `AGENTS.md` verbose because the user wants to learn.
 
@@ -121,3 +121,25 @@ ContextSmith is not:
 - a promise that every harness supports every behavior
 
 It is a toolkit for producing better agent instructions, plans, and audits.
+
+
+## Run Configuration Preview
+
+For guided, deep, review-gate, AGENTS.md, and migration workflows, ContextSmith can show the inferred run configuration before doing important work. The preview uses familiar flags, explains the choices briefly, and lets you change one line instead of rewriting the whole request.
+
+Example:
+
+```bash
+--mode guided
+--target-profile qwen36
+--context-length 32k
+--domain coding,data-science-ml
+--harness generic-agent
+--output project-local
+```
+
+If it looks right, say `proceed`. If one value is wrong, change that value.
+
+## Documentation Quality
+
+ContextSmith separates project documentation from agent references. Project documentation should explain the idea, show useful commands, and stay factual. Agent references should stay compact and operational.

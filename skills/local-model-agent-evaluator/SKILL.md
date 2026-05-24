@@ -2,7 +2,7 @@
 name: local-model-agent-evaluator
 description: Audit prompts, skills, AGENTS.md files, repo instructions, agent workflows, model profiles, migration outputs, and long-running plans for local/open-weight model reliability without modifying them by default. Use when the user wants grades, strengths, weaknesses, A-F rubric scoring, context-risk review, loop-safety review, Git/file safety review, data science/ML safeguard review, small-model atomicity review, no-chain-of-thought validation, or targeted context fit review, upstream artifact audits, skill interoperability grading, or recommendations before using an engineer or migrator skill.
 metadata:
-  version: "1.4.0"
+  version: "1.4.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -69,6 +69,13 @@ When generating or auditing coding plans, tests, or phase workflows, use:
 
 For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
 
+
+## Run Configuration Preview
+
+For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+
+The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
+
 ## Workflow
 
 1. Identify artifact type: prompt, skill, instruction file, workflow, model profile, migration output, phase plan.
@@ -104,3 +111,10 @@ If the user asks about local model loops, server settings, speculative decoding,
 ```
 
 Use constructive critique. Do not rewrite the artifact unless requested.
+
+
+## Documentation Quality
+
+When generating or editing README material, user guides, educational reports, AGENTS.md explanations, or other reader-facing documentation, use `references/documentation-quality.md`. Keep generated artifacts factual, practical, and easy to act on. Avoid overused generated-writing patterns, unsupported claims, and unnecessary imperatives in user documentation.
+
+Support `--focus documentation-quality` for README/docs/user-guide audits.

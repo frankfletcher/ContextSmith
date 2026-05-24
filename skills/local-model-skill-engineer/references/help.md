@@ -47,3 +47,10 @@ Usually returns a revised skill or staged skill package, semantic diff, referenc
 - `--planner-profile <profile>`
 - `--executor-profile <profile>`
 - `--focus implementation-plan|test-quality|runtime-stability|agents-md|prompt|skill`
+
+
+## Additional Controls
+
+- `--review-config` / `--preview-config`: show inferred parameters before important work.
+- `--no-review-config`: skip the preview for low-risk work.
+- `--focus documentation-quality`: audit reader-facing documentation for clarity, tone, examples, factuality, and style.

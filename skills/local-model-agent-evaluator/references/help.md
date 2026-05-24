@@ -44,3 +44,10 @@ Returns summary grade, strengths, weaknesses, A-F rubric table, high-risk issues
 - `--planner-profile <profile>`
 - `--executor-profile <profile>`
 - `--focus implementation-plan|test-quality|runtime-stability|agents-md|prompt|skill`
+
+
+## Additional Controls
+
+- `--review-config` / `--preview-config`: show inferred parameters before important work.
+- `--no-review-config`: skip the preview for low-risk work.
+- `--focus documentation-quality`: audit reader-facing documentation for clarity, tone, examples, factuality, and style.

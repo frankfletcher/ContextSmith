@@ -2,66 +2,30 @@
 
 **Prompt, skill, and AGENTS.md engineering for model-aware AI agents.**
 
-> ContextSmith turns messy agent instructions into operating plans that models can actually follow.
+> ContextSmith can infer a run configuration, explain the choices, and ask for correction before important work.
 
-Local and smaller models can do serious work, but they are unforgiving. They loop. They lose the thread. They write tests that pass but do not protect anything. They follow hallucinated requirements from upstream tools. They overwrite files when the repo state is unclear. They burn context on long explanations when what they need is the next atomic step.
+Local agents can do serious work when their instructions match the project, the harness, the model, and the context budget. ContextSmith helps shape those instructions: prompts, `SKILL.md` files, `AGENTS.md` files, implementation plans, reviews, and migration reports.
 
-ContextSmith is built for that reality.
-
-It helps you engineer the artifacts that shape agent behavior:
-
-- prompts
-- `SKILL.md` files
-- `AGENTS.md` and repo instruction files
-- implementation plans
-- test-quality reviews
-- migration reports
-- long-running task state
-
-> The goal is not just better prompts.  
-> The goal is agent instructions that remain usable under context pressure, tool failures, long coding runs, and real project constraints.
+It is small-model-first because that is where instruction quality matters most. The same operating discipline also helps larger models: clearer plans, safer Git behavior, better tests, cleaner task state, and fewer workflow collisions.
 
 ## Why ContextSmith exists
 
-Most prompt tools optimize the text of a prompt.
+Agent runs often fail for ordinary reasons: vague repo instructions, repeated failed tool calls, weak tests, unsafe Git operations, oversized context, or unsupported requirements inherited from another tool. ContextSmith helps you build the artifacts that prevent those failures before the run begins.
 
-ContextSmith optimizes the operating environment around the prompt:
+It can help you:
 
-- the model profile or capability tier
-- the context length you are actually targeting
-- how large each phase should be
-- what the agent should read first
-- when to ask the user for input
-- how to avoid loops and unsafe Git operations
-- how to preserve task memory across sessions
-- how to review implementation plans and tests
-- how to reject unsupported requirements from upstream tools
-- how to make `AGENTS.md` useful instead of generic
+- turn a rough prompt into a reusable prompt package;
+- create repo-aware `AGENTS.md` instructions;
+- audit implementation plans before handing them to a coding agent;
+- review tests for usefulness rather than pass/fail status alone;
+- migrate skill directories with backup and staging;
+- tune artifacts for the context length you are actually targeting.
 
-The result is not just a prettier prompt. It is a more reliable agent workflow.
-
-> A bigger context window is not a strategy.  
-> ContextSmith optimizes for the context you actually have, not the context the model card promised.
+> A bigger context window is not a strategy. ContextSmith optimizes for the context you actually plan to use.
 
 ## Quick Start
 
-The fastest way to understand ContextSmith is to run it on one real artifact.
-
-Choose the path closest to what you are doing:
-
-- improve a prompt for a local/open-weight model
-- create or refine an `AGENTS.md` file for a repo
-- audit an implementation plan before handing it to a coding agent
-- convert a `SKILL.md` for smaller/local models
-- evaluate tests, prompts, skills, or repo instructions without changing files
-
-You do not need to learn every control parameter first. Start with a few high-signal controls:
-
-```bash
---mode guided --target-profile qwen36 --context-length 32k
-```
-
-Add more controls only when they matter.
+The fastest way to understand ContextSmith is to run it on one real artifact. Choose the path closest to your task.
 
 ### Improve a prompt for a tight local coding model
 
@@ -78,7 +42,7 @@ Add more controls only when they matter.
   --output project-local
 ```
 
-Use this when a prompt will be reused or will drive a coding agent. ContextSmith will keep the model-facing artifact compact, add a context strategy, include validation checks, and optionally save Ralph iterations and reports.
+Use this when a prompt will be reused or will drive a coding agent. ContextSmith keeps the model-facing artifact compact, adds a context strategy, includes validation checks, and can save Ralph iterations and reports.
 
 ### Create or improve `AGENTS.md`
 
@@ -93,9 +57,9 @@ Use this when a prompt will be reused or will drive a coding agent. ContextSmith
   --phase-review standard
 ```
 
-Use this when you want a repo-aware instruction file instead of a generic manifesto. The instruction engineer scans the repo, detects relevant standards, checks existing instruction files, avoids duplicate safeguards, and asks for user input before locking in broad project instructions.
+Use this when you want repo-aware operating instructions instead of generic advice. The instruction engineer scans the repo, detects relevant standards, checks existing instruction files, avoids duplicate safeguards, and asks for user input before changing broad project guidance.
 
-### Audit an implementation plan before giving it to a small model
+### Audit an implementation plan
 
 ```bash
 /local-model-agent-evaluator \
@@ -106,7 +70,7 @@ Use this when you want a repo-aware instruction file instead of a generic manife
   --context-length 32k
 ```
 
-Use this when a plan looks reasonable but may be too broad for a smaller model. The evaluator checks phase granularity, atomicity, validation, task memory, handoff quality, and whether the plan can be executed under the targeted context length.
+Use this when a plan looks reasonable but may be too broad for a smaller model. The evaluator checks phase granularity, atomicity, validation, task memory, handoff quality, and targeted-context fit.
 
 ### Audit tests for usefulness
 
@@ -119,7 +83,7 @@ Use this when a plan looks reasonable but may be too broad for a smaller model. 
   --education-level guided
 ```
 
-Use this when tests pass but you are not sure they protect real behavior. ContextSmith looks for weak assertions, fake edge cases, over-mocking, missing baseline tests, and tests that would not fail during realistic regressions.
+Use this when tests pass but you are not sure they protect real behavior. ContextSmith looks for weak assertions, artificial edge cases, over-mocking, missing baseline tests, and tests that would not fail during realistic regressions.
 
 ### Migrate installed skills safely
 
@@ -134,7 +98,7 @@ Use this when tests pass but you are not sure they protect real behavior. Contex
   --no-apply
 ```
 
-Use this when you want to modernize a directory of skills without overwriting your working setup. The migrator inventories, backs up, stages, validates, reports, and waits for explicit approval before applying changes.
+Use this when you want to modernize a directory of skills without overwriting your working setup. The migrator inventories, backs up, stages, validates, reports, and waits for approval before applying changes.
 
 ## Included skills
 
@@ -142,7 +106,7 @@ Use this when you want to modernize a directory of skills without overwriting yo
 |---|---|
 | `local-model-prompt-engineer` | Create, optimize, audit, and package prompts. |
 | `local-model-skill-engineer` | Create, convert, audit, and package `SKILL.md`-based skills. |
-| `local-model-skill-migrator` | Safely migrate skill directories with backup, staging, manifest, and reports. |
+| `local-model-skill-migrator` | Migrate skill directories with backup, staging, manifests, and reports. |
 | `local-model-instruction-engineer` | Create and improve `AGENTS.md`, `CLAUDE.md`, copilot instructions, `.cursorrules`, and related agent instruction files. |
 | `local-model-agent-evaluator` | Audit prompts, skills, tests, plans, workflows, and instruction files without modifying them. |
 
@@ -170,7 +134,7 @@ python scripts/validate_skills.py
 
 ## Common controls
 
-ContextSmith accepts natural language and CLI-style flags.
+ContextSmith accepts natural language and CLI-style flags. Start with a few high-signal controls, then add more only when they matter.
 
 ```bash
 --mode fast|deep|guided|yolo|review-gate|audit-only
@@ -186,81 +150,65 @@ ContextSmith accepts natural language and CLI-style flags.
 --artifact-verbosity compact|normal|detailed
 --phase-review off|brief|standard|deep
 --code-review-iterations 0|1|2
+--review-config
 --output chat|project-local|staging
 --backup --stage --no-apply
 ```
 
-You can also write the same controls naturally:
+Natural language works too:
 
 > Deep path. Target profile: qwen36. Context length: 32k. Domain: coding. Use project-local output. Ralph loop: 2.
 
-See [`docs/CONTROL_PARAMETERS.md`](docs/CONTROL_PARAMETERS.md) for the full parameter guide.
+See [`docs/reference/CONTROL_PARAMETERS.md`](docs/reference/CONTROL_PARAMETERS.md) for the full parameter guide.
 
 ## Core ideas
 
 > Strong models can write the plan. Smaller models can execute it — if the plan is atomic enough.
 
-ContextSmith is small-model-first, but the operational discipline applies across the model spectrum. Use stronger models for planning, auditing, architecture, and test strategy when available. Use smaller/local models for atomic phase execution when the plan is explicit, context-aware, and backed by durable task state.
+Use stronger models for planning, auditing, architecture, and test strategy when available. Use smaller/local models for atomic phase execution when the plan is explicit, context-aware, and backed by durable task state.
 
 > Passing validation is not the same as being good.
 
 ContextSmith supports bounded Ralph loops, implementation-plan audits, phase code reviews, and test-quality audits so artifacts can improve beyond bare-minimum validation without turning into endless polish.
 
-> The best `AGENTS.md` files are not generic manifestos.  
-> They are concise operating instructions for this repo, this harness, this model, and this risk profile.
+> The best `AGENTS.md` files are concise operating instructions for this repo, this harness, this model, and this risk profile.
 
 ## Documentation
 
-Human-facing docs:
+Project documentation:
 
 - [`docs/QUICKSTART.md`](docs/QUICKSTART.md)
 - [`docs/WHICH_SKILL.md`](docs/WHICH_SKILL.md)
 - [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)
-- [`docs/CONTROL_PARAMETERS.md`](docs/CONTROL_PARAMETERS.md)
-- [`docs/EXAMPLES.md`](docs/EXAMPLES.md)
-- [`docs/FAQ.md`](docs/FAQ.md)
+- [`docs/workflows/`](docs/workflows/)
+- [`docs/concepts/`](docs/concepts/)
+- [`docs/reference/`](docs/reference/)
+- [`docs/contributing/documentation-style.md`](docs/contributing/documentation-style.md)
 
-Workflow guides:
+Agent references live in `shared/` and in each skill's `references/` directory. They are intentionally more compact and operational than the project documentation.
 
-- [`docs/SMALL_CONTEXT_WORKFLOWS.md`](docs/SMALL_CONTEXT_WORKFLOWS.md)
-- [`docs/AGENTS_MD_GUIDE.md`](docs/AGENTS_MD_GUIDE.md)
-- [`docs/IMPLEMENTATION_PLAN_AUDIT.md`](docs/IMPLEMENTATION_PLAN_AUDIT.md)
-- [`docs/TEST_QUALITY_AUDIT.md`](docs/TEST_QUALITY_AUDIT.md)
-- [`docs/PHASE_CODE_REVIEW.md`](docs/PHASE_CODE_REVIEW.md)
-- [`docs/RUNTIME_STABILITY.md`](docs/RUNTIME_STABILITY.md)
-- [`docs/SKILL_MIGRATION.md`](docs/SKILL_MIGRATION.md)
-- [`docs/MODEL_PROFILES.md`](docs/MODEL_PROFILES.md)
-- [`docs/VERSIONING.md`](docs/VERSIONING.md)
+## Project Status
 
-## Project status
-
-ContextSmith is early-stage and actively evolving.
+ContextSmith is early-stage and evolving quickly.
 
 Currently included:
 
-- installable skill folders
-- shared reference docs
-- model/domain/control parameter guidance
-- copied per-skill references for standalone installs
-- lightweight validation script for skill metadata, references, and layout sanity checks
+- installable skill folders;
+- shared agent references;
+- project documentation;
+- model, domain, capability, and control-parameter guidance;
+- a lightweight validation script for skill metadata, line counts, and reference presence.
 
 Not yet included:
 
-- full automated behavioral tests
-- integration tests across agent harnesses
-- benchmark results across models/harnesses
-- a ContextSmith CLI
-- a UI
-- guaranteed support for every skill runner
+- full integration tests across agent harnesses;
+- benchmarked model comparisons;
+- a ContextSmith CLI;
+- a UI;
+- guaranteed support for every skill runner.
 
-Use `audit-only`, `stage`, or `review-gate` mode for important changes.
+Use staged or review-gate mode for important file-changing work.
 
-## Versioning
+## License and Contributing
 
-From v1.4.0 onward, ContextSmith follows a SemVer-style `MAJOR.MINOR.PATCH` policy. Patch releases are for docs/refinements, minor releases are for backward-compatible features, and major releases are reserved for breaking changes. Minor versions can grow past 9; `1.10.0` is a normal release, not a sign that v2 is imminent.
-
-## Philosophy
-
-> Speed optimizations are optional. Stability is the baseline.
-
-> ContextSmith is model-aware agent instruction engineering. It started with small local models, where instruction quality matters most, but the same discipline improves larger-model agent workflows too.
+Choose the license you want for the repository before publishing. Contributions should preserve the core design goal: practical, model-aware agent instruction engineering with clear docs and low-friction workflows.

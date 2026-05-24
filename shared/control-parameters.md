@@ -132,3 +132,25 @@ Aliases:
 
 Conflict rule: if `--education-level deep` conflicts with `--artifact-verbosity compact`, preserve compact artifacts and put educational detail in reports.
 
+
+
+## Run Configuration Preview Flags
+
+Use these when the user wants to see or skip the inferred configuration before work begins:
+
+- `--review-config` / `--preview-config`: show inferred parameters, assumptions, and planned approach before proceeding.
+- `--no-review-config` / `--no-preview-config`: skip the preview unless the task is blocked or approval is required.
+
+Guided, deep, review-gate, AGENTS.md generation, migrations, and file-changing work should normally show a compact run configuration preview when important parameters were inferred.
+
+## Documentation and Review Focus Values
+
+`--focus` may include:
+
+- `documentation-quality` — audit README/docs/user-facing explanations for clarity, tone, factuality, examples, repeated phrasing, overused contrast, and next-step usefulness.
+- `implementation-plan`
+- `test-quality`
+- `runtime-stability`
+- `agents-md`
+- `prompt`
+- `skill`
