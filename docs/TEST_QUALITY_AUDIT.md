@@ -1,54 +1,85 @@
 # Test Quality Audit
 
-Use this reference when auditing generated or modified tests. Passing tests are not necessarily useful tests.
+Passing tests are not always useful tests.
 
-## Core Principle
+Agent-generated tests often look reasonable but fail to protect meaningful behavior. They may only check imports, assert that something “does not throw,” mock away the real behavior, or test edge cases that are not realistic.
 
-Tests are useful when they would fail if important behavior breaks.
+A test-quality audit asks:
 
-## A-F Rubric
+> Would these tests catch a realistic regression?
 
-Grade each category A-F.
+## When to use it
 
-- **Baseline use-case coverage**: Does the test cover normal expected behavior?
-- **Edge-case realism**: Are edge cases plausible and meaningful?
-- **Failure-mode coverage**: Are invalid input, missing data, bad state, permissions, timeouts, and other negative paths tested when relevant?
-- **Assertion strength**: Are assertions specific enough to catch wrong behavior?
-- **Regression-catching power**: Would the test fail if the changed behavior regressed?
-- **Changed-behavior coverage**: Do tests exercise the code actually changed?
-- **Fixture/data realism**: Do fixtures resemble real inputs enough to matter?
-- **Isolation and determinism**: Are tests stable, deterministic, and not dependent on fragile order/timing/network state?
-- **Over-mocking risk**: Do mocks remove the behavior the test claims to verify?
-- **Maintainability**: Are tests readable and easy to update?
+Use a test-quality audit when:
 
-## Weak Test Smells
+- an agent added tests
+- a coding phase changed behavior
+- tests pass but feel shallow
+- a refactor or migration depends on tests for safety
+- data-science, ML, or RAG code needs leakage/factuality checks
 
-- Only checks that code imports.
-- Only checks that a function does not throw.
-- Mocks the method being tested.
-- Asserts on implementation details instead of user-visible behavior.
-- Uses unrealistic fixtures that miss real boundaries.
-- Adds snapshot tests with huge unreviewed outputs.
-- Does not include the bug/regression scenario that motivated the change.
+## What to grade
 
-## Data Science / ML Test Checks
+Grade A-F:
 
-When relevant, check:
+| Dimension | What it checks |
+|---|---|
+| Baseline behavior | Does the test cover the normal expected use case? |
+| Edge-case realism | Are edge cases plausible and meaningful? |
+| Failure modes | Are invalid input, missing data, bad state, timeouts, or errors tested when relevant? |
+| Regression power | Would the test fail if the changed behavior broke? |
+| Assertion strength | Are assertions specific enough? |
+| Coverage depth | Are important branches and boundaries covered? |
+| Isolation | Does the test avoid fragile global state, timing, network, or order dependence? |
+| Fixture realism | Do fixtures resemble real inputs enough to matter? |
+| Maintainability | Is the test readable and stable? |
+| Over-mocking risk | Did mocks remove the behavior the test claims to verify? |
 
-- schema/column expectations
+## Weak test smells
+
+Watch for tests that:
+
+- only check that code imports
+- only check that a function does not throw
+- assert the result of a mocked method instead of real behavior
+- use unrealistic fixtures
+- test implementation details instead of public behavior
+- do not include a normal happy path
+- include edge cases that would never occur
+- add snapshots that are too broad to review
+- pass even if the core logic is replaced with a stub
+
+## Useful tests
+
+Useful tests usually:
+
+- protect user-visible behavior
+- include one normal baseline case
+- include meaningful boundaries or failures
+- use specific assertions
+- would fail if the bug regressed
+- use realistic fixtures or representative data
+- avoid over-mocking
+- are readable enough to maintain
+
+## Data science and ML tests
+
+For DS/ML code, also check:
+
+- schema and column expectations
 - missing values
 - target definition
 - train/validation/test split integrity
 - preprocessing fit only on training data
 - leakage-prone columns
-- deterministic seeds
+- deterministic seeds where practical
 - metric calculation correctness
+- baseline model behavior
 - inference pipeline consistency
-- representative small fixtures
 
-## LLM / RAG Test Checks
+## LLM/RAG tests
 
-When relevant, check:
+For LLM/RAG code, also check:
 
 - retrieval quality separately from generation
 - empty retrieval results
@@ -56,32 +87,33 @@ When relevant, check:
 - citation/evidence requirements
 - prompt injection attempts
 - structured-output parsing failures
-- model/provider unavailable behavior
+- model/provider unavailable cases
 - golden cases and adversarial cases
 
-## Output Format
+## Example output
 
 ```markdown
 ## Test Quality Summary
 
-Overall grade:
-Recommendation: ship | improve tests first | add edge cases | rewrite weak tests | needs human review
+Overall grade: B-
 
 ## Strong Tests
-- ...
+- `tests/test_parser.py::test_valid_multiline_input`
+  - Why: covers normal use case and asserts exact parsed structure.
 
 ## Weak Tests
-- test/path::name
-  - Problem:
-  - Why it matters:
-  - Fix:
+- `tests/test_parser.py::test_parser_does_not_crash`
+  - Problem: only asserts no exception; would pass with incorrect output.
+  - Fix: assert expected parsed fields.
 
 ## Missing Tests
-- ...
-
-## Over-Mocking Risks
-- ...
+- empty input
+- malformed multiline input
+- Unicode input
+- backward compatibility with single-line input
 
 ## Recommended Additions
-1. ...
+1. Add baseline happy-path test with realistic fixture.
+2. Add boundary test for empty input.
+3. Add regression test for the bug fixed in this change.
 ```

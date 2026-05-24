@@ -56,3 +56,12 @@ CLI-style flags are not a separate runtime implementation. They are a compact in
 - Add runtime stability guidance for long local agentic coding runs.
 - Rewrite README as a landing page and move the long manual into `docs/`.
 - Adopt SemVer-style versioning going forward without renumbering history.
+
+## Human Documentation vs Agent References
+
+ContextSmith keeps two documentation layers:
+
+- `docs/` contains human-facing onboarding, guides, examples, and explanations.
+- `shared/` and `skills/*/references/` contain terse agent-facing reference material used by the skills.
+
+The README should remain a project landing page and quick orientation path, not a complete manual. Detailed usage belongs in `docs/`.

@@ -1,65 +1,170 @@
 # Small-Context Workflows
 
-Use this reference when `targeted_context_length` is tight or when the user wants small/local models to execute long-running work.
+A model's advertised context window is not the same thing as the context you should design for.
 
-## Core Principle
+A local model may technically support 128k or 256k tokens, but your actual run may be constrained by VRAM, KV cache precision, context shift, harness overhead, tool output, or stability. ContextSmith uses `targeted_context_length` to design for the context you actually want the model to rely on.
 
-A bigger context window is not a strategy. Optimize for the context that is reliable in the user's runtime.
+## Why small context needs a different workflow
 
-## Small-Context Rules
+When context is tight, the agent cannot keep the whole project, full chat history, logs, plans, and tool outputs in working memory. If the plan assumes it can, the model will drift, loop, or repeat work.
 
-For `targeted_context_length <= 32k`:
+The solution is not just a shorter prompt. It is a different workflow:
 
-- Prefer one phase per session for large tasks.
-- Start each phase by reading task-state files, not the full prior chat.
-- Load only files needed for the current phase.
-- Use Graphify/search/index queries before raw recursive reads when available.
-- Keep the active file set small, usually 3-7 files.
-- Use short phase prompts with explicit stop conditions.
-- Put educational detail in reports, not in the model-facing artifact.
-- End every phase with phase compression/debrief.
-- Save `NEXT_PROMPT.md` so the next session can resume without the full chat.
+- smaller phases
+- fewer active files per phase
+- explicit stop conditions
+- project-local task state
+- phase debriefs
+- do-not-carry-forward notes
+- selective file reading
+- compact validation reports
 
-For `targeted_context_length <= 16k`:
+## Context tiers
 
-- Use micro-phases.
-- One phase should generally modify one component or one narrow path.
-- Avoid multi-objective phases.
-- Use compact summaries and external task state aggressively.
+### Tiny: 16k or less
 
-## Fresh-Session Pattern
+Use micro-phases. Keep prompts short. Avoid examples unless essential. Rely heavily on task-state files and narrow file reads.
 
-For long work, prefer a new session per phase when context grows noisy.
+### Tight: 32k
 
-Start the new session with:
+Use compact artifacts, more phases, short examples, strict output budgets, and phase-local context. This is a good target for many local coding-agent workflows.
 
-1. `TASK.md`
-2. `STATUS.md`
-3. `CHECKLIST.md`
-4. `DECISIONS.md`
-5. `CONTEXT.md`
-6. the current phase's `NEXT_PROMPT.md`
+### Moderate: 64k
 
-Do not reload old iterations, raw logs, or full chat history unless needed.
+Use normal local-model prompts, but still avoid dumping entire repos or long histories into context.
 
-## Compaction Trigger
+### Large: 128k
 
-Compact or start a new session when:
+Allow richer context, but still reserve budget for tool outputs and validation.
 
-- tool output dominates the context
-- the model repeats old mistakes
-- phase goals drift
-- more than one failed strategy has accumulated
-- the session has crossed the intended phase boundary
+### Very large: above 128k
 
-## Phase Closeout Requirement
+Large context helps, but it is still not a substitute for structure. Use indexes, graph queries, and phase memory when the project is complex.
 
-Each phase should end with:
+## Phase sizing rule
 
-- Completed
-- Evidence
-- Blockers
-- Decisions
-- Carry forward
-- Do not carry forward
-- Next phase
+For `targeted_context_length <= 32k`, prefer 8-15 small phases for a large project rather than 3 broad phases.
+
+A weak plan:
+
+```text
+1. Analyze the app.
+2. Port it to Linux.
+3. Test and polish.
+```
+
+A better tight-context plan:
+
+```text
+1. Inventory platform-specific assumptions.
+2. Identify build and packaging dependencies.
+3. Establish a minimal Linux build path.
+4. Fix filesystem/path assumptions.
+5. Fix process/shell invocation assumptions.
+6. Fix UI/windowing/platform integration.
+7. Fix installer/packaging behavior.
+8. Add Linux-specific tests.
+9. Run narrow validation.
+10. Run broader validation.
+11. Document remaining platform gaps.
+```
+
+Each phase should have:
+
+- goal
+- likely files/directories
+- tasks
+- outputs/artifacts
+- validation
+- stop condition
+- handoff notes
+
+## One phase per session
+
+For tight context and long tasks, consider a fresh session for each phase.
+
+At the start of a phase, load only:
+
+- `TASK.md`
+- `STATUS.md`
+- `PLAN.md`
+- `DECISIONS.md`
+- `CONTEXT.md`
+- `CHECKLIST.md`
+- current phase files
+
+Do not reload the entire old chat unless required.
+
+## Phase debrief
+
+At the end of each phase, write a compact debrief:
+
+```markdown
+## Phase Debrief
+
+- Completed:
+- Evidence:
+- Blockers:
+- Decisions:
+- Carry forward:
+- Do not carry forward:
+- Next phase:
+```
+
+The `Do not carry forward` section is important. It prevents the next session from repeating dead ends or obsolete assumptions.
+
+## Persistent task state
+
+For project work, use:
+
+```text
+<project>/.agent-work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/
+```
+
+Recommended files:
+
+- `TASK.md`
+- `PLAN.md`
+- `STATUS.md`
+- `DECISIONS.md`
+- `CONTEXT.md`
+- `CHECKLIST.md`
+- `ARTIFACTS.md`
+- `PHASE_LOG.md`
+- `NEXT_PROMPT.md`
+- `iterations/`
+- `reports/`
+
+Keep these files short. Store summaries, paths, decisions, and validation results. Do not dump raw logs, full files, or long transcripts into task state.
+
+## Compacting
+
+Compact or start a new phase/session when:
+
+- tool output is dominating the chat
+- the agent starts repeating prior context
+- the plan has changed materially
+- a phase is complete
+- validation results are stable enough to summarize
+- the next step only needs a subset of files
+
+A good compaction includes:
+
+- current objective
+- completed work
+- files changed
+- decisions
+- blockers
+- validation results
+- next atomic action
+- do-not-carry-forward notes
+
+## Graph/index support
+
+If Graphify or another index exists, use:
+
+```text
+index → query → verify → edit
+```
+
+Do not recursively read the whole repo when a graph/search/index can identify relevant files first.

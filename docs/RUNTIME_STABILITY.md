@@ -1,43 +1,100 @@
-# Runtime Stability for Local Agentic Coding
+# Runtime Stability
 
-Prompt and instruction engineering cannot fix every loop. Long-running local agent workflows also depend on runtime settings, context policy, speculative decoding, KV cache precision, sampling, and harness behavior.
+ContextSmith improves prompts, skills, plans, and instruction files. It cannot fix every runtime problem.
 
-## Core Principle
+Long agentic coding runs can fail because of the model prompt, but they can also fail because of the runtime stack: context length, KV cache precision, speculative decoding, reasoning settings, sampling, harness behavior, or tool-call parsing.
 
-Speed optimizations are optional. Stability is the baseline.
+## Principle
 
-## Diagnostic Ladder
+> Speed optimizations are optional. Stability is the baseline.
 
-Change one layer at a time and record results.
+If a setup is stable without an optimization and unstable with it, treat the optimization as experimental until proven otherwise.
 
-1. **Harness loop controls**
-   - Add loop safety, retry budgets, no-op detection, and escalation strings.
-2. **Targeted context length**
-   - Operate at 32k/64k even if the server allows 128k/256k.
-3. **Reasoning/thinking preservation**
-   - For tool-heavy loops, test lower reasoning budget or reasoning off when runtime supports it.
-4. **Speculative decoding**
-   - If stable without speculation but looping with speculation, treat speculation as suspect.
-   - Test lower speculation/cross-context settings or disable speculation for long autonomous runs.
-5. **KV cache precision**
-   - Aggressive KV compression trades precision for VRAM/context.
-   - If loops occur in long context, A/B test more conservative KV when hardware allows.
-6. **Sampling**
-   - Change sampling conservatively. Do not change many knobs at once.
+## Diagnose one layer at a time
 
-## Experiment Log Template
+Do not change every knob at once. Keep a known-stable baseline and test one variable at a time.
+
+Useful layers to test:
+
+1. targeted context length
+2. actual server context size
+3. reasoning or thinking budget
+4. thinking preservation across turns
+5. speculative decoding or draft model
+6. KV cache precision/compression
+7. sampling parameters
+8. harness loop controls
+
+## Example experiment log
 
 ```markdown
-| Run | Context | Targeted ctx | Reasoning | Preserve thinking | KV cache | Spec decoding | Sampling | Loop? | Notes |
-|---|---:|---:|---|---|---|---|---|---|---|
-| baseline | 128k | 64k | on 4096 | true | turbo/turbo | dflash | current | yes | |
-| A | 128k | 64k | on 2048 | true | turbo/turbo | dflash reduced | same | ? | |
-| B | 64k | 32k | off | false | q4/q4 | off | same | ? | |
+| Run | Ctx | Reasoning | Preserve thinking | Spec decoding | KV K/V | Sampling | Loop? | Notes |
+|---|---:|---|---|---|---|---|---|---|
+| baseline | 64k | off | false | off | q4/q4 | baseline | no | known stable |
+| A | 128k | on 2048 | true | dflash | turbo/tcq | baseline | yes | loop after long tool run |
+| B | 64k | on 2048 | true | dflash | q4/q4 | baseline | ? | tests DFlash with conservative KV |
+| C | 64k | off | false | off | q4/q4 | repeat 1.05 | ? | tests sampling tweak only |
 ```
 
-## ContextSmith Guidance
+## Context length
 
-- Keep a known-stable baseline profile.
-- Use speed profiles only after A/B testing.
-- Prefer stable moderate context plus task-state over unstable maximum context.
-- Record runtime assumptions in reports, not in model-facing AGENTS.md unless relevant.
+A 128k or 256k model may be more reliable when the agent targets 32k or 64k.
+
+Use `--context-length` to tell ContextSmith what to optimize for:
+
+```bash
+--context-length 32k
+```
+
+This should change the generated plan: smaller phases, stricter output budgets, and stronger task state.
+
+## Reasoning and thinking preservation
+
+Runtime reasoning controls are deployment guidance, not guaranteed skill behavior.
+
+For tool-heavy coding runs, strict structured output, or final artifact generation, test lower reasoning budgets or non-reasoning modes if loops occur.
+
+Do not store or replay reasoning/thinking content in task state, subagent reports, or resume prompts unless the runtime explicitly requires it and it is safe.
+
+## Speculative decoding
+
+Speculative decoding can speed up generation, but it adds another moving part.
+
+If the model is stable without speculative decoding and loops with it, treat speculation as a suspect. Test with speculation disabled, or with a less aggressive speculative configuration, before changing every other setting.
+
+## KV cache precision
+
+Aggressive KV cache compression can trade precision for context and VRAM. If long-context loops appear, test whether a more conservative KV cache improves stability, even if it requires lowering context size.
+
+On constrained GPUs, you often choose between:
+
+- larger context + aggressive cache compression
+- smaller context + more conservative cache precision
+
+For long autonomous coding, stable effective context is usually more valuable than maximum theoretical context.
+
+## Harness loop controls
+
+Even a stable model can loop if the harness repeats failed commands or keeps feeding back bad state.
+
+Use AGENTS.md or harness instructions for:
+
+- no identical consecutive tool calls
+- retry budget
+- no-op edit detection
+- same-output detection
+- strategy change after repeated failure
+- escalation strings such as `BREAK_LOOP_AWAITING_HUMAN_INPUT`
+
+## What to add to ContextSmith outputs
+
+For runtime-sensitive work, include a short note:
+
+```markdown
+## Runtime Assumptions
+
+- Targeted context length: 32k
+- Runtime settings are recommendations only unless the harness can set them.
+- Prefer stability over speed for long autonomous coding runs.
+- If loops occur, record a one-variable-at-a-time experiment log before changing many settings.
+```

@@ -1,5 +1,28 @@
 # Changelog
 
+## v1.4.1
+
+**Released:** 2026-05-22
+
+### Changed
+
+- Reworked the documentation as a human-facing onboarding release rather than only agent-facing reference material.
+- Rewrote `README.md` to be a clearer project front door with stronger positioning, a lower-friction Quick Start, fewer dense manual sections, and factual project status language.
+- Added `docs/QUICKSTART.md` with practical paths for prompt engineering, AGENTS.md generation, implementation-plan audit, test-quality audit, single-skill conversion, and safe skill migration.
+- Added `docs/WHICH_SKILL.md` so users can quickly choose the right ContextSmith skill.
+- Expanded `docs/USER_GUIDE.md` with the core mental model, mode guidance, targeted-context explanation, project-local output guidance, and strong-planner/local-executor workflow.
+- Expanded `docs/CONTROL_PARAMETERS.md` with human explanations, recommended starting controls, and conflict-handling behavior.
+- Expanded `docs/EXAMPLES.md` with copy-paste workflows and benefits for each major tool.
+- Expanded `docs/AGENTS_MD_GUIDE.md` into a human-readable guide explaining why AGENTS.md matters, what to include, what to avoid, and how to keep it concise.
+- Expanded `docs/SMALL_CONTEXT_WORKFLOWS.md` with context tiers, phase sizing, one-phase-per-session guidance, compaction, persistent task state, and Graphify/index-first workflows.
+- Expanded `docs/IMPLEMENTATION_PLAN_AUDIT.md`, `docs/TEST_QUALITY_AUDIT.md`, `docs/PHASE_CODE_REVIEW.md`, `docs/RUNTIME_STABILITY.md`, `docs/MODEL_PROFILES.md`, and `docs/SKILL_MIGRATION.md` with fuller educational explanations and examples.
+- Added `docs/FAQ.md`.
+
+### Notes
+
+- No skill behavior changes were required for this patch. This release focuses on reducing cognitive load, improving time-to-use, and separating human documentation from terse agent-facing references.
+
+
 ## v1.4.0
 
 **Released:** 2026-05-22

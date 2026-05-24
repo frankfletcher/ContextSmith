@@ -284,3 +284,17 @@ Implemented response:
 - [ ] Add package sync/release scripts for shared reference propagation.
 - [ ] Add full behavioral test fixtures for prompts, skills, AGENTS.md files, plans, and test audits.
 - [ ] Consider a tiny router/help skill only if users struggle to choose the correct skill.
+
+
+## Documentation and Onboarding
+
+- [x] Keep README as a human-facing landing page instead of a full manual.
+- [x] Use `Quick Start` as the entry section rather than growth-hacky wording like “first success.”
+- [x] Add `docs/QUICKSTART.md` for practical first-run workflows.
+- [x] Add `docs/WHICH_SKILL.md` to reduce tool-selection cognitive load.
+- [x] Split deeper guidance into human docs under `docs/` while keeping `shared/` as agent-facing references.
+- [x] Humanize terse docs with explanations, examples, benefits, and common failure modes.
+- [x] Keep project status factual: lightweight validation exists; behavioral/integration tests are not yet implemented.
+- [x] Preserve strong project soundbites for README and eventual website copy.
+- [ ] Add screenshots or terminal-output examples once real usage examples are available.
+- [ ] Create a web page later using the README positioning and soundbites.
