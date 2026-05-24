@@ -11,7 +11,7 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 - **Model-aware optimizations** - Tailor artifacts for specific model capabilities
 - **Context-length discipline** - Design for your actual capacity (16k-128k+)
 - **Atomic execution plans** - Break work into phases smaller models can execute
-- **Safety-first workflows** - Prevent loops, unsafe Git ops, and context bloat
+- **Safety-first workflows** - Helps prevent loops, unsafe Git ops, and context bloat
 - **Rich parameter system** - Control every aspect of artifact engineering
 
 ```bash
@@ -34,8 +34,8 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 
 ### Validation & Improvement
 - Audit tests for real-world protection
-- Grade implementation plans (A-F)
-- Run bounded Ralph improvement loops
+- Grade implementation plans (A-F scale)
+- Run bounded improvement loops (Ralph iterations)
 - Conduct phase code reviews
 
 ### Advanced Controls
