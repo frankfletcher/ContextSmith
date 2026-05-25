@@ -1,0 +1,6 @@
+# Generated reference files — populated by scripts/sync_shared_refs.py
+skills/*/references/*
+!skills/*/references/.gitkeep
+
+# Generated distribution artifacts
+dist/

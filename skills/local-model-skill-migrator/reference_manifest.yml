@@ -1,234 +1,173 @@
 skill: local-model-skill-migrator
 version: 1.0.0
 description: Shared reference dependencies for the Skill Migrator skill.
-
 references:
-  # === Safety & safeguards ===
-  - source: shared/git-safety.md
-    version: "32748a1b9b452cb4ef49d3fd02ac25a6a4b43ee8"
-    required: true
-    notes: Git safety rules for coding/repo prompts.
+- source: shared/git-safety.md
+  version: 32748a1b9b452cb4ef49d3fd02ac25a6a4b43ee8
+  required: true
+  notes: Git safety rules for coding/repo prompts.
+- source: shared/loop-safety.md
+  version: bc8cd164a91b84fa5f32259ac53e392954e7e0c7
+  required: true
+  notes: Agentic loop safety rules.
+- source: shared/evaluation-rubrics.md
+  version: 6492250665a63970e092f729c280ecdb9fa5046b
+  required: true
+  notes: A-F grading for Ralph-loop iteration.
+- source: shared/side-effect-matrix.md
+  version: 646b309d8ccf59b5e2aac7493671cf8c93f0edcd
+  required: true
+- source: shared/instruction-conflicts.md
+  version: bdfd76f41d7bb59105d63a1f89a470eb471a02c6
+  required: true
+- source: shared/instruction-deduplication.md
+  version: e680c924e45326cbda6603fb0645076aaf4e3369
+  required: true
+- source: shared/instruction-precedence.md
+  version: 47286ae2757083cd745fa440940c865e6c8d2736
+  required: true
+- source: shared/upstream-artifact-audit.md
+  version: 6e9800efd32073c03b8176d5b853b6ea16f3fcb6
+  required: true
+- source: shared/phased-planning.md
+  version: bcec10578be516993391a1c84d46aa7b506bb16b
+  required: true
+- source: shared/phase-code-review.md
+  version: fdd1f6359db85717634e3516e747611f03dc924d
+  required: true
+- source: shared/phase-compression.md
+  version: 5f23b65f19c071b96b301b1dfafeae4d1445e11d
+  required: true
+- source: shared/persistent-task-state.md
+  version: 9cc4bee5a65abac4769aac366afa508949fb7951
+  required: true
+- source: shared/implementation-plan-audit.md
+  version: 7db3715918ec8939606a7d7286356bc1c0adfd4c
+  required: true
+- source: shared/test-quality-audit.md
+  version: 1cfacccbc756bfeba29912f74cdad5d0baba80ec
+  required: true
+- source: shared/planner-executor-workflows.md
+  version: 79bf52190d69eaa243fd0d3279d244dffde61dc2
+  required: true
+- source: shared/small-context-workflows.md
+  version: dac58d2f0715f0ce2bf428d502632b3733d720ee
+  required: true
+- source: shared/context-management.md
+  version: 6e7d2dafcf947ef4305060efc8ce2b2d95682e14
+  required: true
+- source: shared/targeted-context-length.md
+  version: f51e9f173f66537ee37ef5d9022ea9b48084f146
+  required: true
+- source: shared/reference-optimization.md
+  version: b6e069d250ff2c749e81a39deec1a9b8a06403ca
+  required: true
+- source: shared/output-location.md
+  version: 947121b0780f3d8b1f2f1b146e26ab6f530bab0a
+  required: true
+- source: shared/model-profiles/qwen36.md
+  version: e145d6042e7022cf864f18724dcd69e227cbda71
+  required: true
+  notes: Primary target model profile.
+- source: shared/model-profiles/gemma4.md
+  version: 81f243db66ecaca17606876d94fd0e4487073329
+  required: true
+  notes: Secondary target.
+- source: shared/model-profiles/llama3.md
+  version: b0af3c61ac66f8d40fcbe80dbb139abf026ff9b0
+  required: true
+  notes: Secondary target.
+- source: shared/model-profiles/generic-local.md
+  version: cbb79354512b0a3ebc809efb301f64dde3f95478
+  required: true
+  notes: Default fallback profile.
+- source: shared/model-capability-tiers.md
+  version: feabc377d10fbc5ecd19746e7853f7100d8f61f9
+  required: true
+- source: shared/domain-profiles/coding.md
+  version: 7403afd9f32001ffec5b1f5a3ba4a88cf687d26f
+  required: true
+- source: shared/domain-profiles/data-science-ml.md
+  version: 2adc5016894941d8048fd14fe96ecc3e0a1b7d19
+  required: true
+- source: shared/domain-profiles/ai-modalities.md
+  version: 5c9033caac419850711ecb8a1deaafc9f626c3e3
+  required: true
+- source: shared/domain-profiles/documents.md
+  version: 71ac6fb88770ad55e696cf8f0c62488481296df0
+  required: true
+- source: shared/domain-profiles/email.md
+  version: 0041dfc9254ba3bc38fbf2d8662de3af0945396d
+  required: true
+- source: shared/domain-profiles/research.md
+  version: a8756a9d90d73f91cc55873fe9cecad4b7c7d663
+  required: true
+- source: shared/domain-profiles/scheduling.md
+  version: fa14367f7fec176059dda4f826332d44439bc168
+  required: true
+- source: shared/domain-profiles/purchasing-tickets.md
+  version: 41747cf7f4519a69dba1ae51da2a422175703f00
+  required: true
+- source: shared/documentation-quality.md
+  version: fe5be97e08f59cff8efff178fa40c9da6518a082
+  required: true
+- source: shared/coding-standards.md
+  version: 14484e29d3eec2cb591f8f1aeb1dbfa3a36b9a4b
+  required: true
+- source: shared/ui-standards.md
+  version: b3212b4a28834d78ccd4112460f145bfe1b33fde
+  required: true
+- source: shared/git-hygiene.md
+  version: 1733224ec812f8d68ddea9711d9476528e9077a4
+  required: true
+- source: shared/engineering-metadata.md
+  version: 4cdd9e4090b54664ede4418c7601fe82c84cad09
+  required: true
+- source: shared/ralph-loop.md
+  version: 42b8ee45b3b2356e4e38e548900a413554cb1b35
+  required: true
+- source: shared/subagent-delegation.md
+  version: 9fd0a7d429c0e0741e062df55a197b6e219ae939
+  required: true
+- source: shared/skill-interoperability.md
+  version: 7097284676b2ec171082c360e00aa2a9c24b7f23
+  required: true
+- source: shared/small-model-atomicity.md
+  version: 17fd68dba5eed082bd24c05cfabf6cb65ad82dce
+  required: true
+- source: shared/interaction-modes.md
+  version: 13e79f4f9de2d6b505f7f06d5488c22a1d8fb8bf
+  required: true
+- source: shared/control-parameters.md
+  version: d65cd90034824c859658ed83efa6e019201e3ab9
+  required: true
+- source: shared/control-phrases.md
+  version: 7699947de82e57474c89c3e0d2df069efafafc41
+  required: true
+- source: shared/help-mode.md
+  version: d357885a1db9119791916dcef1d140b9cd165fcb
+  required: true
+- source: shared/usage-patterns.md
+  version: c647ae5b5f9f050a705e20043e872b545787ec63
+  required: true
+- source: shared/run-configuration-preview.md
+  version: 7e1436e30495cd4ce11a3ed1418ce5cccba27cce
+  required: true
+- source: shared/runtime-stability.md
+  version: ecaf560bc90c860e4bd92f9d7b76ff75982e5738
+  required: true
+- source: shared/domain-intent.md
+  version: 320def729d99d3d9a69ad854b055a14b1f511497
+  required: true
+- source: shared/education-levels.md
+  version: efe335df0531804f485656fcb9604d6287f60661
+  required: true
+- source: shared/educational-report.md
+  version: fdc27d10666e201aca854e5c77ca5ae9ce376596
+  required: true
+- source: skills/local-model-skill-migrator/help.md
+  version: ac6aa2cd9dcc2517222a3b40f9ff2c7b5b9acf97
+  required: true
+  local: true
+  notes: Skill-specific help documentation.
 
-  - source: shared/loop-safety.md
-    version: "bc8cd164a91b84fa5f32259ac53e392954e7e0c7"
-    required: true
-    notes: Agentic loop safety rules.
-
-  - source: shared/evaluation-rubrics.md
-    version: "6492250665a63970e092f729c280ecdb9fa5046b"
-    required: true
-    notes: A-F grading for Ralph-loop iteration.
-
-  - source: shared/side-effect-matrix.md
-    version: "646b309d8ccf59b5e2aac7493671cf8c93f0edcd"
-    required: true
-
-  - source: shared/instruction-conflicts.md
-    version: "bdfd76f41d7bb59105d63a1f89a470eb471a02c6"
-    required: false
-
-  - source: shared/instruction-deduplication.md
-    version: "e680c924e45326cbda6603fb0645076aaf4e3369"
-    required: false
-
-  - source: shared/instruction-precedence.md
-    version: "47286ae2757083cd745fa440940c865e6c8d2736"
-    required: true
-
-  - source: shared/upstream-artifact-audit.md
-    version: "6e9800efd32073c03b8176d5b853b6ea16f3fcb6"
-    required: true
-
-  # === Planning & execution ===
-  - source: shared/phased-planning.md
-    version: "bcec10578be516993391a1c84d46aa7b506bb16b"
-    required: true
-
-  - source: shared/phase-code-review.md
-    version: "fdd1f6359db85717634e3516e747611f03dc924d"
-    required: true
-
-  - source: shared/phase-compression.md
-    version: "5f23b65f19c071b96b301b1dfafeae4d1445e11d"
-    required: true
-
-  - source: shared/persistent-task-state.md
-    version: "9cc4bee5a65abac4769aac366afa508949fb7951"
-    required: true
-
-  - source: shared/implementation-plan-audit.md
-    version: "7db3715918ec8939606a7d7286356bc1c0adfd4c"
-    required: true
-
-  - source: shared/test-quality-audit.md
-    version: "1cfacccbc756bfeba29912f74cdad5d0baba80ec"
-    required: false
-
-  - source: shared/planner-executor-workflows.md
-    version: "79bf52190d69eaa243fd0d3279d244dffde61dc2"
-    required: false
-
-  - source: shared/small-context-workflows.md
-    version: "dac58d2f0715f0ce2bf428d502632b3733d720ee"
-    required: false
-
-  # === Context management ===
-  - source: shared/context-management.md
-    version: "6e7d2dafcf947ef4305060efc8ce2b2d95682e14"
-    required: true
-
-  - source: shared/targeted-context-length.md
-    version: "f51e9f173f66537ee37ef5d9022ea9b48084f146"
-    required: true
-
-  - source: shared/reference-optimization.md
-    version: "b6e069d250ff2c749e81a39deec1a9b8a06403ca"
-    required: false
-
-  - source: shared/output-location.md
-    version: "947121b0780f3d8b1f2f1b146e26ab6f530bab0a"
-    required: true
-
-  # === Model profiles ===
-  - source: shared/model-profiles/qwen36.md
-    version: "e145d6042e7022cf864f18724dcd69e227cbda71"
-    required: true
-    notes: Primary target model profile.
-
-  - source: shared/model-profiles/gemma4.md
-    version: "81f243db66ecaca17606876d94fd0e4487073329"
-    required: false
-    notes: Secondary target.
-
-  - source: shared/model-profiles/llama3.md
-    version: "b0af3c61ac66f8d40fcbe80dbb139abf026ff9b0"
-    required: false
-    notes: Secondary target.
-
-  - source: shared/model-profiles/generic-local.md
-    version: "cbb79354512b0a3ebc809efb301f64dde3f95478"
-    required: true
-    notes: Default fallback profile.
-
-  - source: shared/model-capability-tiers.md
-    version: "feabc377d10fbc5ecd19746e7853f7100d8f61f9"
-    required: true
-
-  # === Domain profiles ===
-  - source: shared/domain-profiles/coding.md
-    version: "7403afd9f32001ffec5b1f5a3ba4a88cf687d26f"
-    required: false
-
-  - source: shared/domain-profiles/data-science-ml.md
-    version: "2adc5016894941d8048fd14fe96ecc3e0a1b7d19"
-    required: false
-
-  - source: shared/domain-profiles/ai-modalities.md
-    version: "5c9033caac419850711ecb8a1deaafc9f626c3e3"
-    required: false
-
-  - source: shared/domain-profiles/documents.md
-    version: "71ac6fb88770ad55e696cf8f0c62488481296df0"
-    required: false
-
-  - source: shared/domain-profiles/email.md
-    version: "0041dfc9254ba3bc38fbf2d8662de3af0945396d"
-    required: false
-
-  - source: shared/domain-profiles/research.md
-    version: "a8756a9d90d73f91cc55873fe9cecad4b7c7d663"
-    required: false
-
-  - source: shared/domain-profiles/scheduling.md
-    version: "fa14367f7fec176059dda4f826332d44439bc168"
-    required: false
-
-  - source: shared/domain-profiles/purchasing-tickets.md
-    version: "41747cf7f4519a69dba1ae51da2a422175703f00"
-    required: false
-
-  # === Quality & standards ===
-  - source: shared/documentation-quality.md
-    version: "fe5be97e08f59cff8efff178fa40c9da6518a082"
-    required: true
-
-  - source: shared/coding-standards.md
-    version: "14484e29d3eec2cb591f8f1aeb1dbfa3a36b9a4b"
-    required: false
-
-  - source: shared/ui-standards.md
-    version: "b3212b4a28834d78ccd4112460f145bfe1b33fde"
-    required: false
-
-  - source: shared/git-hygiene.md
-    version: "1733224ec812f8d68ddea9711d9476528e9077a4"
-    required: false
-
-  - source: shared/engineering-metadata.md
-    version: "4cdd9e4090b54664ede4418c7601fe82c84cad09"
-    required: true
-
-  # === Workflow & interaction ===
-  - source: shared/ralph-loop.md
-    version: "42b8ee45b3b2356e4e38e548900a413554cb1b35"
-    required: true
-
-  - source: shared/subagent-delegation.md
-    version: "9fd0a7d429c0e0741e062df55a197b6e219ae939"
-    required: false
-
-  - source: shared/skill-interoperability.md
-    version: "7097284676b2ec171082c360e00aa2a9c24b7f23"
-    required: false
-
-  - source: shared/small-model-atomicity.md
-    version: "17fd68dba5eed082bd24c05cfabf6cb65ad82dce"
-    required: true
-
-  - source: shared/interaction-modes.md
-    version: "13e79f4f9de2d6b505f7f06d5488c22a1d8fb8bf"
-    required: true
-
-  - source: shared/control-parameters.md
-    version: "d65cd90034824c859658ed83efa6e019201e3ab9"
-    required: true
-
-  - source: shared/control-phrases.md
-    version: "7699947de82e57474c89c3e0d2df069efafafc41"
-    required: false
-
-  - source: shared/help-mode.md
-    version: "d357885a1db9119791916dcef1d140b9cd165fcb"
-    required: true
-
-  - source: shared/usage-patterns.md
-    version: "c647ae5b5f9f050a705e20043e872b545787ec63"
-    required: false
-
-  - source: shared/run-configuration-preview.md
-    version: "7e1436e30495cd4ce11a3ed1418ce5cccba27cce"
-    required: true
-
-  - source: shared/runtime-stability.md
-    version: "ecaf560bc90c860e4bd92f9d7b76ff75982e5738"
-    required: false
-
-  - source: shared/domain-intent.md
-    version: "320def729d99d3d9a69ad854b055a14b1f511497"
-    required: true
-
-  # === Education ===
-  - source: shared/education-levels.md
-    version: "efe335df0531804f485656fcb9604d6287f60661"
-    required: true
-
-  - source: shared/educational-report.md
-    version: "fdc27d10666e201aca854e5c77ca5ae9ce376596"
-    required: true
-
-  # === Skill-local file ===
-  - source: skills/local-model-skill-migrator/help.md
-    version: "ac6aa2cd9dcc2517222a3b40f9ff2c7b5b9acf97"
-    required: true
-    local: true
-    notes: Skill-specific help documentation.
