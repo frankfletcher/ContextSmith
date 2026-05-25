@@ -37,7 +37,7 @@ We welcome pull requests for bug fixes, new features, and documentation improvem
 
 2. Install dependencies (if any):
    ```bash
-   pip install -r requirements.txt
+   pip install pyyaml
    ```
 
 3. Run the validation script to ensure everything is set up correctly:
@@ -80,7 +80,7 @@ Before submitting a pull request, please run the following commands:
 ### Code Review Process
 
 All pull requests undergo review:
-1. **Automated checks**: CI runs validation, linting, and tests.
+1. **Automated checks**: CI runs validation and tests.
 2. **Human review**: Maintainers review for correctness, style, and security.
 3. **Feedback**: Reviewers may request changes or provide suggestions.
 4. **Approval**: Once approved, the PR will be merged.
