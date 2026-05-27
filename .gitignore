@@ -4,3 +4,6 @@ skills/*/references/*
 
 # Generated distribution artifacts
 dist/
+
+# Staged skills
+.agent_work/staged_skills/*
