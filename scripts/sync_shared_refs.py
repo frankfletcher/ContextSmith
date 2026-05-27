@@ -118,6 +118,7 @@ def main():
         description="Sync shared references to skill directories. "
                     "Default: staging dir (--staging-dir). Use --in-place for repo tree."
     )
+    parser.add_argument("--all", action="store_true", default=True, help="Sync all skills (default)")
     parser.add_argument("--skill", help="Sync only one skill (directory name)")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be copied")
     parser.add_argument("--verbose", action="store_true", help="Print each file operation")
