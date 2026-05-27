@@ -20,8 +20,8 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
 
-      - name: Sync shared references
-        run: python scripts/sync_shared_refs.py --verbose
+      - name: Sync shared references (in-place for CI validation)
+        run: python scripts/sync_shared_refs.py --in-place --verbose
 
       - name: Validate skills and manifests
         run: python scripts/validate_skills.py

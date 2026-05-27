@@ -20,6 +20,8 @@ if [[ "$SKILL_NAME" == *".."* ]] || [[ "$SKILL_NAME" == /* ]]; then
 fi
 
 SKILL_DIR="$REPO_ROOT/skills/$SKILL_NAME"
+STAGING_DIR="$REPO_ROOT/.agent_work/staged_skills/$SKILL_NAME"
+
 if [ ! -d "$SKILL_DIR" ]; then
     echo "ERROR: skill directory not found: $SKILL_DIR"
     exit 1
@@ -42,11 +44,17 @@ else
     VERSION="0.0.0"
 fi
 
-# Sync and Verify
+# Sync references to staging directory (does not touch repo working tree)
 echo "Syncing references for $SKILL_NAME..."
 python "$REPO_ROOT/scripts/sync_shared_refs.py" --skill "$SKILL_NAME" --verbose
 if [ $? -ne 0 ]; then
     echo "ERROR: sync failed, aborting package"
+    exit 1
+fi
+
+# Verify staging directory has the expected files
+if [ ! -f "$STAGING_DIR/SKILL.md" ]; then
+    echo "ERROR: staging missing SKILL.md at $STAGING_DIR"
     exit 1
 fi
 
@@ -64,12 +72,11 @@ if ! command -v zip &> /dev/null; then
     exit 1
 fi
 
-# Zip the skill directory, excluding the manifest
-# Change to repo root to ensure zip stores relative paths
-cd "$REPO_ROOT"
-zip -r "$ZIP_NAME" "skills/$SKILL_NAME/" \
-    -x "skills/$SKILL_NAME/reference_manifest.yml" \
-    -x "skills/$SKILL_NAME/references/.gitkeep"
+# Zip from staging directory, excluding manifest and .gitkeep
+cd "$REPO_ROOT/.agent_work/staged_skills"
+zip -r "$ZIP_NAME" "$SKILL_NAME/" \
+    -x "$SKILL_NAME/reference_manifest.yml" \
+    -x "$SKILL_NAME/references/.gitkeep"
 
 FILE_COUNT=$(unzip -l "$ZIP_NAME" | tail -1 | awk '{print $2}')
 echo "Packaged $ZIP_NAME ($FILE_COUNT files)"

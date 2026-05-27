@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
-"""sync_shared_refs.py — Populate skill references/ from shared/ via manifests."""
+"""sync_shared_refs.py — Populate skill references/ from shared/ via manifests.
+
+By default writes to a staging directory (.agent_work/staged_skills/) so the
+repo working tree stays clean.  Use --in-place to write directly into
+skills/*/references/ (needed for CI validation).
+"""
 
 import argparse
+import hashlib
 import os
 import shutil
 import sys
@@ -9,29 +15,42 @@ from pathlib import Path
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_STAGING = REPO_ROOT / '.agent_work' / 'staged_skills'
+
 
 def compute_blob_hash(filepath):
     """Compute git-compatible blob hash."""
-    import hashlib
     content = filepath.read_bytes()
     header = f'blob {len(content)}\0'.encode()
     return hashlib.sha1(header + content).hexdigest()
 
-def sync_skill(skill_dir, args):
-    manifest_path = skill_dir / 'reference_manifest.yml'
+
+def sync_skill(source_skill_dir, dest_skill_dir, args):
+    manifest_path = source_skill_dir / 'reference_manifest.yml'
     if not manifest_path.exists():
         if args.verbose:
-            print(f"SKIP {skill_dir.name}: no reference_manifest.yml")
+            print(f"SKIP {source_skill_dir.name}: no reference_manifest.yml")
         return {'copied': 0, 'skipped': 0, 'warnings': 1, 'errors': 0}
 
     try:
         manifest = yaml.safe_load(manifest_path.read_text())
     except yaml.YAMLError as e:
-        print(f"ERROR {skill_dir.name}: invalid YAML in manifest: {e}")
+        print(f"ERROR {source_skill_dir.name}: invalid YAML in manifest: {e}")
         return {'copied': 0, 'skipped': 0, 'warnings': 0, 'errors': 1}
 
     stats = {'copied': 0, 'skipped': 0, 'warnings': 0, 'errors': 0}
-    refs_dir = skill_dir / 'references'
+
+    # Copy SKILL.md into staging so the staged skill is self-contained
+    if not args.in_place:
+        skill_md = source_skill_dir / 'SKILL.md'
+        dest_skill_md = dest_skill_dir / 'SKILL.md'
+        if skill_md.exists():
+            dest_skill_md.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(skill_md, dest_skill_md)
+            if args.verbose:
+                print(f"COPY SKILL.md -> {dest_skill_md}")
+
+    refs_dir = dest_skill_dir / 'references'
 
     for entry in manifest.get('references', []):
         source = entry.get('source', '')
@@ -43,16 +62,16 @@ def sync_skill(skill_dir, args):
 
         src_path = REPO_ROOT / source
         if not is_local and not source.startswith('shared/'):
-            print(f"ERROR {skill_dir.name}: source '{source}' not in shared/")
+            print(f"ERROR {source_skill_dir.name}: source '{source}' not in shared/")
             stats['errors'] += 1
             continue
 
         if not src_path.exists():
             if required:
-                print(f"ERROR {skill_dir.name}: required source not found: {source}")
+                print(f"ERROR {source_skill_dir.name}: required source not found: {source}")
                 stats['errors'] += 1
             else:
-                print(f"WARN {skill_dir.name}: optional source not found: {source}")
+                print(f"WARN {source_skill_dir.name}: optional source not found: {source}")
                 stats['warnings'] += 1
             continue
 
@@ -60,7 +79,7 @@ def sync_skill(skill_dir, args):
         src_hash = compute_blob_hash(src_path)
         manifest_version = entry.get('version', '')
         if manifest_version and manifest_version != src_hash:
-            print(f"WARN {skill_dir.name}: manifest version stale for {source} "
+            print(f"WARN {source_skill_dir.name}: manifest version stale for {source} "
                   f"(stored={manifest_version[:8]}..., current={src_hash[:8]}...)")
 
         # Determine relative path under references/
@@ -93,24 +112,51 @@ def sync_skill(skill_dir, args):
 
     return stats
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Sync shared references to skill directories")
+    parser = argparse.ArgumentParser(
+        description="Sync shared references to skill directories. "
+                    "Default: staging dir (--staging-dir). Use --in-place for repo tree."
+    )
     parser.add_argument("--skill", help="Sync only one skill (directory name)")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be copied")
     parser.add_argument("--verbose", action="store_true", help="Print each file operation")
     parser.add_argument("--force", action="store_true", help="Overwrite even if versions match")
+    parser.add_argument(
+        "--staging-dir",
+        type=Path,
+        default=None,
+        help="Output staging directory (default: .agent_work/staged_skills/)"
+    )
+    parser.add_argument(
+        "--in-place",
+        action="store_true",
+        help="Write directly into skills/*/references/ instead of staging dir"
+    )
     args = parser.parse_args()
+
+    # Resolve staging directory
+    if args.in_place:
+        staging_dir = None
+    else:
+        staging_dir = args.staging_dir or DEFAULT_STAGING
 
     skills_dir = REPO_ROOT / 'skills'
     total = {'copied': 0, 'skipped': 0, 'warnings': 0, 'errors': 0}
 
-    for skill_dir in sorted(skills_dir.iterdir()):
-        if not skill_dir.is_dir():
+    for source_skill_dir in sorted(skills_dir.iterdir()):
+        if not source_skill_dir.is_dir():
             continue
-        if args.skill and skill_dir.name != args.skill:
+        if args.skill and source_skill_dir.name != args.skill:
             continue
 
-        stats = sync_skill(skill_dir, args)
+        # Determine destination skill directory
+        if staging_dir:
+            dest_skill_dir = staging_dir / source_skill_dir.name
+        else:
+            dest_skill_dir = source_skill_dir
+
+        stats = sync_skill(source_skill_dir, dest_skill_dir, args)
         for k in total:
             total[k] += stats[k]
 
@@ -118,6 +164,7 @@ def main():
           f"{total['warnings']} warnings, {total['errors']} errors")
     if total['errors'] > 0:
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
