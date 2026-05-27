@@ -15,7 +15,7 @@ Create or improve AGENTS.md. Scan existing instructions first. Add only relevant
 - Create AGENTS.md for a repo.
 - Improve existing repo instructions without duplicating rules.
 - Add loop safety, Git safety, coding standards, PEP 8, UI standards, and DS/ML rules when relevant.
-- Add phase memory and canonical `.agent-work/` policies.
+- Add phase memory and canonical `.agent_work/` policies.
 - Suggest `.gitignore` entries without editing `.gitignore` unless approved.
 
 ## Common Parameters

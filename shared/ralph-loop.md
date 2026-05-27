@@ -45,7 +45,7 @@ Use `references/output-location.md`.
 For project-based work, write iterations under:
 
 ```text
-<project>/.agent-work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/iterations/
+<project>/.agent_work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/iterations/
 ```
 
 Each iteration folder should contain:

@@ -118,7 +118,7 @@ The `Do not carry forward` section is important. It prevents the next session fr
 For project work, use:
 
 ```text
-<project>/.agent-work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/
+<project>/.agent_work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/
 ```
 
 Recommended files:

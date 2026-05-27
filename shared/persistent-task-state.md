@@ -5,7 +5,7 @@ Use persistent task state for long-running, multi-phase, multi-file, crash-sensi
 ## Directory Layout
 
 ```text
-.agent-work/
+.agent_work/
 └── sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/
     ├── TASK.md
     ├── PLAN.md
@@ -51,4 +51,4 @@ Do not paste full files, logs, transcripts, command output, or model reasoning i
 
 ## Canonical location
 
-Use `references/output-location.md`. For project work, place task state under `<project>/.agent-work/`. Treat `.agent-work/` as local operational state and suggest gitignoring it using `references/git-hygiene.md`.
+Use `references/output-location.md`. For project work, place task state under `<project>/.agent_work/`. Treat `.agent_work/` as local operational state and suggest gitignoring it using `references/git-hygiene.md`.

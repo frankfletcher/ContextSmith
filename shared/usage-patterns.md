@@ -24,7 +24,7 @@ Natural language task goes here.
 - `guided mode` reduces bad assumptions without forcing a long interview.
 - `review-gate mode` prevents destructive or wide changes without approval.
 - `Ralph loop` improves quality after baseline validation, but only when materially useful.
-- `project-local output` preserves reports and iterations under `.agent-work/` instead of `/tmp`.
+- `project-local output` preserves reports and iterations under `.agent_work/` instead of `/tmp`.
 ## Strong Planner, Local Executor Pattern
 
 For large coding tasks, use a stronger model or deep-path ContextSmith run to create and audit the plan, then use a smaller/local model to execute atomic phases.

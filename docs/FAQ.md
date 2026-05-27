@@ -16,9 +16,9 @@ Because usable context is not the same as advertised context. Local runtimes may
 
 For coding agents, `AGENTS.md` can shape every run in a repo. If it is vague, bloated, contradictory, or missing safety rules, the agent inherits those problems.
 
-## Should I commit `.agent-work/`?
+## Should I commit `.agent_work/`?
 
-Usually no. Treat `.agent-work/` as local operational state. Commit curated final documents only when they are intentionally useful to the project.
+Usually no. Treat `.agent_work/` as local operational state. Commit curated final documents only when they are intentionally useful to the project.
 
 ## Does ContextSmith modify files automatically?
 

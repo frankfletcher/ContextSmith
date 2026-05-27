@@ -18,12 +18,12 @@
 | **`loop_safety`** | `off`, `on`, `auto` | `auto` (added when tool-using prompt detected) | Agentic loop safety controls |
 | **`merge_policy_priority`** | `1. preserve_clear_safeguards`, `2. strengthen_vague_safeguards`, `3. consolidate_duplicates`, `4. add_missing_safeguards`, `5. avoid_cross_file_repetition` | priority order 1→5 | Order of precedence when merging safeguards |
 | **`output_format`** | `text`, `json`, `schema`, `instruction_file`, `prompt_package` | `text` | Desired output format |
-| **`output_location`** | `user_specified`, `project_agent_work`, `skill_package_agent_work`, `user_level_agent_work`, `tmp_disposable_only` | `project .agent-work/` (default for project-based work) | Where to write output files and reports |
+| **`output_location`** | `user_specified`, `project_agent_work`, `skill_package_agent_work`, `user_level_agent_work`, `tmp_disposable_only` | `project .agent_work/` (default for project-based work) | Where to write output files and reports |
 | **`phase_compression`** | `off`, `on`, `auto` | `auto` (enabled when phased planning is on) | Phase closeout and debrief with carry-forward rules |
 | **`phase_files`** | `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, `NEXT_PROMPT.md` | all created when persistent state is on | Persistent state file types and their responsibilities |
 | **`phase_granularity`** | `6-12 phases for complex tasks`, `goal/inputs/tasks/outputs/validation/stop_condition/handoff_notes per phase` | scales with complexity | Phase count and structure requirements |
 | **`phase_planning`** | `off`, `on`, `auto` | `auto` (added when long-running task detected) | Phased planning for complex work |
-| **`persistent_state`** | `off`, `on`, `auto` | `auto` (added when crash-sensitive or multi-phase work detected) | Persistent task state tracking via `.agent-work/` |
+| **`persistent_state`** | `off`, `on`, `auto` | `auto` (added when crash-sensitive or multi-phase work detected) | Persistent task state tracking via `.agent_work/` |
 | **`prompt_package_sections`** | `engineering_metadata`, `assumptions`, `target_model_harness_profile`, `domain_intent`, `prompt_control_feasibility`, `context_strategy`, `interaction_mode`, `system_prompt`, `user_prompt_template`, `examples`, `validation_test_plan`, `loop_git_file_safety`, `persistent_task_state`, `subagent_delegation`, `runtime_recommendations`, `educational_change_report` | all included unless user requests otherwise | Output sections in the generated prompt package |
 | **`ralph_loop`** | `off`, `on` (bounded iteration), `requested` (user explicitly requests) | `off` | Ralph improvement loop with A-F grading |
 | **`ralph_loop_limits`** | `max_iterations: 2 (default)`, `hard_max: 3`, `stop_if_all_B_or_better`, `stop_if_cosmetic_only` | defaults shown | Iteration limits for Ralph improvement loop |

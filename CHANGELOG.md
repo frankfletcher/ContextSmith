@@ -146,7 +146,7 @@
 - Added loop-safety reference and injection guidance.
 - Added Git safety, rebase policy, working-tree protection, and Git loop prevention.
 - Added canonical output-location policy for Ralph iterations, reports, migrations, and task state.
-- Added `.gitignore` suggestion and commit-worthiness guidance for `.agent-work/` artifacts.
+- Added `.gitignore` suggestion and commit-worthiness guidance for `.agent_work/` artifacts.
 - Added instruction-scan/de-duplication rules to avoid duplicate safeguards.
 - Added coding standards, practical SOLID guidance, Python/PEP 8 guidance, UI standards, and no-emoji default.
 - Added data science / ML / AI modality domain guidance.
@@ -313,7 +313,7 @@ Initial GitHub-ready consolidation of the local-model agent engineering toolkit.
   - `ARTIFACTS.md`
   - `PHASE_LOG.md`
   - `NEXT_PROMPT.md`
-- Added support for sprint/subproject/task hierarchy under `.agent-work/`.
+- Added support for sprint/subproject/task hierarchy under `.agent_work/`.
 - Added guidance for avoiding task-state junk drawers: narrow file responsibilities, summaries instead of raw dumps, state hygiene, cleanup, and resume prompts.
 - Added subagent delegation rules: bounded scopes, exact files/directories, compact report schemas, no full-context dumping, main-agent synthesis, and conflict resolution by evidence.
 - Added Graphify/index-aware guidance as an optional context provider for large repos/document sets.

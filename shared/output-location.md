@@ -5,16 +5,16 @@ Use predictable durable output locations so reports, Ralph iterations, plans, an
 ## Priority Order
 
 1. If the user specifies an output directory, use it.
-2. For project/repo work, use `<project>/.agent-work/`.
-3. For skill-package work inside a repo, use that package's `.agent-work/`.
+2. For project/repo work, use `<project>/.agent_work/`.
+3. For skill-package work inside a repo, use that package's `.agent_work/`.
 4. For installed user skill migrations, use `~/.agents/skill-migrations/`.
-5. For non-project work, use `~/.agent-work/`.
+5. For non-project work, use `~/.agent_work/`.
 6. Use `/tmp` only for disposable scratch, never as the only location for canonical reports or iterations.
 
 ## Project Task Layout
 
 ```text
-<project>/.agent-work/
+<project>/.agent_work/
 ├── active-task
 └── sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/
     ├── TASK.md
@@ -35,7 +35,7 @@ Use predictable durable output locations so reports, Ralph iterations, plans, an
 For project-based work, write Ralph iterations under:
 
 ```text
-<project>/.agent-work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/iterations/
+<project>/.agent_work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/iterations/
 ```
 
 Use numbered folders:
@@ -58,9 +58,9 @@ Installed user skills:
 Repo-local skill packages:
 
 ```text
-<project>/.agent-work/skill-migrations/<migration-id>/
+<project>/.agent_work/skill-migrations/<migration-id>/
 ```
 
 ## Git Hygiene
 
-Treat `.agent-work/` as local operational state by default. Suggest adding it to `.gitignore`; do not modify `.gitignore` without approval.
+Treat `.agent_work/` as local operational state by default. Suggest adding it to `.gitignore`; do not modify `.gitignore` without approval.

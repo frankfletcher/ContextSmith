@@ -52,7 +52,7 @@ For installed user skills, use:
 For repo-local skills, use:
 
 ```text
-<project>/.agent-work/skill-migrations/<migration-id>/
+<project>/.agent_work/skill-migrations/<migration-id>/
 ```
 
 The workspace should include:

@@ -89,12 +89,12 @@ Use `audit-only` when you want diagnosis before modification.
 For project work, ContextSmith should prefer:
 
 ```text
-<project>/.agent-work/
+<project>/.agent_work/
 ```
 
 This keeps task memory, phase reports, Ralph iterations, validation reports, and resume prompts near the project, without relying on `/tmp`.
 
-By default, `.agent-work/` should usually be gitignored. ContextSmith should suggest `.gitignore` entries, but it should not modify `.gitignore` without approval.
+By default, `.agent_work/` should usually be gitignored. ContextSmith should suggest `.gitignore` entries, but it should not modify `.gitignore` without approval.
 
 ## Strong planner, local executor
 
@@ -102,7 +102,7 @@ For large coding work, a practical workflow is:
 
 1. Use a stronger model or ContextSmith deep path to create/audit the plan.
 2. Split the plan into atomic phases.
-3. Save task state under `.agent-work/`.
+3. Save task state under `.agent_work/`.
 4. Execute one phase at a time with the local model.
 5. End each phase with a debrief.
 6. Start the next phase from task state, not the full previous chat.

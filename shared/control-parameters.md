@@ -47,7 +47,7 @@ ContextSmith skills accept both natural-language controls and CLI-style flags. C
 - `--mode audit-only` = `audit only`
 - `--context-length`, `--targeted-context-length`, and `--ctx` all set `targeted_context_length`.
 - `--ralph 0` and `--no-ralph` disable the Ralph loop.
-- `--output project-local` means durable outputs belong under `<project>/.agent-work/`.
+- `--output project-local` means durable outputs belong under `<project>/.agent_work/`.
 - `--output chat` means do not write files unless the task requires artifacts.
 - `--output staging` means write staged outputs without overwriting originals.
 

@@ -11,7 +11,7 @@ Strong models can write the plan. Smaller models can execute it — if the plan 
 1. Use a stronger model or ContextSmith deep path to create the implementation plan.
 2. Audit the plan for small-model executability.
 3. Split the plan into atomic phases sized for `targeted_context_length`.
-4. Save durable task state under `.agent-work/`.
+4. Save durable task state under `.agent_work/`.
 5. Execute one phase per local-model session when context is tight.
 6. End each phase with a debrief and `NEXT_PROMPT.md`.
 7. Run post-phase code review and test-quality audit when relevant.

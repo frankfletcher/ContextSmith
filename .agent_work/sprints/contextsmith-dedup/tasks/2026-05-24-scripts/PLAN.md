@@ -4,7 +4,7 @@
 **Target executor:** Qwen 3.6 27B (local-model coding agent)
 **Phases:** 8
 **Repository root:** ContextSmith/
-**Task state dir:** `.agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/`
+**Task state dir:** `.agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/`
 
 ---
 
@@ -182,11 +182,11 @@ Capture complete repository state, initialize task state files, and verify all a
 - Repository directory structure (via glob)
 
 ### Likely Files
-- `.agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/TASK.md` — CREATE
-- `.agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/STATUS.md` — CREATE
-- `.agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/CONTEXT.md` — CREATE
-- `.agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/DECISIONS.md` — CREATE
-- `.agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/PLAN.md` — CREATE (this file)
+- `.agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/TASK.md` — CREATE
+- `.agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/STATUS.md` — CREATE
+- `.agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/CONTEXT.md` — CREATE
+- `.agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/DECISIONS.md` — CREATE
+- `.agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/PLAN.md` — CREATE (this file)
 
 ### Tasks
 1. Read the **Universal Phase Protocols** section above (Protocols A–D). These apply to every phase including this one.

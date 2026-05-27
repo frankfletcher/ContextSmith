@@ -15,7 +15,7 @@ This file captures the current saved/compacted ContextSmith memory from this con
 - The package emphasizes practical reliability for small/local models, especially Qwen3.6-27B, while remaining useful for broader model-aware agent workflows.
 - User prefers constructive critique and wants ideas challenged kindly.
 - User prefers practical, low-friction tools with high benefit.
-- User prefers durable project-local output under `.agent-work/`.
+- User prefers durable project-local output under `.agent_work/`.
 - User wants to avoid “vibecoding artifacts” in public repos.
 - User wants docs to be catchy, informative, honest, warm, and practical without sounding like generic AI marketing copy.
 
@@ -890,20 +890,20 @@ For `targeted_context_length <= 32k`:
 
 ## Persistent Task State
 
-For long-running/multi-file/crash-sensitive tasks, use durable state under project-local `.agent-work/`, not `/tmp`.
+For long-running/multi-file/crash-sensitive tasks, use durable state under project-local `.agent_work/`, not `/tmp`.
 
 Canonical output priority:
 
 1. User-specified output dir wins.
-2. Project/repo task → `<project>/.agent-work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/`
+2. Project/repo task → `<project>/.agent_work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/`
 3. Installed skill migration → `~/.agents/skill-migrations/<migration-id>/`
-4. Non-project → `~/.agent-work/tasks/<YYYY-MM-DD-short-slug>/`
+4. Non-project → `~/.agent_work/tasks/<YYYY-MM-DD-short-slug>/`
 5. `/tmp` only for disposable scratch.
 
 Suggested task state:
 
 ```text
-.agent-work/
+.agent_work/
 └── sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/
     ├── TASK.md
     ├── PLAN.md
@@ -942,7 +942,7 @@ Strong planner/local executor workflow:
 1. Use stronger model/ContextSmith deep path to create plan.
 2. Audit plan for small-model executability.
 3. Split into atomic phases.
-4. Save state under `.agent-work`.
+4. Save state under `.agent_work`.
 5. Execute one phase per local-model session if context is tight.
 6. End each phase with debrief and `NEXT_PROMPT.md`.
 7. Start next session from state, not full original chat.
@@ -1102,7 +1102,7 @@ Recommended blocks:
 - DS/ML leakage prevention
 - testing
 - docs
-- `.agent-work`
+- `.agent_work`
 
 ---
 

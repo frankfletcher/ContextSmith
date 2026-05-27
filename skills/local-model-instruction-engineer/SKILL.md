@@ -153,7 +153,7 @@ Use nested instruction files only when subprojects have materially different com
 
 For complex ports, migrations, refactors, or multi-phase work, add phased planning and persistent task state using `phased-planning.md`, `persistent-task-state.md`, `phase-compression.md`, and `output-location.md`.
 
-Suggest `.agent-work/` entries for `.gitignore` using `git-hygiene.md`; do not modify `.gitignore` without approval.
+Suggest `.agent_work/` entries for `.gitignore` using `git-hygiene.md`; do not modify `.gitignore` without approval.
 
 ### 7. Validate
 

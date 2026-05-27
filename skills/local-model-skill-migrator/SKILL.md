@@ -104,7 +104,7 @@ Installed user skills:
 └── RESTORE.md
 ```
 
-Repo-local skill packages use `<project>/.agent-work/skill-migrations/<migration-id>/`.
+Repo-local skill packages use `<project>/.agent_work/skill-migrations/<migration-id>/`.
 
 ### 3. Backup
 

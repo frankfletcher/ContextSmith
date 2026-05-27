@@ -54,7 +54,7 @@ Package structure:
 - [x] Git safety rules.
 - [x] Existing instruction scan / duplicate safeguard detection.
 - [x] Canonical output location policy.
-- [x] `.gitignore` suggestion policy for `.agent-work/` and related artifacts.
+- [x] `.gitignore` suggestion policy for `.agent_work/` and related artifacts.
 - [x] Ralph A-F scoring with bounded iteration rules.
 - [x] Domain profiles and side-effect matrix.
 - [x] Interaction modes across the package.
@@ -106,7 +106,7 @@ Package structure:
 
 ### Output Location and Git Hygiene
 
-- [x] Canonical project output under `<project>/.agent-work/`.
+- [x] Canonical project output under `<project>/.agent_work/`.
 - [x] Canonical Ralph iteration folders.
 - [x] Migration workspace policy.
 - [x] `/tmp` limited to disposable scratch.

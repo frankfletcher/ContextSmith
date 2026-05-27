@@ -49,7 +49,7 @@ source_prompt: hand-written seed, ~80 words
 | No validation criteria | Fully prompt-controllable — add per-phase checkpoints |
 | No context strategy | Fully prompt-controllable — add context budget, staged reading |
 | No loop/Git safety | Fully prompt-controllable — add safety rules inline |
-| No output location | Fully prompt-controllable — specify `.agent-work/` |
+| No output location | Fully prompt-controllable — specify `.agent_work/` |
 | Dangling reference ("described above") | Fully prompt-controllable — resolve to explicit scope |
 | No persistent state | Fully prompt-controllable — add task-state scaffolding |
 
@@ -60,7 +60,7 @@ source_prompt: hand-written seed, ~80 words
 - Reserve ~20% (13k tokens) for tool results, validation output, and recovery
 - Phases: 7, each targeting 4-6 active files
 - Selective file reading: stat/grep before full reads; never load entire `shared/` directory
-- Persistent task state under `.agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/`
+- Persistent task state under `.agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/`
 - Phase compression after each phase — write compact debrief, carry-forward, do-not-carry-forward
 - Re-anchor with `STATUS.md` and `NEXT_PROMPT.md` at session start instead of re-reading full chat
 
@@ -785,7 +785,7 @@ ContextSmith/
 ├── scripts/
 │   └── validate_skills.py           # existing validation script
 ├── docs/
-├── .agent-work/                     # persistent task state directory
+├── .agent_work/                     # persistent task state directory
 ├── .github/                         # (create if absent)
 │   └── workflows/
 └── CONTRIBUTING.md                  # (create or update)
@@ -945,7 +945,7 @@ Do not overwrite user changes.
 
 ## Persistent Task State
 
-Create these files under `.agent-work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/`:
+Create these files under `.agent_work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/`:
 
 | File | Purpose | Update When |
 |---|---|---|
@@ -979,10 +979,10 @@ Start by reading STATUS.md and PHASE_LOG.md phase N entry.
 ## Output Structure
 
 Write the full plan to:
-`.agent-work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/PLAN.md`
+`.agent_work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/PLAN.md`
 
 Write educational reports to:
-`.agent-work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/reports/`
+`.agent_work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/reports/`
 ````
 
 ---
@@ -996,7 +996,7 @@ Scope: manifest files (one per skill), sync_shared_refs.py, package_skill.sh,
 CI validation and workflow — all for ContextSmith reference deduplication management.
 
 Use 8 phases. Include deep phase review and deep education-level reporting for every phase.
-Output the full plan to .agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/PLAN.md.
+Output the full plan to .agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/PLAN.md.
 ```
 
 ---
@@ -1029,7 +1029,7 @@ After the plan is generated, verify:
 
 1. **No structure** — the seed prompt is 4 sentences. A Qwen 3.6 agent would need to invent the entire plan format, phase boundaries, and deliverables from scratch, leading to inconsistent output.
 2. **Dangling reference** — "the other CI scripts described above" is ambiguous. Resolved to: validation enhancement plus GitHub Actions workflow.
-3. **No output location** — the agent would not know where to write the plan. Resolved to `.agent-work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/PLAN.md`.
+3. **No output location** — the agent would not know where to write the plan. Resolved to `.agent_work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/PLAN.md`.
 4. **No validation criteria** — no way to verify plan completeness. Added per-phase validation checkpoint table.
 5. **No context strategy** — for a 64k context budget, the agent could exhaust context reading unnecessary files. Added selective reading rules and context budget guidance.
 6. **No safety rules** — a coding agent without loop/Git safety can loop, overwrite files, or run destructive commands. Added inline loop safety and Git safety rules.
@@ -1101,6 +1101,6 @@ After the plan is generated, verify:
 
 1. Copy the `## System Prompt` section (the code-fenced markdown block) into your Qwen 3.6 27B agent's system prompt field.
 2. Copy the `## User Prompt Template` section into the agent's user message field.
-3. The agent will produce `PLAN.md` at `.agent-work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/` with 8 phases, deep review protocols, and deep education reporting built in.
+3. The agent will produce `PLAN.md` at `.agent_work/sprints/contextsmith-dedup/tasks/2026-05-24-scripts/` with 8 phases, deep review protocols, and deep education reporting built in.
 
 After the plan is generated, review it against the Validation and Test Plan checklist above before handing it to a coding agent for execution.

@@ -142,7 +142,7 @@ For tight context, prefer:
 --no-apply
 ```
 
-Use `project-local` when you want durable task state and reports under `.agent-work/`.
+Use `project-local` when you want durable task state and reports under `.agent_work/`.
 
 Use `staging` or `--no-apply` when original files should not be overwritten.
 

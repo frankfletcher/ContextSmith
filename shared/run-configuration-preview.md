@@ -40,7 +40,7 @@ I’m ready to proceed with this run configuration.
 --ralph 1                       # One bounded improvement pass for a reusable artifact.
 --education-level guided        # Explain key choices without bloating the artifact.
 --artifact-verbosity compact    # Keep model-facing instructions concise.
---output project-local          # Save reports under <project>/.agent-work/.
+--output project-local          # Save reports under <project>/.agent_work/.
 ```
 
 ## Planned Approach

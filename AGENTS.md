@@ -109,10 +109,10 @@ Before editing, check `git status --short`. Do not overwrite user changes. If a 
 
 ## Persistent Task State
 
-For multi-phase work, use `.agent-work/sprints/<sprint>/tasks/<YYYY-MM-DD-slug>/`:
+For multi-phase work, use `.agent_work/sprints/<sprint>/tasks/<YYYY-MM-DD-slug>/`:
 
 ```
-.agent-work/
+.agent_work/
 └── sprints/<sprint>/tasks/<YYYY-MM-DD-slug>/
     ├── TASK.md          # objective, scope, constraints
     ├── PLAN.md          # phase checklist
@@ -123,7 +123,7 @@ For multi-phase work, use `.agent-work/sprints/<sprint>/tasks/<YYYY-MM-DD-slug>/
     └── NEXT_PROMPT.md   # short resume prompt
 ```
 
-Example: `.agent-work/sprints/contextsmith-1.0/tasks/2026-05-24-agents-md`
+Example: `.agent_work/sprints/contextsmith-1.0/tasks/2026-05-24-agents-md`
 
 Keep state files short. Do not paste full files or raw output into state files.
 

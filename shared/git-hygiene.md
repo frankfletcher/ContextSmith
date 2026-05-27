@@ -8,7 +8,7 @@ By default, suggest adding these paths to `.gitignore`:
 
 ```gitignore
 # Agent work state
-.agent-work/
+.agent_work/
 .agent-task/
 .agent-iterations/
 .agent-reports/
@@ -32,7 +32,7 @@ Usually commit:
 
 Usually do not commit:
 
-- `.agent-work/`
+- `.agent_work/`
 - Ralph iteration folders
 - subagent scratch reports
 - local task-state files

@@ -19,7 +19,7 @@ ContextSmith supports both natural-language controls and CLI-style flags. Use ei
 - `context length: 32k`, `targeted context length: 32k`, `ctx: 32k`: optimize for actual local context budget
 - `domain: coding,data-science-ml`: apply domain-specific rules
 - `harness: opencode`: apply harness-aware guidance when known
-- `project-local output`: use `<project>/.agent-work/` for durable artifacts
+- `project-local output`: use `<project>/.agent_work/` for durable artifacts
 - `chat-only output`: return in chat; avoid writing files unless needed
 - `backup first`: back up before edits or migrations
 - `do not apply`: do not overwrite originals or perform in-place changes
