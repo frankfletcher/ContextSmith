@@ -25,6 +25,11 @@ Relevant files to inspect:
 - Do not introduce new dependencies without approval.
 - Add or update tests for behavior changes.
 - Run the narrowest relevant validation first.
+- DRY - do not repeat logic in multiple places.
+- YAGNI - do not add features or abstractions until they are needed.
+- KISS - prefer simple solutions over complex ones.
+- Prefer readability and maintainability over cleverness or terseness.
+- Test Driven Development when feasible, especially for new code or behavior changes.
 
 ## SOLID, Without Ceremony
 

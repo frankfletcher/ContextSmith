@@ -4,7 +4,7 @@ Use phased planning for complex, long-running, multi-file, migration, porting, r
 
 ## Granularity Rule
 
-Phase count must scale with complexity. A three-phase plan is often too coarse for a large application port, repo migration, or multi-system refactor. Prefer 6–12 phases when the task has many unknowns, platforms, dependencies, or subsystems.
+Phase count must scale with complexity. A three-phase plan is often too coarse for a large application port, repo migration, or multi-system refactor. Prefer 6–20 phases when the task has many unknowns, platforms, dependencies, or subsystems. Implementation of each phase must fit within the context window, therefore more phases with narrower scope are usually better than fewer broad phases.
 
 Each phase must include:
 
@@ -12,6 +12,8 @@ Each phase must include:
 - inputs
 - likely files/directories
 - explicit tasks
+- testing/validation steps
+- unit and integration tests where relevant
 - outputs/artifacts
 - validation checks
 - stop condition
@@ -44,6 +46,11 @@ At the end of each phase:
 5. Add compact notes to `PHASE_LOG.md`.
 6. Write carry-forward and do-not-carry-forward notes.
 7. Update `NEXT_PROMPT.md`.
+8. Run phase compression and update `CONTEXT.md` for the next phase.
+9. Run validation checks. If any fail, update `STATUS.md` to "Blocked", add details to `DECISIONS.md`, and exit.
+10. Run an audit of the implementation plan for the next phase using `implementation-plan-audit.md`. If it fails, update `STATUS.md` to "Blocked", add details to `DECISIONS.md`, and exit.
+11. Include a test quality audit for coding-related work. If it fails, update `STATUS.md` to "Blocked", add details to `DECISIONS.md`, and exit. Use `test-quality-audit.md`
+12. If the stop condition is met, update `STATUS.md` to "Completed" and exit.
 
 ## Ralph Evaluation for Plans
 
@@ -57,10 +64,14 @@ Grade phase plans on:
 - context-risk handling
 - domain fit
 - human approval gates
+- safeguards for side effects, loops, Git, and coding when relevant
+- implementation plan audit results when relevant
+- overall plan quality and reliability
+
 ## Implementation Plan Audit Integration
 
 For coding, migration, repo-porting, or long-running work, run the implementation plan audit from `implementation-plan-audit.md` before treating a plan as executable.
 
-Phase count must scale with `targeted_context_length`. For `targeted_context_length <= 32k`, prefer more smaller phases over fewer broad phases. A large Windows/macOS-to-Linux port should usually be closer to 8-15 phases than 3 broad phases.
+Phase count must scale with `targeted_context_length`. For `targeted_context_length <= 32k`, prefer more smaller phases over fewer broad phases. A large Windows/macOS-to-Linux port should usually be closer to 10-25 phases.
 
 Every phase should end with phase compression/debrief and `Do Not Carry Forward` notes.

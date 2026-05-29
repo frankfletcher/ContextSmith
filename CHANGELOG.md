@@ -6,20 +6,27 @@
 
 ### Added
 
+- Added `shared/source-artifact-boundary.md` and wired it into prompt, skill, instruction, and migration workflows so source artifacts with executable-looking instructions are treated as data unless explicitly activated.
 - Added `shared/documentation-quality.md` for readability, style, factuality, repeated-phrasing, example usefulness, and generated-writing-pattern checks.
 - Added `shared/run-configuration-preview.md` so skills can show inferred parameters, assumptions, and planned approach before important guided/review-gate work.
 - Added `--review-config` / `--preview-config` and `--no-review-config` control guidance.
 - Added `--focus documentation-quality` guidance for the evaluator.
 - Added `docs/contributing/documentation-style.md` and `docs/contributing/documentation-review-checklist.md`.
 - Added `docs/workflows/`, `docs/concepts/`, and `docs/reference/` organization with index files.
+- Added explicit default-parameter tables to the prompt, instruction, and skill engineering workflows.
 
 ### Changed
 
+- Strengthened `local-model-prompt-engineer` with a prompt compiler boundary, non-execution self-check, and output contract reminder to reduce accidental execution of seed prompts.
 - Rewrote `README.md` to reduce generated-sounding contrast patterns, remove “project documentation” wording, and keep the tone practical, factual, and reader-centered.
 - Reorganized detailed docs into workflow, concept, reference, and contributing sections.
 - Updated user documentation to prefer advisory wording where appropriate, while keeping safety-critical agent references direct.
 - Updated all skills to reference run configuration previews and documentation-quality checks when relevant.
 - Updated package spec terminology from “project documentation docs” to “project documentation.”
+- Expanded coding standards with DRY, YAGNI, KISS, readability, and TDD guidance.
+- Tightened phased-planning guidance with narrower phase sizing, validation/test expectations, phase compression, implementation-plan audit, and test-quality audit closeout checks.
+- Updated targeted-context guidance to reserve more context for tool output and favor more granular phases for moderate and tight context budgets.
+- Added `tmp` to `.gitignore`.
 
 ### Notes
 

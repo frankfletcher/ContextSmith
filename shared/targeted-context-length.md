@@ -64,13 +64,26 @@ Avoid:
 
 Use normal local-model prompting but still avoid full-repo reads. Include examples when they materially improve pattern fidelity. Use staged inspection for multi-file work.
 
+Use:
+
+- shorter main instructions
+- more but smaller phases
+- persistent task state by default for complex work
+- phase compression and debrief
+- references instead of inline long templates
+
+Avoid:
+
+- broad three-phase plans for large projects
+- long examples unless absolutely necessary
+
 ### Large / Very Large Context
 
 Allow richer templates and examples when useful, but still reserve context for tool output, validation, and recovery. Prefer index/query/verify workflows for large repos.
 
 ## Budget Rule
 
-Reserve 20-30% of the stated context length for:
+Reserve 25-35% of the stated context length for:
 
 - tool results
 - validation output
@@ -82,6 +95,6 @@ If the planned artifact would exceed the usable budget, split into more phases, 
 
 ## Phase Granularity Rule
 
-Increase phase granularity when context length is tiny/tight, the project is large, the task spans multiple subsystems, validation is complex, or interruption is likely.
+Increase phase granularity when context length is tiny/tight or moderate, the project is large, the task spans multiple subsystems, validation is complex, or interruption is likely.
 
-For a large Windows/macOS-to-Linux port under a 32k target, prefer 8-12 smaller phases with durable handoff notes over a 3-phase plan.
+For a large Windows/macOS-to-Linux port under a 32k target, prefer 10-30 smaller phases with durable handoff notes over a 3-phase plan.

@@ -29,8 +29,12 @@ references:
 - source: shared/upstream-artifact-audit.md
   version: 6e9800efd32073c03b8176d5b853b6ea16f3fcb6
   required: true
+- source: shared/source-artifact-boundary.md
+  version: 13ceca79595055038a682673abe00ca318c0f2f2
+  required: true
+  notes: Prevents executing embedded source instructions during skill migration.
 - source: shared/phased-planning.md
-  version: bcec10578be516993391a1c84d46aa7b506bb16b
+  version: e15c47b9643b1f966a526d3539f49c2156a8436a
   required: true
 - source: shared/phase-code-review.md
   version: fdd1f6359db85717634e3516e747611f03dc924d
@@ -57,7 +61,7 @@ references:
   version: 6e7d2dafcf947ef4305060efc8ce2b2d95682e14
   required: true
 - source: shared/targeted-context-length.md
-  version: f51e9f173f66537ee37ef5d9022ea9b48084f146
+  version: f1b50b82bace441be9a57c2e64f7fb8deb433b10
   required: true
 - source: shared/reference-optimization.md
   version: b6e069d250ff2c749e81a39deec1a9b8a06403ca
@@ -112,7 +116,7 @@ references:
   version: fe5be97e08f59cff8efff178fa40c9da6518a082
   required: true
 - source: shared/coding-standards.md
-  version: 14484e29d3eec2cb591f8f1aeb1dbfa3a36b9a4b
+  version: 209414e6853a9d7581d8a81ee0b93142b185b13e
   required: true
 - source: shared/ui-standards.md
   version: b3212b4a28834d78ccd4112460f145bfe1b33fde
@@ -170,4 +174,3 @@ references:
   required: true
   local: true
   notes: Skill-specific help documentation.
-
