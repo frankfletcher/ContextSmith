@@ -2,7 +2,7 @@
 name: local-model-prompt-engineer
 description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, loop-safety rules, Git/file safety, phased execution, Ralph-loop iteration, targeted context length control, upstream artifact audits, or selecting model-specific prompt guidance from profiles.
 metadata:
-  version: "1.7.1"
+  version: "1.7.2"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -102,8 +102,37 @@ When generating or auditing coding plans, tests, or phase workflows, use:
 - `references/test-quality-audit.md`
 - `references/phase-code-review.md`
 - `references/small-context-workflows.md`
+- `references/phased-planning.md`
+- `references/persistent-task-state.md`
+- `references/output-location.md`
 
 For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
+
+When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The downstream model must understand that the deliverable is not only a narrative plan. It is a reusable work package that a later execution session can resume without the original chat transcript.
+
+The downstream prompt MUST require the agent to create or update a task-state directory at:
+
+```text
+<project>/.agent_work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/
+```
+
+The downstream prompt MUST require these artifacts:
+
+- `TASK.md`: objective, scope, constraints, success criteria
+- `PLAN.md`: phase checklist with small-model-executable phases
+- `STATUS.md`: current phase, last completed work, next action
+- `DECISIONS.md`: durable decisions with reasons
+- `CONTEXT.md`: file map, constraints, evidence notes, skip rules
+- `CHECKLIST.md`: validation checklist
+- `ARTIFACTS.md`: generated/changed files and commands to run
+- `PHASE_LOG.md`: compact phase entries
+- `NEXT_PROMPT.md`: short resume prompt for the next session or first execution phase
+
+The downstream prompt MUST tell the agent to write these files, not merely mention them. A section named "Persistent Task State" may summarize the directory and file responsibilities, but it is not a substitute for creating the files. If planning-only mode forbids code changes, state that task-state files are allowed planning artifacts and source-code edits remain forbidden.
+
+The downstream prompt MUST require each state file to stay compact. Do not paste raw logs, full source files, long transcripts, or hidden reasoning into state files. Store objective facts: paths, commands, validation results, decisions, constraints, skip rules, and the next actionable instruction. `NEXT_PROMPT.md` must be directly usable as the first prompt in a fresh session.
+
+For each planned phase, require the fields from `phased-planning.md`: goal, inputs, likely files/directories, explicit tasks, testing/validation steps, unit and integration tests where relevant, outputs/artifacts, validation checks, stop condition, and handoff notes. Require phase closeout to update the state files and refresh `NEXT_PROMPT.md`.
 
 
 ## Run Configuration Preview

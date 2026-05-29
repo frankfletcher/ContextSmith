@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Strengthened `local-model-prompt-engineer`, `local-model-instruction-engineer`, `local-model-skill-engineer`, `local-model-skill-migrator`, and `local-model-agent-evaluator` so long-running planning workflows require or audit a concrete task-state directory with `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md`, instead of allowing a single narrative plan file to stand in for persistent state. The guidance now distinguishes allowed planning artifacts from source-code edits, requires resumable `NEXT_PROMPT.md` handoffs, and reinforces compact state hygiene for paths, commands, validation results, decisions, constraints, and next actions.
+
 ## v1.4.2
 
 **Released:** 2026-05-22

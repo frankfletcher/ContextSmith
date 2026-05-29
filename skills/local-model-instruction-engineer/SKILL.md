@@ -2,7 +2,7 @@
 name: local-model-instruction-engineer
 description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
 metadata:
-  version: "1.4.1"
+  version: "1.4.2"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -96,6 +96,9 @@ When generating or auditing coding plans, tests, or phase workflows, use:
 - `references/test-quality-audit.md`
 - `references/phase-code-review.md`
 - `references/small-context-workflows.md`
+- `references/phased-planning.md`
+- `references/persistent-task-state.md`
+- `references/output-location.md`
 
 For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
 
@@ -172,6 +175,16 @@ Use nested instruction files only when subprojects have materially different com
 ### 6. Add Phase and Memory Support for Long Work
 
 For complex ports, migrations, refactors, or multi-phase work, add phased planning and persistent task state using `phased-planning.md`, `persistent-task-state.md`, `phase-compression.md`, and `output-location.md`.
+
+When generated instructions tell downstream agents to create implementation plans for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, require a task-state directory at:
+
+```text
+<project>/.agent_work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/
+```
+
+The instruction file MUST list these required artifacts: `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md`. Define their responsibilities in plain language so a downstream model knows what to write, what to keep compact, and what to avoid. `TASK.md` captures objective and scope; `PLAN.md` captures the phase checklist; `STATUS.md` captures the current phase and next action; `DECISIONS.md` captures durable decisions with reasons; `CONTEXT.md` captures file maps and constraints; `CHECKLIST.md` captures validation items; `ARTIFACTS.md` captures changed files and commands; `PHASE_LOG.md` captures compact phase notes; `NEXT_PROMPT.md` captures the resume prompt.
+
+Do not allow downstream agents to satisfy persistent task state with only a narrative plan section. The instruction file may include a "Persistent Task State" section, but that section must require file creation or updates. If the instruction file includes a planning-only mode, state that task-state files are allowed planning artifacts while source-code edits remain forbidden.
 
 Suggest `.agent_work/` entries for `.gitignore` using `git-hygiene.md`; do not modify `.gitignore` without approval.
 

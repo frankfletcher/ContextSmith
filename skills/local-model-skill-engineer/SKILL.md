@@ -2,7 +2,7 @@
 name: local-model-skill-engineer
 description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, targeted context length control, upstream artifact audits, skill interoperability handling, or skill-auditor-style quality checks.
 metadata:
-  version: "1.7.1"
+  version: "1.7.2"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -151,6 +151,15 @@ For data science/ML/AI skills, use `domain-profiles/data-science-ml.md` and `dom
 If the skill may handle long docs, repos, files, logs, tool outputs, RAG, graph/index data, or multi-turn state, add context strategy from `context-management.md`.
 
 If the skill supports long-running work, add phased planning, persistent task state, output location, and phase compression/debrief.
+
+If the generated skill may create implementation plans or direct downstream agents through long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, embed a concrete task-state contract in the generated skill. The generated skill must make the downstream deliverable resumable by another session, not dependent on the original chat history. The contract MUST require the downstream agent to create or update:
+
+- `<project>/.agent_work/sprints/<sprint-or-subproject>/tasks/<YYYY-MM-DD-short-slug>/`
+- `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md`
+
+Do not let generated skills treat "Persistent Task State" as only an explanatory section. Require generated skills to state that planning artifacts are allowed in planning-only mode while source-code edits remain forbidden. Require phase closeout to update state files and refresh `NEXT_PROMPT.md`.
+
+When adding this contract, define the minimum responsibility of each state file and require state hygiene: compact summaries, file paths, commands, validation results, constraints, and durable decisions only. Do not store raw transcripts, full logs, full source files, or hidden reasoning in task state. The generated skill should tell downstream agents to use `NEXT_PROMPT.md` as the handoff artifact for fresh-session continuation.
 
 If scoped review reduces context pressure or improves validation, add subagent delegation.
 

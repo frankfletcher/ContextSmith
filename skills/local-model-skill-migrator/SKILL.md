@@ -2,7 +2,7 @@
 name: local-model-skill-migrator
 description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, loop/Git/context safeguards, semantic-diff validation, Ralph-loop quality review, and explicit approval before applying changes, targeted context length control, and upstream workflow collision checks.
 metadata:
-  version: "1.5.1"
+  version: "1.5.2"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -107,6 +107,10 @@ Installed user skills:
 ```
 
 Repo-local skill packages use `<project>/.agent_work/skill-migrations/<migration-id>/`.
+
+For multi-phase migrations, also create or update task-state files in the migration workspace or the project task folder: `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md`. Do not treat `MIGRATION_PLAN.md` alone as persistent task state for long-running migrations. `MIGRATION_PLAN.md` describes the migration strategy; the task-state files preserve execution state, decisions, validation results, and the next resumable prompt.
+
+At each phase closeout, update status, decisions, artifacts, phase log, compressed context, and the next resume prompt. Keep task-state files compact and factual. Store paths, checksums, staged locations, validation commands, review gates, and approval status; do not store raw source dumps, long logs, full transcripts, or hidden reasoning.
 
 ### 3. Backup
 
