@@ -1,0 +1,418 @@
+{
+  "nodes": [
+    {
+      "id": "skill_local_model_prompt_engineer",
+      "label": "Local Model Prompt Engineer Skill",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "reference_manifest_references",
+      "label": "Reference Manifest Dependencies",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/reference_manifest.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "targeted_context_length_context_tiers",
+      "label": "Targeted Context Length Tiers",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/targeted-context-length.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "interaction_modes_guided_mode",
+      "label": "Guided Interaction Mode",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/interaction-modes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "side_effect_matrix_approval_requirements",
+      "label": "Side Effect Matrix Approval Rules",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/side-effect-matrix.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "model_capability_tiers_small_local",
+      "label": "Small Local Model Capability Tier",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/model-capability-tiers.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "planner_executor_workflows_recommended_workflow",
+      "label": "Planner/Executor Recommended Workflow",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/planner-executor-workflows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "education_levels_core_distinction",
+      "label": "Education Level vs Artifact Verbosity",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/education-levels.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "persistent_task_state_directory_layout",
+      "label": "Persistent Task State Layout",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/persistent-task-state.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "output_location_priority_order",
+      "label": "Canonical Output Location Priority",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/output-location.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "phased_planning_granularity_rule",
+      "label": "Phased Planning Granularity Rule",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/phased-planning.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "loop_safety_core_loop_rules",
+      "label": "Agentic Loop Safety Rules",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/loop-safety.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "git_safety_hard_rule",
+      "label": "Git Safety Hard Rule",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/git-safety.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ralph_loop_iteration_limits",
+      "label": "Ralph Loop Iteration Limits",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/ralph-loop.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "evaluation_rubrics_grade_meanings",
+      "label": "Evaluation Rubric Grade Meanings",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/evaluation-rubrics.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "test_quality_audit_core_principle",
+      "label": "Test Quality Audit Core Principle",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/test-quality-audit.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "control_parameters_parsing_rules",
+      "label": "Control Parameter Parsing Rules",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/control-parameters.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "domain_intent_detect",
+      "label": "Domain Intent Detection Logic",
+      "file_type": "document",
+      "source_file": "skills/local-model-prompt-engineer/references/domain-intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "reference_manifest_references",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "targeted_context_length_context_tiers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "interaction_modes_guided_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "side_effect_matrix_approval_requirements",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "model_capability_tiers_small_local",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "planner_executor_workflows_recommended_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "education_levels_core_distinction",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "loop_safety_core_loop_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "git_safety_hard_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "ralph_loop_iteration_limits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "evaluation_rubrics_grade_meanings",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "test_quality_audit_core_principle",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "control_parameters_parsing_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_prompt_engineer",
+      "target": "domain_intent_detect",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "phased_planning_granularity_rule",
+      "target": "persistent_task_state_directory_layout",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/references/phased-planning.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "phased_planning_granularity_rule",
+      "target": "output_location_priority_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/references/phased-planning.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "persistent_task_state_directory_layout",
+      "target": "output_location_priority_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/references/persistent-task-state.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "planner_executor_workflows_recommended_workflow",
+      "target": "targeted_context_length_context_tiers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/references/planner-executor-workflows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ralph_loop_iteration_limits",
+      "target": "evaluation_rubrics_grade_meanings",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/references/ralph-loop.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "control_parameters_parsing_rules",
+      "target": "interaction_modes_guided_mode",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "skills/local-model-prompt-engineer/references/control-parameters.md",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "domain_intent_detect",
+      "target": "side_effect_matrix_approval_requirements",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-prompt-engineer/references/domain-intent.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 26395,
+  "output_tokens": 5947,
+  "failed_chunks": 0
+}

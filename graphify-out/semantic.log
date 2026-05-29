@@ -1,0 +1,123 @@
+==============================================
+  Graphify Semantic Extraction (Local LLM)
+==============================================
+Project:    /home/frank/00-Code/ContextSmith
+Output:     /home/frank/00-Code/ContextSmith/graphify-out
+Python:     /home/frank/.local/share/uv/tools/graphifyy/bin/python
+Started:    2026-05-28T13:31:24-07:00
+
+Running semantic extraction...
+Log file: /home/frank/00-Code/ContextSmith/graphify-out/semantic_20260528_133124.log
+
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting ':' delimiter: line 1 column 130 (char 129)
+[graphify] openai returned a hollow response (content=no nodes/edges, output_tokens=6214); treating as truncation so adaptive retry can bisect the chunk.
+[graphify] chunk of 74 truncated at depth 0, splitting into halves of 37 and 37
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting value: line 1 column 1 (char 0)
+[graphify] chunk of 37 truncated at depth 1, splitting into halves of 18 and 19
+[graphify] LLM returned invalid JSON, skipping chunk: Unterminated string starting at: line 1 column 32385 (char 32384)
+[graphify] chunk of 69 truncated at depth 0, splitting into halves of 34 and 35
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting property name enclosed in double quotes: line 658 column 33 (char 22488)
+[graphify] chunk of 34 truncated at depth 1, splitting into halves of 17 and 17
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting property name enclosed in double quotes: line 761 column 53 (char 24639)
+[graphify] chunk of 69 truncated at depth 0, splitting into halves of 34 and 35
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting ',' delimiter: line 638 column 20 (char 21931)
+[graphify] chunk of 35 truncated at depth 1, splitting into halves of 17 and 18
+[graphify] LLM returned invalid JSON, skipping chunk: Unterminated string starting at: line 694 column 17 (char 21351)
+[graphify] chunk of 18 truncated at depth 2, splitting into halves of 9 and 9
+[graphify] LLM returned invalid JSON, skipping chunk: Unterminated string starting at: line 646 column 17 (char 21783)
+[graphify] chunk of 9 still truncated at recursion depth 3 (max 3) — partial result kept
+[graphify] LLM returned invalid JSON, skipping chunk: Unterminated string starting at: line 670 column 7 (char 21206)
+[graphify] chunk of 9 still truncated at recursion depth 3 (max 3) — partial result kept
+[graphify] LLM returned invalid JSON, skipping chunk: Extra data: line 1 column 2 (char 1)
+[graphify] openai returned a hollow response (content=no nodes/edges, output_tokens=7186); treating as truncation so adaptive retry can bisect the chunk.
+[graphify] chunk of 45 truncated at depth 0, splitting into halves of 22 and 23
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting value: line 1 column 27960 (char 27959)
+[graphify] chunk of 56 truncated at depth 0, splitting into halves of 28 and 28
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting ',' delimiter: line 85 column 243 (char 22351)
+[graphify] chunk of 56 truncated at depth 0, splitting into halves of 28 and 28
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting value: line 1 column 12473 (char 12472)
+[graphify] openai returned a hollow response (content=no nodes/edges, output_tokens=4944); treating as truncation so adaptive retry can bisect the chunk.
+[graphify] chunk of 28 truncated at depth 1, splitting into halves of 14 and 14
+[graphify] LLM returned invalid JSON, skipping chunk: Expecting value: line 755 column 21 (char 24296)
+[graphify] chunk of 56 truncated at depth 0, splitting into halves of 28 and 28
+
+==================================================
+ [1/7] (root): 667 files
+ Budget: 32768 tokens/chunk, sequential, deep mode
+==================================================
+
+  Done: 412 nodes, 398 edges in 3163s
+  Tokens: 331,260 in / 116,987 out | Failed chunks: 0
+  Saved: .graphify_semantic_(root).json (331,260 in / 116,987 out tokens)
+
+==================================================
+ [2/7] docs: 34 files
+ Budget: 32768 tokens/chunk, sequential, deep mode
+==================================================
+
+  Done: 18 nodes, 15 edges in 113s
+  Tokens: 23,630 in / 5,088 out | Failed chunks: 0
+  Saved: .graphify_semantic_docs.json (23,630 in / 5,088 out tokens)
+
+==================================================
+ [3/7] skills/local-model-agent-evaluator: 56 files
+ Budget: 32768 tokens/chunk, sequential, deep mode
+==================================================
+
+  Done: 68 nodes, 57 edges in 371s
+  Tokens: 25,572 in / 13,733 out | Failed chunks: 0
+  Saved: .graphify_semantic_skills_local-model-agent-evaluator.json (25,572 in / 13,733 out tokens)
+
+==================================================
+ [4/7] skills/local-model-instruction-engineer: 56 files
+ Budget: 32768 tokens/chunk, sequential, deep mode
+==================================================
+
+  Done: 15 nodes, 32 edges in 121s
+  Tokens: 26,308 in / 6,671 out | Failed chunks: 0
+  Saved: .graphify_semantic_skills_local-model-instruction-engineer.json (26,308 in / 6,671 out tokens)
+
+==================================================
+ [5/7] skills/local-model-prompt-engineer: 56 files
+ Budget: 32768 tokens/chunk, sequential, deep mode
+==================================================
+
+  Done: 18 nodes, 21 edges in 120s
+  Tokens: 26,395 in / 5,947 out | Failed chunks: 0
+  Saved: .graphify_semantic_skills_local-model-prompt-engineer.json (26,395 in / 5,947 out tokens)
+
+==================================================
+ [6/7] skills/local-model-skill-engineer: 56 files
+ Budget: 32768 tokens/chunk, sequential, deep mode
+==================================================
+
+  Done: 61 nodes, 44 edges in 477s
+  Tokens: 26,869 in / 15,813 out | Failed chunks: 0
+  Saved: .graphify_semantic_skills_local-model-skill-engineer.json (26,869 in / 15,813 out tokens)
+
+==================================================
+ [7/7] skills/local-model-skill-migrator: 56 files
+ Budget: 32768 tokens/chunk, sequential, deep mode
+==================================================
+
+  Done: 42 nodes, 36 edges in 300s
+  Tokens: 25,813 in / 11,992 out | Failed chunks: 0
+  Saved: .graphify_semantic_skills_local-model-skill-migrator.json (25,813 in / 11,992 out tokens)
+
+==================================================
+ MERGING ALL RESULTS
+==================================================
+
+Merged: 410 nodes, 603 edges
+Tokens: 485,847 in / 176,231 out
+Saved:  graphify-out/.graphify_semantic.json
+
+==================================================
+ COMPLETE in 4665s (77.7 min)
+ Total tokens: 485,847 in / 176,231 out
+==================================================
+
+Extraction completed successfully!
+Results saved to:
+  - /home/frank/00-Code/ContextSmith/graphify-out/.graphify_semantic.json (merged)
+  - /home/frank/00-Code/ContextSmith/graphify-out/.graphify_semantic_*.json (per-directory)

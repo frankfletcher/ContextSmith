@@ -1,0 +1,358 @@
+{
+  "nodes": [
+    {
+      "id": "user_guide_contextsmith",
+      "label": "ContextSmith",
+      "file_type": "document",
+      "source_file": "docs/USER_GUIDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "examples_prompt_engineer",
+      "label": "local-model-prompt-engineer",
+      "file_type": "document",
+      "source_file": "docs/EXAMPLES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "examples_instruction_engineer",
+      "label": "local-model-instruction-engineer",
+      "file_type": "document",
+      "source_file": "docs/EXAMPLES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "examples_agent_evaluator",
+      "label": "local-model-agent-evaluator",
+      "file_type": "document",
+      "source_file": "docs/EXAMPLES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "examples_skill_engineer",
+      "label": "local-model-skill-engineer",
+      "file_type": "document",
+      "source_file": "docs/EXAMPLES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "examples_skill_migrator",
+      "label": "local-model-skill-migrator",
+      "file_type": "document",
+      "source_file": "docs/EXAMPLES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agents_md_guide_agents_md",
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "docs/AGENTS_MD_GUIDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "control_parameters_context_length",
+      "label": "Targeted Context Length",
+      "file_type": "document",
+      "source_file": "docs/CONTROL_PARAMETERS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "control_parameters_modes",
+      "label": "Interaction Modes",
+      "file_type": "document",
+      "source_file": "docs/CONTROL_PARAMETERS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "model_profiles_model_profiles",
+      "label": "Model Profiles",
+      "file_type": "document",
+      "source_file": "docs/MODEL_PROFILES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "model_profiles_capability_tiers",
+      "label": "Capability Tiers",
+      "file_type": "document",
+      "source_file": "docs/MODEL_PROFILES.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ralph_loop_ralph_loop",
+      "label": "Ralph Improvement Loop",
+      "file_type": "document",
+      "source_file": "docs/RALPH_LOOP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "implementation_plan_audit_plan_audit",
+      "label": "Implementation Plan Audit",
+      "file_type": "document",
+      "source_file": "docs/IMPLEMENTATION_PLAN_AUDIT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "test_quality_audit_test_audit",
+      "label": "Test Quality Audit",
+      "file_type": "document",
+      "source_file": "docs/TEST_QUALITY_AUDIT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "phase_code_review_phase_review",
+      "label": "Phase Code Review",
+      "file_type": "document",
+      "source_file": "docs/PHASE_CODE_REVIEW.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "skill_migration_skill_migration",
+      "label": "Skill Migration Workflow",
+      "file_type": "document",
+      "source_file": "docs/SKILL_MIGRATION.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "small_context_workflows_small_context",
+      "label": "Small-Context Workflows",
+      "file_type": "document",
+      "source_file": "docs/SMALL_CONTEXT_WORKFLOWS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "runtime_stability_runtime_stability",
+      "label": "Runtime Stability",
+      "file_type": "document",
+      "source_file": "docs/RUNTIME_STABILITY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "user_guide_contextsmith",
+      "target": "examples_prompt_engineer",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/USER_GUIDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "user_guide_contextsmith",
+      "target": "examples_instruction_engineer",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/USER_GUIDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "user_guide_contextsmith",
+      "target": "examples_agent_evaluator",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/USER_GUIDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "user_guide_contextsmith",
+      "target": "examples_skill_engineer",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/USER_GUIDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "user_guide_contextsmith",
+      "target": "examples_skill_migrator",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/USER_GUIDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "examples_instruction_engineer",
+      "target": "agents_md_guide_agents_md",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/EXAMPLES.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "control_parameters_modes",
+      "target": "ralph_loop_ralph_loop",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/CONTROL_PARAMETERS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "control_parameters_context_length",
+      "target": "small_context_workflows_small_context",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/CONTROL_PARAMETERS.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "model_profiles_model_profiles",
+      "target": "model_profiles_capability_tiers",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/MODEL_PROFILES.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "examples_agent_evaluator",
+      "target": "implementation_plan_audit_plan_audit",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/EXAMPLES.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "examples_agent_evaluator",
+      "target": "test_quality_audit_test_audit",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/EXAMPLES.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "phase_code_review_phase_review",
+      "target": "control_parameters_modes",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "docs/PHASE_CODE_REVIEW.md",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "skill_migration_skill_migration",
+      "target": "examples_skill_migrator",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/SKILL_MIGRATION.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "runtime_stability_runtime_stability",
+      "target": "control_parameters_context_length",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/RUNTIME_STABILITY.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "small_context_workflows_small_context",
+      "target": "agents_md_guide_agents_md",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/SMALL_CONTEXT_WORKFLOWS.md",
+      "source_location": null,
+      "weight": 0.7
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 23630,
+  "output_tokens": 5088,
+  "failed_chunks": 0
+}

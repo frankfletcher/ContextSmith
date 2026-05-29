@@ -1,0 +1,495 @@
+{
+  "nodes": [
+    {
+      "id": "skill_local_model_instruction_engineer",
+      "label": "Local Model Instruction Engineer Skill",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "reference_manifest_references",
+      "label": "Reference Manifest Dependencies",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "coding_standards_repo_aware_first_rule",
+      "label": "Repo-Aware First Rule",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/coding-standards.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "context_management_context_modes",
+      "label": "Context Modes Classification",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/context-management.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "control_parameters_parsing_rules",
+      "label": "Control Parameter Parsing Rules",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/control-parameters.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "loop_safety_core_loop_rules",
+      "label": "Agentic Loop Safety Rules",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/loop-safety.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "git_safety_hard_rule",
+      "label": "Git Safety Hard Rule",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/git-safety.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "targeted_context_length_context_tiers",
+      "label": "Targeted Context Length Tiers",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/targeted-context-length.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "phased_planning_granularity_rule",
+      "label": "Phased Planning Granularity Rule",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/phased-planning.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "persistent_task_state_directory_layout",
+      "label": "Persistent Task State Directory Layout",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/persistent-task-state.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "output_location_priority_order",
+      "label": "Canonical Output Location Priority",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/output-location.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "model_capability_tiers_small_local",
+      "label": "Small-Local Model Capability Tier",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/model-capability-tiers.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "evaluation_rubrics_grade_meanings",
+      "label": "Evaluation Rubric Grade Meanings",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/evaluation-rubrics.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "side_effect_matrix_action_types",
+      "label": "Side-Effect Matrix Action Types",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/side-effect-matrix.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "domain_intent_domain_defaults",
+      "label": "Domain Intent Defaults",
+      "file_type": "document",
+      "source_file": "skills/local-model-instruction-engineer/references/domain-intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "reference_manifest_references",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "coding_standards_repo_aware_first_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "context_management_context_modes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "control_parameters_parsing_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "loop_safety_core_loop_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "git_safety_hard_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "targeted_context_length_context_tiers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "phased_planning_granularity_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "persistent_task_state_directory_layout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "output_location_priority_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "model_capability_tiers_small_local",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "evaluation_rubrics_grade_meanings",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "side_effect_matrix_action_types",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "skill_local_model_instruction_engineer",
+      "target": "domain_intent_domain_defaults",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "coding_standards_repo_aware_first_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "context_management_context_modes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "control_parameters_parsing_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "loop_safety_core_loop_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "git_safety_hard_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "targeted_context_length_context_tiers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "phased_planning_granularity_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "persistent_task_state_directory_layout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "output_location_priority_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "model_capability_tiers_small_local",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "evaluation_rubrics_grade_meanings",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "side_effect_matrix_action_types",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "reference_manifest_references",
+      "target": "domain_intent_domain_defaults",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "skills/local-model-instruction-engineer/reference_manifest.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "phased_planning_granularity_rule",
+      "target": "persistent_task_state_directory_layout",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "skills/local-model-instruction-engineer/references/phased-planning.md",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "persistent_task_state_directory_layout",
+      "target": "output_location_priority_order",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "skills/local-model-instruction-engineer/references/persistent-task-state.md",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "targeted_context_length_context_tiers",
+      "target": "phased_planning_granularity_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "skills/local-model-instruction-engineer/references/targeted-context-length.md",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "model_capability_tiers_small_local",
+      "target": "loop_safety_core_loop_rules",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "skills/local-model-instruction-engineer/references/model-capability-tiers.md",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "side_effect_matrix_action_types",
+      "target": "git_safety_hard_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "skills/local-model-instruction-engineer/references/side-effect-matrix.md",
+      "source_location": null,
+      "weight": 0.7
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 26308,
+  "output_tokens": 6671,
+  "failed_chunks": 0
+}

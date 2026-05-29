@@ -7,4 +7,11 @@ dist/
 
 # Staged skills
 .agent_work/staged_skills/*
+
+# temp files
 tmp
+
+# Graphify intermediate files and folders
+graphify-out/manifest.json
+graphify-out/cost.json
+graphify-out/cache/
