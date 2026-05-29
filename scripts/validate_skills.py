@@ -121,5 +121,68 @@ for skill in sorted(skills.iterdir()):
     warnings += manifest_warns
     errors += manifest_errors
 
+def validate_artifact_manifest_ref(skill_dir, skill_name, text):
+    """Validate that engineer skills reference artifact-manifest.md in generation instructions."""
+    # Only check the three engineer skills
+    engineer_skills = {'local-model-prompt-engineer', 'local-model-skill-engineer', 'local-model-instruction-engineer'}
+    if skill_name not in engineer_skills:
+        return 0, 0
+
+    warn = 0
+    err = 0
+
+    # Check that SKILL.md mentions artifact-manifest.md (the manifest generation rule)
+    if 'artifact-manifest' not in text.lower():
+        print(f"ERROR {skill_name}: missing reference to artifact-manifest in generation instructions")
+        err += 1
+
+    # Check that SKILL.md mentions behavioral-contracts.md
+    if 'behavioral-contract' not in text.lower():
+        print(f"WARN {skill_name}: missing reference to behavioral-contracts.md")
+        warn += 1
+
+    # Check that references/artifact-manifest.md exists in the skill's references/
+    manifest_ref = skill_dir / 'references' / 'artifact-manifest.md'
+    if not manifest_ref.exists():
+        print(f"ERROR {skill_name}: references/artifact-manifest.md not found")
+        err += 1
+
+    return warn, err
+
+
+def validate_shared_reference_format(filepath):
+    """Validate shared reference files use ATX headings, no YAML frontmatter."""
+    warn = 0
+    err = 0
+    text = filepath.read_text()
+
+    # Check for YAML frontmatter (shared refs should not have it)
+    if text.startswith('---\n') and '---' in text[:500]:
+        # Could be a skill file with frontmatter - skip those
+        if re.match(r'^---\n(.*?)\n---\n', text, re.S):
+            return 0, 0
+
+    # Check that the file starts with an ATX heading (# )
+    first_line = text.split('\n')[0].strip() if text else ''
+    if first_line and not first_line.startswith('#'):
+        print(f"WARN {filepath.name}: does not start with ATX heading")
+        warn += 1
+
+    return warn, err
+
+
+# Validate new shared references for correct format
+shared_dir = root / 'shared'
+new_refs = ['artifact-manifest.md', 'behavioral-contracts.md', 'parameter-narrowing-rules.md']
+for ref_name in new_refs:
+    ref_path = shared_dir / ref_name
+    if ref_path.exists():
+        rw, re_ = validate_shared_reference_format(ref_path)
+        warnings += rw
+        errors += re_
+    else:
+        print(f"ERROR shared/: {ref_name} not found")
+        errors += 1
+
 print('Validation complete')
 sys.exit(1 if errors else 0)

@@ -7,9 +7,9 @@ metadata:
   target: local-open-weight-models
 ---
 
-## Default Parameters
+## Parameters and Artifact Manifest
 
-When generating instructions, the following default parameters are used unless overridden:
+Default parameter values for generated instruction files:
 
 | Parameter | Default |
 |-----------|---------|
@@ -20,11 +20,13 @@ When generating instructions, the following default parameters are used unless o
 | --ralph | 2 |
 | --harness | opencode |
 
+Every generated instruction file (AGENTS.md, CLAUDE.md, etc.) MUST include an `## Artifact Manifest` section per `references/artifact-manifest.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing when child scope is more constrained with justification (`narrowed`), (4) selecting references using the Artifact Type -> Default References Matrix — instruction files always include instruction-deduplication, instruction-precedence, loop-safety, git-safety, conditionally domain-profiles and coding-standards, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
+
 # Local Model Instruction Engineer
 
 Create, optimize, audit, and maintain repository or agent instruction files such as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursorrules`, OpenCode/Hermes/OpenClaw instructions, and project-specific agent guidance.
 
-The primary goal is to produce instructions that are more likely to be reliable for the user's intended use while teaching them how to improve their own instructions. When the user provides specific parameters, use them to guide instruction design decisions and educate the user on how those parameters affect instruction engineering. Use this skill for tasks such as creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
+The primary goal is to produce instructions that are more likely to be reliable for the user's intended use while teaching them how to improve their own instructions. When the user provides specific parameters, use them to guide instruction design decisions and educate the user on how those parameters affect instruction engineering. Use this skill for tasks such as creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
 
 The primary output is a set of instruction files tailored to the user's project and goals, along with an educational report explaining the changes made, safeguards implemented, and how the user's parameters influenced the instruction design.
 
@@ -211,6 +213,16 @@ If the user asks about local model loops, server settings, speculative decoding,
 ## Files Written
 ```
 
+
+## Artifact Manifest Propagation
+
+Generated instruction files propagate parameters and references through the chain per `references/artifact-manifest.md`. Child artifacts inherit parent parameters, may narrow with justification (see `references/parameter-narrowing-rules.md`), must never widen without documented reason.
+
+When generating AGENTS.md or similar:
+- Inherit target-profile from user request (`user-set`)
+- Always include instruction-deduplication, instruction-precedence, loop-safety, git-safety references
+- Add coding-standards reference for coding repos, domain-profiles for specialized domains
+- Include behavioral contracts for all referenced safeguards
 
 ## Documentation Quality
 

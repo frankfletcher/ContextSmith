@@ -7,9 +7,9 @@ metadata:
   target: local-open-weight-models
 ---
 
-## Default Parameters
+## Parameters and Artifact Manifest
 
-When generating skills, the following default parameters are used unless overridden:
+Default parameter values for generated skills:
 
 | Parameter | Default |
 |-----------|---------|
@@ -19,6 +19,8 @@ When generating skills, the following default parameters are used unless overrid
 | --education_level | deep |
 | --ralph | 2 |
 | --harness | opencode |
+
+Every generated SKILL.md MUST include an `## Artifact Manifest` section per `references/artifact-manifest.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing when child scope is more constrained with justification (`narrowed`), (4) selecting references using the Artifact Type -> Default References Matrix — generated skills always include control-parameters, loop-safety, skill-interoperability, conditionally upstream-artifact-audit and reference-optimization, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
 
 # Local Model Skill Engineer
 
@@ -187,6 +189,16 @@ Check:
 ## Files Written
 ```
 
+
+## Artifact Manifest Propagation
+
+Generated SKILL.md files propagate parameters and references through the chain per `references/artifact-manifest.md`. Child artifacts inherit parent parameters, may narrow with justification (see `references/parameter-narrowing-rules.md`), must never widen without documented reason.
+
+When converting or migrating an existing skill:
+- Inherit target-profile and harness from user request (`user-set`)
+- Add skill-interoperability and upstream-artifact-audit references
+- Include behavioral contracts for loop-safety, context-management, and task-state-hygiene
+- Append custom contracts for the skill's specific domain
 
 ## Documentation Quality
 
