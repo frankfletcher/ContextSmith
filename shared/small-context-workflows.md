@@ -20,6 +20,16 @@ For `targeted_context_length <= 32k`:
 - End every phase with phase compression/debrief.
 - Save `NEXT_PROMPT.md` so the next session can resume without the full chat.
 
+For tool-heavy work under tight or moderate targets (`targeted_context_length <= 64k`):
+
+- Forecast expected tool calls before execution.
+- Reserve 50-65% of context for tool output, validation, recovery, and closeout.
+- Prefer one phase per fresh session.
+- Split discovery, editing, and validation into separate phases when tool output would dominate the transcript.
+- Stop and compact when actual tool use exceeds the forecast instead of expanding the phase.
+
+For large and very-large targets (`targeted_context_length > 64k`), still forecast tool use and compact raw output. Larger windows permit larger phases, but they do not make raw search results, validation logs, or repeated recovery attempts good long-term memory.
+
 For `targeted_context_length <= 16k`:
 
 - Use micro-phases.
@@ -35,18 +45,22 @@ Start the new session with:
 
 1. `TASK.md`
 2. `STATUS.md`
-3. `CHECKLIST.md`
-4. `DECISIONS.md`
-5. `CONTEXT.md`
-6. the current phase's `NEXT_PROMPT.md`
+3. current `PLAN.md` phase section
+4. `CONTEXT.md` carry-forward notes and tool ledger
+5. `DECISIONS.md`
+6. `CHECKLIST.md`
+7. the current phase's `NEXT_PROMPT.md`
 
-Do not reload old iterations, raw logs, or full chat history unless needed.
+Do not reload old iterations, raw logs, full `PHASE_LOG.md`, full `ARTIFACTS.md`, broad search output, or full chat history unless blocked.
 
 ## Compaction Trigger
 
 Compact or start a new session when:
 
+- actual tool calls exceed the phase forecast by 50%
 - tool output dominates the context
+- validation output is large enough that only summarized failures remain useful
+- new discovery is required after edits have started
 - the model repeats old mistakes
 - phase goals drift
 - more than one failed strategy has accumulated

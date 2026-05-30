@@ -47,6 +47,7 @@ Use:
 - aggressive selective reading
 - persistent task state by default for complex work
 - phase compression and debrief
+- tool-use forecasts before phase execution
 - subagents only for tightly scoped summarization/validation
 - graph/index/search before raw context loading
 - references instead of inline long templates
@@ -70,6 +71,7 @@ Use:
 - more but smaller phases
 - persistent task state by default for complex work
 - phase compression and debrief
+- tool-use forecasts for implementation phases
 - references instead of inline long templates
 
 Avoid:
@@ -83,18 +85,28 @@ Allow richer templates and examples when useful, but still reserve context for t
 
 ## Budget Rule
 
-Reserve 25-35% of the stated context length for:
+Reserve context before planning phase scope:
 
-- tool results
-- validation output
-- final answer
-- error recovery
-- active task state
+- read-only or analysis-heavy phases: reserve 25-35% for tool results, validation output, final answer, error recovery, and active task state
+- tool-heavy phases such as coding, editing, migration, validation, or broad discovery: reserve 50-65% for tool output, validation output, failed attempts, recovery, and closeout state
 
-If the planned artifact would exceed the usable budget, split into more phases, externalize state, compress references, or stage the work.
+If tool calls are expected to dominate the transcript, size the phase against the remaining usable phase budget, not the headline context target. Typical tool-heavy executable phase budgets are:
+
+| Target | Typical Executable Phase Budget | Planning Consequence |
+|---:|---:|---|
+| 32k | 12k-16k | Use micro-phases and fresh sessions. |
+| 64k | 24k-32k | Split discovery, editing, and validation. |
+| 128k | 48k-64k | Larger phases are possible, but tool forecasts still gate execution. |
+| 256k | 96k-128k | Broad context is available, but raw tool transcripts still need compaction. |
+
+If the harness injects large system prompts, skill content, or repo instructions, narrow the executable budget further.
+
+If the planned artifact would exceed the usable budget, split into more phases, externalize state, compress references, forecast tool use more narrowly, or stage the work.
 
 ## Phase Granularity Rule
 
 Increase phase granularity when context length is tiny/tight or moderate, the project is large, the task spans multiple subsystems, validation is complex, or interruption is likely.
 
 For a large Windows/macOS-to-Linux port under a 32k target, prefer 10-30 smaller phases with durable handoff notes over a 3-phase plan.
+
+For tool-heavy work under tight or moderate targets, prefer discovery/edit/validation separation and fresh-session phase execution when expected tool output would consume the reserve. For large and very-large targets, keep tool forecasts and compaction triggers because raw tool transcripts can still dominate long sessions.

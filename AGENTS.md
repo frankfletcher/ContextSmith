@@ -49,6 +49,7 @@ Note: The validation script requires PyYAML. Install with `pip install pyyaml` i
 
 ### Adding or editing docs
 - User-facing docs go in `docs/`. Use the project voice from `.agent_work/contextsmith_mem.md` and `shared/documentation-quality.md`.
+- Agent workflow artifacts, including Superpowers specs and plans, must go under `.agent_work/`, not `docs/`. This overrides any external skill default that suggests `docs/superpowers/...`. The `docs/` tree is only for user-facing package documentation.
 
 ## Coding Standards
 
@@ -104,6 +105,7 @@ Before editing, check `git status --short`. Do not overwrite user changes. If a 
 
 - Do not edit files outside the workspace without explicit approval.
 - `skills/` and `shared/` are the core package. Treat `docs/` as derivative (user-facing documentation derived from the reference content).
+- Do not place transient plans, specs, scratch notes, or other agent workflow artifacts under `docs/`; use `.agent_work/` for those artifacts.
 - `docs/contributing/documentation-style.md` and `docs/contributing/documentation-review-checklist.md` are the voice/style authority for user-facing docs.
 - `shared/` files are the canonical source for agent-facing references. Skills must not redefine concepts that `shared/` already defines.
 

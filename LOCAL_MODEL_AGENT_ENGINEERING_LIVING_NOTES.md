@@ -316,6 +316,24 @@ Implemented response:
 - [ ] GitHub Actions validation workflow
 - [ ] Example outputs for each skill
 
+## v1.5.1 Living Notes Update
+
+### Implemented in this pass
+
+- [x] Forecast-then-compact context budget guidance — phases must forecast tool use, reserve 50-65% context for tool output, and compact when forecasts are exceeded.
+- [x] Executable phase budget tables for all target ranges: 32k, 64k, 128k, and 256k.
+- [x] Tool forecast realism audit questions in implementation-plan audit rubric.
+- [x] Fresh-session phase execution for tight/moderate targets; compaction guidance for large targets.
+- [x] `.agent_work/` override in `AGENTS.md` — agent workflow artifacts belong under `.agent_work/`, not `docs/`.
+- [x] Added `.agent_work/superpowers/` to `.gitignore`.
+
+### Future ideas retained
+
+- [ ] `scripts/check_no_duplicate_rules.py`
+- [ ] `scripts/check_references.py`
+- [ ] GitHub Actions validation workflow
+- [ ] Example outputs for each skill
+
 ## Documentation and Onboarding
 
 - [x] Keep README as a project documentation landing page instead of a full manual.

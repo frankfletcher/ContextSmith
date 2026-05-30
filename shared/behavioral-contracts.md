@@ -10,9 +10,13 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 
 **Phased Planning - Phase Granularity:** Phase count must scale with complexity. Prefer 6-20 phases for large tasks. For `targeted_context_length <= 32k`, prefer more smaller phases. Each phase must fit within the context window.
 
+**Phased Planning - Tool Forecast:** Tool-heavy implementation phases MUST include a context contract with phase type, usable phase budget, tool-output reserve, expected search/read/edit/bash/validation calls, compaction trigger, fresh-session rule, and stop-if-forecast-exceeded rule. Split phases that combine broad discovery, editing, and validation under tight or moderate context.
+
 **Phased Planning - 12-Step Closeout:** (1) Update STATUS.md, (2) Check off PLAN.md items, (3) Record durable decisions in DECISIONS.md, (4) Record changed files/commands in ARTIFACTS.md, (5) Add compact notes to PHASE_LOG.md, (6) Write carry-forward and do-not-carry-forward notes, (7) Update NEXT_PROMPT.md, (8) Run phase compression and update CONTEXT.md for next phase, (9) Run validation checks — if any fail, set STATUS to "Blocked" and exit, (10) Run implementation plan audit for next phase — if fails, set STATUS to "Blocked" and exit, (11) Include test quality audit for coding work — if fails, set STATUS to "Blocked" and exit, (12) If stop condition met, set STATUS to "Completed" and exit.
 
 **Implementation Plan Audit - Gates:** Before executing each phase, grade the next-phase plan on: phase granularity, atomicity, dependency ordering, context fit, validation strength, task-state integration, handoff quality, rollback/recovery, test strategy, small-model readiness. Block on failure (grade below C). Output: recommendation + must-fix items.
+
+**Implementation Plan Audit - Tool Budget:** Block or split a tool-heavy phase when expected tool use cannot fit the usable phase budget, validation/recovery output is omitted, compaction triggers are missing, broad search is expected after edits begin, or fresh-session behavior is missing for tool-heavy work under tight/moderate targets. Large targets still require tool forecasts and raw-output compaction.
 
 **Test Quality Audit - Requirements:** Tests must cover baseline use cases, realistic edge cases, failure modes (invalid input, missing data, bad state), and changed behavior. Assertions must be specific enough to catch wrong behavior. Avoid: tests that only check imports, tests that only check "no throw", mocking the method being tested, asserting on implementation details instead of user-visible behavior.
 
@@ -56,9 +60,13 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 
 **Phase Compression - Rules:** Summarize, do not paste raw logs or tool output. Do-Not-Carry-Forward entries prevent the same failed approach from repeating in the next phase.
 
+**Phase Compression - Forecast Exceeded:** Compact or close the phase when actual tool calls exceed forecast by 50%, raw tool output dominates context, validation output grows large, new discovery is needed after edits begin, or the stop condition cannot fit remaining reserve. Handoff with exact evidence anchors, tool ledger, revised next phase, and do-not-carry-forward notes.
+
 **Small Context Workflows - Fresh Session:** When resuming work, load only 6 files: TASK.md, STATUS.md, CHECKLIST.md, DECISIONS.md, CONTEXT.md, NEXT_PROMPT.md. Do not load full chat history or all state files. Use more phases for tighter context budgets.
 
 **Context Management - Budget Allocation:** Reserve context space for tool results and output generation. Reading order matters: load task definition before evidence, load constraints before exploration. Use evidence anchors (file:line references) for re-anchoring in long sessions.
+
+**Context Management - Tool-Heavy Reserve:** Reserve 50-65% of context for tool-heavy coding, migration, validation, or discovery phases. Typical executable phase budgets: `32k -> 12k-16k`, `64k -> 24k-32k`, `128k -> 48k-64k`, `256k -> 96k-128k`. Narrow further when system prompts, skill content, repo instructions, validation, recovery, or closeout consume the reserve.
 
 **Targeted Context Length - Optimization:** Optimize for the stated context budget, not the model's advertised maximum. Affects: verbosity level, phase count (more phases = tighter per-phase budget), example count, report size, and number of files loaded simultaneously.
 

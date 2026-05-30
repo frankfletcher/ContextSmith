@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## v1.5.1
+
+**Released:** 2026-05-30
 
 ### Added
 
@@ -8,7 +10,10 @@
 
 ### Changed
 
-- Bumped all skill versions to 1.5.0.
+- Bumped all skill versions to 1.5.1.
+- Strengthened phased planning and implementation-plan audit guidance with forecast-then-compact context contracts, tool-use forecasts, larger tool-heavy context reserves, fresh-session phase execution, and compaction triggers when tool output exceeds the phase forecast.
+- Broadened context-budget executable phase budgets to cover all target ranges: 32k, 64k, 128k, and 256k.
+- Added `.agent_work/` override in `AGENTS.md`: agent workflow artifacts (Superpowers specs, plans, etc.) belong under `.agent_work/`, not `docs/`.
 
 ## v1.5.0
 

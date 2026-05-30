@@ -19,6 +19,29 @@ Each phase must include:
 - stop condition
 - handoff notes
 
+Implementation phases must also include a compact context contract:
+
+```yaml
+context_contract:
+  targeted_context_length: 64k
+  usable_phase_budget: 32k
+  tool_output_reserve: 32k
+  phase_type: edit-light
+  expected_tool_calls:
+    search: 2
+    read: 4
+    edit: 2
+    bash: 2
+  max_tool_calls_before_compaction: 10
+  max_raw_output_lines_per_call: 200
+  fresh_session_after_phase: true
+  stop_if_forecast_exceeded: true
+```
+
+Use phase types to size the reserve: `read-only`, `discovery-heavy`, `edit-light`, `edit-heavy`, or `validation-heavy`. If a phase is both discovery-heavy and edit-heavy, split it. Discovery should produce an edit map; editing should consume that map without broad repo exploration.
+
+Each tool-heavy phase must include a context fit estimate covering task-state load, search output, file reads, edit/patch attempts, validation output, recovery buffer, and expected active context. If the estimate does not fit the usable phase budget, split the phase before execution.
+
 ## Phase Memory
 
 For long work, require persistent phase memory:
@@ -52,6 +75,8 @@ At the end of each phase:
 11. Include a test quality audit for coding-related work. If it fails, update `STATUS.md` to "Blocked", add details to `DECISIONS.md`, and exit. Use `test-quality-audit.md`
 12. If the stop condition is met, update `STATUS.md` to "Completed" and exit.
 
+During execution, compact or close the phase early when actual tool calls exceed the forecast by 50%, raw tool output dominates useful context, validation output becomes long, new discovery is required after edits begin, or the stop condition cannot fit the remaining reserve. Record the reason and create a narrower next phase instead of silently expanding scope.
+
 ## Ralph Evaluation for Plans
 
 Grade phase plans on:
@@ -75,3 +100,5 @@ For coding, migration, repo-porting, or long-running work, run the implementatio
 Phase count must scale with `targeted_context_length`. For `targeted_context_length <= 32k`, prefer more smaller phases over fewer broad phases. A large Windows/macOS-to-Linux port should usually be closer to 10-25 phases.
 
 Every phase should end with phase compression/debrief and `Do Not Carry Forward` notes.
+
+For tool-heavy work under tight or moderate targets (`targeted_context_length <= 64k`), prefer one fresh session per phase unless the previous phase used few tool calls and produced no large search or validation output. For larger targets, continuing in the same session is acceptable only while the tool ledger stays compact and raw tool output is not carried forward.

@@ -14,6 +14,7 @@ Grade each category A-F.
 - **Atomicity**: Can each step be executed without hidden inference leaps?
 - **Dependency ordering**: Are prerequisites completed before dependent work begins?
 - **Context fit**: Can one phase fit in the stated context budget with tool results and output reserved?
+- **Tool forecast realism**: Does each tool-heavy phase estimate search, read, edit, bash, validation, raw-output, and recovery volume before execution?
 - **Validation strength**: Does each phase define concrete pass/fail checks?
 - **Task-state integration**: Does the plan update TASK, PLAN, STATUS, DECISIONS, CONTEXT, CHECKLIST, ARTIFACTS, PHASE_LOG, and NEXT_PROMPT when needed?
 - **Handoff quality**: Does each phase end with a debrief and clear next prompt?
@@ -33,6 +34,25 @@ Grade each category A-F.
 8. Does the plan include code review/test-quality gates for coding work?
 9. Does the plan identify user-approval points for risky actions?
 10. Does the plan state what can be done in a fresh session?
+11. Does each tool-heavy phase include a `context_contract` with phase type, usable phase budget, expected tool calls, compaction trigger, and stop rule?
+12. Does the context fit estimate include validation output and recovery attempts, not only initial file reads?
+13. Does the phase avoid combining broad discovery, editing, and validation under a tight or moderate context target?
+14. Does the plan stop or compact when actual tool use exceeds the forecast instead of silently expanding scope?
+15. For tool-heavy work under tight or moderate targets (`targeted_context_length <= 64k`), does the plan prefer fresh-session phase execution?
+16. For large or very-large targets, does the plan still forecast tool use and compact raw tool output instead of relying on the full context window?
+
+## Blocking Conditions
+
+Recommend `refine before execution` or `split phases` when:
+
+- a tool-heavy phase lacks a context contract
+- expected tool use cannot fit the usable phase budget
+- validation or recovery output is omitted from the forecast
+- broad discovery, editing, and validation are bundled into one tight-context phase
+- the phase expects broad search after edits begin
+- compaction triggers or stop-if-forecast-exceeded rules are missing
+- fresh-session behavior is missing for tool-heavy work under tight or moderate targets
+- a large or very-large target is used as justification for carrying raw search, validation, or recovery output forward without compaction
 
 ## Output Format
 
@@ -46,6 +66,7 @@ Overall recommendation: ship | refine before execution | split phases | needs us
 | Phase granularity |  |  |
 | Atomicity |  |  |
 | Context fit |  |  |
+| Tool forecast realism |  |  |
 | Validation strength |  |  |
 | Task-state integration |  |  |
 | Handoff quality |  |  |

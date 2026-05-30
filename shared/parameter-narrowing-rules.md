@@ -14,8 +14,12 @@ A narrowing is permitted when the child artifact operates under a more constrain
 
 | Parameter | Parent Value | Child Value | Justification Pattern |
 |-----------|-------------|-------------|----------------------|
+| `targeted_context_length` | 32k | 12k-16k executable phase budget | Tool-heavy micro-phase reserve; use fresh session and compact state |
 | `targeted_context_length` | 64k | 32k | Per-phase tight context budget; each phase must fit in window |
+| `targeted_context_length` | 64k | 24k-32k executable phase budget | Tool-heavy phase reserve after system instructions, task state, validation output, and recovery buffer |
 | `targeted_context_length` | 128k | 48k | Sub-artifact has narrower scope than parent plan |
+| `targeted_context_length` | 128k | 48k-64k executable phase budget | Tool-heavy phase reserve; larger phase allowed but forecast still gates execution |
+| `targeted_context_length` | 256k | 96k-128k executable phase budget | Very-large context reserve; raw tool transcript still requires compaction |
 | `ralph_iterations` | 3 | 2 | Child artifact is intermediate; reserve iterations for final output |
 | `education_level` | deep | standard | Child artifact is a reference summary, not the primary deliverable |
 | `verbosity` | detailed | concise | Child artifact is a status update or debrief, not full report |
@@ -71,7 +75,10 @@ Every narrowing creates a provenance trail through the chain:
 Root Prompt: context-length=128k (user-set)
   -> Implementation Plan: context-length=64k (narrowed from 128k, per-plan budget split)
     -> Phase 1 NEXT_PROMPT.md: context-length=32k (narrowed from 64k, single-phase execution)
+    -> Phase context_contract: usable_phase_budget=24k-32k (tool-heavy reserve inside moderate target)
 ```
+
+For other parent targets, apply the same direction of narrowing: `32k -> 12k-16k`, `128k -> 48k-64k`, and `256k -> 96k-128k` for tool-heavy executable phase budgets. Narrow further when the harness carries large system prompts, skill content, repository instructions, or validation output.
 
 Each artifact's `chain-of` field points to its parent. Tracing the chain reveals the full narrowing history. If a downstream artifact's behavior is unexpected, follow the chain upward to find where parameters were narrowed.
 
@@ -94,6 +101,7 @@ Different artifact types have different default narrowing behaviors:
 |---------------|-------------------|---------------------|
 | Implementation Plan from Prompt | context-length (split across phases), ralph-iterations | mode, target-profile, harness, education-level |
 | NEXT_PROMPT.md from Plan | context-length (single-phase budget) | All plan parameters; adds phase-specific focus params |
+| Phase Context Contract from Plan | usable-phase-budget, tool-output-reserve, max-tool-calls | Targeted context length, phase objective, validation requirements |
 | Generated Skill from Prompt | ralph-iterations (skills are structural, not iterative) | target-profile, harness, reference-policy |
 | Instruction File from Prompt | verbosity (instructions are imperative, concise) | target-profile, loop-safety rules, git-safety rules |
 
