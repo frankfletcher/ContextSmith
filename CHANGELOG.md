@@ -2,9 +2,37 @@
 
 ## Unreleased
 
+### Added
+
+- Added `scripts/publish_release.sh` — create and publish GitHub releases with `gh` CLI. Uploads all dist/ artifacts (individual zips, bundle, SHA-256 checksums, RELEASE_SUMMARY.json), creates annotated git tag, and pushes to remote. Supports dry-run, custom release notes, and prerelease/draft flags.
+
 ### Changed
 
+- Bumped all skill versions to 1.5.0.
+
+## v1.5.0
+
+**Released:** 2026-05-29
+
+### Added
+
+- Added `scripts/build_release.py` — release orchestrator that runs the full pipeline: sync references, update manifests, validate, optional version bump, package all skills, and generate `dist/RELEASE_SUMMARY.json`. CLI flags: `--package`, `--version`, `--dry-run`, `--dist-dir`, `--bundle`.
+- Added `scripts/install_skill.sh` — install a single skill package from a zip file. Extracts to temp directory, verifies MANIFEST.json SHA-256 checksums, compares versions, backs up existing installation with timestamped rename, and copies to target. Default target: `~/.agents/skills/`.
+- Added `scripts/install_all.sh` — batch install all skill packages from a dist directory. Delegates to `install_skill.sh` for each zip and prints a summary table.
+- Added `scripts/test_release.sh` — end-to-end integration test with 74 assertions covering full pipeline, zip contents, SHA-256 checksums, bundle, installation, and idempotent re-install.
+- Added `docs/RELEASE_PROCESS.md` — maintainer guide with prerequisites, step-by-step release checklist, verification commands, and troubleshooting.
+- Added `--bundle` flag to `scripts/build_release.py` — creates `dist/contextsmith-all-bundle.zip` containing all 5 skills as a single download, with `.sha256` checksum.
+
+### Changed
+
+- Updated `scripts/sync_shared_refs.py` with `--update-manifests` flag to recompute and write back stale SHA-1 blob hashes in `reference_manifest.yml`.
+- Updated `scripts/package_skill.sh` with pre-package validation gate, MANIFEST.json generation (SHA-256 per-file checksums), and `.sha256` zip-level checksum files.
+- Updated `README.md` with a package-based installation section and copy-paste commands.
 - Strengthened `local-model-prompt-engineer`, `local-model-instruction-engineer`, `local-model-skill-engineer`, `local-model-skill-migrator`, and `local-model-agent-evaluator` so long-running planning workflows require or audit a concrete task-state directory with `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md`, instead of allowing a single narrative plan file to stand in for persistent state. The guidance now distinguishes allowed planning artifacts from source-code edits, requires resumable `NEXT_PROMPT.md` handoffs, and reinforces compact state hygiene for paths, commands, validation results, decisions, constraints, and next actions.
+
+### Notes
+
+- This release completes the release tooling pipeline: sync, validate, package, bundle, install, test, and publish. The package can now be distributed as individual skill zips or a single all-skills bundle, with SHA-256 checksum verification at every step.
 
 ## v1.4.2
 

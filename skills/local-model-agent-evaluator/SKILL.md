@@ -2,7 +2,7 @@
 name: local-model-agent-evaluator
 description: Audit prompts, skills, AGENTS.md files, repo instructions, agent workflows, model profiles, migration outputs, and long-running plans for local/open-weight model reliability without modifying them by default. Use when the user wants grades, strengths, weaknesses, A-F rubric scoring, context-risk review, loop-safety review, Git/file safety review, data science/ML safeguard review, small-model atomicity review, no-chain-of-thought validation, or targeted context fit review, upstream artifact audits, skill interoperability grading, or recommendations before using an engineer or migrator skill.
 metadata:
-  version: "1.4.2"
+  version: "1.5.0"
   package: ContextSmith
   target: local-open-weight-models
 ---

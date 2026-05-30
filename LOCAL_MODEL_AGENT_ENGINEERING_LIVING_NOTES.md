@@ -22,8 +22,12 @@ Package structure:
 - [x] Detailed invocation examples per tool.
 - [x] Control phrases / keyword cheat sheet.
 - [x] Validation script.
-- [ ] Sync script for shared references.
-- [ ] Release builder script.
+- [x] Sync script for shared references (`scripts/sync_shared_refs.py`).
+- [x] Release builder script (`scripts/build_release.py`).
+- [x] Packaging script (`scripts/package_skill.sh`).
+- [x] Installation scripts (`scripts/install_skill.sh`, `scripts/install_all.sh`).
+- [x] Integration test (`scripts/test_release.sh`).
+- [x] GitHub release publishing script (`scripts/publish_release.sh`).
 - [ ] Webpage / landing page.
 
 ## Implemented Foundation
@@ -215,8 +219,13 @@ Package structure:
 - [x] README quick start examples.
 - [x] Detailed invocation examples per tool.
 - [x] Package validation script.
-- [ ] `scripts/sync_shared_refs.py`.
-- [ ] `scripts/build_release.py`.
+- [x] `scripts/sync_shared_refs.py` — sync shared references to per-skill copies with SHA-1 hash comparison and `--update-manifests` flag.
+- [x] `scripts/build_release.py` — full release pipeline: sync, validate, version bump, package, bundle, summary.
+- [x] `scripts/package_skill.sh` — individual skill packaging with MANIFEST.json and SHA-256 checksums.
+- [x] `scripts/install_skill.sh` — install single skill with checksum verification and backup.
+- [x] `scripts/install_all.sh` — batch install all skills from dist/.
+- [x] `scripts/test_release.sh` — 74-assertion end-to-end integration test.
+- [x] `scripts/publish_release.sh` — create and publish GitHub releases with gh CLI.
 - [ ] `scripts/check_no_duplicate_rules.py`.
 - [ ] `scripts/check_references.py`.
 - [ ] GitHub Actions validation workflow.
@@ -255,7 +264,7 @@ Implemented response:
 - [ ] Build an actual `contextsmith` CLI around the same flags.
 - [ ] Build a local-first UI/workbench after CLI semantics stabilize.
 - [ ] Add harness profiles for OpenCode, Hermes, OpenClaw, Codex, Cursor, Aider, Continue.
-- [ ] Add package sync/release builder scripts for Option C shared-reference copying.
+- [x] Add package sync/release builder scripts for Option C shared-reference copying.
 - [ ] Add a tiny router skill only if users struggle to pick the correct specialized skill.
 
 ## v1.4.0 Living Notes Update
@@ -285,6 +294,27 @@ Implemented response:
 - [ ] Add full behavioral test fixtures for prompts, skills, AGENTS.md files, plans, and test audits.
 - [ ] Consider a tiny router/help skill only if users struggle to choose the correct skill.
 
+
+## v1.5.0 Living Notes Update
+
+### Implemented in this pass
+
+- [x] `scripts/sync_shared_refs.py` — sync shared references to per-skill copies with SHA-1 hash comparison, `--update-manifests` flag for hash recomputation, and `--force` for unconditional overwrite.
+- [x] `scripts/build_release.py` — full release pipeline orchestrator: sync, manifest update, validate, optional version bump, package all skills, optional bundle, and RELEASE_SUMMARY.json generation.
+- [x] `scripts/package_skill.sh` — individual skill packaging with pre-package validation gate, MANIFEST.json (SHA-256 per-file checksums), and `.sha256` zip-level checksum files.
+- [x] `scripts/install_skill.sh` — install single skill from zip with checksum verification, version comparison, and timestamped backup of existing installation.
+- [x] `scripts/install_all.sh` — batch install all skills from dist/ directory.
+- [x] `scripts/test_release.sh` — 74-assertion end-to-end integration test covering full pipeline, zip contents, SHA-256 checksums, bundle, installation, idempotent re-install, and negative cases.
+- [x] `scripts/publish_release.sh` — create and publish GitHub releases with gh CLI. Uploads all dist/ artifacts, creates annotated git tag, and pushes to remote. Supports dry-run, custom release notes, and prerelease/draft flags.
+- [x] `docs/RELEASE_PROCESS.md` — maintainer guide with prerequisites, step-by-step release checklist, verification commands, and troubleshooting.
+- [x] Task-state contract hardening across all 5 skills — long-running planning workflows now require concrete task-state directories instead of single narrative plan files.
+
+### Future ideas retained
+
+- [ ] `scripts/check_no_duplicate_rules.py`
+- [ ] `scripts/check_references.py`
+- [ ] GitHub Actions validation workflow
+- [ ] Example outputs for each skill
 
 ## Documentation and Onboarding
 

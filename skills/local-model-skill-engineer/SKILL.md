@@ -2,7 +2,7 @@
 name: local-model-skill-engineer
 description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, targeted context length control, upstream artifact audits, skill interoperability handling, or skill-auditor-style quality checks.
 metadata:
-  version: "1.7.2"
+  version: "1.5.0"
   package: ContextSmith
   target: local-open-weight-models
 ---

@@ -1,5 +1,5 @@
 skill: local-model-agent-evaluator
-version: 1.0.0
+version: 1.5.0
 description: Shared reference dependencies for the Agent Evaluator skill.
 references:
 - source: shared/git-safety.md
@@ -39,7 +39,7 @@ references:
   version: 5f23b65f19c071b96b301b1dfafeae4d1445e11d
   required: true
 - source: shared/persistent-task-state.md
-  version: 9cc4bee5a65abac4769aac366afa508949fb7951
+  version: d7d693864419cd9c79fc15eab991a471e6ce50de
   required: true
 - source: shared/implementation-plan-audit.md
   version: 7db3715918ec8939606a7d7286356bc1c0adfd4c
@@ -48,7 +48,7 @@ references:
   version: 1cfacccbc756bfeba29912f74cdad5d0baba80ec
   required: true
 - source: shared/planner-executor-workflows.md
-  version: 79bf52190d69eaa243fd0d3279d244dffde61dc2
+  version: de7a46821fdfe26f71cee53bbedf1b2d526d8887
   required: true
 - source: shared/small-context-workflows.md
   version: dac58d2f0715f0ce2bf428d502632b3733d720ee
@@ -63,7 +63,7 @@ references:
   version: b6e069d250ff2c749e81a39deec1a9b8a06403ca
   required: true
 - source: shared/output-location.md
-  version: 947121b0780f3d8b1f2f1b146e26ab6f530bab0a
+  version: 05578904e3553f62fe4c057d95ce423169d2f1ee
   required: true
 - source: shared/model-profiles/qwen36.md
   version: e145d6042e7022cf864f18724dcd69e227cbda71
@@ -118,13 +118,13 @@ references:
   version: b3212b4a28834d78ccd4112460f145bfe1b33fde
   required: true
 - source: shared/git-hygiene.md
-  version: 1733224ec812f8d68ddea9711d9476528e9077a4
+  version: 2cfd279d185b4f68301015f823266181783bbba6
   required: true
 - source: shared/engineering-metadata.md
   version: 4cdd9e4090b54664ede4418c7601fe82c84cad09
   required: true
 - source: shared/ralph-loop.md
-  version: 42b8ee45b3b2356e4e38e548900a413554cb1b35
+  version: 5950e79ed5008cb26d7bde97db6ab90b0280ae08
   required: true
 - source: shared/subagent-delegation.md
   version: 9fd0a7d429c0e0741e062df55a197b6e219ae939
@@ -139,19 +139,19 @@ references:
   version: 13e79f4f9de2d6b505f7f06d5488c22a1d8fb8bf
   required: true
 - source: shared/control-parameters.md
-  version: d65cd90034824c859658ed83efa6e019201e3ab9
+  version: 4e378b3850b0ddee23e82f95bb145e60d965850d
   required: true
 - source: shared/control-phrases.md
-  version: 7699947de82e57474c89c3e0d2df069efafafc41
+  version: 447247cbab5083cac16f653a1d9eb6cd1d2d08f3
   required: true
 - source: shared/help-mode.md
   version: d357885a1db9119791916dcef1d140b9cd165fcb
   required: true
 - source: shared/usage-patterns.md
-  version: c647ae5b5f9f050a705e20043e872b545787ec63
+  version: 4c640a1e38ef153a9e7ef56b3323b630c336d431
   required: true
 - source: shared/run-configuration-preview.md
-  version: 7e1436e30495cd4ce11a3ed1418ce5cccba27cce
+  version: 4612b87bb23a1ca88b8419145e1fd381b90ca68a
   required: true
 - source: shared/runtime-stability.md
   version: ecaf560bc90c860e4bd92f9d7b76ff75982e5738
@@ -170,4 +170,3 @@ references:
   required: true
   local: true
   notes: Skill-specific help documentation.
-

@@ -2,7 +2,7 @@
 name: local-model-prompt-engineer
 description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, loop-safety rules, Git/file safety, phased execution, Ralph-loop iteration, targeted context length control, upstream artifact audits, or selecting model-specific prompt guidance from profiles.
 metadata:
-  version: "1.7.2"
+  version: "1.5.0"
   package: ContextSmith
   target: local-open-weight-models
 ---
