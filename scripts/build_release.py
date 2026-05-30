@@ -16,6 +16,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -229,40 +230,70 @@ def step_package(dist_dir, dry_run=False):
 
 
 def step_bundle(dist_dir, dry_run=False):
-    """Create a combined zip containing all individual skill packages."""
+    """Create a release bundle: README, CHANGELOG, docs, skills (with references).
+
+    Stages a curated copy of the usable project into .agent_work/release_bundle/,
+    syncs skill references into the staged skills/, then zips it all.
+    """
     print("\n=== Step F: Bundle ===")
 
     if dry_run:
-        print("  [DRY-RUN] Would create all-skills bundle")
+        print("  [DRY-RUN] Would create release bundle")
         return None
 
-    skills = discover_skills()
-    versions = {}
-    for skill_name in skills:
-        manifest_path = SKILLS_DIR / skill_name / "reference_manifest.yml"
-        version = "0.0.0"
-        if manifest_path.exists():
-            manifest = yaml.safe_load(manifest_path.read_text())
-            version = manifest.get("version", "0.0.0")
-        versions[skill_name] = version
+    staging = REPO_ROOT / ".agent_work" / "release_bundle"
+    if staging.exists():
+        import shutil
+        shutil.rmtree(staging)
+    staging.mkdir(parents=True)
 
-    bundle_name = f"contextsmith-all-bundle.zip"
+    # Copy top-level files
+    for src_name in ("README.md", "CHANGELOG.md"):
+        src = REPO_ROOT / src_name
+        if src.exists():
+            shutil.copy2(src, staging / src_name)
+            print(f"  COPY {src_name}")
+
+    # Copy docs/
+    docs_src = REPO_ROOT / "docs"
+    if docs_src.exists():
+        shutil.copytree(docs_src, staging / "docs")
+        print(f"  COPY docs/")
+
+    # Copy skills/ (SKILL.md only — references synced next)
+    skills = discover_skills()
+    skills_staging = staging / "skills"
+    for skill_name in skills:
+        skill_src = SKILLS_DIR / skill_name
+        skill_dest = skills_staging / skill_name
+        skill_dest.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(skill_src / "SKILL.md", skill_dest / "SKILL.md")
+        print(f"  COPY skills/{skill_name}/SKILL.md")
+
+    # Sync references into staged skills
+    print("  Syncing references into bundle...")
+    ok, _ = run_cmd(
+        [sys.executable, str(REPO_ROOT / "scripts" / "sync_shared_refs.py"),
+         "--all", "--verbose",
+         "--staging-dir", str(skills_staging)],
+        dry_run=False,
+        label="Sync refs",
+    )
+    if not ok:
+        print("ERROR: reference sync failed, aborting bundle")
+        return None
+
+    # Zip the bundle
+    bundle_name = "contextsmith-release.zip"
     bundle_path = dist_dir / bundle_name
 
     with zipfile.ZipFile(bundle_path, "w", zipfile.ZIP_DEFLATED) as bundle:
-        for skill_name in skills:
-            version = versions[skill_name]
-            zip_name = f"{skill_name}-{version}.zip"
-            zip_path = dist_dir / zip_name
-
-            if not zip_path.exists():
-                print(f"  WARN: {zip_name} not found, skipping in bundle")
-                continue
-
-            with zipfile.ZipFile(zip_path) as skill_zip:
-                for info in skill_zip.infolist():
-                    skill_data = skill_zip.read(info.filename)
-                    bundle.writestr(info.filename, skill_data)
+        for root, dirs, files in os.walk(staging):
+            dirs.sort()
+            for fname in sorted(files):
+                fpath = os.path.join(root, fname)
+                arcname = os.path.relpath(fpath, staging)
+                bundle.write(fpath, arcname)
 
     file_count = 0
     total_size = 0
@@ -284,7 +315,7 @@ def step_bundle(dist_dir, dry_run=False):
     print(f"  Checksum: {sha256_name}")
 
     return {
-        "name": "contextsmith-all-bundle",
+        "name": "contextsmith-release",
         "version": "mixed",
         "zip_path": bundle_name,
         "sha256_path": sha256_name,
