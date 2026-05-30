@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """build_release.py — Orchestrate the full release pipeline.
 
-Pipeline: sync → manifest update → validate → (version bump) → package → summary
+Pipeline: sync → manifest update → validate → (version bump) → bundle
+
+By default creates only the release bundle (contextsmith-release.zip).
+Use --individual to also create per-skill zip packages.
 
 Usage:
     python scripts/build_release.py --package
     python scripts/build_release.py --package --dry-run
     python scripts/build_release.py --package --version 1.1.0
+    python scripts/build_release.py --package --individual
     python scripts/build_release.py --package --dist-dir /tmp/release
 """
 
@@ -241,6 +245,8 @@ def step_bundle(dist_dir, dry_run=False):
         print("  [DRY-RUN] Would create release bundle")
         return None
 
+    dist_dir.mkdir(parents=True, exist_ok=True)
+
     staging = REPO_ROOT / ".agent_work" / "release_bundle"
     if staging.exists():
         import shutil
@@ -324,7 +330,7 @@ def step_bundle(dist_dir, dry_run=False):
     }
 
 
-def generate_summary(dist_dir, dry_run=False, bundle_entry=None):
+def generate_summary(dist_dir, dry_run=False, bundle_entry=None, individual=False):
     """Generate RELEASE_SUMMARY.json and print formatted table."""
     print("\n=== Release Summary ===")
 
@@ -336,6 +342,9 @@ def generate_summary(dist_dir, dry_run=False, bundle_entry=None):
     entries = []
 
     for skill_name in skills:
+        if not individual:
+            continue
+
         manifest_path = SKILLS_DIR / skill_name / "reference_manifest.yml"
         version = "0.0.0"
         if manifest_path.exists():
@@ -416,7 +425,7 @@ def main():
             "  python scripts/build_release.py --package\n"
             "  python scripts/build_release.py --package --dry-run\n"
             "  python scripts/build_release.py --package --version 1.1.0\n"
-            "  python scripts/build_release.py --package --bundle\n"
+            "  python scripts/build_release.py --package --individual\n"
             "  python scripts/build_release.py --package --dist-dir /tmp/release\n"
         ),
     )
@@ -437,7 +446,13 @@ def main():
     parser.add_argument(
         "--bundle",
         action="store_true",
-        help="Create a combined zip containing all skill packages",
+        default=True,
+        help="Create release bundle (default)",
+    )
+    parser.add_argument(
+        "--individual",
+        action="store_true",
+        help="Also create individual per-skill zip packages",
     )
     parser.add_argument(
         "--dist-dir",
@@ -474,7 +489,8 @@ def main():
             ("Version bump", lambda: step_version_bump(args.version, args.dry_run))
         )
 
-    steps.append(("Package", lambda: step_package(dist_dir, args.dry_run)))
+    if args.individual:
+        steps.append(("Package", lambda: step_package(dist_dir, args.dry_run)))
 
     bundle_entry = [None]
     if args.bundle:
@@ -486,7 +502,7 @@ def main():
             return True
         steps.append(("Bundle", bundle_step))
 
-    steps.append(("Summary", lambda: generate_summary(dist_dir, args.dry_run, bundle_entry[0])))
+    steps.append(("Summary", lambda: generate_summary(dist_dir, args.dry_run, bundle_entry[0], args.individual)))
 
     for name, fn in steps:
         try:

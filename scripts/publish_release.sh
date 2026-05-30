@@ -159,7 +159,6 @@ do_build() {
   local build_cmd=(
     python3 "${REPO_ROOT}/scripts/build_release.py"
     --package
-    --bundle
     --dist-dir "$ACTUAL_DIST"
   )
 
