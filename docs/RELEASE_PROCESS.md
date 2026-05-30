@@ -198,17 +198,73 @@ ls -t ~/.agents/skills/ | grep backup | tail -n +3 | xargs rm -rf
 
 This keeps the two most recent backups.
 
+## Publishing to GitHub
+
+### Automated publish
+
+```bash
+# Build and publish in one command
+bash scripts/publish_release.sh 1.5.0
+
+# Dry-run (no changes)
+bash scripts/publish_release.sh 1.5.0 --dry-run
+
+# Build only, skip GitHub push (for manual review)
+bash scripts/publish_release.sh 1.5.0 --skip-push
+
+# Prerelease
+bash scripts/publish_release.sh 1.5.0-rc.1 --prerelease
+
+# Draft release
+bash scripts/publish_release.sh 1.5.0 --draft
+
+# Custom release notes
+bash scripts/publish_release.sh 1.5.0 --notes my-notes.md
+```
+
+The publish script:
+1. Builds the release (calls `build_release.py --package --bundle`)
+2. Verifies all SHA-256 checksums
+3. Creates an annotated git tag
+4. Pushes the tag to origin
+5. Creates the GitHub release via `gh` CLI
+6. Uploads all dist/ artifacts (zips, checksums, RELEASE_SUMMARY.json)
+
+### Manual publish
+
+If you prefer to publish manually:
+
+```bash
+# Build
+python scripts/build_release.py --package --bundle
+
+# Verify
+sha256sum -c dist/*.sha256
+
+# Tag and push
+git tag -a v1.5.0 -m "ContextSmith v1.5.0"
+git push origin v1.5.0
+
+# Create release
+gh release create v1.5.0 \
+  --title "ContextSmith v1.5.0" \
+  --notes-file <notes.md> \
+  dist/*.zip dist/*.sha256 dist/RELEASE_SUMMARY.json
+```
+
 ## Pipeline Architecture
 
 ```
-build_release.py
-├── sync_shared_refs.py   (steps A, B)
-├── validate_skills.py    (step C)
-├── package_skill.sh      (step E, per skill)
-└── generates RELEASE_SUMMARY.json (step F)
+publish_release.sh
+└── build_release.py
+    ├── sync_shared_refs.py   (steps A, B)
+    ├── validate_skills.py    (step C)
+    ├── package_skill.sh      (step E, per skill)
+    └── generates RELEASE_SUMMARY.json (step F)
 
 install_skill.sh          (standalone, consumes dist/ packages)
 install_all.sh            (standalone, delegates to install_skill.sh)
+test_release.sh           (integration test, 74 assertions)
 ```
 
 Scripts delegate via `subprocess.run()` or direct bash invocation — no logic duplication. Changes to an underlying script automatically propagate to the pipeline.
