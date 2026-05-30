@@ -261,7 +261,9 @@ with open('${changelog}', 'r') as f:
 
 # Find the section for this version
 version = '${VERSION}'
-pattern = rf'## v?{re.escape(version)}\s*\n(?:\*\*Released:\*\*.*?\n)?\s*\n(.*?)(?=^## [^#]|\Z)'
+# Strip prerelease suffix (e.g., 1.5.0-rc.1 -> 1.5.0) for changelog lookup
+base_version = re.sub(r'-(rc|alpha|beta|dev)\.\d+$', '', version, flags=re.IGNORECASE)
+pattern = rf'## v?{re.escape(base_version)}\s*\n(?:\*\*Released:\*\*.*?\n)?\s*\n(.*?)(?=^## [^#]|\Z)'
 match = re.search(pattern, content, re.DOTALL | re.MULTILINE)
 
 if match:
