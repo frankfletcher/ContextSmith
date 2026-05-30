@@ -4,6 +4,7 @@ skills/*/references/*
 
 # Generated distribution artifacts
 dist/
+.agent_work/release_bundle/
 
 # Staged skills
 .agent_work/staged_skills/*
