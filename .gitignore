@@ -19,3 +19,4 @@ graphify-out/cache/
 
 # Superpowers agent workflow artifacts
 .agent_work/superpowers/
+scripts/__pycache__/
