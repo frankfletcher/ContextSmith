@@ -471,6 +471,11 @@ def main():
     print(f"ContextSmith Release Builder")
     print(f"Repo: {REPO_ROOT}")
     print(f"Dist: {dist_dir}")
+
+    # Clean dist directory to avoid stale artifacts
+    if not args.dry_run and dist_dir.exists():
+        shutil.rmtree(dist_dir)
+        print(f"Cleaned {dist_dir}")
     if args.version:
         print(f"Version bump: {args.version}")
     if args.dry_run:

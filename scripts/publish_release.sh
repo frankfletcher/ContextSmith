@@ -156,6 +156,14 @@ check_prerequisites() {
 do_build() {
   echo "=== Step 1: Build release ==="
 
+  # Clean dist directory to avoid stale artifacts from previous builds
+  if $DRY_RUN; then
+    echo "  [DRY-RUN] Would clean ${ACTUAL_DIST}"
+  elif [[ -d "$ACTUAL_DIST" ]]; then
+    echo "  Cleaning ${ACTUAL_DIST}..."
+    rm -rf "$ACTUAL_DIST"
+  fi
+
   local build_cmd=(
     python3 "${REPO_ROOT}/scripts/build_release.py"
     --package
