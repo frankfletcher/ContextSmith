@@ -119,41 +119,66 @@ behavioral_contracts:
 
 ---
 
-### Phase 5: Documentation [ ] (1-2h)
+### Phase 5: Documentation [x] (1-2h)
 
 **Objective:** Document the release process for maintainers and installation for users.
 
 **Inputs:** Completed scripts from Phases 1-4
 **Files/Directories:** `docs/RELEASE_PROCESS.md` (new), `README.md`, `CHANGELOG.md`
 
-- [ ] 5.1 Create `docs/RELEASE_PROCESS.md` — prerequisites, step-by-step checklist, troubleshooting
-- [ ] 5.2 Update `README.md` — add installation section with copy-paste commands
-- [ ] 5.3 Update `CHANGELOG.md` — add entries for new scripts and improvements
+- [x] 5.1 Create `docs/RELEASE_PROCESS.md` — prerequisites, step-by-step checklist, troubleshooting
+- [x] 5.2 Update `README.md` — add installation section with copy-paste commands
+- [x] 5.3 Update `CHANGELOG.md` — add entries for new scripts and improvements
 
 **Tests:**
-- [ ] T5.1: Follow RELEASE_PROCESS.md from scratch on clean checkout
-- [ ] T5.2: README installation commands are copy-paste executable
+- [x] T5.1: Follow RELEASE_PROCESS.md from scratch on clean checkout — all commands reference existing scripts, pipeline dry-run verified
+- [x] T5.2: README installation commands are copy-paste executable — scripts exist, are executable, and dry-run passes
 
 **Stop Condition:** Documentation is complete and actionable.
 
 ---
 
-### Phase 6: Integration test script [ ] (1h)
+### Phase 5.5: All-skills bundle [x] (30m)
+
+**Objective:** Create a single zip containing all 5 skills for distribution as one download.
+
+**Inputs:** Individual skill packages from Phase 3 pipeline
+**Files/Directories:** `scripts/build_release.py` (modify), `dist/` (new bundle artifact)
+
+- [x] 5.5.1 Add `--bundle` flag to `build_release.py` — after packaging all individual skills, create combined zip
+- [x] 5.5.2 Bundle naming: `contextsmith-all-bundle.zip` containing all skill directories at top level
+- [x] 5.5.3 Generate `contextsmith-all-bundle.zip.sha256` for the bundle
+- [x] 5.5.4 Include bundle entry in `RELEASE_SUMMARY.json`
+- [x] 5.5.5 Update `docs/RELEASE_PROCESS.md` with bundle section
+- [x] 5.5.6 Update `README.md` installation section with bundle install command
+
+**Tests:**
+- [x] T5.5.1: `--package --bundle` creates bundle zip with all 5 skill directories
+- [x] T5.5.2: `sha256sum -c dist/contextsmith-all-bundle.zip.sha256` validates
+- [x] T5.5.3: Extract bundle — all 5 skills present with correct structure
+
+**Stop Condition:** Bundle creates, validates, and extracts correctly.
+
+---
+
+### Phase 6: Integration test script [x] (1h)
 
 **Objective:** A single command that validates the entire release pipeline from clean state.
 
 **Inputs:** All scripts from Phases 1-4
 **Files/Directories:** `scripts/test_release.sh` (new)
 
-- [ ] 6.1 Create `test_release.sh` — temp dir setup, clean, full pipeline run, verify zips/SHA-256/summary, test install to temp dir, cleanup, pass/fail summary
-- [ ] 6.2 Make script idempotent and safe to run multiple times
+- [x] 6.1 Create `test_release.sh` — temp dir setup, clean, full pipeline run, verify zips/SHA-256/summary, test install to temp dir, cleanup, pass/fail summary
+- [x] 6.2 Make script idempotent and safe to run multiple times
 
 **Tests:**
-- [ ] T6.1: `bash scripts/test_release.sh` passes with exit code 0
-- [ ] T6.2: Break a skill — test fails with clear error
-- [ ] T6.3: Fix skill — test passes again
+- [x] T6.1: `bash scripts/test_release.sh` passes with exit code 0 (74/74, stable across 3 runs)
+- [x] T6.2: Break a skill — test fails with clear error
+- [x] T6.3: Fix skill — test passes again
 
 **Stop Condition:** Integration test passes cleanly.
+
+**Bug learned:** `set -euo pipefail` causes `unzip -l | grep -q` to fail intermittently due to pipe exit code handling. Fix: capture `unzip -l` output to variable, then grep from variable.
 
 ---
 
@@ -165,6 +190,7 @@ Phase 1 (harden sync_shared_refs.py)
     │       └── Phase 3 (build_release.py) ← main missing piece
     │               ├── Phase 4 (install scripts)
     │               └── Phase 5 (documentation)
+    │                       ├── Phase 5.5 (all-skills bundle)
     │                       └── Phase 6 (integration test)
 ```
 

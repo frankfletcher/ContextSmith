@@ -68,3 +68,38 @@
 - Downgraded installed MANIFEST.json to v0.9.0, reinstalled v1.0.0 — backup created, new version installed (T4.3)
 - `bash scripts/install_all.sh dist <temp-dir>` — all 10 packages (5 skills x 2 versions) installed, 0 failures (T4.4)
 - `python scripts/validate_skills.py` — passed after all changes
+
+### Phase 5
+- `python scripts/validate_skills.py` — passed after all changes
+- `python scripts/build_release.py --package --dry-run` — pipeline dry-run verified all 5 skills
+- RELEASE_PROCESS.md content verified: all referenced scripts exist, commands are syntactically correct
+- README installation commands verified: scripts exist and are executable
+
+### Phase 5.5
+- `scripts/build_release.py` — added `--bundle` flag and `step_bundle()` function. Creates `contextsmith-all-bundle.zip` with all 5 skill directories at top level, `.sha256` checksum, and RELEASE_SUMMARY.json entry.
+- `scripts/sync_shared_refs.py` — added missing `--update-manifests` flag (Phase 1 was never persisted). Includes `update_manifest_hashes()` function and main() wiring.
+- `docs/RELEASE_PROCESS.md` — added bundle section, `--bundle` CLI example, bundle dist/ entries, and bundle install instructions.
+- `README.md` — updated package-based install section to include `--bundle` flag.
+- `CHANGELOG.md` — added `--bundle` entry under Unreleased > Added.
+
+## Commands Run
+
+### Phase 5.5
+- `python scripts/build_release.py --package --bundle --dry-run` — dry-run verified pipeline order: sync → manifest update → validate → package → bundle → summary
+- `python scripts/build_release.py --package --bundle --dist-dir /tmp/test-bundle` — full pipeline: all 5 skills packaged, bundle created (299 files, 520.7 KB), SHA-256 verified
+- `sha256sum -c /tmp/test-bundle/contextsmith-all-bundle.zip.sha256` — OK
+- `unzip -l /tmp/test-bundle/contextsmith-all-bundle.zip` — all 5 skill directories present
+- `python scripts/sync_shared_refs.py --all --update-manifests --verbose` — updated 37 hashes in 4 manifests
+- `python scripts/validate_skills.py` — passed
+
+### Phase 6
+- `scripts/test_release.sh` — new integration test script (~322 lines). 9 test steps: prerequisites, full pipeline run, zip artifacts, SHA-256 checksums, zip contents, bundle contents, RELEASE_SUMMARY.json, installation, idempotent re-install, installed checksum verification. 74 total assertions.
+- `scripts/package_skill.sh` — minor fix: added `--update-manifests` flag to sync_shared_refs.py call (Phase 1 was never persisted, discovered during Phase 6 testing).
+
+## Commands Run
+
+### Phase 6
+- `bash scripts/test_release.sh` — 74/74 passed, stable across 3 consecutive runs (T6.1)
+- `mv skills/local-model-prompt-engineer/SKILL.md .bak && bash scripts/test_release.sh` — pipeline failed with clear error at Step 1 (T6.2)
+- `mv .bak skills/local-model-prompt-engineer/SKILL.md && bash scripts/test_release.sh` — 74/74 passed after restore (T6.3)
+- `python scripts/validate_skills.py` — passed

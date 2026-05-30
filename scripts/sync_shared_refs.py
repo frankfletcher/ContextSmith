@@ -113,6 +113,44 @@ def sync_skill(source_skill_dir, dest_skill_dir, args):
     return stats
 
 
+def update_manifest_hashes(source_skill_dir, args):
+    """Recompute SHA-1 blob hashes and write back to reference_manifest.yml."""
+    manifest_path = source_skill_dir / 'reference_manifest.yml'
+    if not manifest_path.exists():
+        return {'manifestsUpdated': 0, 'hashesUpdated': 0}
+
+    try:
+        manifest = yaml.safe_load(manifest_path.read_text())
+    except yaml.YAMLError as e:
+        print(f"ERROR {source_skill_dir.name}: invalid YAML in manifest: {e}")
+        return {'manifestsUpdated': 0, 'hashesUpdated': 0}
+
+    hashes_updated = 0
+    for entry in manifest.get('references', []):
+        source = entry.get('source', '')
+        src_path = REPO_ROOT / source
+        if not src_path.exists():
+            continue
+
+        src_hash = compute_blob_hash(src_path)
+        old_hash = entry.get('version', '')
+        if old_hash and old_hash != src_hash:
+            entry['version'] = src_hash
+            hashes_updated += 1
+            if args.verbose:
+                print(f"UPDATE {source_skill_dir.name}: {source} -> {src_hash[:8]}...")
+
+    if hashes_updated > 0:
+        manifest_path.write_text(
+            yaml.dump(manifest, default_flow_style=False, sort_keys=False)
+        )
+        if args.verbose:
+            print(f"WRITTEN {source_skill_dir.name}: updated {hashes_updated} hashes")
+        return {'manifestsUpdated': 1, 'hashesUpdated': hashes_updated}
+
+    return {'manifestsUpdated': 0, 'hashesUpdated': 0}
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Sync shared references to skill directories. "
@@ -134,6 +172,11 @@ def main():
         action="store_true",
         help="Write directly into skills/*/references/ instead of staging dir"
     )
+    parser.add_argument(
+        "--update-manifests",
+        action="store_true",
+        help="Recompute SHA-1 blob hashes and write back to reference_manifest.yml"
+    )
     args = parser.parse_args()
 
     # Resolve staging directory
@@ -143,7 +186,7 @@ def main():
         staging_dir = args.staging_dir or DEFAULT_STAGING
 
     skills_dir = REPO_ROOT / 'skills'
-    total = {'copied': 0, 'skipped': 0, 'warnings': 0, 'errors': 0}
+    total = {'copied': 0, 'skipped': 0, 'warnings': 0, 'errors': 0, 'manifestsUpdated': 0, 'hashesUpdated': 0}
 
     for source_skill_dir in sorted(skills_dir.iterdir()):
         if not source_skill_dir.is_dir():
@@ -158,11 +201,18 @@ def main():
             dest_skill_dir = source_skill_dir
 
         stats = sync_skill(source_skill_dir, dest_skill_dir, args)
-        for k in total:
+        for k in ('copied', 'skipped', 'warnings', 'errors'):
             total[k] += stats[k]
+
+        if args.update_manifests:
+            manifest_stats = update_manifest_hashes(source_skill_dir, args)
+            total['manifestsUpdated'] += manifest_stats['manifestsUpdated']
+            total['hashesUpdated'] += manifest_stats['hashesUpdated']
 
     print(f"Synced: {total['copied']} copied, {total['skipped']} skipped, "
           f"{total['warnings']} warnings, {total['errors']} errors")
+    if args.update_manifests:
+        print(f"Updated {total['hashesUpdated']} hashes in {total['manifestsUpdated']} manifests")
     if total['errors'] > 0:
         sys.exit(1)
 

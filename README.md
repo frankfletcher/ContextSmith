@@ -96,10 +96,30 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 - Cross-harness benchmarks
 - Automated behavioral tests
 
+## Installation
+
+### Quick install (all skills)
+
 ```bash
-# Install & Validate
 cp -r skills/* ~/.agents/skills/
 python scripts/validate_skills.py
 ```
+
+### Package-based install (recommended)
+
+Build verified packages with checksums, then install:
+
+```bash
+# Build all skill packages (with all-skills bundle)
+python scripts/build_release.py --package --bundle
+
+# Install all skills
+bash scripts/install_all.sh dist
+
+# Or install a single skill
+bash scripts/install_skill.sh dist/local-model-prompt-engineer-1.0.0.zip
+```
+
+Package-based install verifies SHA-256 checksums, backs up existing versions, and skips already-installed versions. See [RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md) for the full release and installation guide.
 
 > ContextSmith started with small models where instruction quality matters most, but its discipline improves all agent workflows. Developed by engineers for engineers.

@@ -5,7 +5,7 @@
 ### Existing scripts (inputs)
 - `scripts/sync_shared_refs.py` — Production-ready sync tool (~200 lines). Full CLI: --skill, --all, --dry-run, --force, --verbose, --in-place, --staging-dir, --update-manifests. SHA-1 blob hash comparison. Manifest staleness warnings. `--update-manifests` recomputes and writes back stale hashes (Phase 1).
 - `scripts/package_skill.sh` — Hardened packaging (135 lines). Pre-package validation gate via validate_skills.py. MANIFEST.json generation with SHA-256 per-file checksums. `.sha256` checksum file for zip integrity. Reliable file count via Python zipfile module. (Phase 2)
-- `scripts/build_release.py` — Release orchestrator (~260 lines). Pipeline: sync → validate → version bump → package → summary. CLI: --version, --package, --dry-run, --dist-dir. (Phase 3)
+- `scripts/build_release.py` — Release orchestrator (~340 lines). Pipeline: sync → manifest update → validate → version bump → package → bundle (optional) → summary. CLI: --version, --package, --bundle, --dry-run, --dist-dir. (Phase 3, Phase 5.5)
 - `scripts/install_skill.sh` — Installation script (~100 lines). Extract zip to temp dir, verify MANIFEST.json SHA-256 checksums, version comparison, backup old version with timestamped rename, copy to target. Default target: ~/.agents/skills/. (Phase 4)
 - `scripts/install_all.sh` — Batch installation script (~70 lines). Find all zips in dist/, delegate to install_skill.sh, print summary. (Phase 4)
 - `scripts/validate_skills.py` — Validation suite (188 lines). Frontmatter, line count, reference manifests, artifact references, shared ref format (3 files only).
@@ -53,3 +53,22 @@
 - Version comparison is string equality (not semver). Same version = skip. Different version = backup + install.
 - install_all.sh processes zips in sorted order. When multiple versions of the same skill exist, earlier versions install first then get upgraded.
 - Bug learned: `[ -n "${VAR:-}" ] && echo` returns exit code 1 under `set -e` when VAR is empty. Use if/then/fi instead.
+
+## Phase 5 Carry-Forward Notes
+- `docs/RELEASE_PROCESS.md` exists and documents the full pipeline. Phase 6's test_release.sh should follow the same steps as the RELEASE_PROCESS.md checklist.
+- README installation section now references `build_release.py --package` and `install_all.sh dist`.
+- CHANGELOG Unreleased section has entries for all Phase 1-5 changes.
+- Phase 6 should create `scripts/test_release.sh` that automates: clean temp dir → full pipeline → verify zips/SHA-256/summary → test install to temp dir → cleanup → pass/fail summary.
+
+## Phase 5.5 Carry-Forward Notes
+- `--bundle` flag creates `contextsmith-all-bundle.zip` with all 5 skill directories at top level. Bundle is a re-zip of individual skill zips (not a nested archive).
+- Bundle naming: `contextsmith-all-bundle.zip` (no version in name since skills have different versions). SHA-256: `contextsmith-all-bundle.zip.sha256`.
+- Bundle entry in RELEASE_SUMMARY.json has version "mixed" and includes file count and total size.
+- `--update-manifests` flag was added to sync_shared_refs.py during Phase 5.5 (Phase 1 was never persisted). It works correctly and is used by build_release.py's pipeline.
+- Phase 6's test_release.sh should also test the bundle: `--package --bundle` creates bundle, SHA-256 validates, bundle extracts with all 5 skills present.
+
+## Phase 6 Carry-Forward Notes
+- `scripts/test_release.sh` is the integration test entry point. Run `bash scripts/test_release.sh` to validate the full pipeline. 74 assertions across 9 steps.
+- Bug learned: `set -euo pipefail` causes `unzip -l | grep -q` to fail intermittently due to pipe exit code handling. Fix: capture `unzip -l` output to variable, then grep from variable.
+- Test also validates negative case: breaking a skill (removing SKILL.md) causes pipeline to fail at Step 1 with clear error.
+- Sprint is complete. All phases done.

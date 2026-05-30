@@ -228,7 +228,72 @@ def step_package(dist_dir, dry_run=False):
     return True
 
 
-def generate_summary(dist_dir, dry_run=False):
+def step_bundle(dist_dir, dry_run=False):
+    """Create a combined zip containing all individual skill packages."""
+    print("\n=== Step F: Bundle ===")
+
+    if dry_run:
+        print("  [DRY-RUN] Would create all-skills bundle")
+        return None
+
+    skills = discover_skills()
+    versions = {}
+    for skill_name in skills:
+        manifest_path = SKILLS_DIR / skill_name / "reference_manifest.yml"
+        version = "0.0.0"
+        if manifest_path.exists():
+            manifest = yaml.safe_load(manifest_path.read_text())
+            version = manifest.get("version", "0.0.0")
+        versions[skill_name] = version
+
+    bundle_name = f"contextsmith-all-bundle.zip"
+    bundle_path = dist_dir / bundle_name
+
+    with zipfile.ZipFile(bundle_path, "w", zipfile.ZIP_DEFLATED) as bundle:
+        for skill_name in skills:
+            version = versions[skill_name]
+            zip_name = f"{skill_name}-{version}.zip"
+            zip_path = dist_dir / zip_name
+
+            if not zip_path.exists():
+                print(f"  WARN: {zip_name} not found, skipping in bundle")
+                continue
+
+            with zipfile.ZipFile(zip_path) as skill_zip:
+                for info in skill_zip.infolist():
+                    skill_data = skill_zip.read(info.filename)
+                    bundle.writestr(info.filename, skill_data)
+
+    file_count = 0
+    total_size = 0
+    with zipfile.ZipFile(bundle_path) as z:
+        file_count = len(z.namelist())
+        total_size = sum(info.file_size for info in z.infolist())
+
+    size_str = (
+        f"{total_size / 1024:.1f} KB"
+        if total_size < 1024 * 1024
+        else f"{total_size / (1024 * 1024):.1f} MB"
+    )
+    print(f"  Bundled: {bundle_name} ({file_count} files, {size_str})")
+
+    sha256_hash = hashlib.sha256(bundle_path.read_bytes()).hexdigest()
+    sha256_name = f"{bundle_name}.sha256"
+    sha256_path = dist_dir / sha256_name
+    sha256_path.write_text(f"{sha256_hash}  {bundle_name}\n")
+    print(f"  Checksum: {sha256_name}")
+
+    return {
+        "name": "contextsmith-all-bundle",
+        "version": "mixed",
+        "zip_path": bundle_name,
+        "sha256_path": sha256_name,
+        "file_count": file_count,
+        "total_size_bytes": total_size,
+    }
+
+
+def generate_summary(dist_dir, dry_run=False, bundle_entry=None):
     """Generate RELEASE_SUMMARY.json and print formatted table."""
     print("\n=== Release Summary ===")
 
@@ -275,6 +340,9 @@ def generate_summary(dist_dir, dry_run=False):
             "total_size_bytes": total_size,
         })
 
+    if bundle_entry:
+        entries.append(bundle_entry)
+
     summary = {
         "generated_at": datetime.datetime.now(datetime.timezone.utc).strftime(
             "%Y-%m-%dT%H:%M:%SZ"
@@ -303,7 +371,7 @@ def generate_summary(dist_dir, dry_run=False):
             f"{entry['file_count']:<8} {size_str:<12}"
         )
     print(sep)
-    print(f"  Total: {len(entries)} skills packaged")
+    print(f"  Total: {len(entries)} entries packaged")
 
     return True
 
@@ -317,6 +385,7 @@ def main():
             "  python scripts/build_release.py --package\n"
             "  python scripts/build_release.py --package --dry-run\n"
             "  python scripts/build_release.py --package --version 1.1.0\n"
+            "  python scripts/build_release.py --package --bundle\n"
             "  python scripts/build_release.py --package --dist-dir /tmp/release\n"
         ),
     )
@@ -333,6 +402,11 @@ def main():
         "--dry-run",
         action="store_true",
         help="Print what would be done without executing",
+    )
+    parser.add_argument(
+        "--bundle",
+        action="store_true",
+        help="Create a combined zip containing all skill packages",
     )
     parser.add_argument(
         "--dist-dir",
@@ -370,7 +444,18 @@ def main():
         )
 
     steps.append(("Package", lambda: step_package(dist_dir, args.dry_run)))
-    steps.append(("Summary", lambda: generate_summary(dist_dir, args.dry_run)))
+
+    bundle_entry = [None]
+    if args.bundle:
+        def bundle_step():
+            result = step_bundle(dist_dir, args.dry_run)
+            if not args.dry_run:
+                bundle_entry[0] = result
+                return result is not None
+            return True
+        steps.append(("Bundle", bundle_step))
+
+    steps.append(("Summary", lambda: generate_summary(dist_dir, args.dry_run, bundle_entry[0])))
 
     for name, fn in steps:
         try:
