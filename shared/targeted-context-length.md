@@ -103,6 +103,19 @@ If the harness injects large system prompts, skill content, or repo instructions
 
 If the planned artifact would exceed the usable budget, split into more phases, externalize state, compress references, forecast tool use more narrowly, or stage the work.
 
+## Phase Types
+
+Use phase types to select appropriate context budgets for different work categories:
+
+| Phase Type | Budget | Description |
+|---|---|---|
+| analysis | 32k | Reading, searching, understanding code or documents. |
+| editing | 48k | Targeted file edits, refactoring, test writing. |
+| migration | 64k | Cross-file migrations, framework upgrades, bulk changes. |
+| ml-heavy | 80k | Data loading, model training, evaluation, experiment tracking. |
+| validation | 32k | Running tests, linting, typechecking, reviewing results. |
+| planning | 24k | Design, architecture decisions, task breakdown. |
+
 ## Phase Granularity Rule
 
 Increase phase granularity when context length is tiny/tight or moderate, the project is large, the task spans multiple subsystems, validation is complex, or interruption is likely.
