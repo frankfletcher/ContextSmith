@@ -29,11 +29,11 @@
 - Commit: 
 
 ## Phase 4: Parameterize Context Budget
-- Status: Not started
-- Date: 
-- Changes: 
-- Validation: 
-- Commit: 
+- Status: Complete
+- Date: 2026-06-01
+- Changes: replaced hardcoded 64k with {{CONTEXT_BUDGET}} in shared/phased-planning.md (2 occurrences)
+- Validation: passes
+- Commit: 690d811
 
 ## Phase 5: Add Tool Forecast Realism
 - Status: Complete (no-op)
@@ -43,8 +43,8 @@
 - Commit: N/A (no changes)
 
 ## Phase 6: CHANGELOG and Final Validation
-- Status: Not started
-- Date: 
-- Changes: 
-- Validation: 
-- Commit: 
+- Status: Complete
+- Date: 2026-06-01
+- Changes: added v1.5.2 CHANGELOG entry with 4 fixes and 1 change
+- Validation: passes, all SKILL.md under 500 lines
+- Commit: 494e472

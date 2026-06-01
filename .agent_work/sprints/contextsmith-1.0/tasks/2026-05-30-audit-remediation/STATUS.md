@@ -1,7 +1,7 @@
 # Status: ContextSmith v1.5.1 Audit Remediation
 
 ## Current Phase
-Phase 6: CHANGELOG and Final Validation (in progress)
+Complete
 
 ## Completed Phases
 - Phase 0: Baseline Validation - validation passes, 291 lines, clean git
@@ -9,7 +9,8 @@ Phase 6: CHANGELOG and Final Validation (in progress)
 - Phase 2: Add ML-Heavy Phase Type - Phase Types table added, committed 4bdf198
 - Phase 3: Create Minimal Behavioral Contracts - new file created, committed 6770a92
 - Phase 4: Parameterize Hardcoded Context Budget - {{CONTEXT_BUDGET}} applied, committed 690d811
-- Phase 5: Tool Forecast Realism - already present in rubric and output table, no change needed
+- Phase 5: Tool Forecast Realism - already present, no change needed
+- Phase 6: CHANGELOG and Final Validation - v1.5.2 entry added, committed 494e472
 
 ## Blockers
 None

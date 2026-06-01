@@ -124,7 +124,7 @@ For a large Windows/macOS-to-Linux port under a 32k target, prefer 10-30 smaller
 
 For tool-heavy work under tight or moderate targets, prefer discovery/edit/validation separation and fresh-session phase execution when expected tool output would consume the reserve. For large and very-large targets, keep tool forecasts and compaction triggers because raw tool transcripts can still dominate long sessions.
 
-## Phase-Specific Budgets
+## Task-State Requirements
 
 When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The downstream model must understand that the deliverable is not only a narrative plan. It is a reusable work package that a later execution session can resume without the original chat transcript.
 
