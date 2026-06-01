@@ -2,7 +2,7 @@
 name: local-model-run
 description: Execute prompts, prompt files, and ContextSmith task-state handoffs under explicit local/open-weight model parameters, domain-specific refinement, validation gates, Ralph loops, self-audit, and evidence requirements. Use when running a prompt or implementation handoff and you need declared controls such as target profile, context budget, interaction mode, validation, and self-audit to be enforced rather than merely mentioned.
 metadata:
-  version: "1.6.0"
+  version: "1.6.1"
   package: ContextSmith
   target: local-open-weight-models
 ---

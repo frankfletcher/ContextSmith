@@ -21,9 +21,10 @@ Each phase must include:
 
 Implementation phases must also include a compact context contract:
 
+<!-- CONTEXT_BUDGET: Override per-project. Default: 64k tokens -->
 ```yaml
 context_contract:
-  targeted_context_length: 64k
+  targeted_context_length: "{{CONTEXT_BUDGET}}"
   usable_phase_budget: 32k
   tool_output_reserve: 32k
   phase_type: edit-light

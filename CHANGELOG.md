@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.6.1
+
+**Released:** 2026-06-01
+
+### Fixed
+
+- Reverted prose threshold in `shared/phased-planning.md` from `{{CONTEXT_BUDGET}}` back to `64k` — the YAML template variable at line 27 is the configurable parameter; the prose at line 105 is a meaningful boundary value, not a budget setting.
+- Moved "Downstream Prompt Requirements" section from `shared/targeted-context-length.md` to `shared/persistent-task-state.md` where it belongs semantically. Updated `skills/local-model-prompt-engineer/SKILL.md` reference anchor accordingly.
+
+### Changed
+
+- Bumped all skill versions to 1.6.1.
+
+### Notes
+
+- This patch resolves two post-release audit findings: a circular comparison in phased-planning.md and misplaced task-state requirements in targeted-context-length.md.
+
 ## v1.6.0
 
 **Released:** 2026-06-01
