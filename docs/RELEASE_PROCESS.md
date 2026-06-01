@@ -12,7 +12,7 @@ This guide walks maintainers through building, verifying, and distributing Conte
 
 ## Quick Release
 
-Build all 5 skill packages into `dist/`:
+Build all skill packages into `dist/`:
 
 ```bash
 python scripts/build_release.py --package
@@ -141,7 +141,7 @@ bash scripts/install_all.sh dist ~/.agents/skills
 
 ## All-Skills Bundle
 
-Add `--bundle` to create a single zip containing all 5 skills:
+Add `--bundle` to create a single zip containing all skills:
 
 ```bash
 python scripts/build_release.py --package --bundle

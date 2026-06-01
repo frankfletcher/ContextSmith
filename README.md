@@ -11,6 +11,7 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 - **Model-aware optimizations** - Tailor artifacts for specific model capabilities
 - **Context-length discipline** - Design for your actual capacity (16k-128k+)
 - **Atomic execution plans** - Break work into phases smaller models can execute
+- **Enforced run contracts** - Execute prompts and handoffs with validation, self-audit, and Ralph evidence
 - **Safety-first workflows** - Helps prevent loops, unsafe Git ops, and context bloat
 - **Rich parameter system** - Control every aspect of artifact engineering
 
@@ -37,6 +38,7 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 - Grade implementation plans (A-F scale)
 - Run bounded improvement loops (Ralph iterations)
 - Conduct phase code reviews
+- Execute prompts and `NEXT_PROMPT.md` handoffs with declared-vs-enforced evidence
 
 ### Advanced Controls
 ```bash
@@ -66,6 +68,17 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
   --domain coding
 ```
 
+**Execute a prompt or task-state handoff**
+```bash
+/local-model-run \
+  --run-mode phase \
+  --target .agent_work/sprints/<sprint>/tasks/<task> \
+  --target-profile qwen36 \
+  --interaction refine \
+  --validation strict \
+  --ralph 2
+```
+
 **Migrate skills safely**
 ```bash
 /local-model-skill-migrator \
@@ -90,6 +103,7 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 - AGENTS.md generation
 - Skill migration
 - Test/plan audits
+- Parameter-enforced prompt and handoff execution
 
 **Active Development**
 - Harness adapters (Opencode, Cursor)

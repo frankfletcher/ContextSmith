@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.6.0
+
+**Released:** 2026-06-01
+
+### Added
+
+- Added `local-model-run`, a parameter-enforced run executor for prompts, prompt files, `NEXT_PROMPT.md` handoffs, and `.agent_work/.../tasks/<task>/` folders.
+- Added run modes for `single`, `single-with-state`, `phase`, `phased-run`, `dry-run`, and `audit-only`, allowing the same skill to handle lightweight one-shot prompts and durable phased implementation plans.
+- Added `--interaction refine` support with bounded multiple-choice questions, recommended defaults, question budgets, and concrete answer-to-parameter mapping so users can guide execution before the model assumes architecture, stack, source quality, tone, output format, or validation strategy.
+- Added domain-specific refinement, validation, self-audit, and Ralph critique guidance for software engineering, frontend UX, data analytics, data science/ML, AI/ML engineering, research, writing/editing, business strategy, education/tutoring, ops/DevOps, legal/policy/compliance, and general tasks.
+- Added execution-contract and evidence-ledger references so declared controls such as `--target-profile`, `--context-length`, `--validation`, `--ralph`, `--self-audit`, and `--interaction` become runtime obligations with auditable evidence.
+- Added task-state execution guidance for reading `STATUS.md`, `NEXT_PROMPT.md`, current `PLAN.md` phase, and `CONTEXT.md`, then closing phases with compact state updates and refreshed handoffs.
+
+### Changed
+
+- Bumped all skill versions and reference manifests to 1.6.0.
+- Updated README, Quick Start, Which Skill guidance, repo map, and living notes to include `local-model-run` as the sixth ContextSmith skill.
+- Strengthened local-model execution guidance with one-screen contracts, one bounded unit at a time, selective reference loading, explicit stop conditions, validation-level semantics, and declared-vs-enforced completion checks.
+
 ## v1.5.1
 
 **Released:** 2026-05-30

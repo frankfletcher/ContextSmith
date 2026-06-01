@@ -24,6 +24,12 @@ For important reusable artifacts:
 --mode deep --ralph 2 --output project-local
 ```
 
+For executing a prompt or handoff with enforced evidence:
+
+```bash
+--run-mode phase --interaction refine --validation strict --ralph 2
+```
+
 For anything that may overwrite files:
 
 ```bash
@@ -99,7 +105,31 @@ What you should get:
 - validation gaps
 - recommendations for splitting or rewriting phases
 
-## Path 4: Audit tests for usefulness
+## Path 4: Execute a prompt or task-state handoff
+
+Use this when you want ContextSmith controls to be enforced during execution, not only included in the prompt.
+
+```bash
+/local-model-run \
+  --run-mode phase \
+  --target .agent_work/sprints/<sprint>/tasks/<task> \
+  --target-profile qwen36 \
+  --context-length 32k \
+  --interaction refine \
+  --validation strict \
+  --ralph 2
+```
+
+What you should get:
+
+- a compact execution contract
+- domain-specific refinement questions when choices matter
+- validation evidence or a blocker
+- self-audit and Ralph summary
+- declared-vs-enforced status
+- updated task state for phased work
+
+## Path 5: Audit tests for usefulness
 
 Use this when tests exist but you suspect they are shallow or agent-generated fluff.
 
@@ -120,7 +150,7 @@ What you should get:
 - over-mocking risks
 - recommended test additions
 
-## Path 5: Convert a skill safely
+## Path 6: Convert a skill safely
 
 Use this when you have a `SKILL.md` and want it optimized for local/open-weight models without changing its behavior.
 
@@ -142,7 +172,7 @@ What you should get:
 - target-profile metadata
 - rejected unsupported additions, if any
 
-## Path 6: Migrate many skills without clobbering originals
+## Path 7: Migrate many skills without clobbering originals
 
 Use this when you want to stage changes across a whole skills directory.
 

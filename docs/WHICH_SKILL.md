@@ -25,6 +25,27 @@ Example:
 /local-model-prompt-engineer --mode deep --target-profile qwen36 --context-length 32k --ralph 2
 ```
 
+## I want to run a prompt or handoff
+
+Use:
+
+```text
+local-model-run
+```
+
+Good for:
+
+- executing a prompt while enforcing target model, context budget, validation, self-audit, and Ralph controls
+- running `NEXT_PROMPT.md` or a `.agent_work/.../tasks/<task>/` phase handoff
+- asking refinement questions before execution so domain choices are not silently assumed
+- handling code and non-code runs such as research, email rewriting, data analysis, ML work, and business memos
+
+Example:
+
+```bash
+/local-model-run --run-mode phase --target .agent_work/sprints/<sprint>/tasks/<task> --interaction refine --validation strict --ralph 2
+```
+
 ## I have a SKILL.md
 
 Use:
