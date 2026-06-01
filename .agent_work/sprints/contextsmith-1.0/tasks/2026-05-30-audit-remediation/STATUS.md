@@ -1,13 +1,13 @@
 # Status: ContextSmith v1.5.1 Audit Remediation
 
 ## Current Phase
-Phase 0: Baseline Validation (not started)
+Phase 1: Extract Context Budget Section (in progress)
 
 ## Completed Phases
-None
+- Phase 0: Baseline Validation - validation passes, 291 lines, clean git
 
 ## Next Action
-Run `python scripts/validate_skills.py` to confirm current state before changes.
+Read SKILL.md lines 113-135 to extract context budget section
 
 ## Blockers
 None

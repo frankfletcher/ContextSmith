@@ -1,11 +1,11 @@
 # Phase Log: ContextSmith v1.5.1 Audit Remediation
 
 ## Phase 0: Baseline Validation
-- Status: Not started
-- Date: 
-- Changes: 
-- Validation: 
-- Commit: 
+- Status: Complete
+- Date: 2026-06-01
+- Changes: baseline captured - 291 lines, validation passes, clean git
+- Validation: all 6 skills OK
+- Commit: N/A (baseline only)
 
 ## Phase 1: Extract Context Budget Section
 - Status: Not started
