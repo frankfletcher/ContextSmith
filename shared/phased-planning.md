@@ -21,9 +21,10 @@ Each phase must include:
 
 Implementation phases must also include a compact context contract:
 
+<!-- CONTEXT_BUDGET: Override per-project. Default: 64k tokens -->
 ```yaml
 context_contract:
-  targeted_context_length: 64k
+  targeted_context_length: "{{CONTEXT_BUDGET}}"
   usable_phase_budget: 32k
   tool_output_reserve: 32k
   phase_type: edit-light
@@ -101,4 +102,5 @@ Phase count must scale with `targeted_context_length`. For `targeted_context_len
 
 Every phase should end with phase compression/debrief and `Do Not Carry Forward` notes.
 
-For tool-heavy work under tight or moderate targets (`targeted_context_length <= 64k`), prefer one fresh session per phase unless the previous phase used few tool calls and produced no large search or validation output. For larger targets, continuing in the same session is acceptable only while the tool ledger stays compact and raw tool output is not carried forward.
+<!-- CONTEXT_BUDGET: Override per-project. Default: 64k tokens -->
+For tool-heavy work under tight or moderate targets (`targeted_context_length <= {{CONTEXT_BUDGET}}`), prefer one fresh session per phase unless the previous phase used few tool calls and produced no large search or validation output. For larger targets, continuing in the same session is acceptable only while the tool ledger stays compact and raw tool output is not carried forward.

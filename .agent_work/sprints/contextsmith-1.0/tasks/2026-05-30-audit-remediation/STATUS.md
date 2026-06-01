@@ -1,12 +1,13 @@
 # Status: ContextSmith v1.5.1 Audit Remediation
 
 ## Current Phase
-Phase 3: Create Minimal Behavioral Contracts (in progress)
+Phase 4: Parameterize Hardcoded Context Budget (in progress)
 
 ## Completed Phases
 - Phase 0: Baseline Validation - validation passes, 291 lines, clean git
 - Phase 1: Extract Context Budget Section - SKILL.md 269 lines, committed 17ae7b2
-- Phase 2: Add ML-Heavy Phase Type - Phase Types table added, committed
+- Phase 2: Add ML-Heavy Phase Type - Phase Types table added, committed 4bdf198
+- Phase 3: Create Minimal Behavioral Contracts - new file created, committed 6770a92
 
 ## Blockers
 None
