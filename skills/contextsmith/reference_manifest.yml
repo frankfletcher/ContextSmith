@@ -1,0 +1,4 @@
+skill: contextsmith
+version: 1.0.0
+description: Meta-skill for ContextSmith — routes to sub-skills based on user intent.
+references: []
