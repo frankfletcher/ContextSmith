@@ -102,5 +102,4 @@ Phase count must scale with `targeted_context_length`. For `targeted_context_len
 
 Every phase should end with phase compression/debrief and `Do Not Carry Forward` notes.
 
-<!-- CONTEXT_BUDGET: Override per-project. Default: 64k tokens -->
-For tool-heavy work under tight or moderate targets (`targeted_context_length <= {{CONTEXT_BUDGET}}`), prefer one fresh session per phase unless the previous phase used few tool calls and produced no large search or validation output. For larger targets, continuing in the same session is acceptable only while the tool ledger stays compact and raw tool output is not carried forward.
+For tool-heavy work under tight or moderate targets (`targeted_context_length <= 64k`), prefer one fresh session per phase unless the previous phase used few tool calls and produced no large search or validation output. For larger targets, continuing in the same session is acceptable only while the tool ledger stays compact and raw tool output is not carried forward.

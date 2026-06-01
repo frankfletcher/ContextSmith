@@ -34,6 +34,10 @@
 
 - Added cross-reference from `shared/behavioral-contracts.md` to new `shared/minimal-behavioral-contracts.md`.
 
+### Notes
+
+- Finding #5 (tool forecast realism) was already addressed in a prior release — no change required.
+
 ## v1.5.1
 
 **Released:** 2026-05-30

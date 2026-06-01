@@ -110,7 +110,7 @@ For coding domains, implementation plans should include test strategy, code revi
 
 When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The downstream model must understand that the deliverable is not only a narrative plan. It is a reusable work package that a later execution session can resume without the original chat transcript.
 
-> Task-state and phase planning requirements: see shared/targeted-context-length.md#task-state-requirements
+> Task-state and phase planning requirements: see shared/persistent-task-state.md#downstream-prompt-requirements
 
 
 ## Run Configuration Preview
