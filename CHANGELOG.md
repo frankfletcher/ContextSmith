@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.6.1
+
+**Released:** 2026-06-01
+
+### Fixed
+
+- Reverted prose threshold in `shared/phased-planning.md` from `{{CONTEXT_BUDGET}}` back to `64k` — the YAML template variable at line 27 is the configurable parameter; the prose at line 105 is a meaningful boundary value, not a budget setting.
+- Moved "Downstream Prompt Requirements" section from `shared/targeted-context-length.md` to `shared/persistent-task-state.md` where it belongs semantically. Updated `skills/local-model-prompt-engineer/SKILL.md` reference anchor accordingly.
+
+### Changed
+
+- Bumped all skill versions to 1.6.1.
+
+### Notes
+
+- This patch resolves two post-release audit findings: a circular comparison in phased-planning.md and misplaced task-state requirements in targeted-context-length.md.
+
 ## v1.6.0
 
 **Released:** 2026-06-01
@@ -18,25 +35,6 @@
 - Bumped all skill versions and reference manifests to 1.6.0.
 - Updated README, Quick Start, Which Skill guidance, repo map, and living notes to include `local-model-run` as the sixth ContextSmith skill.
 - Strengthened local-model execution guidance with one-screen contracts, one bounded unit at a time, selective reference loading, explicit stop conditions, validation-level semantics, and declared-vs-enforced completion checks.
-
-## v1.5.2
-
-**Released:** 2026-06-01
-
-### Fixed
-
-- Extracted context budget section from `local-model-prompt-engineer/SKILL.md` to `shared/targeted-context-length.md` (reduces SKILL.md from 291 to 269 lines).
-- Added Phase Types table with ml-heavy (80k), analysis (32k), editing (48k), migration (64k), validation (32k), and planning (24k) phase types to `shared/targeted-context-length.md`.
-- Created `shared/minimal-behavioral-contracts.md` with model-specific behavioral contracts for Qwen3.6, Llama 3.1, Mistral, Gemma, DeepSeek, and Phi.
-- Parameterized hardcoded 64k context budget in `shared/phased-planning.md` with configurable `{{CONTEXT_BUDGET}}` variable.
-
-### Changed
-
-- Added cross-reference from `shared/behavioral-contracts.md` to new `shared/minimal-behavioral-contracts.md`.
-
-### Notes
-
-- Finding #5 (tool forecast realism) was already addressed in a prior release — no change required.
 
 ## v1.5.1
 

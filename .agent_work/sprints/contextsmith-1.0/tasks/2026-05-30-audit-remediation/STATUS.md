@@ -1,7 +1,7 @@
 # Status: ContextSmith v1.5.1 Audit Remediation
 
 ## Current Phase
-Complete
+Complete (with audit fixes)
 
 ## Completed Phases
 - Phase 0: Baseline Validation - validation passes, 291 lines, clean git
@@ -11,6 +11,13 @@ Complete
 - Phase 4: Parameterize Hardcoded Context Budget - {{CONTEXT_BUDGET}} applied, committed 690d811
 - Phase 5: Tool Forecast Realism - already present, no change needed
 - Phase 6: CHANGELOG and Final Validation - v1.5.2 entry added, committed 494e472
+
+## Audit Fixes (post-completion)
+- Reverted circular `{{CONTEXT_BUDGET}}` in phased-planning.md:106 back to `64k` threshold
+- Moved task-state section from targeted-context-length.md to persistent-task-state.md
+- Updated SKILL.md reference to point to persistent-task-state.md#downstream-prompt-requirements
+- Added CHANGELOG note that finding #5 was already addressed
+- Committed 71dc8af
 
 ## Blockers
 None
