@@ -103,3 +103,5 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 **Side Effect Matrix - Risk Tiers:** Tier 1 (read-only): file reads, git inspection commands — no approval needed. Tier 2 (write own files): creating/editing files in `.agent_work/` or new files — proceed without approval. Tier 3 (modify user files): editing existing user code or configuration — require user confirmation for significant changes. Tier 4 (system/network): package installs, network requests, destructive operations — always require explicit approval.
 
 **Output Location - Canonical Paths:** Generated artifacts go under `.agent_work/`. Iterations from Ralph loop go under `.agent_work/sprints/<sprint>/tasks/<YYYY-MM-DD-slug>/iterations/`. Do not scatter outputs across arbitrary directories.
+
+> Model-specific contracts: see shared/minimal-behavioral-contracts.md
