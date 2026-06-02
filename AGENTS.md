@@ -6,13 +6,14 @@ ContextSmith is a meta-skills package for model-aware agent instruction engineer
 
 ```
 ContextSmith/
-├── skills/                          # 6 installable skill folders (SKILL.md + references/)
-│   ├── local-model-prompt-engineer/
-│   ├── local-model-skill-engineer/
-│   ├── local-model-skill-migrator/
-│   ├── local-model-instruction-engineer/
-│   ├── local-model-agent-evaluator/
-│   └── local-model-run/
+├── skills/                          # 7 installable skill folders (SKILL.md + references/)
+│   ├── contextsmith/
+│   ├── contextsmith-prompt-engineer/
+│   ├── contextsmith-skill-engineer/
+│   ├── contextsmith-skill-migrator/
+│   ├── contextsmith-instruction-engineer/
+│   ├── contextsmith-agent-evaluator/
+│   └── contextsmith-run/
 ├── shared/                          # Canonical agent references (42 files)
 ├── docs/                            # User-facing documentation
 │   ├── workflows/
@@ -23,7 +24,7 @@ ContextSmith/
 ├── README.md                        # Project landing page
 ├── PACKAGE_SPEC.md                  # Design decisions and package spec
 ├── CHANGELOG.md                     # Version history
-├── LOCAL_MODEL_AGENT_ENGINEERING_LIVING_NOTES.md
+├── CONTEXTSMITH_LIVING_NOTES.md
 └── .agent_work/                     # Persistent task state (gitignored)
 ```
 

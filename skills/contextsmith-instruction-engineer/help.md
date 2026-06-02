@@ -1,11 +1,11 @@
-# local-model-instruction-engineer Help
+# contextsmith-instruction-engineer Help
 
 Create, improve, audit, and maintain `AGENTS.md`, `CLAUDE.md`, copilot instructions, `.cursorrules`, and similar repo/agent instruction files.
 
 ## Quickstart
 
 ```text
-/local-model-instruction-engineer --project . --mode guided --target-profile qwen36 --context-length 32k --harness opencode --domain coding,data-science-ml --output project-local
+/contextsmith-instruction-engineer --project . --mode guided --target-profile qwen36 --context-length 32k --harness opencode --domain coding,data-science-ml --output project-local
 
 Create or improve AGENTS.md. Scan existing instructions first. Add only relevant safeguards.
 ```

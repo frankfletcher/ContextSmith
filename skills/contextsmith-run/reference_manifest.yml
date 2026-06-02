@@ -1,6 +1,6 @@
-skill: local-model-run
-version: 1.6.0
-description: Shared and local reference dependencies for the Local Model Run skill.
+skill: contextsmith-run
+version: 1.7.0
+description: Shared and local reference dependencies for the ContextSmith Run skill.
 references:
 - source: shared/control-parameters.md
   version: 4e378b3850b0ddee23e82f95bb145e60d965850d
@@ -9,7 +9,7 @@ references:
   version: 783571f82366920bf3a7b437dd6246dcdee1406c
   required: true
 - source: shared/behavioral-contracts.md
-  version: cb8beb1dcdfcf0947ae99612bd7e3ce36164a66a
+  version: a701cb7251289c8c73fa4fcf8feddb7691dd1f50
   required: true
 - source: shared/interaction-modes.md
   version: 13e79f4f9de2d6b505f7f06d5488c22a1d8fb8bf
@@ -27,7 +27,7 @@ references:
   version: 6e7d2dafcf947ef4305060efc8ce2b2d95682e14
   required: true
 - source: shared/targeted-context-length.md
-  version: f0cbdd4b50d21b204bac10dad23d7da4c2c421b0
+  version: 608c36fa0181b44a0b5893506a7d3e7c6f4b915e
   required: true
 - source: shared/model-capability-tiers.md
   version: feabc377d10fbc5ecd19746e7853f7100d8f61f9
@@ -54,10 +54,10 @@ references:
   version: 05578904e3553f62fe4c057d95ce423169d2f1ee
   required: true
 - source: shared/persistent-task-state.md
-  version: d7d693864419cd9c79fc15eab991a471e6ce50de
+  version: 6b5ba1d26fa47851ce06882c878434be62d21f9f
   required: true
 - source: shared/phased-planning.md
-  version: 3c02f0e1881b4c0c5964ee6deabbbd3db6b4f426
+  version: ecf597cdb54453a77c1b757af0cca8d1066ea12b
   required: true
 - source: shared/implementation-plan-audit.md
   version: 746fc6944ce6e1dedc631326237481e69a4a45cd
@@ -104,33 +104,33 @@ references:
 - source: shared/domain-profiles/research.md
   version: a8756a9d90d73f91cc55873fe9cecad4b7c7d663
   required: true
-- source: skills/local-model-run/execution-contract.md
+- source: skills/contextsmith-run/execution-contract.md
   version: a230b23490cc6aac79ca21d0f24e34ea8d5f616f
   required: true
   local: true
   notes: Runtime contract compilation and declared-vs-enforced checks.
-- source: skills/local-model-run/interaction-refinement.md
+- source: skills/contextsmith-run/interaction-refinement.md
   version: eddae8ab8ceb93c077f9b5c1e5148e54bf43c9f7
   required: true
   local: true
   notes: Refine-mode question rules and parameter mapping.
-- source: skills/local-model-run/domain-packs.md
+- source: skills/contextsmith-run/domain-packs.md
   version: 69909bfa101fd567ce928a5879bfaa9c0a0c8e3a
   required: true
   local: true
   notes: Domain-specific refinement, validation, self-audit, and Ralph lenses.
-- source: skills/local-model-run/task-state-execution.md
+- source: skills/contextsmith-run/task-state-execution.md
   version: ee2f4c96da9770d2479bee345c45989ec94e2996
   required: true
   local: true
   notes: Phase and NEXT_PROMPT task-state execution rules.
-- source: skills/local-model-run/evidence-ledger.md
+- source: skills/contextsmith-run/evidence-ledger.md
   version: ea9ba3555809dbb9a8d99b4e4f9e2a65cf7d6d48
   required: true
   local: true
   notes: Evidence format for runtime obligation enforcement.
-- source: skills/local-model-run/help.md
-  version: 50bbc37582576032b2938d40e166509743b40c1e
+- source: skills/contextsmith-run/help.md
+  version: 68dd885f87197776a791d2070ebf2f242e09db87
   required: true
   local: true
   notes: Skill-specific help documentation.

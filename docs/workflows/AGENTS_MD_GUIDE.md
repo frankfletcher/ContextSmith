@@ -30,7 +30,7 @@ When creating or improving `AGENTS.md`, ContextSmith should:
 6. ask the user before making broad project-wide decisions
 7. keep the final file concise
 
-This is why `local-model-instruction-engineer` defaults to a more guided style for repo instruction work.
+This is why `contextsmith-instruction-engineer` defaults to a more guided style for repo instruction work.
 
 ## Useful sections
 

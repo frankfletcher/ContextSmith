@@ -1,8 +1,8 @@
 ---
-name: local-model-skill-engineer
+name: contextsmith-skill-engineer
 description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, targeted context length control, upstream artifact audits, skill interoperability handling, or skill-auditor-style quality checks.
 metadata:
-  version: "1.6.1"
+  version: "1.7.0"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -22,7 +22,7 @@ Default parameter values for generated skills:
 
 Every generated SKILL.md MUST include an `## Artifact Manifest` section per `references/artifact-manifest.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing when child scope is more constrained with justification (`narrowed`), (4) selecting references using the Artifact Type -> Default References Matrix — generated skills always include control-parameters, loop-safety, skill-interoperability, conditionally upstream-artifact-audit and reference-optimization, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
 
-# Local Model Skill Engineer
+# ContextSmith Skill Engineer
 
 Create, convert, improve, and audit SKILL.md-based skills for local/open-weight models.
 

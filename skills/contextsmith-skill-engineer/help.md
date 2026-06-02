@@ -1,11 +1,11 @@
-# local-model-skill-engineer Help
+# contextsmith-skill-engineer Help
 
 Create, convert, improve, audit, and package `SKILL.md`-based skills for local/open-weight models.
 
 ## Quickstart
 
 ```text
-/local-model-skill-engineer --source ./my-skill/SKILL.md --mode guided --target-profiles generic-local,qwen36 --context-length 64k --reference-policy optimize --output staging
+/contextsmith-skill-engineer --source ./my-skill/SKILL.md --mode guided --target-profiles generic-local,qwen36 --context-length 64k --reference-policy optimize --output staging
 
 Convert this skill for local models. Preserve behavior and report all changes.
 ```

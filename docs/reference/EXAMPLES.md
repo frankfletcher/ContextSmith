@@ -7,7 +7,7 @@ These examples are meant to be copied, edited, and reused. You do not need every
 ### Optimize a prompt for Qwen3.6 under tight context
 
 ```bash
-/local-model-prompt-engineer \
+/contextsmith-prompt-engineer \
   --mode deep \
   --target-profile qwen36 \
   --context-length 32k \
@@ -24,7 +24,7 @@ Benefit: the model-facing prompt stays compact, while the human gets a useful ex
 ### Fast cleanup of a general prompt
 
 ```bash
-/local-model-prompt-engineer \
+/contextsmith-prompt-engineer \
   --mode fast \
   --target-profile generic-local \
   --no-ralph
@@ -37,7 +37,7 @@ Benefit: low friction, minimal report, no iteration overhead.
 ### Build a prompt package for long document work
 
 ```bash
-/local-model-prompt-engineer \
+/contextsmith-prompt-engineer \
   --mode guided \
   --target-capability small-local \
   --context-length 64k \
@@ -54,7 +54,7 @@ Benefit: adds source separation, evidence anchors, chunking or staged processing
 ### Create AGENTS.md for a Python data-science repo
 
 ```bash
-/local-model-instruction-engineer \
+/contextsmith-instruction-engineer \
   --project . \
   --mode guided \
   --target-profile qwen36 \
@@ -70,7 +70,7 @@ Benefit: scans the repo, proposes relevant instruction blocks, avoids duplicate 
 ### Improve existing AGENTS.md without duplicating safeguards
 
 ```bash
-/local-model-instruction-engineer \
+/contextsmith-instruction-engineer \
   --project . \
   --mode guided \
   --focus agents-md \
@@ -85,7 +85,7 @@ Benefit: detects existing loop safety, Git safety, context rules, coding standar
 ### Create concise instructions for a small executor model
 
 ```bash
-/local-model-instruction-engineer \
+/contextsmith-instruction-engineer \
   --project . \
   --mode guided \
   --executor-profile qwen36 \
@@ -103,7 +103,7 @@ Benefit: produces compact repo instructions with loop safety, Git safety, phase 
 ### Audit an implementation plan
 
 ```bash
-/local-model-agent-evaluator \
+/contextsmith-agent-evaluator \
   --mode audit-only \
   --focus implementation-plan \
   --target IMPLEMENTATION_PLAN.md \
@@ -119,7 +119,7 @@ Benefit: catches phases that are too broad, missing stop conditions, missing tas
 ### Audit test quality
 
 ```bash
-/local-model-agent-evaluator \
+/contextsmith-agent-evaluator \
   --mode audit-only \
   --focus test-quality \
   --target tests/ \
@@ -134,7 +134,7 @@ Benefit: identifies weak assertions, fake edge cases, over-mocking, and tests th
 ### Audit runtime stability notes
 
 ```bash
-/local-model-agent-evaluator \
+/contextsmith-agent-evaluator \
   --mode audit-only \
   --focus runtime-stability \
   --target ./runtime-notes.md \
@@ -151,7 +151,7 @@ Benefit: encourages one-variable-at-a-time experiments instead of folklore-drive
 ### Convert one skill for local models
 
 ```bash
-/local-model-skill-engineer \
+/contextsmith-skill-engineer \
   --source ./skills/my-skill/SKILL.md \
   --mode guided \
   --target-profiles generic-local,qwen36 \
@@ -167,7 +167,7 @@ Benefit: extracts the source contract, preserves commands/references, rejects un
 ### Audit a skill without editing
 
 ```bash
-/local-model-skill-engineer \
+/contextsmith-skill-engineer \
   --source ./skills/my-skill/SKILL.md \
   --mode audit-only \
   --target-profile generic-local
@@ -182,7 +182,7 @@ Benefit: shows whether the skill actually needs changes.
 ### Stage a safe migration of installed skills
 
 ```bash
-/local-model-skill-migrator \
+/contextsmith-skill-migrator \
   --skills-dir ~/.agents/skills \
   --mode review-gate \
   --target-profiles generic-local,qwen36 \
@@ -199,7 +199,7 @@ Benefit: creates a backup, staging directory, manifest, reports, and restore not
 ### Audit a skills directory only
 
 ```bash
-/local-model-skill-migrator \
+/contextsmith-skill-migrator \
   --skills-dir ~/.agents/skills \
   --mode audit-only \
   --target-profile generic-local

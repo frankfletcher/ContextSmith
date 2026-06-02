@@ -1,8 +1,8 @@
 ---
-name: local-model-instruction-engineer
+name: contextsmith-instruction-engineer
 description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
 metadata:
-  version: "1.6.1"
+  version: "1.7.0"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -22,7 +22,7 @@ Default parameter values for generated instruction files:
 
 Every generated instruction file (AGENTS.md, CLAUDE.md, etc.) MUST include an `## Artifact Manifest` section per `references/artifact-manifest.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing when child scope is more constrained with justification (`narrowed`), (4) selecting references using the Artifact Type -> Default References Matrix — instruction files always include instruction-deduplication, instruction-precedence, loop-safety, git-safety, conditionally domain-profiles and coding-standards, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
 
-# Local Model Instruction Engineer
+# ContextSmith Instruction Engineer
 
 Create, optimize, audit, and maintain repository or agent instruction files such as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursorrules`, OpenCode/Hermes/OpenClaw instructions, and project-specific agent guidance.
 

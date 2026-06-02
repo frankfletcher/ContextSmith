@@ -124,7 +124,7 @@ for skill in sorted(skills.iterdir()):
 def validate_artifact_manifest_ref(skill_dir, skill_name, text):
     """Validate that engineer skills reference artifact-manifest.md in generation instructions."""
     # Only check the three engineer skills
-    engineer_skills = {'local-model-prompt-engineer', 'local-model-skill-engineer', 'local-model-instruction-engineer'}
+    engineer_skills = {'contextsmith-prompt-engineer', 'contextsmith-skill-engineer', 'contextsmith-instruction-engineer'}
     if skill_name not in engineer_skills:
         return 0, 0
 

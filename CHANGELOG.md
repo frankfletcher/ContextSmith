@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.7.0
+
+**Released:** 2026-06-01
+
+### Changed
+
+- Renamed public skill entry points from `local-model-*` to `contextsmith-*`:
+  `contextsmith-prompt-engineer`, `contextsmith-skill-engineer`, `contextsmith-skill-migrator`, `contextsmith-instruction-engineer`, `contextsmith-agent-evaluator`, and `contextsmith-run`.
+- Added `contextsmith` as a top-level router skill for package discovery and intent-based dispatch.
+- Updated README, Quick Start, Which Skill guidance, package spec, release docs, scripts, manifests, and live design notes for the new naming convention.
+- Bumped all skill versions and reference manifests to 1.7.0.
+- Clarified that ContextSmith remains local/open-weight first while the methodology also applies to frontier-model agent workflows.
+
+### Breaking
+
+- Existing `/local-model-*` invocations are replaced by `/contextsmith-*` invocations. Installations should use the renamed skill packages.
+
 ## v1.6.1
 
 **Released:** 2026-06-01
@@ -7,7 +24,7 @@
 ### Fixed
 
 - Reverted prose threshold in `shared/phased-planning.md` from `{{CONTEXT_BUDGET}}` back to `64k` — the YAML template variable at line 27 is the configurable parameter; the prose at line 105 is a meaningful boundary value, not a budget setting.
-- Moved "Downstream Prompt Requirements" section from `shared/targeted-context-length.md` to `shared/persistent-task-state.md` where it belongs semantically. Updated `skills/local-model-prompt-engineer/SKILL.md` reference anchor accordingly.
+- Moved "Downstream Prompt Requirements" section from `shared/targeted-context-length.md` to `shared/persistent-task-state.md` where it belongs semantically. Updated `skills/contextsmith-prompt-engineer/SKILL.md` reference anchor accordingly.
 
 ### Changed
 
@@ -23,7 +40,7 @@
 
 ### Added
 
-- Added `local-model-run`, a parameter-enforced run executor for prompts, prompt files, `NEXT_PROMPT.md` handoffs, and `.agent_work/.../tasks/<task>/` folders.
+- Added `contextsmith-run`, a parameter-enforced run executor for prompts, prompt files, `NEXT_PROMPT.md` handoffs, and `.agent_work/.../tasks/<task>/` folders.
 - Added run modes for `single`, `single-with-state`, `phase`, `phased-run`, `dry-run`, and `audit-only`, allowing the same skill to handle lightweight one-shot prompts and durable phased implementation plans.
 - Added `--interaction refine` support with bounded multiple-choice questions, recommended defaults, question budgets, and concrete answer-to-parameter mapping so users can guide execution before the model assumes architecture, stack, source quality, tone, output format, or validation strategy.
 - Added domain-specific refinement, validation, self-audit, and Ralph critique guidance for software engineering, frontend UX, data analytics, data science/ML, AI/ML engineering, research, writing/editing, business strategy, education/tutoring, ops/DevOps, legal/policy/compliance, and general tasks.
@@ -33,7 +50,7 @@
 ### Changed
 
 - Bumped all skill versions and reference manifests to 1.6.0.
-- Updated README, Quick Start, Which Skill guidance, repo map, and living notes to include `local-model-run` as the sixth ContextSmith skill.
+- Updated README, Quick Start, Which Skill guidance, repo map, and living notes to include `contextsmith-run` as the sixth ContextSmith skill.
 - Strengthened local-model execution guidance with one-screen contracts, one bounded unit at a time, selective reference loading, explicit stop conditions, validation-level semantics, and declared-vs-enforced completion checks.
 
 ## v1.5.1
@@ -69,7 +86,7 @@
 - Updated `scripts/sync_shared_refs.py` with `--update-manifests` flag to recompute and write back stale SHA-1 blob hashes in `reference_manifest.yml`.
 - Updated `scripts/package_skill.sh` with pre-package validation gate, MANIFEST.json generation (SHA-256 per-file checksums), and `.sha256` zip-level checksum files.
 - Updated `README.md` with a package-based installation section and copy-paste commands.
-- Strengthened `local-model-prompt-engineer`, `local-model-instruction-engineer`, `local-model-skill-engineer`, `local-model-skill-migrator`, and `local-model-agent-evaluator` so long-running planning workflows require or audit a concrete task-state directory with `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md`, instead of allowing a single narrative plan file to stand in for persistent state. The guidance now distinguishes allowed planning artifacts from source-code edits, requires resumable `NEXT_PROMPT.md` handoffs, and reinforces compact state hygiene for paths, commands, validation results, decisions, constraints, and next actions.
+- Strengthened `contextsmith-prompt-engineer`, `contextsmith-instruction-engineer`, `contextsmith-skill-engineer`, `contextsmith-skill-migrator`, and `contextsmith-agent-evaluator` so long-running planning workflows require or audit a concrete task-state directory with `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md`, instead of allowing a single narrative plan file to stand in for persistent state. The guidance now distinguishes allowed planning artifacts from source-code edits, requires resumable `NEXT_PROMPT.md` handoffs, and reinforces compact state hygiene for paths, commands, validation results, decisions, constraints, and next actions.
 
 ### Notes
 
@@ -92,7 +109,7 @@
 
 ### Changed
 
-- Strengthened `local-model-prompt-engineer` with a prompt compiler boundary, non-execution self-check, and output contract reminder to reduce accidental execution of seed prompts.
+- Strengthened `contextsmith-prompt-engineer` with a prompt compiler boundary, non-execution self-check, and output contract reminder to reduce accidental execution of seed prompts.
 - Rewrote `README.md` to reduce generated-sounding contrast patterns, remove “project documentation” wording, and keep the tone practical, factual, and reader-centered.
 - Reorganized detailed docs into workflow, concept, reference, and contributing sections.
 - Updated user documentation to prefer advisory wording where appropriate, while keeping safety-critical agent references direct.
@@ -276,11 +293,11 @@ Initial GitHub-ready consolidation of the local-model agent engineering toolkit.
 ### Generalization from Qwen-specific skills to local-model skills
 
 - Renamed and generalized the core skills into local/open-weight model tools:
-  - `local-model-prompt-engineer`
-  - `local-model-skill-engineer`
-  - `local-model-skill-migrator`
-  - `local-model-instruction-engineer`
-  - `local-model-agent-evaluator`
+  - `contextsmith-prompt-engineer`
+  - `contextsmith-skill-engineer`
+  - `contextsmith-skill-migrator`
+  - `contextsmith-instruction-engineer`
+  - `contextsmith-agent-evaluator`
 
 - Introduced model-profile architecture.
   - Added profiles for `generic-local`, `qwen36`, `gemma4`, and `llama3`.
@@ -288,7 +305,7 @@ Initial GitHub-ready consolidation of the local-model agent engineering toolkit.
   - Kept the central rules model-agnostic: literal instructions, strict output contracts, progressive disclosure, no exposed CoT by default, context-risk management, validation, and atomicity for smaller models.
   - Preserved Qwen3.6 as an available/default profile when appropriate, while avoiding Qwen-only assumptions for Gemma, Llama, or unknown local models.
 
-### local-model-prompt-engineer v1.3
+### contextsmith-prompt-engineer v1.3
 
 - Added support for creating, improving, auditing, and packaging prompts for local/open-weight models.
 - Added model-profile selection and fallback to `generic-local` when the target model is unknown.
@@ -307,7 +324,7 @@ Initial GitHub-ready consolidation of the local-model agent engineering toolkit.
 - Added educational reporting: original strengths, weaknesses, changes made, why changes improve local-model reliability, and remaining risks.
 - Added optional Ralph loop support with bounded iteration and A–F grading concept in shared references.
 
-### local-model-skill-engineer v1.3
+### contextsmith-skill-engineer v1.3
 
 - Added creation, conversion, improvement, audit, and packaging of `SKILL.md`-based agent skills.
 - Added skill contract extraction for purpose, triggers, inputs, outputs, tools, files/resources, side effects, permission boundaries, failure handling, and validation.
@@ -322,7 +339,7 @@ Initial GitHub-ready consolidation of the local-model agent engineering toolkit.
 - Added local-model compatibility gate, context-risk audit, persistent-state audit, subagent delegation audit, Graphify/index support audit, and skill-auditor-style validation.
 - Added educational change report to show original strengths, original weaknesses, changes made, improvement rationale, and remaining risks.
 
-### local-model-skill-migrator v1.1 baseline
+### contextsmith-skill-migrator v1.1 baseline
 
 - Added a conservative recursive migration skill for directories such as `~/.agents/skills`.
 - Defaulted to staged migration rather than in-place rewrites.
@@ -341,7 +358,7 @@ Initial GitHub-ready consolidation of the local-model agent engineering toolkit.
 - Added conservative reference optimization during migration.
 - Added batch-level manifest and reports so migrated output can be reviewed before applying.
 
-### local-model-instruction-engineer v1.0
+### contextsmith-instruction-engineer v1.0
 
 - Added a new skill for creating, optimizing, and auditing agent-facing instruction files that are not prompts or skills.
 - Supported instruction artifacts such as:
@@ -357,7 +374,7 @@ Initial GitHub-ready consolidation of the local-model agent engineering toolkit.
 - Added support for layered instruction files, with root-level general rules and nested subproject-specific rules only when justified.
 - Added local-model-oriented instruction guidance: atomic steps, clear validation, loop-safety hooks, context economy, and small-model-friendly operating rules.
 
-### local-model-agent-evaluator v1.0
+### contextsmith-agent-evaluator v1.0
 
 - Added a non-mutating evaluator skill for prompts, skills, AGENTS.md files, and other agent-facing instructions.
 - Separated “passes validation” from “is actually good.”

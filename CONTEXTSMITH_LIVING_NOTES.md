@@ -1,20 +1,21 @@
-# Local Model Agent Engineering — Living Design Notes
+# ContextSmith — Living Design Notes
 
 Status: living backlog / implementation tracker  
 Purpose: capture implemented features and future improvements so the package evolves intentionally.
 
 ## Package Thesis
 
-Local and smaller open-weight models perform best when agent instructions are explicit, staged, validated, context-aware, loop-safe, and durable across interruptions. The package helps users engineer prompts, skills, repo instruction files, and skill migrations that work reliably under limited context, imperfect reasoning, varied agent harnesses, and chained-skill workflows.
+ContextSmith is local/open-weight first: local and smaller open-weight models perform best when agent instructions are explicit, staged, validated, context-aware, loop-safe, and durable across interruptions. The package helps users engineer prompts, skills, repo instruction files, and skill migrations that work reliably under limited context, imperfect reasoning, varied agent harnesses, and chained-skill workflows. The same discipline also improves frontier-model agent workflows.
 
 ## Current Core Skills
 
-- [x] `local-model-prompt-engineer`
-- [x] `local-model-skill-engineer`
-- [x] `local-model-skill-migrator`
-- [x] `local-model-instruction-engineer`
-- [x] `local-model-agent-evaluator`
-- [x] `local-model-run`
+- [x] `contextsmith-prompt-engineer`
+- [x] `contextsmith-skill-engineer`
+- [x] `contextsmith-skill-migrator`
+- [x] `contextsmith-instruction-engineer`
+- [x] `contextsmith-agent-evaluator`
+- [x] `contextsmith-run`
+- [x] `contextsmith` router
 
 Package structure:
 
@@ -151,11 +152,11 @@ Package structure:
 
 ### Additional Skills
 
-- [x] `local-model-agent-evaluator` — implemented.
-- [x] `local-model-run` — execute prompts and task-state handoffs with runtime contracts, refinement, validation, self-audit, Ralph evidence, and declared-vs-enforced checks.
-- [ ] `local-model-profile-builder` — create/update model profiles based on user tests, model cards, runtime behavior, and known failure modes.
+- [x] `contextsmith-agent-evaluator` — implemented.
+- [x] `contextsmith-run` — execute prompts and task-state handoffs with runtime contracts, refinement, validation, self-audit, Ralph evidence, and declared-vs-enforced checks.
+- [ ] `contextsmith-profile-builder` — create/update model profiles based on user tests, model cards, runtime behavior, and known failure modes.
 - [ ] `agent-task-state-manager` — initialize, clean, audit, or resume persistent task-state folders.
-- [ ] `local-model-agent-harness-adapter` — adapt instructions for OpenCode, Codex, OpenClaw, Hermes, Aider-like tools, Cursor, Continue, etc.
+- [ ] `contextsmith-agent-harness-adapter` — adapt instructions for OpenCode, Codex, OpenClaw, Hermes, Aider-like tools, Cursor, Continue, etc.
 
 ### Harness Profiles
 
@@ -323,7 +324,7 @@ Implemented response:
 
 ### Implemented in this pass
 
-- [x] Added `local-model-run`, a parameter-enforced execution skill for raw prompts, prompt files, `NEXT_PROMPT.md` handoffs, and `.agent_work/.../tasks/<task>/` folders.
+- [x] Added `contextsmith-run`, a parameter-enforced execution skill for raw prompts, prompt files, `NEXT_PROMPT.md` handoffs, and `.agent_work/.../tasks/<task>/` folders.
 - [x] Added run modes for `single`, `single-with-state`, `phase`, `phased-run`, `dry-run`, and `audit-only` execution.
 - [x] Added interaction modes for `silent`, `confirm`, `refine`, `collaborative`, and `review-gate`, with bounded multiple-choice refinement questions and question budgets.
 - [x] Added domain-specific refinement and validation packs for software engineering, frontend UX, data analytics, data science/ML, AI/ML engineering, research, writing/editing, business strategy, education/tutoring, ops/DevOps, legal/policy/compliance, and general tasks.
@@ -335,14 +336,14 @@ Implemented response:
 - [x] Added a compact reference-selection matrix so local models load only the references needed for a specific run shape, domain, and side-effect tier.
 - [x] Added validation-level semantics for `none`, `basic`, `available`, and `strict`.
 - [x] Added domain-specific Ralph critique lenses so `--ralph N` critiques the correct risk profile for code, frontend, research, writing, data, ML, operations, legal/policy, and general tasks.
-- [x] Updated README, Quick Start, and Which Skill guidance so users can discover when to use `local-model-run` instead of the prompt engineer or evaluator.
+- [x] Updated README, Quick Start, and Which Skill guidance so users can discover when to use `contextsmith-run` instead of the prompt engineer or evaluator.
 - [x] Bumped all skill metadata and reference manifests to v1.6.0.
 
 ### Future ideas retained
 
 - [ ] Build a real `contextsmith` CLI around the same run and artifact flags.
 - [ ] Consider MCP-backed parameter resolution, reference selection, validation, and task-state inspection after the skill contract stabilizes.
-- [ ] Add example outputs for `local-model-run` covering a phase handoff, frontend refine run, research brief, email rewrite, and data-analysis run.
+- [ ] Add example outputs for `contextsmith-run` covering a phase handoff, frontend refine run, research brief, email rewrite, and data-analysis run.
 - [ ] Add automated behavioral fixtures for declared-vs-enforced checks and Ralph evidence.
 
 ## v1.5.1 Living Notes Update

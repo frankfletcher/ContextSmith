@@ -7,7 +7,7 @@ This is powerful, but it is risky if done in place. A bad batch rewrite could su
 ## Safe default
 
 ```bash
-/local-model-skill-migrator \
+/contextsmith-skill-migrator \
   --skills-dir ~/.agents/skills \
   --mode review-gate \
   --target-profiles generic-local,qwen36 \

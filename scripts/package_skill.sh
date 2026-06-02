@@ -9,7 +9,7 @@ OUTPUT_DIR="${2:-$REPO_ROOT/dist}"
 
 if [ -z "$SKILL_NAME" ]; then
     echo "Usage: $0 <skill-name> [output-dir]"
-    echo "Example: $0 local-model-prompt-engineer"
+    echo "Example: $0 contextsmith-prompt-engineer"
     exit 1
 fi
 

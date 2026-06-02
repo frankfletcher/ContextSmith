@@ -32,7 +32,7 @@ For large coding tasks, use a stronger model or deep-path ContextSmith run to cr
 Example:
 
 ```bash
-/local-model-prompt-engineer   --mode deep   --planner-profile frontier-cloud   --executor-profile qwen36   --target-capability small-local   --context-length 32k
+/contextsmith-prompt-engineer   --mode deep   --planner-profile frontier-cloud   --executor-profile qwen36   --target-capability small-local   --context-length 32k
 ```
 
 This pattern works because the executor model does not need to rediscover the architecture. It carries out well-scoped instructions with durable task state.

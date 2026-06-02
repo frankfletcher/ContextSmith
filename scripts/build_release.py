@@ -7,9 +7,9 @@ By default creates only the release bundle (contextsmith-release.zip).
 Use --individual to also create per-skill zip packages.
 
 Usage:
-    python scripts/build_release.py --package
+    python scripts/build_release.py --package --individual
     python scripts/build_release.py --package --dry-run
-    python scripts/build_release.py --package --version 1.1.0
+    python scripts/build_release.py --package --individual --version 1.7.0
     python scripts/build_release.py --package --individual
     python scripts/build_release.py --package --dist-dir /tmp/release
 """
@@ -422,9 +422,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Examples:\n"
-            "  python scripts/build_release.py --package\n"
+            "  python scripts/build_release.py --package --individual\n"
             "  python scripts/build_release.py --package --dry-run\n"
-            "  python scripts/build_release.py --package --version 1.1.0\n"
+            "  python scripts/build_release.py --package --individual --version 1.7.0\n"
             "  python scripts/build_release.py --package --individual\n"
             "  python scripts/build_release.py --package --dist-dir /tmp/release\n"
         ),

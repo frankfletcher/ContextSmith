@@ -63,7 +63,7 @@ echo ""
 
 # Step 1: Full pipeline run
 echo "=== Step 1: Full Pipeline Run ==="
-if python "$REPO_ROOT/scripts/build_release.py" --package --bundle --dist-dir "$DIST_DIR" > "$TEST_ROOT/pipeline.log" 2>&1; then
+if python "$REPO_ROOT/scripts/build_release.py" --package --bundle --individual --dist-dir "$DIST_DIR" > "$TEST_ROOT/pipeline.log" 2>&1; then
     pass "Pipeline completed successfully"
 else
     fail "Pipeline failed (see $TEST_ROOT/pipeline.log)"
@@ -81,16 +81,18 @@ echo ""
 # Step 2: Verify zip artifacts
 echo "=== Step 2: Verify Zip Artifacts ==="
 EXPECTED_SKILLS=(
-    "local-model-prompt-engineer"
-    "local-model-skill-engineer"
-    "local-model-instruction-engineer"
-    "local-model-agent-evaluator"
-    "local-model-skill-migrator"
+    "contextsmith"
+    "contextsmith-prompt-engineer"
+    "contextsmith-skill-engineer"
+    "contextsmith-skill-migrator"
+    "contextsmith-instruction-engineer"
+    "contextsmith-agent-evaluator"
+    "contextsmith-run"
 )
 
 for skill in "${EXPECTED_SKILLS[@]}"; do
     # Find the zip for this skill
-    ZIP_FILE=$(find "$DIST_DIR" -maxdepth 1 -name "${skill}-*.zip" 2>/dev/null | head -1)
+    ZIP_FILE=$(find "$DIST_DIR" -maxdepth 1 -name "${skill}-[0-9]*.zip" 2>/dev/null | head -1)
     if [ -n "$ZIP_FILE" ] && [ -f "$ZIP_FILE" ]; then
         pass "Zip exists: $(basename "$ZIP_FILE")"
     else
@@ -98,7 +100,7 @@ for skill in "${EXPECTED_SKILLS[@]}"; do
     fi
 
     # Find the corresponding .sha256 file
-    SHA_FILE=$(find "$DIST_DIR" -maxdepth 1 -name "${skill}-*.sha256" 2>/dev/null | head -1)
+    SHA_FILE=$(find "$DIST_DIR" -maxdepth 1 -name "${skill}-[0-9]*.sha256" 2>/dev/null | head -1)
     if [ -n "$SHA_FILE" ] && [ -f "$SHA_FILE" ]; then
         pass "SHA256 exists: $(basename "$SHA_FILE")"
     else
@@ -107,13 +109,13 @@ for skill in "${EXPECTED_SKILLS[@]}"; do
 done
 
 # Check bundle
-if [ -f "$DIST_DIR/contextsmith-all-bundle.zip" ]; then
+if [ -f "$DIST_DIR/contextsmith-release.zip" ]; then
     pass "Bundle zip exists"
 else
     fail "Bundle zip missing"
 fi
 
-if [ -f "$DIST_DIR/contextsmith-all-bundle.zip.sha256" ]; then
+if [ -f "$DIST_DIR/contextsmith-release.zip.sha256" ]; then
     pass "Bundle SHA256 exists"
 else
     fail "Bundle SHA256 missing"
@@ -145,7 +147,7 @@ echo ""
 # Step 4: Verify zip contents
 echo "=== Step 4: Verify Zip Contents ==="
 for skill in "${EXPECTED_SKILLS[@]}"; do
-    ZIP_FILE=$(find "$DIST_DIR" -maxdepth 1 -name "${skill}-*.zip" 2>/dev/null | head -1)
+    ZIP_FILE=$(find "$DIST_DIR" -maxdepth 1 -name "${skill}-[0-9]*.zip" 2>/dev/null | head -1)
     if [ -z "$ZIP_FILE" ]; then
         fail "Cannot verify contents: $skill zip not found"
         continue
@@ -186,8 +188,8 @@ echo ""
 
 # Step 5: Verify bundle contents
 echo "=== Step 5: Verify Bundle Contents ==="
-if [ -f "$DIST_DIR/contextsmith-all-bundle.zip" ]; then
-    BUNDLE_LIST=$(unzip -l "$DIST_DIR/contextsmith-all-bundle.zip" 2>/dev/null) || true
+if [ -f "$DIST_DIR/contextsmith-release.zip" ]; then
+    BUNDLE_LIST=$(unzip -l "$DIST_DIR/contextsmith-release.zip" 2>/dev/null) || true
     for skill in "${EXPECTED_SKILLS[@]}"; do
         if echo "$BUNDLE_LIST" | grep -q "$skill/"; then
             pass "Bundle contains $skill/"
@@ -203,17 +205,17 @@ echo ""
 # Step 6: Verify RELEASE_SUMMARY.json
 echo "=== Step 6: Verify RELEASE_SUMMARY.json ==="
 if [ -f "$DIST_DIR/RELEASE_SUMMARY.json" ]; then
-    # Check it has the expected number of entries (5 skills + 1 bundle = 6)
+    # Check it has the expected number of entries (7 skills + 1 bundle = 8)
     ENTRY_COUNT=$(python -c "
 import json
 with open('$DIST_DIR/RELEASE_SUMMARY.json') as f:
     data = json.load(f)
 print(len(data.get('skills', [])))
 ")
-    if [ "$ENTRY_COUNT" -ge 6 ]; then
-        pass "RELEASE_SUMMARY.json has $ENTRY_COUNT entries (expected >= 6)"
+    if [ "$ENTRY_COUNT" -ge 8 ]; then
+        pass "RELEASE_SUMMARY.json has $ENTRY_COUNT entries (expected >= 8)"
     else
-        fail "RELEASE_SUMMARY.json has $ENTRY_COUNT entries (expected >= 6)"
+        fail "RELEASE_SUMMARY.json has $ENTRY_COUNT entries (expected >= 8)"
     fi
 
     # Check all entries have required fields

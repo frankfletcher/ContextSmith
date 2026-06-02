@@ -16,8 +16,11 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 - **Rich parameter system** - Control every aspect of artifact engineering
 
 ```bash
+# Unsure which sub-skill to use? Start with the router.
+/contextsmith help
+
 # Sample advanced workflow
-/local-model-prompt-engineer \
+/contextsmith-prompt-engineer \
   --target-profile qwen36 \
   --context-length 32k \
   --ralph 2 \
@@ -54,7 +57,7 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 
 **Create atomic implementation plan**
 ```bash
-/local-model-instruction-engineer \
+/contextsmith-instruction-engineer \
   --project . \
   --target-profile qwen36 \
   --context-length 32k
@@ -62,7 +65,7 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 
 **Audit test quality**
 ```bash
-/local-model-agent-evaluator \
+/contextsmith-agent-evaluator \
   --focus test-quality \
   --target tests/ \
   --domain coding
@@ -70,7 +73,7 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 
 **Execute a prompt or task-state handoff**
 ```bash
-/local-model-run \
+/contextsmith-run \
   --run-mode phase \
   --target .agent_work/sprints/<sprint>/tasks/<task> \
   --target-profile qwen36 \
@@ -81,7 +84,7 @@ Smaller/local models (Qwen, Gemma, Llama) require surgical precision in instruct
 
 **Migrate skills safely**
 ```bash
-/local-model-skill-migrator \
+/contextsmith-skill-migrator \
   --skills-dir ~/.agents/skills \
   --mode review-gate \
   --backup --stage
@@ -124,14 +127,14 @@ python scripts/validate_skills.py
 Build verified packages with checksums, then install:
 
 ```bash
-# Build all skill packages (with all-skills bundle)
-python scripts/build_release.py --package --bundle
+# Build all installable skill packages and the release bundle
+python scripts/build_release.py --package --individual
 
 # Install all skills
 bash scripts/install_all.sh dist
 
 # Or install a single skill
-bash scripts/install_skill.sh dist/local-model-prompt-engineer-1.0.0.zip
+bash scripts/install_skill.sh dist/contextsmith-prompt-engineer-1.7.0.zip
 ```
 
 Package-based install verifies SHA-256 checksums, backs up existing versions, and skips already-installed versions. See [RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md) for the full release and installation guide.

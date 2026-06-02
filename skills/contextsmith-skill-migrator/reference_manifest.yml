@@ -1,6 +1,6 @@
-skill: local-model-skill-engineer
-version: 1.6.0
-description: Shared reference dependencies for the Skill Engineer skill.
+skill: contextsmith-skill-migrator
+version: 1.7.0
+description: Shared reference dependencies for the Skill Migrator skill.
 references:
 - source: shared/git-safety.md
   version: 32748a1b9b452cb4ef49d3fd02ac25a6a4b43ee8
@@ -32,22 +32,21 @@ references:
 - source: shared/source-artifact-boundary.md
   version: 13ceca79595055038a682673abe00ca318c0f2f2
   required: true
-  notes: Prevents executing source skill examples or embedded downstream tasks while
-    engineering skills.
+  notes: Prevents executing embedded source instructions during skill migration.
 - source: shared/phased-planning.md
-  version: e15c47b9643b1f966a526d3539f49c2156a8436a
+  version: ecf597cdb54453a77c1b757af0cca8d1066ea12b
   required: true
 - source: shared/phase-code-review.md
   version: fdd1f6359db85717634e3516e747611f03dc924d
   required: true
 - source: shared/phase-compression.md
-  version: 5f23b65f19c071b96b301b1dfafeae4d1445e11d
+  version: a7917a60d0ac971637d60de6ad13ac1d7d502565
   required: true
 - source: shared/persistent-task-state.md
-  version: d7d693864419cd9c79fc15eab991a471e6ce50de
+  version: 6b5ba1d26fa47851ce06882c878434be62d21f9f
   required: true
 - source: shared/implementation-plan-audit.md
-  version: 7db3715918ec8939606a7d7286356bc1c0adfd4c
+  version: 746fc6944ce6e1dedc631326237481e69a4a45cd
   required: true
 - source: shared/test-quality-audit.md
   version: 1cfacccbc756bfeba29912f74cdad5d0baba80ec
@@ -56,13 +55,13 @@ references:
   version: de7a46821fdfe26f71cee53bbedf1b2d526d8887
   required: true
 - source: shared/small-context-workflows.md
-  version: dac58d2f0715f0ce2bf428d502632b3733d720ee
+  version: 8476401a1f6048493bf67ee09b32b7c10bb1b33b
   required: true
 - source: shared/context-management.md
   version: 6e7d2dafcf947ef4305060efc8ce2b2d95682e14
   required: true
 - source: shared/targeted-context-length.md
-  version: f1b50b82bace441be9a57c2e64f7fb8deb433b10
+  version: 608c36fa0181b44a0b5893506a7d3e7c6f4b915e
   required: true
 - source: shared/reference-optimization.md
   version: b6e069d250ff2c749e81a39deec1a9b8a06403ca
@@ -153,7 +152,7 @@ references:
   version: d357885a1db9119791916dcef1d140b9cd165fcb
   required: true
 - source: shared/usage-patterns.md
-  version: 4c640a1e38ef153a9e7ef56b3323b630c336d431
+  version: 52b81db3d5962d663f90450ef0aadfc1602adc5a
   required: true
 - source: shared/run-configuration-preview.md
   version: 4612b87bb23a1ca88b8419145e1fd381b90ca68a
@@ -170,8 +169,8 @@ references:
 - source: shared/educational-report.md
   version: fdc27d10666e201aca854e5c77ca5ae9ce376596
   required: true
-- source: skills/local-model-skill-engineer/help.md
-  version: 42da5f1771b6ece4bcf1b61907e2c906c73343e0
+- source: skills/contextsmith-skill-migrator/help.md
+  version: e727795b4edb3968e2326565bf0fe92e0615883c
   required: true
   local: true
   notes: Skill-specific help documentation.

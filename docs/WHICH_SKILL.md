@@ -2,12 +2,20 @@
 
 ContextSmith is a toolkit, not one giant skill. Each skill has a narrow job so the agent loads less context and mixes fewer workflows.
 
+If you are unsure, start with the router:
+
+```bash
+/contextsmith help
+```
+
+The router dispatches to one sub-skill and leaves omitted parameters for that sub-skill's own defaults.
+
 ## I have a prompt
 
 Use:
 
 ```text
-local-model-prompt-engineer
+contextsmith-prompt-engineer
 ```
 
 Good for:
@@ -22,7 +30,7 @@ Good for:
 Example:
 
 ```bash
-/local-model-prompt-engineer --mode deep --target-profile qwen36 --context-length 32k --ralph 2
+/contextsmith-prompt-engineer --mode deep --target-profile qwen36 --context-length 32k --ralph 2
 ```
 
 ## I want to run a prompt or handoff
@@ -30,7 +38,7 @@ Example:
 Use:
 
 ```text
-local-model-run
+contextsmith-run
 ```
 
 Good for:
@@ -43,7 +51,7 @@ Good for:
 Example:
 
 ```bash
-/local-model-run --run-mode phase --target .agent_work/sprints/<sprint>/tasks/<task> --interaction refine --validation strict --ralph 2
+/contextsmith-run --run-mode phase --target .agent_work/sprints/<sprint>/tasks/<task> --interaction refine --validation strict --ralph 2
 ```
 
 ## I have a SKILL.md
@@ -51,7 +59,7 @@ Example:
 Use:
 
 ```text
-local-model-skill-engineer
+contextsmith-skill-engineer
 ```
 
 Good for:
@@ -66,7 +74,7 @@ Good for:
 Example:
 
 ```bash
-/local-model-skill-engineer --source ./my-skill/SKILL.md --target-profiles generic-local,qwen36 --output staging
+/contextsmith-skill-engineer --source ./my-skill/SKILL.md --target-profiles generic-local,qwen36 --output staging
 ```
 
 ## I have a directory full of skills
@@ -74,7 +82,7 @@ Example:
 Use:
 
 ```text
-local-model-skill-migrator
+contextsmith-skill-migrator
 ```
 
 Good for:
@@ -89,7 +97,7 @@ Good for:
 Example:
 
 ```bash
-/local-model-skill-migrator --skills-dir ~/.agents/skills --backup --stage --no-apply
+/contextsmith-skill-migrator --skills-dir ~/.agents/skills --backup --stage --no-apply
 ```
 
 ## I have a repo and want better agent instructions
@@ -97,7 +105,7 @@ Example:
 Use:
 
 ```text
-local-model-instruction-engineer
+contextsmith-instruction-engineer
 ```
 
 Good for:
@@ -111,7 +119,7 @@ Good for:
 Example:
 
 ```bash
-/local-model-instruction-engineer --project . --mode guided --domain coding,data-science-ml --context-length 32k
+/contextsmith-instruction-engineer --project . --mode guided --domain coding,data-science-ml --context-length 32k
 ```
 
 ## I want to audit without changing files
@@ -119,7 +127,7 @@ Example:
 Use:
 
 ```text
-local-model-agent-evaluator
+contextsmith-agent-evaluator
 ```
 
 Good for:
@@ -135,15 +143,21 @@ Good for:
 Example:
 
 ```bash
-/local-model-agent-evaluator --mode audit-only --focus implementation-plan --target IMPLEMENTATION_PLAN.md
+/contextsmith-agent-evaluator --mode audit-only --focus implementation-plan --target IMPLEMENTATION_PLAN.md
 ```
 
 ## If you are still unsure
 
-Start with the evaluator:
+Start with the router for discovery or the evaluator for audit-only work:
 
 ```bash
-/local-model-agent-evaluator --mode audit-only --target <file-or-folder>
+/contextsmith help
+```
+
+For an existing artifact you want reviewed without edits:
+
+```bash
+/contextsmith-agent-evaluator --mode audit-only --target <file-or-folder>
 ```
 
 It will tell you what is weak and which ContextSmith skill is likely to help.

@@ -6,6 +6,14 @@ You do not need to learn the whole package first. Pick the closest workflow and 
 
 ## Good default controls
 
+If you are not sure which skill to use, start with the router:
+
+```bash
+/contextsmith help
+```
+
+The router selects one ContextSmith sub-skill based on intent. It does not override omitted parameters; the selected sub-skill applies its own defaults.
+
 For local Qwen coding work:
 
 ```bash
@@ -41,7 +49,7 @@ For anything that may overwrite files:
 Use this when a prompt is vague, bloated, too frontier-model-oriented, or likely to be run by a smaller/local model.
 
 ```bash
-/local-model-prompt-engineer \
+/contextsmith-prompt-engineer \
   --mode deep \
   --target-profile qwen36 \
   --context-length 32k \
@@ -65,7 +73,7 @@ What you should get:
 Use this when you want better repo instructions for a coding agent.
 
 ```bash
-/local-model-instruction-engineer \
+/contextsmith-instruction-engineer \
   --project . \
   --mode guided \
   --target-profile qwen36 \
@@ -88,7 +96,7 @@ What you should get:
 Use this when a strong model or another tool created an implementation plan and you want to know if a smaller model can execute it.
 
 ```bash
-/local-model-agent-evaluator \
+/contextsmith-agent-evaluator \
   --mode audit-only \
   --focus implementation-plan \
   --target IMPLEMENTATION_PLAN.md \
@@ -110,7 +118,7 @@ What you should get:
 Use this when you want ContextSmith controls to be enforced during execution, not only included in the prompt.
 
 ```bash
-/local-model-run \
+/contextsmith-run \
   --run-mode phase \
   --target .agent_work/sprints/<sprint>/tasks/<task> \
   --target-profile qwen36 \
@@ -134,7 +142,7 @@ What you should get:
 Use this when tests exist but you suspect they are shallow or agent-generated fluff.
 
 ```bash
-/local-model-agent-evaluator \
+/contextsmith-agent-evaluator \
   --mode audit-only \
   --focus test-quality \
   --target tests/ \
@@ -155,7 +163,7 @@ What you should get:
 Use this when you have a `SKILL.md` and want it optimized for local/open-weight models without changing its behavior.
 
 ```bash
-/local-model-skill-engineer \
+/contextsmith-skill-engineer \
   --source ./my-skill/SKILL.md \
   --mode guided \
   --target-profiles generic-local,qwen36 \
@@ -177,7 +185,7 @@ What you should get:
 Use this when you want to stage changes across a whole skills directory.
 
 ```bash
-/local-model-skill-migrator \
+/contextsmith-skill-migrator \
   --skills-dir ~/.agents/skills \
   --mode review-gate \
   --target-profiles generic-local,qwen36 \

@@ -1,4 +1,10 @@
 skill: contextsmith
-version: 1.0.0
-description: Meta-skill for ContextSmith — routes to sub-skills based on user intent.
-references: []
+version: 1.7.0
+description: "Meta-skill for ContextSmith \u2014 routes to sub-skills based on user\
+  \ intent."
+references:
+- source: skills/contextsmith/help.md
+  version: 24b0b499ca47e3034e14b47f1f148cdb1b5c1b7c
+  required: true
+  local: true
+  notes: Router help and sub-skill overview.

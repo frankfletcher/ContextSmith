@@ -1,8 +1,8 @@
 ---
-name: local-model-run
+name: contextsmith-run
 description: Execute prompts, prompt files, and ContextSmith task-state handoffs under explicit local/open-weight model parameters, domain-specific refinement, validation gates, Ralph loops, self-audit, and evidence requirements. Use when running a prompt or implementation handoff and you need declared controls such as target profile, context budget, interaction mode, validation, and self-audit to be enforced rather than merely mentioned.
 metadata:
-  version: "1.6.1"
+  version: "1.7.0"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -27,7 +27,7 @@ Default runtime parameters:
 
 If an upstream artifact includes an `## Artifact Manifest`, inherit its parameters unless the current user overrides them. Build the run manifest from `references/artifact-manifest.md`, `references/control-parameters.md`, and `references/execution-contract.md`. Child runs may narrow scope or validation; do not silently widen side effects, context use, target model assumptions, or external actions.
 
-# Local Model Run
+# ContextSmith Run
 
 Execute one prompt, prompt file, or ContextSmith task-state handoff while enforcing the declared runtime contract.
 

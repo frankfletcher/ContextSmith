@@ -6,7 +6,7 @@ set -euo pipefail
 # Usage: install_all.sh <dist-dir> [target-dir]
 # Example: install_all.sh dist
 #
-# Finds all .zip files in dist-dir, calls install_skill.sh for each,
+# Finds installable skill .zip files in dist-dir, calls install_skill.sh for each,
 # and prints a summary report.
 
 DIST_DIR="${1:-}"
@@ -33,11 +33,12 @@ if [ ! -f "$INSTALL_SCRIPT" ]; then
     exit 1
 fi
 
-# Find all zip files (excluding .sha256 files)
+# Find installable skill zip files. Skip the source/all-skills release bundle,
+# which is not an install_skill.sh package and has no top-level MANIFEST.json.
 ZIPS=()
 while IFS= read -r -d '' zip; do
     ZIPS+=("$zip")
-done < <(find "$DIST_DIR" -maxdepth 1 -name '*.zip' -print0 | sort -z)
+done < <(find "$DIST_DIR" -maxdepth 1 -name '*.zip' ! -name 'contextsmith-release.zip' -print0 | sort -z)
 
 if [ ${#ZIPS[@]} -eq 0 ]; then
     echo "ERROR: no .zip files found in $DIST_DIR"

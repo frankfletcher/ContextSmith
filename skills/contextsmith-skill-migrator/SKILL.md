@@ -1,13 +1,13 @@
 ---
-name: local-model-skill-migrator
+name: contextsmith-skill-migrator
 description: Safely audit, stage, migrate, validate, apply, or restore whole directories of SKILL.md-based skills for local/open-weight model compatibility. Use for recursive skill migrations such as ~/.agents/skills, with backup, manifest, staging, per-skill reports, target-profile metadata, reference optimization, loop/Git/context safeguards, semantic-diff validation, Ralph-loop quality review, and explicit approval before applying changes, targeted context length control, and upstream workflow collision checks.
 metadata:
-  version: "1.6.1"
+  version: "1.7.0"
   package: ContextSmith
   target: local-open-weight-models
 ---
 
-# Local Model Skill Migrator
+# ContextSmith Skill Migrator
 
 Safely migrate directories of skills to local/open-weight model engineering standards.
 
@@ -118,7 +118,7 @@ Copy every touched skill before conversion. Write checksums to `MANIFEST.json`.
 
 ### 4. Stage Conversion
 
-Use local-model-skill-engineer principles per skill:
+Use contextsmith-skill-engineer principles per skill:
 
 - preserve behavior
 - apply target profiles

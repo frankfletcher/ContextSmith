@@ -2,23 +2,25 @@
 
 ## Name
 
-Local Model Agent Engineering Skills
+ContextSmith Skills
 
 ## Version
 
-v1.4.2
+v1.7.0
 
 ## Thesis
 
-Local and smaller open-weight models do best when instructions are explicit, staged, validated, context-aware, loop-safe, and durable across interruptions. Artifacts must also be sized and structured for the user's targeted context length, not the model card maximum.
+ContextSmith is local/open-weight first: smaller models do best when instructions are explicit, staged, validated, context-aware, loop-safe, and durable across interruptions. The same discipline also improves frontier-model agent workflows. Artifacts must be sized and structured for the user's targeted context length, not the model card maximum.
 
 ## Core Skills
 
-- `local-model-prompt-engineer`
-- `local-model-skill-engineer`
-- `local-model-skill-migrator`
-- `local-model-instruction-engineer`
-- `local-model-agent-evaluator`
+- `contextsmith-prompt-engineer`
+- `contextsmith-skill-engineer`
+- `contextsmith-skill-migrator`
+- `contextsmith-instruction-engineer`
+- `contextsmith-agent-evaluator`
+- `contextsmith-run`
+- `contextsmith`
 
 ## Shared Principles
 
@@ -74,3 +76,10 @@ The README should remain a project landing page and quick orientation path, not 
 - Keep project documentation warm, practical, and factual while keeping agent references concise and operational.
 - Organize docs into `workflows/`, `concepts/`, `reference/`, and `contributing/` sections where appropriate.
 - Avoid overused AI-sounding contrast patterns and avoid language that implies the user needs hand-holding.
+
+## v1.7.0 Design Additions
+
+- Rename public skill entry points from `local-model-*` to `contextsmith-*` to align the package surface with the project name.
+- Add `contextsmith` as the top-level router skill for discovery and intent-based dispatch.
+- Keep the methodology local/open-weight first while documenting that the practices transfer to frontier-model agents.
+- Treat `contextsmith-run` as a core skill alongside engineering, migration, instruction, and evaluation workflows.

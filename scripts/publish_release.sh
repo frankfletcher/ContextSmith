@@ -20,9 +20,9 @@
 #   - Clean working tree (no uncommitted changes to tracked files)
 #
 # Example:
-#   bash scripts/publish_release.sh 1.5.0
-#   bash scripts/publish_release.sh 1.5.0 --dry-run
-#   bash scripts/publish_release.sh 1.5.0 --notes my-notes.md --prerelease
+#   bash scripts/publish_release.sh 1.7.0
+#   bash scripts/publish_release.sh 1.7.0 --dry-run
+#   bash scripts/publish_release.sh 1.7.0 --notes my-notes.md --prerelease
 
 set -euo pipefail
 
@@ -167,6 +167,7 @@ do_build() {
   local build_cmd=(
     python3 "${REPO_ROOT}/scripts/build_release.py"
     --package
+    --individual
     --dist-dir "$ACTUAL_DIST"
   )
 

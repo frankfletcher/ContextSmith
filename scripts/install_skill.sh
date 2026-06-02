@@ -4,7 +4,7 @@ set -euo pipefail
 # install_skill.sh — Install a ContextSmith skill package to a target directory.
 #
 # Usage: install_skill.sh <zip-file> [target-dir]
-# Example: install_skill.sh dist/local-model-prompt-engineer-1.0.0.zip
+# Example: install_skill.sh dist/contextsmith-prompt-engineer-1.7.0.zip
 #
 # The script extracts the zip, verifies MANIFEST.json checksums, compares
 # versions, backs up any existing installation, and copies to target.
@@ -14,7 +14,7 @@ TARGET_DIR="${2:-$HOME/.agents/skills}"
 
 if [ -z "$ZIP_FILE" ]; then
     echo "Usage: $0 <zip-file> [target-dir]"
-    echo "Example: $0 dist/local-model-prompt-engineer-1.0.0.zip"
+    echo "Example: $0 dist/contextsmith-prompt-engineer-1.7.0.zip"
     exit 1
 fi
 

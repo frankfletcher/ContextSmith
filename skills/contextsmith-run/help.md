@@ -1,6 +1,6 @@
-# local-model-run Help
+# contextsmith-run Help
 
-`local-model-run` executes prompts, prompt files, and ContextSmith task-state handoffs under explicit runtime controls.
+`contextsmith-run` executes prompts, prompt files, and ContextSmith task-state handoffs under explicit runtime controls.
 
 ## Use It For
 
@@ -13,19 +13,19 @@
 ## Common Commands
 
 ```bash
-/local-model-run --run-mode single --target-profile qwen36 --ralph 1
+/contextsmith-run --run-mode single --target-profile qwen36 --ralph 1
 ```
 
 ```bash
-/local-model-run --run-mode phase --target .agent_work/sprints/contextsmith-1.0/tasks/example --validation strict
+/contextsmith-run --run-mode phase --target .agent_work/sprints/contextsmith-1.0/tasks/example --validation strict
 ```
 
 ```bash
-/local-model-run --interaction refine --domain frontend-ux --validation available
+/contextsmith-run --interaction refine --domain frontend-ux --validation available
 ```
 
 ```bash
-/local-model-run --run-mode dry-run --target NEXT_PROMPT.md
+/contextsmith-run --run-mode dry-run --target NEXT_PROMPT.md
 ```
 
 ## Key Parameters

@@ -1,11 +1,11 @@
-# local-model-agent-evaluator Help
+# contextsmith-agent-evaluator Help
 
 Audit prompts, skills, AGENTS.md files, repo instructions, agent workflows, model profiles, migration outputs, and long-running plans without modifying them by default.
 
 ## Quickstart
 
 ```text
-/local-model-agent-evaluator --target ./AGENTS.md --mode audit-only --target-profile qwen36 --context-length 32k --domain coding
+/contextsmith-agent-evaluator --target ./AGENTS.md --mode audit-only --target-profile qwen36 --context-length 32k --domain coding
 
 Grade this file for local-model reliability and recommend fixes. Do not edit files.
 ```

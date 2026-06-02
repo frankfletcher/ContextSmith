@@ -12,13 +12,13 @@ This guide walks maintainers through building, verifying, and distributing Conte
 
 ## Quick Release
 
-Build all skill packages into `dist/`:
+Build the release bundle and all installable skill packages into `dist/`:
 
 ```bash
-python scripts/build_release.py --package
+python scripts/build_release.py --package --individual
 ```
 
-This runs the full pipeline: sync references, update manifests, validate, package, and generate summary.
+This runs the full pipeline: sync references, update manifests, validate, package individual skills, build the release bundle, and generate summary.
 
 ## Step-by-Step Checklist
 
@@ -42,13 +42,13 @@ This prints every step the pipeline will execute without modifying any files.
 
 ```bash
 # Without version bump (uses current versions from manifests)
-python scripts/build_release.py --package
+python scripts/build_release.py --package --individual
 
 # With version bump
-python scripts/build_release.py --package --version 1.5.0
+python scripts/build_release.py --package --individual --version 1.7.0
 
-# With all-skills bundle
-python scripts/build_release.py --package --bundle
+# Bundle only, without individual installable packages
+python scripts/build_release.py --package
 ```
 
 The pipeline executes in this order:
@@ -59,8 +59,8 @@ The pipeline executes in this order:
 | B | `sync_shared_refs.py --all --update-manifests` | Recompute stale SHA-1 hashes |
 | C | `validate_skills.py` | Abort if any skill fails validation |
 | D | *(optional)* Version bump | Update SKILL.md and manifest versions |
-| E | `package_skill.sh` (per skill) | Create zip, MANIFEST.json, .sha256 |
-| F | *(optional)* Bundle | Create combined all-skills zip |
+| E | `package_skill.sh` (per skill, with `--individual`) | Create zip, MANIFEST.json, .sha256 |
+| F | Bundle | Create source/all-skills release zip |
 | G | Summary | Generate `RELEASE_SUMMARY.json` and print table |
 
 ### 4. Verify the output
@@ -76,15 +76,15 @@ cat dist/RELEASE_SUMMARY.json
 Each `dist/` entry:
 - `{skill}-{version}.zip` — the skill package
 - `{skill}-{version}.sha256` — zip-level checksum for `sha256sum -c`
-- `contextsmith-all-bundle.zip` — combined all-skills package (when `--bundle` is used)
-- `contextsmith-all-bundle.zip.sha256` — bundle checksum
+- `contextsmith-release.zip` — source/all-skills release bundle
+- `contextsmith-release.zip.sha256` — bundle checksum
 - `RELEASE_SUMMARY.json` — per-skill metadata (name, version, file count, size)
 
 ### 5. Test installation (optional but recommended)
 
 ```bash
 # Install a single skill to a temp directory
-bash scripts/install_skill.sh dist/local-model-prompt-engineer-1.0.0.zip /tmp/test-install
+bash scripts/install_skill.sh dist/contextsmith-prompt-engineer-1.7.0.zip /tmp/test-install
 
 # Install all skills
 bash scripts/install_all.sh dist /tmp/test-install-all
@@ -95,7 +95,7 @@ bash scripts/install_all.sh dist /tmp/test-install-all
 If you only need to package one skill (e.g., after editing a single skill):
 
 ```bash
-bash scripts/package_skill.sh local-model-prompt-engineer [output-dir]
+bash scripts/package_skill.sh contextsmith-prompt-engineer [output-dir]
 ```
 
 This syncs references, validates, generates MANIFEST.json, creates the zip, and produces the `.sha256` file. Output defaults to `dist/`.
@@ -121,19 +121,9 @@ bash scripts/install_skill.sh <zip-file> [target-dir]
 bash scripts/install_all.sh <dist-dir> [target-dir]
 ```
 
-Finds all `.zip` files, delegates to `install_skill.sh`, and prints a summary table.
+Finds installable skill `.zip` files, skips `contextsmith-release.zip`, delegates to `install_skill.sh`, and prints a summary table.
 
-### Install from the all-skills bundle
-
-```bash
-# Extract bundle, then install each skill
-unzip contextsmith-all-bundle.zip -d /tmp/bundle-extract
-for skill_dir in /tmp/bundle-extract/*/; do
-  bash scripts/install_skill.sh "$skill_dir" [target-dir]
-done
-```
-
-Or install all individual zips from `dist/` (recommended — checksums are verified):
+Install all individual zips from `dist/`:
 
 ```bash
 bash scripts/install_all.sh dist ~/.agents/skills
@@ -141,13 +131,13 @@ bash scripts/install_all.sh dist ~/.agents/skills
 
 ## All-Skills Bundle
 
-Add `--bundle` to create a single zip containing all skills:
+The release pipeline creates a source/all-skills bundle by default:
 
 ```bash
-python scripts/build_release.py --package --bundle
+python scripts/build_release.py --package
 ```
 
-Produces `dist/contextsmith-all-bundle.zip` (all skill directories at top level) and its `.sha256` file. Useful for distribution as a single download.
+Produces `dist/contextsmith-release.zip` and its `.sha256` file. Use `--individual` when you also need installable per-skill packages.
 
 ## Custom Output Directory
 
@@ -204,26 +194,26 @@ This keeps the two most recent backups.
 
 ```bash
 # Build and publish in one command
-bash scripts/publish_release.sh 1.5.0
+bash scripts/publish_release.sh 1.7.0
 
 # Dry-run (no changes)
-bash scripts/publish_release.sh 1.5.0 --dry-run
+bash scripts/publish_release.sh 1.7.0 --dry-run
 
 # Build only, skip GitHub push (for manual review)
-bash scripts/publish_release.sh 1.5.0 --skip-push
+bash scripts/publish_release.sh 1.7.0 --skip-push
 
 # Prerelease
-bash scripts/publish_release.sh 1.5.0-rc.1 --prerelease
+bash scripts/publish_release.sh 1.7.0-rc.1 --prerelease
 
 # Draft release
-bash scripts/publish_release.sh 1.5.0 --draft
+bash scripts/publish_release.sh 1.7.0 --draft
 
 # Custom release notes
-bash scripts/publish_release.sh 1.5.0 --notes my-notes.md
+bash scripts/publish_release.sh 1.7.0 --notes my-notes.md
 ```
 
 The publish script:
-1. Builds the release (calls `build_release.py --package --bundle`)
+1. Builds the release (calls `build_release.py --package --individual`)
 2. Verifies all SHA-256 checksums
 3. Creates an annotated git tag
 4. Pushes the tag to origin
@@ -236,18 +226,18 @@ If you prefer to publish manually:
 
 ```bash
 # Build
-python scripts/build_release.py --package --bundle
+python scripts/build_release.py --package --individual
 
 # Verify
 sha256sum -c dist/*.sha256
 
 # Tag and push
-git tag -a v1.5.0 -m "ContextSmith v1.5.0"
-git push origin v1.5.0
+git tag -a v1.7.0 -m "ContextSmith v1.7.0"
+git push origin v1.7.0
 
 # Create release
-gh release create v1.5.0 \
-  --title "ContextSmith v1.5.0" \
+gh release create v1.7.0 \
+  --title "ContextSmith v1.7.0" \
   --notes-file <notes.md> \
   dist/*.zip dist/*.sha256 dist/RELEASE_SUMMARY.json
 ```

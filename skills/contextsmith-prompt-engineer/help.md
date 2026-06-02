@@ -1,11 +1,11 @@
-# local-model-prompt-engineer Help
+# contextsmith-prompt-engineer Help
 
 Create, improve, audit, test, and package prompts for local/open-weight models.
 
 ## Quickstart
 
 ```text
-/local-model-prompt-engineer --mode deep --target-profile qwen36 --context-length 32k --ralph 2 --output project-local
+/contextsmith-prompt-engineer --mode deep --target-profile qwen36 --context-length 32k --ralph 2 --output project-local
 
 Optimize this prompt for a local coding agent. Include context strategy, test cases, loop safety, and a validation checklist.
 ```

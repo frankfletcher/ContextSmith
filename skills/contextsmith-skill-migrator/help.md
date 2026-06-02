@@ -1,11 +1,11 @@
-# local-model-skill-migrator Help
+# contextsmith-skill-migrator Help
 
 Safely audit, stage, migrate, validate, apply, or restore whole directories of skills.
 
 ## Quickstart
 
 ```text
-/local-model-skill-migrator --skills-dir ~/.agents/skills --mode review-gate --target-profiles generic-local,qwen36 --context-length 32k --backup --stage --no-apply
+/contextsmith-skill-migrator --skills-dir ~/.agents/skills --mode review-gate --target-profiles generic-local,qwen36 --context-length 32k --backup --stage --no-apply
 
 Audit and stage a migration. Do not overwrite originals.
 ```
