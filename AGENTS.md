@@ -59,7 +59,7 @@ This repo has one Python file and many Markdown/YAML files.
 
 ### Python
 - The single file is `scripts/validate_skills.py`. Keep it readable and self-contained.
-- No new dependencies without approval.
+- Ask for approval before adding new dependencies.
 - Follow PEP 8.
 
 ### Markdown / YAML
