@@ -56,6 +56,10 @@
 - Do not describe orchestrated runner behavior as hard enforcement; it only enforces workflows that opt into the runner.
 - Do not continue after a blocked phase until the recovery procedure updates STATUS.md, PHASE_LOG.md, ARTIFACTS.md, and NEXT_PROMPT.md.
 - Do not execute Phase 8B unless Phase 8A names an exact target count and exact skill or skills.
+- Do not execute Phase 8B until ISSUE-1 is resolved: packaging flattening breaks runtime module paths. `sync_shared_refs.py` flattens `local: true` files into `references/`, stripping directory structure. Phase 4A manifest declares `runtime/validator.py`, `runtime/cli.py`, `runtime/__init__.py`, and `runtime/domain_packs/*.json` as local entries. After sync, these become `references/validator.py`, `references/cli.py`, etc., breaking `python -m runtime.cli`. Four resolution options documented in DECISIONS.md.
+- Do not execute Phase 8B until ISSUE-1 is resolved: packaging flattening breaks runtime module paths. `sync_shared_refs.py` flattens `local: true` files into `references/`, stripping directory structure. Phase 4A manifest declares `runtime/validator.py`, `runtime/cli.py`, `runtime/__init__.py`, and `runtime/domain_packs/*.json` as local entries. After sync, these become `references/validator.py`, `references/cli.py`, etc., breaking `python -m runtime.cli`. Four resolution options documented in DECISIONS.md.
+- Do not execute Phase 8B until ISSUE-1 is resolved: packaging flattening breaks runtime module paths. `sync_shared_refs.py` flattens `local: true` files into `references/`, stripping directory structure. Phase 4A manifest declares `runtime/validator.py`, `runtime/cli.py`, `runtime/__init__.py`, and `runtime/domain_packs/*.json` as local entries. After sync, these become `references/validator.py`, `references/cli.py`, etc., breaking `python -m runtime.cli`. Four resolution options documented in DECISIONS.md.
+- Do not execute Phase 8B until ISSUE-1 is resolved: packaging flattening breaks runtime module paths. `sync_shared_refs.py` flattens `local: true` files into `references/`, stripping directory structure. Phase 4A manifest declares `runtime/validator.py`, `runtime/cli.py`, `runtime/__init__.py`, and `runtime/domain_packs/*.json` as local entries. After sync, these become `references/validator.py`, `references/cli.py`, etc., breaking `python -m runtime.cli`. Four resolution options documented in DECISIONS.md.
 - Do not let the Next Prompt Compiler execute phases or invoke models; it only generates safe handoff prompts.
 
 ## Validation Commands
@@ -141,6 +145,19 @@ The manifest mechanism can carry runtime files, but adding Python executables an
 | Phase | Estimated | Actual | Notes |
 |---|---|---|---|
 | Phase 0 | 40k-60k | 78k | Discovery: 4-8 reads, 1 dry-run, 0 edits. Exceeded due to accumulated system/AGENTS.md/PLAN.md overhead. Use as baseline for discovery phases. |
+| Phase 3C | 25k-40k | unavailable | Proxy: 11 task/source reads, 4 source/test edits, 5 task-state edits, 8 validation commands. Stayed within phase scope; no calendar APIs or external sends. |
+| Phase 3D | 25k-40k | unavailable | Proxy: 10 task/source reads, 3 source/test edits, 5 task-state edits, 5 validation commands. Stayed within phase scope; no booking APIs, purchases, payments, or external reservations. |
+| Phase 3E | 25k-40k | unavailable | Proxy: 11 task/source reads, 3 source/test edits, 5 task-state edits, 7 validation commands. Stayed within phase scope; no external sending, publishing, submitting, or representing text as final. |
+| Phase 3F | 25k-40k | unavailable | Proxy: 10 task/source reads, 3 source/test edits, 5 task-state edits, 5 validation commands. Stayed within phase scope; no live browsing, citation scraping, publication, submission, or external citation workflow. |
+| Phase 3G | 20k-40k | unavailable | Proxy: 10 task/source reads, 4 source/test edits, 6 task-state edits, 9 validation commands. Stayed within review scope; no new domains, runner, MCP, harness, or skill integration edits. |
+
+## Phase 3G Domain Pack Review Facts (2026-06-02)
+- All six starter domain packs remain compact JSON data artifacts (52-58 lines each).
+- All `requires_approval` external action boundaries have matching `approval_gates` entries.
+- Deterministic checks and human confirmation checks are separated by explicit `check_type` values; human confirmation gates also have approval/boundary coverage.
+- `general_fallback` now uses `triggers: ["*"]` so it can handle unknown domains without domain-specific claims.
+- `validate_domain_pack()` now enforces schema rule 10 for the `general_fallback` wildcard trigger.
+- No new domain packs were created in Phase 3G.
 
 ## Open Questions
 - Should runtime files be declared per-skill in each `reference_manifest.yml`, or shipped as a separate package? — Resolved: per-skill manifest entries (Decision 8, 2026-06-02).

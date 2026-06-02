@@ -3,12 +3,12 @@
 ## Artifact Manifest
 - artifact_type: status
 - parent_task: TASK.md
-- current_phase: Phase 3 audit complete
-- next_required_action: Phase 4A (ContextSmith-Run Pilot Integration)
-- validation_state: `python -m pytest tests/ -v` (96 pass), `python scripts/validate_skills.py` (OK), `python scripts/token_budget.py --strict` (OK), CLI validation for all six runtime domain packs (6/6 PASS), Phase 3 audit (PASS)
+- current_phase: Phase 4A complete
+- next_required_action: Phase 5A (Next Prompt Compiler Specification)
+- validation_state: `python -m pytest tests/ -v` (96 pass), `python scripts/validate_skills.py` (OK), `python scripts/token_budget.py --strict` (OK), CLI validation for all six runtime domain packs (6/6 PASS), Phase 3 audit (PASS), Phase 4A SKILL.md integration (328 lines, 3979 tokens, within budget), Phase 4B thin-skill writing guide (113 lines, compact, practical)
 
 ## Current Phase
-Phase 3 audit complete (PASS). Phase 4A (ContextSmith-Run Pilot Integration) authorized to proceed.
+Phase 4B (Thin-Skill Writing Guide) complete (PASS). Phase 5A (Next Prompt Compiler Specification) authorized to proceed.
 
 ## Completed
 - Created task-state package for deterministic runtime enforcement planning.
@@ -52,12 +52,14 @@ Phase 3 audit complete (PASS). Phase 4A (ContextSmith-Run Pilot Integration) aut
 - Completed Phase 3F: Research Summary Domain Pack — created compact `research_summary` domain pack and fixture, added validator tests for both, and validated with CLI. All 95 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, both no-op by evidence.
 - Completed Phase 3G: Domain Pack Review Gate — reviewed all six starter packs for compactness, approval-boundary alignment, deterministic-vs-human gate separation, and fallback coverage. Fixed `general_fallback` wildcard trigger drift and added validator/test coverage for rule 10. All 96 tests pass. `python scripts/validate_skills.py`, `python scripts/token_budget.py --strict`, and CLI validation for all six runtime domain packs pass. Ralph loop: 2 iterations, iteration 1 fixed rule 10 enforcement, iteration 2 no-op by evidence.
 - Completed Phase 3 Audit: Audited all six starter domain packs against PLAN.md specifications, Phase 1C schema, and Rule 9 approval boundary alignment. Verdict: PASS. Created `PHASE_3_AUDIT.md` with detailed findings. 96 pytest tests pass. `validate_skills.py` and `token_budget.py --strict` pass. CLI validation passes for all six runtime packs.
+- Completed Phase 4A: ContextSmith-Run Pilot Integration — updated `contextsmith-run` SKILL.md with runtime-checkable artifact integration. Added "Runtime Validators" subsection to Validation Gate section (compact CLI reference table), "Runtime Artifacts" subsection to Evidence Ledger section, and runtime validation step (step 9) to Execution Workflow. Updated `reference_manifest.yml` with 10 local entries for runtime files (validator.py, cli.py, __init__.py, 6 domain pack JSON files). SKILL.md at 328 lines, 3979 tokens (within 4000 budget). All validations pass: `validate_skills.py` OK, `token_budget.py --strict` OK, 96 pytest tests pass. Ralph loop: 2 iterations, both no-op by evidence.
+- Completed Phase 4B: Thin-Skill Writing Guide — created `THIN_SKILL_WRITING_GUIDE.md` with five patterns (point to runtime artifacts, reference validator gates, use manifest for shipped files, add a step not a section, stay within token budgets), a checklist, a Phase 4A integration example, and a "when thin is not enough" escalation path. Guide is 113 lines, practical and actionable. All validations pass: `validate_skills.py` OK, `token_budget.py --strict` OK, 96 pytest tests pass. Ralph loop: 2 iterations, iteration 1 added concrete budget target to checklist, iteration 2 no-op by evidence.
 
 ## Next Action
-Phase 4A: ContextSmith-Run Pilot Integration — update only `contextsmith-run` to emit or request runtime-checkable artifacts.
+Phase 5A: Next Prompt Compiler Specification — specify a small tool that compiles the current phase into a detailed small-model execution prompt.
 
 ## Blockers
-None for planning.
+- **ISSUE-1 (medium risk):** Packaging flattening breaks runtime module paths. `sync_shared_refs.py` flattens `local: true` files into `references/`, stripping directory structure. Phase 4A manifest declares `runtime/validator.py`, `runtime/cli.py`, `runtime/__init__.py`, and `runtime/domain_packs/*.json` as local entries. After sync, these become `references/validator.py`, `references/cli.py`, etc., breaking `python -m runtime.cli`. Blocks Phase 8B rollout. Four resolution options documented in DECISIONS.md.
 
 ## Approval Boundaries
 - Ask before editing `PACKAGE_SPEC.md`.

@@ -152,3 +152,23 @@ Reason: The architecture review confirms the schemas are universally applicable,
 - Whether opencode can enforce validator success as a closeout or permission gate.
 - Which additional domain packs should be added after the starter set.
 - Whether the install script needs extension to support the separate runtime package (Phase 2E smoke-test concern).
+
+## Tracked Issues
+
+### ISSUE-1: Packaging flattening breaks runtime module paths (medium risk)
+Discovered: Phase 4 audit, 2026-06-02
+Status: Open — blocks Phase 8B rollout
+
+**Problem:** `sync_shared_refs.py` flattens all `local: true` files into `references/`, stripping their directory structure. Phase 4A declares `runtime/validator.py`, `runtime/cli.py`, `runtime/__init__.py`, and `runtime/domain_packs/*.json` as local entries. After sync, these become `references/validator.py`, `references/cli.py`, etc. — breaking `python -m runtime.cli` because the `runtime/` Python package no longer exists.
+
+**Impact:** The Phase 2E smoke test worked by manually copying files with preserved paths, not through manifest-driven sync. An installed `contextsmith-run` skill will have runtime files in the wrong location, making the CLI invocations in SKILL.md step 9 and the Runtime Validators subsection non-functional.
+
+**Options:**
+1. **Separate runtime package** — ship `contextsmith-runtime` as its own installable package, not per-skill. Requires install ordering and path resolution.
+2. **Post-install path rewrite** — add a post-install hook that reconstructs the `runtime/` directory from flattened `references/` files. Fragile and adds complexity.
+3. **Extend sync script** — modify `sync_shared_refs.py` to preserve directory structure for `local: true` entries. Changes packaging behavior for all skills.
+4. **Inline CLI** — rewrite the CLI as a single-file script that doesn't need a package structure. Loses modularity.
+
+**Decision needed before:** Phase 8B rollout. This is a blocker for any skill that ships runtime files via per-skill manifest entries.
+
+**Phase 0.5 Decision 8 reference:** Chose per-skill manifest entries over separate runtime package. This issue is a consequence of that choice combined with the sync script's flattening behavior.

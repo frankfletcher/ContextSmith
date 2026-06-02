@@ -260,3 +260,24 @@
 - Observations: (1) `check_type: "command"` in software_engineering is structural-only (field presence), not command execution — correct by design for Phase 3 data-only packs. (2) `approval_record` in all `required_artifacts` is consistent but potentially unnecessary for purely local domains. (3) Optional `example_good_closeout`/`example_blocked_closeout` absent from runtime packs — acceptable per schema, would aid small-model emit guidance.
 - Blockers: None.
 - Next: Phase 4A (ContextSmith-Run Pilot Integration).
+
+## 2026-06-02: Phase 4A ContextSmith-Run Pilot Integration Complete
+- Completed: Updated `contextsmith-run` SKILL.md with runtime-checkable artifact integration. Added "Runtime Validators" subsection to Validation Gate section (compact CLI reference table), "Runtime Artifacts" subsection to Evidence Ledger section, and runtime validation step (step 9) to Execution Workflow. Updated `reference_manifest.yml` with 10 local entries for runtime files (validator.py, cli.py, __init__.py, 6 domain pack JSON files).
+- SKILL.md: 328 lines, 3979 tokens (within 4000 budget). Integration is minimal and compact — points to runtime artifacts and validator gates without pasting full schemas.
+- Manifest: 10 new local entries with `version: local` (acceptable sentinel for untracked local files). After `sync_shared_refs.py`, local files flatten to `references/` (documented Phase 0 behavior, not a Phase 4A concern).
+- Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed (3979/4000). `python -m pytest tests/ -v` passed (96 tests).
+- Ralph: 2 iterations. Iteration 1: no material defects after validation. Iteration 2: no material defects, no-op by evidence.
+- Blockers: None.
+- Carry forward: Phase 4B should create a thin-skill writing guide for keeping SKILL.md files thin while pointing to runtime artifacts and validator gates.
+- Do not carry forward: Do not edit other skills, add new domain packs, implement runner/MCP/harness behavior, or claim hard enforcement in Phase 4B.
+- Next: Phase 4B (Thin-Skill Writing Guide).
+
+## 2026-06-02: Phase 4B Thin-Skill Writing Guide Complete
+- Completed: Created `THIN_SKILL_WRITING_GUIDE.md` with five thin-skill patterns (point to runtime artifacts, reference validator gates, use manifest for shipped files, add a step not a section, stay within token budgets), a practical checklist, a Phase 4A integration example with concrete line counts, and a "when thin is not enough" escalation path.
+- Artifact: `THIN_SKILL_WRITING_GUIDE.md` created in this task directory (113 lines).
+- Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (96 tests).
+- Ralph: 2 iterations. Iteration 1: added concrete budget target (500 lines, 4000 tokens) to checklist. Iteration 2: no material defects, no-op by evidence.
+- Blockers: None.
+- Carry forward: Phase 5A should specify the Next Prompt Compiler — a read-only tool that generates detailed small-model execution prompts from task state.
+- Do not carry forward: Do not implement runner/MCP/harness behavior, edit other skills, or claim hard enforcement in Phase 5A.
+- Next: Phase 5A (Next Prompt Compiler Specification).

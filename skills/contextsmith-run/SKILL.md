@@ -175,11 +175,12 @@ Do not load every manifest reference for a routine run.
 6. Compile the execution contract.
 7. Execute the smallest bounded unit: one prompt result, one file-edit task, or one current phase.
 8. Run domain validation or record why validation could not run.
-9. Run self-audit.
-10. Run required Ralph loop iterations.
-11. Record evidence and declared-vs-enforced status.
-12. Update task state if the run uses state.
-13. Return compact results and residual risks.
+9. When runtime validators are available, validate emitted artifacts with `python -m runtime.cli` before proceeding.
+10. Run self-audit.
+11. Run required Ralph loop iterations.
+12. Record evidence and declared-vs-enforced status.
+13. Update task state if the run uses state.
+14. Return compact results and residual risks.
 
 ## Task-State Execution
 
@@ -204,6 +205,10 @@ At phase closeout, update state artifacts with compact facts only: changed paths
 ## Validation Gate
 
 Use domain validation from `references/domain-packs.md`. For repo/code work, run available tests, lint, build, typecheck, or project validation commands when safe. For non-code work, validate against domain-specific evidence such as source support, tone preservation, metric correctness, leakage checks, or decision criteria.
+
+### Runtime Validators
+
+When `runtime/` is available, use `python -m runtime.cli <subcommand> <artifact.json>` for deterministic structural validation. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs ship under `runtime/domain_packs/` as compact JSON files.
 
 Validation levels:
 
@@ -262,6 +267,10 @@ Use `references/evidence-ledger.md` when the evidence format is unclear. Each co
 - changed files or produced artifacts
 - declared-vs-enforced check
 - residual risks and next action
+
+### Runtime Artifacts
+
+Emit runtime-checkable artifacts as JSON files. Validate with `python -m runtime.cli` before marking a phase complete. Schema details live in `runtime/validator.py`.
 
 ## Completion Criteria
 

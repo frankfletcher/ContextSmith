@@ -39,7 +39,7 @@
 - [x] Small-model phases are capable of broad architecture decisions (frontier review optional).
 - [x] Pytest is used only for approved phases; YAML/PyYAML is deferred.
 - [ ] Blocked phases use the recovery procedure before any next-phase work begins.
-- [ ] Phase closeout records carry-forward and do-not-carry-forward notes.
+- [x] Phase closeout records carry-forward and do-not-carry-forward notes.
 - [ ] Next Prompt Compiler does not execute phases, call models, or advance task state beyond writing handoff prompts.
 
 ## Runtime Enforcement Quality
@@ -53,18 +53,20 @@
 - [x] Validator output has stable exit codes or structured MCP results.
 - [x] Artifacts expose machine-readable fields for validation.
 - [ ] Advisory validation and hard blocking are clearly labeled.
-- [ ] Pilot workflow demonstrates a passing and failing runtime check.
+- [x] Pilot workflow demonstrates a passing and failing runtime check.
 - [x] Fixture set covers baseline, missing-field, widened-parameter, missing-evidence, and failed-closeout cases.
-- [ ] Sample installed-skill workflow proves the validator can run outside the repo-local planning context.
+- [x] Sample installed-skill workflow proves the validator can run outside the repo-local planning context.
 - [x] Universal protocol validates requirements chains, phase contracts, evidence ledgers, approval records, and closeouts.
 - [x] Starter domain packs cover software, writing, research, scheduling, travel/purchase, and general fallback.
+- [x] Phase 3G review confirms starter packs are compact, approval-boundary aligned, and fallback-capable.
 - [x] Architecture review gate confirms schemas are universally applicable, approval-boundary-explicit, small-model-emit-friendly, and validator-deterministic.
 - [ ] Orchestrated runner claims are limited to workflow-level enforcement unless a harness hard-block is proven.
-- [ ] Installed-workflow smoke test records a fallback path if packaging cannot carry runtime files.
+- [x] Installed-workflow smoke test records a fallback path if packaging cannot carry runtime files.
 - [ ] Harness adapter design includes positive completion criteria, not only stop rules.
 - [ ] Generated next prompts include validation, audit, closeout, recovery, and hard-stop sections.
 - [ ] Generated next prompts render cleanly as Markdown with balanced fences.
 - [x] Phase 2A parser behavior matches the Phase 0.5 dependency policy.
+- [x] Phase 3F research-summary pack validates sources, unsupported claims, uncertainty/limitations, evidence traceability, and external-use approval boundaries.
 
 ## Documentation Quality
 - [ ] README explains the pain point, sells ContextSmith clearly, and routes readers to deeper docs.

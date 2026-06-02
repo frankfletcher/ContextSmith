@@ -3,7 +3,7 @@
 ## Artifact Manifest
 - artifact_type: artifact-index
 - parent_task: TASK.md
-- status: Phase 3 audit complete
+- status: Phase 4A complete
 - behavioral_contract: Track generated files, future source changes, and validation evidence.
 
 ## Task-State Files
@@ -38,8 +38,8 @@
 | Starter domain packs | 3A-3F | Complete — `runtime/domain_packs/general_fallback.json`, `runtime/domain_packs/software_engineering.json`, `runtime/domain_packs/scheduling.json`, `runtime/domain_packs/travel_purchase.json`, `runtime/domain_packs/writing_editing.json`, `runtime/domain_packs/research_summary.json` |
 | Domain pack review notes | 3G | Complete — recorded in STATUS.md, CONTEXT.md, CHECKLIST.md, and PHASE_LOG.md |
 | Phase 3 audit report | 3A-3G | Complete — `PHASE_3_AUDIT.md` |
-| `contextsmith-run` pilot integration | 4A | Pending |
-| Thin-skill writing guide | 4B | Pending |
+| `contextsmith-run` pilot integration | 4A | Complete — `skills/contextsmith-run/SKILL.md`, `skills/contextsmith-run/reference_manifest.yml` |
+| Thin-skill writing guide | 4B | Complete — `THIN_SKILL_WRITING_GUIDE.md` |
 | Next Prompt Compiler specification | 5A | Pending |
 | Next Prompt Compiler implementation | 5B | Pending |
 | Next Prompt Compiler tests | 5C | Pending |
@@ -90,6 +90,8 @@
 - 2026-06-02: Phase 3F research summary domain pack complete: created `runtime/domain_packs/research_summary.json`, `tests/fixtures/domain_pack_research_summary.json`, and validator tests for both. `python -m runtime.cli domain-pack runtime/domain_packs/research_summary.json` passed. `python -m runtime.cli domain-pack tests/fixtures/domain_pack_research_summary.json` passed. All 95 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
 - 2026-06-02: Phase 3G domain pack review complete: reviewed all six starter packs; corrected `general_fallback` to `triggers: ["*"]`; added `validate_domain_pack()` enforcement and pytest coverage for rule 10. `python -m pytest tests/ -v` passed with 96 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. CLI validation passed for all six runtime domain packs.
 - 2026-06-02: Phase 3 audit complete: all six starter domain packs pass schema compliance, plan compliance, and Rule 9 approval boundary alignment. Audit verdict: PASS. Created `PHASE_3_AUDIT.md` with detailed findings.
+- 2026-06-02: Phase 4A ContextSmith-Run Pilot Integration complete: updated `contextsmith-run` SKILL.md with runtime-checkable artifact integration. Added "Runtime Validators" subsection to Validation Gate section, "Runtime Artifacts" subsection to Evidence Ledger section, and runtime validation step (step 9) to Execution Workflow. Updated `reference_manifest.yml` with 10 local entries for runtime files. SKILL.md at 328 lines, 3979 tokens (within 4000 budget). `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (96 tests). Ralph loop: 2 iterations, both no-op by evidence.
+- 2026-06-02: Phase 4B Thin-Skill Writing Guide complete: created `THIN_SKILL_WRITING_GUIDE.md` with five patterns, checklist, Phase 4A example, and escalation path. 113 lines, compact and practical. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (96 tests). Ralph loop: 2 iterations, iteration 1 added budget target to checklist, iteration 2 no-op by evidence.
 
 ## Phase 3G Changed Artifacts
 | File | Change |
@@ -98,6 +100,12 @@
 | `tests/fixtures/domain_pack_general_fallback.json` | Matched fixture to runtime pack wildcard trigger |
 | `runtime/validator.py` | Added schema rule 10 enforcement for `general_fallback` |
 | `tests/test_validator.py` | Added regression test for non-wildcard fallback trigger rejection |
+
+## Phase 4A Changed Artifacts
+| File | Change |
+|---|---|
+| `skills/contextsmith-run/SKILL.md` | Added "Runtime Validators" subsection to Validation Gate, "Runtime Artifacts" subsection to Evidence Ledger, runtime validation step 9 to Execution Workflow |
+| `skills/contextsmith-run/reference_manifest.yml` | Added 10 local entries for runtime files (validator.py, cli.py, __init__.py, 6 domain pack JSON files) |
 
 ## Phase 0 Files Inspected
 | File | Purpose |
