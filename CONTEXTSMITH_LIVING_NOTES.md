@@ -30,6 +30,7 @@ Package structure:
 - [x] Installation scripts (`scripts/install_skill.sh`, `scripts/install_all.sh`).
 - [x] Integration test (`scripts/test_release.sh`).
 - [x] GitHub release publishing script (`scripts/publish_release.sh`).
+- [x] Token budget regression script (`scripts/token_budget.py`).
 - [ ] Webpage / landing page.
 
 ## Implemented Foundation
@@ -54,6 +55,7 @@ Package structure:
 - [x] Instruction precedence hierarchy.
 - [x] Skill interoperability / workflow collision handling.
 - [x] Parameter-enforced run execution for prompts, prompt files, and task-state handoffs.
+- [x] Cache-efficient core references for artifact manifests, control parameters, execution contracts, and evidence ledgers.
 
 ## Top Reliability Improvements
 
@@ -67,6 +69,7 @@ Package structure:
 - [x] Interaction modes across the package.
 - [x] Instruction conflict detector.
 - [x] Package validation script.
+- [x] Token budget gate in release builds.
 - [x] Upstream artifact audit for chained optimizers/skills.
 - [x] Instruction precedence and conflict resolution.
 - [x] `targeted_context_length` metadata and context-tier behavior.
@@ -118,6 +121,14 @@ Package structure:
 - [x] Migration workspace policy.
 - [x] `/tmp` limited to disposable scratch.
 - [x] `.gitignore` suggestions.
+
+### Cache Token Efficiency and Enforcement
+
+- [x] Keep portable copied per-skill references for standalone installation; do not rely on symlinks.
+- [x] Add compact core references for hot-path contracts while retaining full references for schema, examples, and deep guidance.
+- [x] Require `contextsmith-run` to enforce execution-contract and evidence-ledger core refs on every run.
+- [x] Preserve or strengthen validation, self-audit, Ralph loop, plan-completion audit, phase code review, and declared-vs-enforced requirements while reducing routine reference loading.
+- [x] Add release-time token budget reporting for always-loaded SKILL.md files, common runtime load sets, and largest shared references.
 - [x] Commit-worthiness check for agent artifacts.
 
 ### Git Safety

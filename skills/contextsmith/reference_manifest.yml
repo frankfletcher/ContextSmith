@@ -1,5 +1,5 @@
 skill: contextsmith
-version: 1.7.0
+version: 1.7.1
 description: "Meta-skill for ContextSmith \u2014 routes to sub-skills based on user\
   \ intent."
 references:

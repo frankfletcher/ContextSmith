@@ -2,14 +2,18 @@
 name: contextsmith-run
 description: Execute prompts, prompt files, and ContextSmith task-state handoffs under explicit local/open-weight model parameters, domain-specific refinement, validation gates, Ralph loops, self-audit, and evidence requirements. Use when running a prompt or implementation handoff and you need declared controls such as target profile, context budget, interaction mode, validation, and self-audit to be enforced rather than merely mentioned.
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
 
-## Parameters and Artifact Manifest
+# ContextSmith Run
 
-Default runtime parameters:
+Execute one prompt, prompt file, or ContextSmith task-state handoff while enforcing the declared runtime contract. This is a run harness, not a prompt optimizer.
+
+## Runtime Contract
+
+Default parameters:
 
 | Parameter | Default |
 |-----------|---------|
@@ -25,13 +29,20 @@ Default runtime parameters:
 | --validation | available |
 | --harness | opencode |
 
-If an upstream artifact includes an `## Artifact Manifest`, inherit its parameters unless the current user overrides them. Build the run manifest from `references/artifact-manifest.md`, `references/control-parameters.md`, and `references/execution-contract.md`. Child runs may narrow scope or validation; do not silently widen side effects, context use, target model assumptions, or external actions.
+If an upstream artifact has `## Artifact Manifest`, inherit its parameters unless the current user overrides them. Child runs may narrow scope or validation; never silently widen side effects, context use, target model assumptions, validation strictness, or external actions.
 
-# ContextSmith Run
+Declared controls are obligations. Before final output, compare declared controls against evidence. If required evidence is missing, perform the gate or report a blocker; do not mark complete.
 
-Execute one prompt, prompt file, or ContextSmith task-state handoff while enforcing the declared runtime contract.
+Non-negotiable gates unless explicitly disabled by current user:
 
-This skill is not a prompt optimizer. It is a run harness for prompts and plans that should actually be executed. Use prompt, instruction, skill, or evaluator skills when the user wants to design, rewrite, or audit an artifact without executing it.
+- parse parameters and conflicts
+- compile a compact execution contract
+- validate or record why validation is unavailable
+- run self-audit when `--self-audit true`
+- run required Ralph critique/revision checks when `--ralph N > 0`
+- record evidence for parameters, validation, self-audit, Ralph, side effects, changed artifacts, residual risks
+
+For every run, enforce `references/execution-contract-core.md` and `references/evidence-ledger-core.md`. Use the full `execution-contract.md` or `evidence-ledger.md` only when schema detail or examples are needed.
 
 ## Supported Inputs
 
@@ -52,12 +63,12 @@ If invoked with `help`, `describe`, `examples`, `modes`, `parameters`, `quicksta
 
 ## Control Parameters
 
-Accept natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing and conflict handling.
+Accept natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog. Latest explicit current-user instruction wins; ask one concise question only when the conflict changes side effects, output location, target model, domain, validation, or permission boundaries.
 
 Run-specific controls:
 
 | Parameter | Values | Meaning |
-|-----------|--------|---------|
+|---|---|---|
 | `--run-mode` | `single`, `single-with-state`, `phase`, `phased-run`, `dry-run`, `audit-only` | Execution shape |
 | `--interaction` | `silent`, `confirm`, `refine`, `collaborative`, `review-gate` | User participation level |
 | `--question-budget` | integer | Maximum refinement questions |
@@ -66,26 +77,11 @@ Run-specific controls:
 | `--domain` | domain name or comma list | Domain pack selection |
 | `--side-effects` | `none`, `read-only`, `file-editing`, `external-action` | Permission and safety tier |
 
-If prose and flags conflict, prefer the user's latest explicit instruction. Ask one concise question only when the conflict changes side effects, output location, target model, domain, validation, or permission boundaries.
-
-## Core Principle
-
-Declared controls become runtime obligations. Before final output, compare all declared or inherited controls against recorded evidence. If required evidence is missing, do not mark the run complete; either perform the missing gate or report a blocker.
-
-Examples:
-
-- `--ralph 2` requires two bounded critique/revision checks or a recorded reason fewer were useful.
-- `--validation strict` requires validation evidence or an explicit blocker.
-- `--interaction refine` requires bounded user questions before execution unless the prompt already fixes every material choice.
-- `--target-profile qwen36` requires literal, atomic, compact execution and output.
-
 Treat `silent-unless-blocked` as an alias for `silent` when inherited from older artifacts.
 
 ## Local-Model Execution Rules
 
-Optimize for smaller/local models first. Larger models may execute faster or with fewer questions, but they must preserve the same contract and evidence gates.
-
-Use `references/small-model-atomicity.md` and apply these rules:
+Optimize for smaller/local models first. Larger models may execute faster or with fewer questions, but they must preserve the same contract and evidence gates. Use `references/small-model-atomicity.md` when more detail is needed.
 
 - keep the active contract under one screen when possible
 - execute one bounded unit at a time
@@ -100,31 +96,16 @@ Avoid asking local models to infer architecture, domain defaults, validation str
 
 ## Domain Routing
 
-Classify the task domain before execution. Use `references/domain-packs.md` for domain triggers, refinement questions, validation gates, self-audit lenses, and evidence requirements.
-
-Supported domains include:
-
-- software engineering
-- frontend UX
-- data analytics
-- data science and ML
-- AI/ML engineering
-- research
-- writing and editing
-- business strategy
-- education and tutoring
-- ops and DevOps
-- legal, policy, and compliance summaries
-- general task fallback
+Classify the task domain before execution. Use `references/domain-packs.md` for domain triggers, refinement questions, validation gates, self-audit lenses, and evidence requirements. Supported domains: software engineering, frontend UX, data analytics, data science/ML, AI/ML engineering, research, writing/editing, business strategy, education/tutoring, ops/DevOps, legal/policy/compliance summaries, and general fallback.
 
 Prefer repository or source evidence over model defaults. In `refine` mode, do not assume domain choices that materially affect architecture, dependencies, APIs, UI framework, storage, deployment, model family, data source, source quality, tone, or output format. Infer from evidence when available; otherwise ask a bounded multiple-choice question.
 
 ## Interaction Modes
 
-Use `references/interaction-modes.md` for base behavior and `references/interaction-refinement.md` for this skill's refinement contract.
+Use `references/interaction-modes.md` only when base mode behavior is unclear. Use `references/interaction-refinement.md` for refine mode.
 
 | Mode | Behavior |
-|------|----------|
+|---|---|
 | `silent` | Ask only when blocked, unsafe, or ambiguous enough to change the result. |
 | `confirm` | Show compact run configuration and ask before side effects. |
 | `refine` | Ask up to `--question-budget` high-impact multiple-choice questions before execution. |
@@ -135,7 +116,7 @@ Every refinement question must map to concrete run parameters or execution const
 
 ## Execution Contract Compiler
 
-Before execution, compile a compact contract using `references/execution-contract.md`:
+Before execution, compile a compact contract. Use `references/execution-contract.md` when inherited artifacts, strict validation, or declared-vs-enforced checks need the full schema.
 
 ```yaml
 execution_contract:
@@ -172,8 +153,9 @@ For `dry-run` and `audit-only`, stop after the preflight/report. Do not execute 
 Load references by run need:
 
 | Need | Read |
-|------|------|
-| Any run | `execution-contract.md`, `evidence-ledger.md`, `control-parameters.md` |
+|---|---|
+| Every run | `execution-contract-core.md`, `evidence-ledger-core.md`, `control-parameters-core.md` |
+| Contract/schema ambiguity | `execution-contract.md`, `evidence-ledger.md` |
 | Refinement | `interaction-refinement.md`, relevant domain pack section |
 | Task-state handoff | `task-state-execution.md`, `persistent-task-state.md` |
 | Code or repo edits | `git-safety.md`, `loop-safety.md`, relevant coding/UI/domain reference |
@@ -256,7 +238,7 @@ Check:
 
 ## Ralph Loop Enforcement
 
-Use `references/ralph-loop.md`. For `--ralph N`:
+Use `references/ralph-loop.md` when details are needed. For `--ralph N`:
 
 1. Produce or inspect the candidate result.
 2. Critique against the execution contract and domain audit lens.
@@ -270,7 +252,7 @@ Ralph loops are critique/revision passes, not repeated blind tool calls. Do not 
 
 ## Evidence Ledger
 
-Use `references/evidence-ledger.md`. Each completed run must include compact evidence for:
+Use `references/evidence-ledger.md` when the evidence format is unclear. Each completed run must include compact evidence for:
 
 - parameters applied
 - domain and interaction mode
@@ -323,27 +305,15 @@ Omit sections that do not apply only when their absence is explained by the run 
 
 ## Artifact Manifest
 
-Artifact type: run-executor-skill
-
-Parameters:
-
-- mode: guided (default)
-- run-mode: single (default)
-- target-profile: qwen36 (default)
-- context-length: 64k (default)
-- education-level: guided (default)
-- artifact-verbosity: compact (default)
-- interaction: silent (default)
-- ralph: 1 (default)
-- self-audit: true (default)
-- validation: available (default)
-- harness: opencode (default)
+Artifact type: run-executor-skill. Parameters are the defaults listed in `Runtime Contract` unless overridden or inherited.
 
 References:
 
 - `references/execution-contract.md` for contract compilation and declared-vs-enforced checks
+- `references/execution-contract-core.md` for always-loaded runtime obligations
 - `references/interaction-refinement.md` for user question behavior
 - `references/domain-packs.md` for domain-specific refinement, validation, and audits
 - `references/task-state-execution.md` for phased task-state runs
 - `references/evidence-ledger.md` for completion evidence
+- `references/evidence-ledger-core.md` for always-loaded evidence requirements
 - shared control, context, safety, Ralph, and validation references listed in `reference_manifest.yml`

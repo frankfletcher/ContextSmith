@@ -102,6 +102,21 @@ def step_validate(dry_run=False):
     return True
 
 
+def step_token_budget(dry_run=False):
+    """Run token budget regression check."""
+    print("\n=== Step C2: Token budget ===")
+    ok, _ = run_cmd(
+        [sys.executable, str(REPO_ROOT / "scripts" / "token_budget.py"), "--strict"],
+        dry_run=dry_run,
+        label="Token budget",
+    )
+    if not ok:
+        print("ERROR: token budget check failed, aborting")
+        return False
+    print("  Token budget passed.")
+    return True
+
+
 def check_git_clean():
     """Check that tracked files have no uncommitted changes. Returns True if clean."""
     result = subprocess.run(
@@ -487,6 +502,7 @@ def main():
         ("Sync", lambda: step_sync(args.dry_run)),
         ("Manifest update", lambda: step_manifest_update(args.dry_run)),
         ("Validate", lambda: step_validate(args.dry_run)),
+        ("Token budget", lambda: step_token_budget(args.dry_run)),
     ]
 
     if args.version:

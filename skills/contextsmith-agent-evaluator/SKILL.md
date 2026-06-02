@@ -2,7 +2,7 @@
 name: contextsmith-agent-evaluator
 description: Audit prompts, skills, AGENTS.md files, repo instructions, agent workflows, model profiles, migration outputs, and long-running plans for local/open-weight model reliability without modifying them by default. Use when the user wants grades, strengths, weaknesses, A-F rubric scoring, context-risk review, loop-safety review, Git/file safety review, data science/ML safeguard review, small-model atomicity review, no-chain-of-thought validation, or targeted context fit review, upstream artifact audits, skill interoperability grading, or recommendations before using an engineer or migrator skill.
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -20,7 +20,7 @@ Return the requested usage guidance from `references/help.md` and `references/he
 
 ## Control Parameter Parsing
 
-Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
 
 Examples:
 

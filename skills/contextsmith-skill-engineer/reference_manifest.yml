@@ -1,7 +1,13 @@
 skill: contextsmith-skill-engineer
-version: 1.7.0
+version: 1.7.1
 description: Shared reference dependencies for the Skill Engineer skill.
 references:
+- source: shared/control-parameters-core.md
+  version: e5dfcf00636d99ffc45e5566efcd0a4f19252322
+  required: true
+- source: shared/artifact-manifest-core.md
+  version: 43d9ba9dedcb4010de4894a69dfae9f6391ebb18
+  required: true
 - source: shared/git-safety.md
   version: 32748a1b9b452cb4ef49d3fd02ac25a6a4b43ee8
   required: true

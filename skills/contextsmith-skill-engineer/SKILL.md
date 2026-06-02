@@ -2,7 +2,7 @@
 name: contextsmith-skill-engineer
 description: Create, convert, improve, audit, and package SKILL.md-based agent skills for local/open-weight language models. Use when building a new skill, adapting an existing skill for smaller/local models, preserving source skill behavior while rewriting it, adding model profiles, optimizing references, adding loop safety, Git/file safety, context-aware workflows, persistent task state, subagent delegation, Ralph-loop iteration, engineering metadata, semantic diff validation, targeted context length control, upstream artifact audits, skill interoperability handling, or skill-auditor-style quality checks.
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -16,36 +16,28 @@ Default parameter values for generated skills:
 | --mode | guided |
 | --target-profile | qwen36 |
 | --context-length | 64k |
-| --education_level | deep |
+| --education-level | deep |
 | --ralph | 2 |
 | --harness | opencode |
 
-Every generated SKILL.md MUST include an `## Artifact Manifest` section per `references/artifact-manifest.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing when child scope is more constrained with justification (`narrowed`), (4) selecting references using the Artifact Type -> Default References Matrix — generated skills always include control-parameters, loop-safety, skill-interoperability, conditionally upstream-artifact-audit and reference-optimization, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
+Every generated SKILL.md MUST include an `## Artifact Manifest` section per `references/artifact-manifest-core.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing child scope with justification (`narrowed`), (4) selecting references — generated skills always include control-parameters, loop-safety, skill-interoperability, conditionally upstream-artifact-audit and reference-optimization, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
 
 # ContextSmith Skill Engineer
 
 Create, convert, improve, and audit SKILL.md-based skills for local/open-weight models.
 
-The primary goal is to produce skills that are more likely to be reliable for the user's intended use while teaching them how to improve their own skills. When the user provides specific parameters, use them to guide skill design decisions and educate the user on how those parameters affect skill engineering. Use this skill for tasks such as creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
+The primary goal is a reliable SKILL.md package plus a separate educational report explaining changes, safeguards, and how requested parameters affected skill design. Use this skill for skill creation, conversion, migration, reference optimization, trigger/description design, source-contract preservation, validation gates, loop/Git/file safety, persistent state, subagent delegation, Ralph-loop iteration, targeted context length control, and upstream artifact/workflow collision checks.
 
-The primary output is a set of instruction files tailored to the user's project and goals, along with an educational report explaining the changes made, safeguards implemented, and how the user's parameters influenced the skill design.
+The primary output is a SKILL.md-based skill package tailored to the user's goals, not a generic instruction file.
 
 
 ## Help Mode
 
-If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not run the normal workflow.
-
-Return the requested usage guidance from `references/help.md` and `references/help-mode.md`.
+For `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI equivalents, return usage guidance from `references/help.md` and `references/help-mode.md`; do not run the normal workflow.
 
 ## Control Parameter Parsing
 
-Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
-
-Examples:
-
-```bash
---mode deep --target-profile qwen36 --context-length 32k --domain coding --harness opencode --ralph 2 --output project-local --no-apply
-```
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
 
 When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
@@ -163,9 +155,9 @@ When adding this contract, define the minimum responsibility of each state file 
 
 If scoped review reduces context pressure or improves validation, add subagent delegation.
 
-### 7. Optional Ralph Loop
+### 7. Ralph Loop
 
-For reusable/high-risk skills, or when requested, run the bounded Ralph loop. Save each iteration to the canonical task folder and grade A-F. Do not iterate for cosmetics.
+Run the declared Ralph iterations (`--ralph`, default `2`) unless explicitly disabled. Save each iteration to the canonical task folder, grade A-F, and stop early only with recorded evidence that further iterations would be no-op or bloat. Do not iterate for cosmetics.
 
 ### 8. Validate
 
@@ -182,6 +174,7 @@ Check:
 - duplicate/near-duplicate rules removed or consolidated
 - instructions atomic enough for smaller models
 - semantic diff and educational report included
+- declared parameters, required audits, and Ralph iterations have evidence or a blocker
 
 ## Required Output
 
@@ -201,7 +194,7 @@ Check:
 
 ## Artifact Manifest Propagation
 
-Generated SKILL.md files propagate parameters and references through the chain per `references/artifact-manifest.md`. Child artifacts inherit parent parameters, may narrow with justification (see `references/parameter-narrowing-rules.md`), must never widen without documented reason.
+Generated SKILL.md files propagate parameters and references through the chain per `references/artifact-manifest-core.md`. Child artifacts inherit parent parameters, may narrow with justification (see `references/parameter-narrowing-rules.md`), must never widen without documented reason.
 
 When converting or migrating an existing skill:
 - Inherit target-profile and harness from user request (`user-set`)

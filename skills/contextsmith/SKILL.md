@@ -2,7 +2,7 @@
 name: contextsmith
 description: Meta-skill for ContextSmith, an instruction-engineering toolkit for local/open-weight models that is also useful for frontier-model agent workflows. Routes to sub-skills for prompt engineering, skill creation, skill migration, repo instruction engineering, agent evaluation, and prompt execution. Use when the user needs to create, improve, audit, migrate, or execute model-aware agent artifacts.
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
   package: ContextSmith
   target: local-open-weight-first
   type: meta-skill

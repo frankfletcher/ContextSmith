@@ -134,7 +134,7 @@ python scripts/build_release.py --package --individual
 bash scripts/install_all.sh dist
 
 # Or install a single skill
-bash scripts/install_skill.sh dist/contextsmith-prompt-engineer-1.7.0.zip
+bash scripts/install_skill.sh dist/contextsmith-prompt-engineer-1.7.1.zip
 ```
 
 Package-based install verifies SHA-256 checksums, backs up existing versions, and skips already-installed versions. See [RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md) for the full release and installation guide.

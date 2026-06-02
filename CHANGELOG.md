@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.7.1
+
+**Released:** 2026-06-01
+
+### Added
+
+- Added `scripts/token_budget.py` to estimate always-loaded SKILL.md token footprints, common runtime load sets, and largest shared references, with `--strict` regression checks for release builds.
+- Added compact core references for artifact manifests, control parameter parsing, execution contracts, and evidence ledgers so routine skill runs can avoid loading full catalogs while preserving mandatory validation/audit/Ralph enforcement and full-reference fallback.
+
+### Changed
+
+- Added a token-budget gate to `scripts/build_release.py` after skill validation.
+- Tightened prompt, instruction, skill, and run skills so declared Ralph loops, audit gates, validation, phase review, plan-completion audit, and evidence checks are mandatory unless explicitly disabled.
+- Bumped all skill versions and reference manifests to 1.7.1.
+
+### Fixed
+
+- Corrected `contextsmith-skill-engineer` wording so it describes SKILL.md packages rather than generic instruction files.
+- Strengthened artifact-manifest propagation so widening context use, side effects, target model assumptions, validation strictness, or external actions requires explicit current-user approval.
+
 ## v1.7.0
 
 **Released:** 2026-06-01

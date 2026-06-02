@@ -1,9 +1,15 @@
 skill: contextsmith-run
-version: 1.7.0
+version: 1.7.1
 description: Shared and local reference dependencies for the ContextSmith Run skill.
 references:
+- source: shared/control-parameters-core.md
+  version: e5dfcf00636d99ffc45e5566efcd0a4f19252322
+  required: true
 - source: shared/control-parameters.md
   version: 4e378b3850b0ddee23e82f95bb145e60d965850d
+  required: true
+- source: shared/artifact-manifest-core.md
+  version: 43d9ba9dedcb4010de4894a69dfae9f6391ebb18
   required: true
 - source: shared/artifact-manifest.md
   version: 783571f82366920bf3a7b437dd6246dcdee1406c
@@ -109,6 +115,11 @@ references:
   required: true
   local: true
   notes: Runtime contract compilation and declared-vs-enforced checks.
+- source: skills/contextsmith-run/execution-contract-core.md
+  version: 9fcb16bdee375f7c3608cb68eade8bfcb671154c
+  required: true
+  local: true
+  notes: Always-loaded runtime obligations for cache-efficient enforcement.
 - source: skills/contextsmith-run/interaction-refinement.md
   version: eddae8ab8ceb93c077f9b5c1e5148e54bf43c9f7
   required: true
@@ -129,6 +140,11 @@ references:
   required: true
   local: true
   notes: Evidence format for runtime obligation enforcement.
+- source: skills/contextsmith-run/evidence-ledger-core.md
+  version: 77fe847ed4f71e04a1350fa6df9a3828cd9ae7a3
+  required: true
+  local: true
+  notes: Always-loaded evidence requirements for cache-efficient enforcement.
 - source: skills/contextsmith-run/help.md
   version: 68dd885f87197776a791d2070ebf2f242e09db87
   required: true

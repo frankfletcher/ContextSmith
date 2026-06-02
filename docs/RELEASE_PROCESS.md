@@ -18,7 +18,7 @@ Build the release bundle and all installable skill packages into `dist/`:
 python scripts/build_release.py --package --individual
 ```
 
-This runs the full pipeline: sync references, update manifests, validate, package individual skills, build the release bundle, and generate summary.
+This runs the full pipeline: sync references, update manifests, validate, check token budgets, package individual skills, build the release bundle, and generate summary.
 
 ## Step-by-Step Checklist
 
@@ -45,7 +45,7 @@ This prints every step the pipeline will execute without modifying any files.
 python scripts/build_release.py --package --individual
 
 # With version bump
-python scripts/build_release.py --package --individual --version 1.7.0
+python scripts/build_release.py --package --individual --version 1.7.1
 
 # Bundle only, without individual installable packages
 python scripts/build_release.py --package
@@ -58,6 +58,7 @@ The pipeline executes in this order:
 | A | `sync_shared_refs.py --all --in-place` | Copy shared references to staging |
 | B | `sync_shared_refs.py --all --update-manifests` | Recompute stale SHA-1 hashes |
 | C | `validate_skills.py` | Abort if any skill fails validation |
+| C2 | `token_budget.py --strict` | Abort if always-loaded SKILL.md budgets regress; report common load-set estimates and largest references |
 | D | *(optional)* Version bump | Update SKILL.md and manifest versions |
 | E | `package_skill.sh` (per skill, with `--individual`) | Create zip, MANIFEST.json, .sha256 |
 | F | Bundle | Create source/all-skills release zip |
@@ -84,7 +85,7 @@ Each `dist/` entry:
 
 ```bash
 # Install a single skill to a temp directory
-bash scripts/install_skill.sh dist/contextsmith-prompt-engineer-1.7.0.zip /tmp/test-install
+bash scripts/install_skill.sh dist/contextsmith-prompt-engineer-1.7.1.zip /tmp/test-install
 
 # Install all skills
 bash scripts/install_all.sh dist /tmp/test-install-all
@@ -194,22 +195,22 @@ This keeps the two most recent backups.
 
 ```bash
 # Build and publish in one command
-bash scripts/publish_release.sh 1.7.0
+bash scripts/publish_release.sh 1.7.1
 
 # Dry-run (no changes)
-bash scripts/publish_release.sh 1.7.0 --dry-run
+bash scripts/publish_release.sh 1.7.1 --dry-run
 
 # Build only, skip GitHub push (for manual review)
-bash scripts/publish_release.sh 1.7.0 --skip-push
+bash scripts/publish_release.sh 1.7.1 --skip-push
 
 # Prerelease
-bash scripts/publish_release.sh 1.7.0-rc.1 --prerelease
+bash scripts/publish_release.sh 1.7.1-rc.1 --prerelease
 
 # Draft release
-bash scripts/publish_release.sh 1.7.0 --draft
+bash scripts/publish_release.sh 1.7.1 --draft
 
 # Custom release notes
-bash scripts/publish_release.sh 1.7.0 --notes my-notes.md
+bash scripts/publish_release.sh 1.7.1 --notes my-notes.md
 ```
 
 The publish script:
@@ -232,12 +233,12 @@ python scripts/build_release.py --package --individual
 sha256sum -c dist/*.sha256
 
 # Tag and push
-git tag -a v1.7.0 -m "ContextSmith v1.7.0"
-git push origin v1.7.0
+git tag -a v1.7.1 -m "ContextSmith v1.7.1"
+git push origin v1.7.1
 
 # Create release
-gh release create v1.7.0 \
-  --title "ContextSmith v1.7.0" \
+gh release create v1.7.1 \
+  --title "ContextSmith v1.7.1" \
   --notes-file <notes.md> \
   dist/*.zip dist/*.sha256 dist/RELEASE_SUMMARY.json
 ```

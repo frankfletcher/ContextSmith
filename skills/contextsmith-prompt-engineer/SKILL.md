@@ -2,14 +2,14 @@
 name: contextsmith-prompt-engineer
 description: Create, improve, audit, test, and package prompts for local/open-weight language models such as Qwen, Gemma, Llama, Mistral, Phi, and DeepSeek. Use when optimizing seed prompts, creating system/user prompt packages, improving structured outputs, reducing hallucination or drift, adding few-shot examples, designing context-aware prompts, adding persistent task state, defining subagent delegation, loop-safety rules, Git/file safety, phased execution, Ralph-loop iteration, targeted context length control, upstream artifact audits, or selecting model-specific prompt guidance from profiles.
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
 
 # ContextSmith Prompt Engineer
 
-Engineer prompt packages for local/open-weight models. Default to `generic-local` unless the user names a model. Use model profiles only when requested or clearly applicable.  The primary goal is to create prompts that are more likely to be reliable for the user's intended use while teaching them how to improve their own prompts. When the user provides specific parameters, use them to guide prompt design decisions and educate the user on how those parameters affect prompt engineering.
+Engineer prompt packages for local/open-weight models. Default to `generic-local` unless the user names a model. Use model profiles only when requested or clearly applicable. The primary goal is a reliable prompt package plus a separate educational report explaining how requested parameters affected design.
 
 The primary output is a prompt package.
 
@@ -32,19 +32,11 @@ Before finalizing, verify:
 
 ## Help Mode
 
-If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not run the normal workflow.
-
-Return the requested usage guidance from `references/help.md` and `references/help-mode.md`.
+For `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI equivalents, return usage guidance from `references/help.md` and `references/help-mode.md`; do not run the normal workflow.
 
 ## Control Parameter Parsing
 
-Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
-
-Examples:
-
-```bash
---mode deep --target-profile qwen36 --context-length 32k --domain coding --harness opencode --ralph 2 --output project-local --no-apply
-```
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
 
 When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
@@ -55,7 +47,7 @@ When CLI flags and prose conflict, prefer explicit current-user prose or ask one
 3. Make instructions literal, atomic, and testable.
 4. Avoid exposed chain-of-thought; request assumptions, rationale, tests, diffs, or verification instead.
 5. Add context strategy, loop safety, Git/file safety, persistent state, or subagent delegation only when relevant.
-6. Validate with A-F rubrics; optionally run a bounded Ralph loop.
+6. Validate with A-F rubrics; run the declared Ralph loop unless `--ralph 0` or `--no-ralph` is explicit.
 7. Teach the user what was strong, weak, and improved.
 
 ## Clarification Policy
@@ -106,9 +98,9 @@ When generating or auditing coding plans, tests, or phase workflows, use:
 - `references/persistent-task-state.md`
 - `references/output-location.md`
 
-For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
+For coding domains, every generated implementation plan must include test strategy, phase code review gates, phase debriefs, and plan-completion audit requirements. Tests must be audited for usefulness, not just pass/fail status.
 
-When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The downstream model must understand that the deliverable is not only a narrative plan. It is a reusable work package that a later execution session can resume without the original chat transcript.
+When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The deliverable is not only a narrative plan; it must be a reusable work package that a later execution session can resume without the original chat transcript.
 
 > Task-state and phase planning requirements: see shared/persistent-task-state.md#downstream-prompt-requirements
 
@@ -133,7 +125,7 @@ Identify:
 
 ### 0. Apply Parameters and Build Artifact Manifest
 
-Determine active parameters from user input, then build an Artifact Manifest for every generated artifact per `references/artifact-manifest.md`.
+Determine active parameters from user input, then build an Artifact Manifest for every generated artifact per `references/artifact-manifest-core.md`. Use `references/artifact-manifest.md` only for full schema details or default reference matrices.
 
 Default parameter values:
 
@@ -142,7 +134,7 @@ Default parameter values:
 | `--mode` | `guided` | Interaction mode (guided, yolo, deep, etc) |
 | `--target-profile` | `qwen36` | Target model profile |
 | `--context-length` | `64k` | Targeted context window |
-| `--education_level` | `deep` | Explanation depth |
+| `--education-level` | `deep` | Explanation depth |
 | `--ralph` | `2` | Ralph loop iterations |
 | `--harness` | `opencode` | Execution environment |
 
@@ -151,7 +143,7 @@ Building the manifest:
 1. Start with defaults; override with user-provided values (source: `user-set`)
 2. If regenerating from a parent artifact, inherit its parameters (source: `inherited`)
 3. Narrow parameters when child scope is more constrained — include justification in parentheses (source: `narrowed`)
-4. Select references using the Artifact Type -> Default References Matrix in `references/artifact-manifest.md`
+4. Select references using the Artifact Type -> Default References Matrix in `references/artifact-manifest.md` when defaults are not already specified by the skill
 5. Embed behavioral contracts from `references/behavioral-contracts.md` for each selected reference
 6. Append custom contracts for domain-specific requirements not covered by canonical contracts
 
@@ -214,9 +206,9 @@ For long-running work, require phase plans with durable memory and phase closeou
 
 For tool-using prompts, add loop-safety rules. For coding/repo prompts, add Git/file safety and gitignore suggestions.
 
-### 6. Optional Ralph Loop
+### 6. Ralph Loop
 
-Use `references/ralph-loop.md` only when requested, reusable, high-risk, or likely to benefit. Save each iteration in the canonical location from `references/output-location.md`. Grade each iteration A-F using `references/evaluation-rubrics.md`.
+Run the declared Ralph iterations (`--ralph`, default `2`) unless explicitly disabled. Use `references/ralph-loop.md` for the loop contract, save iterations in the canonical location from `references/output-location.md`, grade each iteration A-F using `references/evaluation-rubrics.md`, and stop early only with recorded evidence that further iterations would be no-op or bloat.
 
 ### 7. Audit Before Delivery
 
@@ -232,6 +224,7 @@ Check:
 - loop/Git/file safeguards are present when relevant
 - instructions are de-duplicated and non-contradictory
 - validation/test plan exists for reusable prompts
+- declared parameters, required audits, and Ralph iterations have evidence or a blocker
 - educational report explains strengths, weaknesses, changes, and remaining risks
 
 
@@ -257,7 +250,7 @@ Deliver the optimized prompt package plus a concise report:
 
 ## Artifact Manifest Propagation
 
-All generated artifacts MUST include an Artifact Manifest section per `references/artifact-manifest.md`. Child artifacts inherit parent parameters and references, may narrow with justification, must never widen without documented reason. Use `references/parameter-narrowing-rules.md` for narrowing guidance.
+All generated artifacts MUST include an Artifact Manifest section per `references/artifact-manifest-core.md`. Child artifacts inherit parent parameters and references, may narrow with justification, must never widen without documented reason. Use `references/parameter-narrowing-rules.md` for narrowing guidance.
 
 - Prompts generate implementation plans: plan inherits prompt params, narrows context-length per phase, adds phased-planning/implementation-plan-audit refs
 - Implementation plans generate NEXT_PROMPT.md: inherits all plan params, may add phase-specific focus params

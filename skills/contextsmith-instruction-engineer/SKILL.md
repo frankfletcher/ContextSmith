@@ -2,7 +2,7 @@
 name: contextsmith-instruction-engineer
 description: Create, improve, audit, and maintain AGENTS.md, CLAUDE.md, copilot-instructions, .cursorrules, and other repo or agent instruction files for local/open-weight models and agent harnesses. Use when creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
   package: ContextSmith
   target: local-open-weight-models
 ---
@@ -16,35 +16,27 @@ Default parameter values for generated instruction files:
 | --mode | guided |
 | --target-profile | qwen36 |
 | --context-length | 64k |
-| --education_level | deep |
+| --education-level | deep |
 | --ralph | 2 |
 | --harness | opencode |
 
-Every generated instruction file (AGENTS.md, CLAUDE.md, etc.) MUST include an `## Artifact Manifest` section per `references/artifact-manifest.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing when child scope is more constrained with justification (`narrowed`), (4) selecting references using the Artifact Type -> Default References Matrix — instruction files always include instruction-deduplication, instruction-precedence, loop-safety, git-safety, conditionally domain-profiles and coding-standards, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
+Every generated instruction file (AGENTS.md, CLAUDE.md, etc.) MUST include an `## Artifact Manifest` section per `references/artifact-manifest-core.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing child scope with justification (`narrowed`), (4) selecting references — instruction files always include instruction-deduplication, instruction-precedence, loop-safety, git-safety, conditionally domain-profiles and coding-standards, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
 
 # ContextSmith Instruction Engineer
 
 Create, optimize, audit, and maintain repository or agent instruction files such as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursorrules`, OpenCode/Hermes/OpenClaw instructions, and project-specific agent guidance.
 
-The primary goal is to produce instructions that are more likely to be reliable for the user's intended use while teaching them how to improve their own instructions. When the user provides specific parameters, use them to guide instruction design decisions and educate the user on how those parameters affect instruction engineering. Use this skill for tasks such as creating or optimizing project instructions, coding-agent guidance, setup/test/lint commands, coding standards, SOLID/PEP 8/Python guidance, UI standards, data science/ML/AI modality rules, Git safety, loop prevention, context management, persistent task state, subagent delegation, human approval boundaries, or phased execution plans, targeted context length control, and upstream artifact/workflow collision checks.
+The primary goal is reliable instruction files plus a separate educational report explaining changes, safeguards, and how requested parameters affected instruction design. Use this skill for creating, optimizing, or auditing project instructions, coding-agent guidance, setup/test/lint commands, standards, Git safety, loop prevention, context management, persistent task state, subagent delegation, approval boundaries, phased execution, targeted context length control, and upstream artifact/workflow collision checks.
 
 The primary output is a set of instruction files tailored to the user's project and goals, along with an educational report explaining the changes made, safeguards implemented, and how the user's parameters influenced the instruction design.
 
 ## Help Mode
 
-If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not run the normal workflow.
-
-Return the requested usage guidance from `references/help.md` and `references/help-mode.md`.
+For `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI equivalents, return usage guidance from `references/help.md` and `references/help-mode.md`; do not run the normal workflow.
 
 ## Control Parameter Parsing
 
-Accept both natural-language controls and CLI-style flags. Use `references/control-parameters.md` for parsing rules.
-
-Examples:
-
-```bash
---mode deep --target-profile qwen36 --context-length 32k --domain coding --harness opencode --ralph 2 --output project-local --no-apply
-```
+Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
 
 When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
@@ -100,7 +92,7 @@ When generating or auditing coding plans, tests, or phase workflows, use:
 - `references/persistent-task-state.md`
 - `references/output-location.md`
 
-For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
+For coding domains, every generated implementation plan must include test strategy, phase code review gates, phase debriefs, and plan-completion audit requirements. Tests must be audited for usefulness, not just pass/fail status.
 
 
 ## Run Configuration Preview
@@ -201,6 +193,8 @@ Check:
 - loop-safety rules are present for tool-using agents
 - data science/ML safeguards are present when relevant
 - phase plans include memory, debrief, and do-not-carry-forward notes when relevant
+- generated plans require implementation-plan audits at plan completion and phase code reviews at coding phase completion
+- declared parameters, required audits, and Ralph iterations have evidence or a blocker
 - no exposed chain-of-thought
 - no destructive actions without approval
 
@@ -229,7 +223,7 @@ If the user asks about local model loops, server settings, speculative decoding,
 
 ## Artifact Manifest Propagation
 
-Generated instruction files propagate parameters and references through the chain per `references/artifact-manifest.md`. Child artifacts inherit parent parameters, may narrow with justification (see `references/parameter-narrowing-rules.md`), must never widen without documented reason.
+Generated instruction files propagate parameters and references through the chain per `references/artifact-manifest-core.md`. Child artifacts inherit parent parameters, may narrow with justification (see `references/parameter-narrowing-rules.md`), must never widen without documented reason.
 
 When generating AGENTS.md or similar:
 - Inherit target-profile from user request (`user-set`)
