@@ -1,0 +1,10 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "scheduling",
+    "triggers": ["meeting"],
+    "required_artifacts": ["requirements_chain", "nonexistent_artifact"],
+    "validation_gates": {},
+    "approval_gates": [],
+    "external_action_boundaries": {},
+    "residual_risk": "none"
+}

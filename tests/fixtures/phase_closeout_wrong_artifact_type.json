@@ -1,0 +1,12 @@
+{
+  "artifact_type": "wrong_type",
+  "phase_id": "phase-1",
+  "objective_met": true,
+  "artifacts_produced": ["artifact-1"],
+  "evidence_ids": ["ev-1"],
+  "validation_results": "passed",
+  "blockers": [],
+  "carry_forward": [],
+  "next_phase_id": "phase-2",
+  "status": "passed"
+}

@@ -1,0 +1,11 @@
+{
+  "artifact_type": "wrong_type",
+  "id": "ev-1",
+  "requirement_id": "req-1",
+  "phase_id": "phase-1",
+  "claim": "Test claim",
+  "evidence": "Test evidence",
+  "evidence_type": "file",
+  "verified": true,
+  "timestamp": "2026-01-01"
+}

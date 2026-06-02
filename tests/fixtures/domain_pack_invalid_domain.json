@@ -1,0 +1,10 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "Software Engineering",
+    "triggers": ["code"],
+    "required_artifacts": ["requirements_chain"],
+    "validation_gates": {},
+    "approval_gates": [],
+    "external_action_boundaries": {},
+    "residual_risk": "none"
+}

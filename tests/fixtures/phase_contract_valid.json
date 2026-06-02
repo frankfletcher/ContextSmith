@@ -1,0 +1,11 @@
+{
+    "artifact_type": "phase_contract",
+    "phase_id": "phase-1a",
+    "objective": "Define universal artifact types",
+    "domain": "general",
+    "allowed_actions": ["read", "write"],
+    "disallowed_actions": ["execute_model"],
+    "validation_commands": ["python scripts/validate_skills.py"],
+    "max_artifacts": 6,
+    "status": "active"
+}

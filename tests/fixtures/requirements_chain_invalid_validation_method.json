@@ -1,0 +1,11 @@
+{
+  "artifact_type": "requirements_chain",
+  "id": "req-bad-method",
+  "source": "Test",
+  "domain": "general",
+  "side_effect_tier": "read_only",
+  "validation_method": "invalid_method",
+  "phase_ids": ["phase-1"],
+  "evidence_ids": ["ev-1"],
+  "status": "passed"
+}

@@ -1,0 +1,11 @@
+{
+  "artifact_type": "evidence_ledger",
+  "id": "ev-nonbool",
+  "requirement_id": "req-1",
+  "phase_id": "phase-1",
+  "claim": "Test claim",
+  "evidence": "Test evidence",
+  "evidence_type": "file",
+  "verified": "yes",
+  "timestamp": "2026-01-01"
+}

@@ -1,0 +1,11 @@
+{
+  "artifact_type": "requirements_chain",
+  "id": "req-empty-source",
+  "source": "",
+  "domain": "general",
+  "side_effect_tier": "read_only",
+  "validation_method": "artifact_check",
+  "phase_ids": ["phase-1"],
+  "evidence_ids": ["ev-1"],
+  "status": "passed"
+}

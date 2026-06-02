@@ -1,0 +1,11 @@
+{
+  "artifact_type": "wrong_type",
+  "id": "req-wrong-type",
+  "source": "Test",
+  "domain": "general",
+  "side_effect_tier": "read_only",
+  "validation_method": "artifact_check",
+  "phase_ids": ["phase-1"],
+  "evidence_ids": ["ev-1"],
+  "status": "passed"
+}

@@ -1,0 +1,11 @@
+{
+    "artifact_type": "requirements_chain",
+    "id": "req-001",
+    "source": "User asked to summarize three research papers",
+    "domain": "research",
+    "side_effect_tier": "read_only",
+    "validation_method": "artifact_check",
+    "phase_ids": ["phase-1a"],
+    "evidence_ids": ["ev-001"],
+    "status": "passed"
+}

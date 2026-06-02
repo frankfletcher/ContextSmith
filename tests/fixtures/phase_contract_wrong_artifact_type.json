@@ -1,0 +1,11 @@
+{
+  "artifact_type": "wrong_type",
+  "phase_id": "phase-1",
+  "objective": "Test",
+  "domain": "general",
+  "allowed_actions": ["read"],
+  "disallowed_actions": ["write"],
+  "validation_commands": ["echo ok"],
+  "max_artifacts": 3,
+  "status": "active"
+}

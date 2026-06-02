@@ -1,0 +1,13 @@
+{
+  "artifact_type": "approval_record",
+  "id": "appr-requested",
+  "requirement_ids": ["req-1"],
+  "action": "Test action",
+  "side_effect_tier": "read_only",
+  "requester": "agent",
+  "approver": "human",
+  "status": "requested",
+  "timestamp": "2026-01-01",
+  "evidence_id": "ev-1",
+  "residual_risk": "Low risk"
+}

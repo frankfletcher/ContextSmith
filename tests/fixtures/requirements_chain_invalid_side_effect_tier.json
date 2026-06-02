@@ -1,0 +1,11 @@
+{
+  "artifact_type": "requirements_chain",
+  "id": "req-bad-tier",
+  "source": "Test",
+  "domain": "general",
+  "side_effect_tier": "invalid_tier",
+  "validation_method": "artifact_check",
+  "phase_ids": ["phase-1"],
+  "evidence_ids": ["ev-1"],
+  "status": "passed"
+}

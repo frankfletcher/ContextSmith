@@ -1,0 +1,11 @@
+{
+    "artifact_type": "phase_contract",
+    "phase_id": "phase-1a",
+    "objective": "Invalid status",
+    "domain": "general",
+    "allowed_actions": ["read"],
+    "disallowed_actions": [],
+    "validation_commands": [],
+    "max_artifacts": 1,
+    "status": "invalid_status"
+}

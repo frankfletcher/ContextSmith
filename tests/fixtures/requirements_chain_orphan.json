@@ -1,0 +1,11 @@
+{
+  "artifact_type": "requirements_chain",
+  "id": "req-orphan",
+  "source": "Orphan test",
+  "domain": "general",
+  "side_effect_tier": "read_only",
+  "validation_method": "artifact_check",
+  "phase_ids": ["phase-1"],
+  "evidence_ids": ["ev-orphan"],
+  "status": "passed"
+}

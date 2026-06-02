@@ -1,0 +1,12 @@
+{
+    "artifact_type": "approval_record",
+    "id": "appr-002",
+    "action": "Missing requirement_ids",
+    "side_effect_tier": "local_write",
+    "requester": "agent",
+    "approver": "not_yet_approved",
+    "status": "requested",
+    "timestamp": "pending",
+    "evidence_id": "ev-001",
+    "residual_risk": "none"
+}

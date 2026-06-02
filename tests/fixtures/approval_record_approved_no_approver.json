@@ -1,0 +1,13 @@
+{
+    "artifact_type": "approval_record",
+    "id": "appr-003",
+    "requirement_ids": ["req-001"],
+    "action": "Approved without approver",
+    "side_effect_tier": "local_write",
+    "requester": "agent",
+    "approver": "not_yet_approved",
+    "status": "approved",
+    "timestamp": "pending",
+    "evidence_id": "ev-001",
+    "residual_risk": "none"
+}

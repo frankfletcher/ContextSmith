@@ -1,0 +1,16 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "scheduling",
+    "triggers": ["meeting"],
+    "required_artifacts": ["requirements_chain"],
+    "validation_gates": {
+        "bad_gate": {
+            "description": "Bad check type",
+            "required": true,
+            "check_type": "invalid_check_type"
+        }
+    },
+    "approval_gates": [],
+    "external_action_boundaries": {},
+    "residual_risk": "none"
+}

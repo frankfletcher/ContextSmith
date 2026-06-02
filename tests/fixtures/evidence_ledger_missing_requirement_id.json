@@ -1,0 +1,10 @@
+{
+    "artifact_type": "evidence_ledger",
+    "id": "ev-002",
+    "phase_id": "phase-1a",
+    "claim": "Missing requirement_id",
+    "evidence": "path/to/file.md",
+    "evidence_type": "file",
+    "verified": false,
+    "timestamp": "pending"
+}

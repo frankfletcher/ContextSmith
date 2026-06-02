@@ -1,0 +1,11 @@
+{
+    "artifact_type": "evidence_ledger",
+    "id": "ev-003",
+    "requirement_id": "req-001",
+    "phase_id": "phase-1a",
+    "claim": "Invalid evidence type",
+    "evidence": "path/to/file.md",
+    "evidence_type": "invalid_type",
+    "verified": false,
+    "timestamp": "pending"
+}

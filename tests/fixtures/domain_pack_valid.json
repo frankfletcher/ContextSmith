@@ -1,0 +1,19 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "scheduling",
+    "triggers": ["meeting", "calendar"],
+    "required_artifacts": ["requirements_chain", "phase_contract"],
+    "validation_gates": {
+        "participants_known": {
+            "description": "All participants identified",
+            "required": true,
+            "check_type": "field_presence"
+        }
+    },
+    "approval_gates": ["send_invite"],
+    "external_action_boundaries": {
+        "read_calendar": "allowed",
+        "send_invite": "requires_approval"
+    },
+    "residual_risk": "Time zone data may be stale"
+}

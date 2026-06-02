@@ -1,0 +1,13 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "software_engineering",
+    "triggers": ["code", "deploy"],
+    "required_artifacts": ["requirements_chain"],
+    "validation_gates": {},
+    "approval_gates": ["deploy_production"],
+    "external_action_boundaries": {
+        "deploy_staging": "requires_approval",
+        "deploy_production": "requires_approval"
+    },
+    "residual_risk": "Code changes may have unintended side effects"
+}

@@ -1,0 +1,10 @@
+{
+    "artifact_type": "phase_contract",
+    "phase_id": "phase-1a",
+    "objective": "Missing domain field",
+    "allowed_actions": ["read"],
+    "disallowed_actions": ["execute_model"],
+    "validation_commands": [],
+    "max_artifacts": 3,
+    "status": "active"
+}

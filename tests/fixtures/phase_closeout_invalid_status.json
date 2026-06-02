@@ -1,0 +1,12 @@
+{
+    "artifact_type": "phase_closeout",
+    "phase_id": "phase-1a",
+    "objective_met": true,
+    "artifacts_produced": [],
+    "evidence_ids": [],
+    "validation_results": [],
+    "blockers": [],
+    "carry_forward": [],
+    "next_phase_id": "none",
+    "status": "invalid_status"
+}

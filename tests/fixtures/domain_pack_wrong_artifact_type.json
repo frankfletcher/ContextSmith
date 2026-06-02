@@ -1,0 +1,10 @@
+{
+    "artifact_type": "wrong_type",
+    "domain": "scheduling",
+    "triggers": ["meeting"],
+    "required_artifacts": ["requirements_chain"],
+    "validation_gates": {},
+    "approval_gates": [],
+    "external_action_boundaries": {},
+    "residual_risk": "none"
+}

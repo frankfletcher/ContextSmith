@@ -1,0 +1,13 @@
+{
+  "artifact_type": "approval_record",
+  "id": "appr-high-risk",
+  "requirement_ids": ["req-1"],
+  "action": "Deploy to production",
+  "side_effect_tier": "irreversible",
+  "requester": "agent",
+  "approver": "human",
+  "status": "approved",
+  "timestamp": "2026-01-01",
+  "evidence_id": "ev-1",
+  "residual_risk": ""
+}

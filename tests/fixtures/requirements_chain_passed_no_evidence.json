@@ -1,0 +1,11 @@
+{
+    "artifact_type": "requirements_chain",
+    "id": "req-003",
+    "source": "Passed without evidence",
+    "domain": "research",
+    "side_effect_tier": "read_only",
+    "validation_method": "artifact_check",
+    "phase_ids": [],
+    "evidence_ids": [],
+    "status": "passed"
+}

@@ -69,12 +69,14 @@ The protocol must support more than coding:
 
 ## Small-Model Execution Rules
 - Every implementation phase is one bounded unit with one primary objective.
-- Tool-heavy phases run in a fresh session.
+- Tool-heavy phases run in a fresh session. Never chain multiple implementation or test phases in one session.
 - Fresh-session read order: `STATUS.md`, current phase in `PLAN.md`, `CONTEXT.md`, `CHECKLIST.md`, then exact files named by the phase.
 - Do not carry raw search output, raw pytest output, or prior chat into later phases.
 - If a phase discovers architecture uncertainty, stop and ask for human/frontier review instead of improvising.
 - If validation fails twice or needs broad redesign, stop and record a blocker.
+- If a phase reads more than 3 source files AND produces more than 2 output artifacts, consider splitting it.
 - Pytest is pre-approved; other new dependencies still require approval.
+- Track actual token usage per phase. Record in `PHASE_LOG.md`. Use as data for future budgeting.
 
 ## Phase Contract Template
 Each phase must include this compact contract:
@@ -83,13 +85,22 @@ Each phase must include this compact contract:
 context_contract:
   executor: small-model|human-or-frontier-review
   phase_type: discovery|design|implementation|test|integration|rollout|validation
-  usable_phase_budget: small|moderate
+  usable_phase_budget: estimated token range (e.g., 40k-60k). Baseline: Phase 0 discovery actual = 78k.
   expected_tool_calls: read/edit/bash/validation counts or ranges
   validation_output_budget: brief|moderate
-  validation_output_reserve: space reserved for command/test output summaries
+  validation_output_reserve: required for all implementation and test phases; reserve at least 25 percent for validation output and one targeted correction
   compaction_trigger: what to summarize before continuing
   stop_rule: when to stop instead of widening scope
 ```
+
+**Budgeting notes:**
+- Phase 0 actual: 78k tokens for a discovery phase (4-8 reads, 1 dry-run, 0 edits). Use as baseline for discovery phases that read multiple files and produce task-state artifacts.
+- `usable_phase_budget` should be a numeric estimate, not just `small` or `moderate`.
+- For a 64k executor context, small-model phases should normally target 20k-45k usable tokens. Anything estimated above 45k must either be split or explicitly marked for a larger-context/frontier executor.
+- Actual token usage may be unavailable in some harnesses. If unavailable, record `actual_token_usage: unavailable` plus proxy metrics: files read, tool calls, commands run, artifacts edited, and validation-output size.
+- Any phase that reads more than 3 source files AND produces more than 2 output artifacts is a candidate for splitting.
+- Implementation and test phases always include `validation_output_reserve` — no exceptions.
+- Tool-heavy phases must run in a fresh session. Never chain multiple implementation phases in one session.
 
 ## Required Phase Closeout
 Every phase, including read-only design phases, must close with a compact debrief. Update all files that changed in relevance; do not paste raw logs.
@@ -145,7 +156,7 @@ Documentation should focus on how to use ContextSmith. Mention architecture only
 context_contract:
   executor: small-model
   phase_type: discovery
-  usable_phase_budget: moderate
+  usable_phase_budget: 40k-45k estimated; ACTUAL 78k (exceeded budget; use as warning baseline for discovery phases)
   expected_tool_calls: 4-8 reads, optional 1 dry-run command, 0 source edits
   validation_output_budget: brief
   compaction_trigger: summarize include/exclude behavior for each packaging path
@@ -175,21 +186,30 @@ context_contract:
 - Every claim cites exact file paths or commands inspected.
 - No source behavior is changed.
 
-## Phase 0.5: Runtime Surface Decision
-**Goal:** Decide which runtime surfaces are in scope for the first implementation slice.
+## Phase 0.5: Runtime Distribution, Dependency, and Surface Decision
+**Goal:** Decide the runtime distribution model, dependency policy, and first implementation slice before any validator implementation begins.
 
 ```yaml
 context_contract:
   executor: human-or-frontier-review
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 0-2 reads, 0 source edits
-  validation_output_budget: brief decision matrix
-  compaction_trigger: summarize selected surfaces and rejected surfaces
-  stop_rule: stop if decision requires package design changes, dependencies beyond pytest, or user-level config edits
+  validation_output_budget: brief decision matrix with explicit authorization result
+  compaction_trigger: summarize selected distribution model, dependency policy, selected surfaces, rejected surfaces, and Phase 1A authorization
+  stop_rule: stop if the distribution model requires package design changes, a dependency not already approved, user-level config edits, or an unresolved runtime install assumption
 ```
 
-**Options:**
+**Required decisions:**
+1. Distribution model:
+   - per-skill manifest entries for runtime files;
+   - separate `contextsmith-runtime` package;
+   - hybrid: separate runtime package plus small per-skill references or generated artifacts.
+2. Runtime parsing/dependency policy:
+   - stdlib-only JSON first;
+   - PyYAML-backed YAML with explicit approval/install path;
+   - dual JSON/YAML support where YAML is optional and failure messages name the missing dependency.
+3. First-slice runtime surfaces:
 - CLI validator only.
 - CLI validator plus domain packs.
 - CLI validator plus orchestrated runner.
@@ -202,7 +222,13 @@ context_contract:
 
 **Outputs:**
 - Decision entry in `DECISIONS.md`.
-- Narrowed first-slice scope in `STATUS.md` and `NEXT_PROMPT.md`.
+- Distribution model, runtime dependency policy, and narrowed first-slice scope in `STATUS.md` and `NEXT_PROMPT.md`.
+- Explicit `Phase 1A authorized: yes|no` statement with reason.
+
+**Validation:**
+- Decision matrix compares at least the three distribution options above.
+- Dependency policy states whether PyYAML is required, optional, or avoided for the first slice.
+- No implementation phase starts until Phase 0.5 records the chosen distribution model and authorization result.
 
 ## Phase 1A: Universal Artifact Vocabulary
 **Goal:** Define the small set of artifact names used across all domains.
@@ -211,7 +237,7 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-30k
   expected_tool_calls: 2-4 reads, 1 task artifact edit
   validation_output_budget: brief
   compaction_trigger: summarize artifact names and fields
@@ -243,7 +269,7 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 1-3 reads, 1 task artifact edit
   validation_output_budget: brief
   compaction_trigger: summarize required fields and one trace example
@@ -265,6 +291,36 @@ context_contract:
 **Validation:**
 - Example traces one requirement from task request to phase output to validation evidence.
 
+## Phase 1B.5: Approval Record Schema
+**Goal:** Define explicit approval records for irreversible, external, private, costly, or high-risk actions.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: design
+  usable_phase_budget: 20k-30k
+  expected_tool_calls: 1-3 reads, 1 task artifact edit
+  validation_output_budget: brief
+  compaction_trigger: summarize approval fields and one external-action example
+  stop_rule: stop if approval records try to automate external actions instead of documenting authorization
+```
+
+**Required fields:**
+- approval id
+- linked requirement ids
+- action requiring approval
+- side-effect tier
+- requester
+- approver or `not_yet_approved`
+- approval status: not_required, requested, approved, denied, waived_by_user
+- approval timestamp or `pending`
+- evidence id or source note
+- residual risk disclosure for high-risk actions
+
+**Validation:**
+- Example shows travel purchase approval remains `requested` or `denied` unless explicit user approval exists.
+- No approval record implies permission for external action without evidence.
+
 ## Phase 1C: Domain Pack Schema
 **Goal:** Define small domain-specific rule packs without making the core domain-specific.
 
@@ -272,7 +328,7 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 1-3 reads, 1 task artifact edit
   validation_output_budget: brief
   compaction_trigger: summarize domain pack fields
@@ -309,7 +365,7 @@ context_contract:
 context_contract:
   executor: human-or-frontier-review
   phase_type: validation
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 2-4 reads, 0-1 task artifact edits
   validation_output_budget: brief review findings
   compaction_trigger: summarize approved schema and required corrections
@@ -332,24 +388,29 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: moderate
+  usable_phase_budget: 35k-45k
   expected_tool_calls: 3-5 reads, 2-4 edits, 1-2 validation commands
   validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize function names and result schema
-  stop_rule: stop if implementation needs dependencies beyond PyYAML and pytest
+  stop_rule: stop if implementation conflicts with the Phase 0.5 distribution or dependency policy, or if it needs an unapproved dependency
 ```
 
 **Actions:**
 1. Create the runtime validator module in the location approved by Phase 0.5.
-2. Implement `validate_requirements_chain(path)`.
-3. Implement `validate_phase_contract(path)`.
-4. Implement `validate_evidence_ledger(path)`.
-5. Implement `validate_phase_closeout(path)`.
-6. Return `{"passed": bool, "violations": list, "warnings": list}` from every public validator.
+2. Implement parsing according to the Phase 0.5 dependency policy; do not assume YAML support unless that decision explicitly approved it.
+3. Implement `validate_requirements_chain(path)`.
+4. Implement `validate_phase_contract(path)`.
+5. Implement `validate_evidence_ledger(path)`.
+6. Implement `validate_approval_record(path)`.
+7. Implement `validate_phase_closeout(path)`.
+8. Return `{"passed": bool, "violations": list, "warnings": list}` from every public validator.
 
 **Validation:**
 - Module imports successfully.
 - Each public validator returns the expected result shape for a tiny valid fixture.
+- Approval records reject missing approval status for external or high-risk actions.
+- Parser behavior matches the Phase 0.5 dependency policy, including clear errors for unsupported file formats or missing optional dependencies.
 
 ## Phase 2B: Domain Pack Validator
 **Goal:** Add generic validation for domain pack files.
@@ -358,9 +419,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: small
+  usable_phase_budget: 30k-45k
   expected_tool_calls: 2-3 reads, 1-2 edits, 1-2 validation commands
   validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize domain pack required fields
   stop_rule: stop if implementation tries to encode domain-specific business logic in the core
 ```
@@ -381,9 +443,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: small
+  usable_phase_budget: 30k-45k
   expected_tool_calls: 2-3 reads, 1-2 edits, 2-3 validation commands
   validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize subcommands and exit codes
   stop_rule: stop if CLI grows beyond validator dispatch and output formatting
 ```
@@ -392,6 +455,7 @@ context_contract:
 - `requirements`
 - `phase-contract`
 - `evidence`
+- `approval`
 - `closeout`
 - `domain-pack`
 
@@ -412,9 +476,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: test
-  usable_phase_budget: moderate
+  usable_phase_budget: 35k-45k
   expected_tool_calls: 2-3 reads, 4-8 edits, 2-4 validation commands
   validation_output_budget: compact pytest summary
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize fixture matrix before writing tests
   stop_rule: stop if tests become broad integration tests or require dependencies beyond pytest
 ```
@@ -425,6 +490,7 @@ context_contract:
 - good and bad `requirements_chain`
 - good and bad `phase_contract`
 - good and bad `evidence_ledger`
+- good and bad `approval_record`
 - good and bad `phase_closeout`
 - good and bad `domain_pack`
 
@@ -441,10 +507,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: test
-  usable_phase_budget: small
+  usable_phase_budget: 30k-45k
   expected_tool_calls: 2-4 reads, 0-2 edits, 1-3 commands
   validation_output_budget: brief
-  validation_output_reserve: include staging command result and fallback/blocker summary
+  validation_output_reserve: at least 25 percent for staging command result and fallback/blocker summary
   compaction_trigger: summarize staged path and command used
   stop_rule: stop if packaging must change before the smoke test is meaningful; record fallback path instead of redesigning packaging
 ```
@@ -466,9 +532,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: small
+  usable_phase_budget: 25k-40k
   expected_tool_calls: 1-3 reads, 1-2 edits, 1-2 validation commands
   validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize fields and gates
   stop_rule: stop if domain pack becomes a long instruction file
 ```
@@ -490,9 +557,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: small
+  usable_phase_budget: 25k-40k
   expected_tool_calls: 1-3 reads, 1-2 edits, 1-2 validation commands
   validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize gates
   stop_rule: stop if this duplicates full coding standards
 ```
@@ -511,9 +579,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: small
+  usable_phase_budget: 25k-40k
   expected_tool_calls: 1-3 reads, 1-2 edits, 1-2 validation commands
   validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize gates
   stop_rule: stop if calendar APIs or external sending are implemented here
 ```
@@ -533,9 +602,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: small
+  usable_phase_budget: 25k-40k
   expected_tool_calls: 1-3 reads, 1-2 edits, 1-2 validation commands
   validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize gates
   stop_rule: stop if purchase automation is implied without explicit approval controls
 ```
@@ -547,14 +617,58 @@ context_contract:
 - no purchase, payment, or irreversible action without explicit user approval
 - residual risk disclosure required because fares and policies may change
 
-## Phase 3E: Domain Pack Review Gate
+## Phase 3E: Writing/Editing Domain Pack
+**Goal:** Create a compact writing and editing domain pack.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: implementation
+  usable_phase_budget: 25k-40k
+  expected_tool_calls: 1-3 reads, 1-2 edits, 1-2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize gates
+  stop_rule: stop if writing guidance becomes a style manual instead of validation gates
+```
+
+**Required gates:**
+- source material or user intent preserved
+- audience, tone, and format recorded or blocker noted
+- final draft claims do not add unsupported facts
+- requested constraints are traced to output evidence
+- user approval required before sending, publishing, or representing text as final externally
+
+## Phase 3F: Research Summary Domain Pack
+**Goal:** Create a compact research and source-summary domain pack.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: implementation
+  usable_phase_budget: 25k-40k
+  expected_tool_calls: 1-3 reads, 1-2 edits, 1-2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize gates
+  stop_rule: stop if research validation requires live browsing, citation scraping, or complex evidence scoring
+```
+
+**Required gates:**
+- sources listed with paths or URLs
+- unsupported claims flagged or removed
+- uncertainty and limitations recorded
+- quotes, statistics, and factual claims trace to evidence
+- external publication or submission requires approval
+
+## Phase 3G: Domain Pack Review Gate
 **Goal:** Review starter domain packs before adding more domains.
 
 ```yaml
 context_contract:
   executor: human-or-frontier-review
   phase_type: validation
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 2-4 reads, 0-1 edits
   validation_output_budget: brief findings
   compaction_trigger: summarize accepted and rejected patterns
@@ -573,10 +687,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: integration
-  usable_phase_budget: moderate with explicit validation reserve
+  usable_phase_budget: 35k-45k
   expected_tool_calls: 3-5 reads, 1-2 edits, 2-4 validation commands
   validation_output_budget: brief summaries only; reserve space for validate_skills, token_budget, and pytest summaries
-  validation_output_reserve: at least 25 percent of phase context for validation and one targeted correction
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize current SKILL.md line count, changed paths, and intended validator references before validation
   stop_rule: stop if SKILL.md approaches 450 lines, integration needs more than 2 edits, validation output is verbose, or integration duplicates validator logic
 ```
@@ -599,7 +713,7 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 1-3 reads, 1 edit
   validation_output_budget: brief
   compaction_trigger: summarize old-vs-new skill style
@@ -615,7 +729,7 @@ context_contract:
 context_contract:
   executor: human-or-frontier-review
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 2-4 reads, 1 task artifact edit
   validation_output_budget: brief compiler spec
   validation_output_reserve: include generated-prompt quality checklist
@@ -660,10 +774,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: moderate
+  usable_phase_budget: 35k-45k
   expected_tool_calls: 3-5 reads, 2-4 edits, 2-4 validation commands
   validation_output_budget: brief
-  validation_output_reserve: include sample generated prompt and validation summary
+  validation_output_reserve: at least 25 percent for sample generated prompt and validation summary
   compaction_trigger: summarize compiler inputs, output path, and template sections before implementation
   stop_rule: stop if implementation tries to invoke a model, mutate source code, or advance phases
 ```
@@ -689,10 +803,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: test
-  usable_phase_budget: small
+  usable_phase_budget: 30k-45k
   expected_tool_calls: 2-4 reads, 2-5 edits, 2-3 validation commands
   validation_output_budget: compact pytest summary
-  validation_output_reserve: include generated-prompt fixture comparison
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize fixture cases before writing tests
   stop_rule: stop if tests require dependencies beyond pytest
 ```
@@ -716,7 +830,7 @@ context_contract:
 context_contract:
   executor: human-or-frontier-review
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 1-3 reads, 1 task artifact edit
   validation_output_budget: brief
   compaction_trigger: summarize gate loop and bypass limits
@@ -742,9 +856,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: moderate
+  usable_phase_budget: 35k-45k
   expected_tool_calls: 2-4 reads, 2-4 edits, 2-4 validation commands
   validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize supported runner commands
   stop_rule: stop if runner needs live model API, MCP, or harness integration
 ```
@@ -767,7 +882,7 @@ context_contract:
 context_contract:
   executor: human-or-frontier-review
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 1-3 reads, 1 task artifact edit
   validation_output_budget: brief
   compaction_trigger: summarize tool names and JSON shapes
@@ -790,7 +905,7 @@ context_contract:
 context_contract:
   executor: human-or-frontier-review
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 1-4 reads, 0-1 task artifact edits
   validation_output_budget: brief capability matrix
   validation_output_reserve: include positive completion evidence for each reviewed harness capability
@@ -810,7 +925,7 @@ context_contract:
 context_contract:
   executor: human-or-frontier-review
   phase_type: design
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 3-6 reads, 1 task artifact edit
   validation_output_budget: brief user journey map
   validation_output_reserve: include docs inventory and gaps summary
@@ -849,10 +964,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: moderate
+  usable_phase_budget: 35k-45k
   expected_tool_calls: 3-5 reads, 1 edit, 2 validation commands
   validation_output_budget: brief
-  validation_output_reserve: include docs quality self-check and link/path sanity check
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize README narrative, primary calls to action, and changed sections before editing
   stop_rule: stop if README rewrite needs broad product positioning decisions not settled in Phase 7A
 ```
@@ -878,10 +993,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: moderate
+  usable_phase_budget: 35k-45k
   expected_tool_calls: 3-6 reads, 1-3 edits, 2 validation commands
   validation_output_budget: brief
-  validation_output_reserve: include command/path sanity check
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize the shortest successful user path before editing
   stop_rule: stop if quickstart depends on unimplemented commands or runtime features
 ```
@@ -903,18 +1018,18 @@ context_contract:
 - The first useful workflow is short and clearly marked.
 
 ## Phase 7D: How To Use Runtime Workflows
-**Goal:** Explain how users create, run, validate, and recover from runtime-managed workflows.
+**Goal:** Create or update one runtime-workflow user guide without widening into the full examples library.
 
 ```yaml
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: moderate
-  expected_tool_calls: 4-8 reads, 1-3 edits, 2 validation commands
+  usable_phase_budget: 35k-45k
+  expected_tool_calls: 3-5 reads, 1 edit, 2 validation commands
   validation_output_budget: brief
-  validation_output_reserve: include factuality, command/path, and enforcement-claim checks
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize user workflow steps before editing
-  stop_rule: stop if usage instructions depend on unimplemented commands or unclear feature status
+  stop_rule: stop if usage instructions depend on unimplemented commands, unclear feature status, more than one substantial doc edit, or more than five source/doc reads
 ```
 
 **Required user tasks:**
@@ -940,20 +1055,21 @@ context_contract:
 - Non-coding examples are included.
 - Unimplemented adapters are marked as active development or planned work.
 - A user can follow the page without understanding the internal architecture.
+- If the workflow guide needs multiple pages, record the split in `ARTIFACTS.md` and stop after the first page.
 
 ## Phase 7E: Use-Case Workflow Docs
-**Goal:** Provide detailed lookup docs for common use cases.
+**Goal:** Add a bounded first batch of use-case workflow docs.
 
 ```yaml
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: moderate
-  expected_tool_calls: 4-8 reads, 1-4 edits, 2 validation commands
+  usable_phase_budget: 35k-45k
+  expected_tool_calls: 3-5 reads, 1-3 edits, 2 validation commands
   validation_output_budget: brief
-  validation_output_reserve: include example quality audit
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize selected workflows before editing
-  stop_rule: stop if more than three workflow pages are attempted in one phase
+  stop_rule: stop if more than two workflow pages are attempted in one phase, or if any workflow depends on unimplemented tooling without an explicit planned/illustrative label
 ```
 
 **Starter workflows:**
@@ -967,20 +1083,21 @@ context_contract:
 - Each workflow has a table of contents.
 - Each workflow includes inputs, commands or prompts, expected artifacts, validation, and common failure modes.
 - External actions clearly require human approval.
+- Remaining workflow ideas are recorded as deferred, not attempted in the same phase.
 
 ## Phase 7F: Examples Library
-**Goal:** Add plenty of examples that users can copy, adapt, and compare.
+**Goal:** Add a bounded first batch of examples that users can copy, adapt, and compare.
 
 ```yaml
 context_contract:
   executor: small-model
   phase_type: implementation
-  usable_phase_budget: moderate
-  expected_tool_calls: 3-6 reads, 1-3 edits, 2 validation commands
+  usable_phase_budget: 35k-45k
+  expected_tool_calls: 2-4 reads, 1-2 edits, 2 validation commands
   validation_output_budget: brief
-  validation_output_reserve: include example coverage matrix
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize example set before editing
-  stop_rule: stop if examples become synthetic claims about unimplemented tooling
+  stop_rule: stop if more than three examples are attempted, examples become synthetic claims about unimplemented tooling, or examples need more than two edited files
 ```
 
 **Example types:**
@@ -997,6 +1114,7 @@ context_contract:
 - Examples are labeled as implemented, planned, or illustrative.
 - Examples reduce cognitive load by showing expected outputs, not only inputs.
 - No example performs an irreversible external action.
+- Deferred examples are listed for a later batch instead of expanding this phase.
 
 ## Phase 7G: Documentation Quality Audit
 **Goal:** Review README and documentation before rollout.
@@ -1005,7 +1123,7 @@ context_contract:
 context_contract:
   executor: human-or-frontier-review
   phase_type: validation
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 4-8 reads, 0-2 edits, 2 validation commands
   validation_output_budget: compact audit findings
   validation_output_reserve: include link/path issues and factuality findings
@@ -1032,7 +1150,7 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: rollout
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 2-5 reads, 1 task-state edit
   validation_output_budget: brief
   validation_output_reserve: include rollout matrix and exact target count
@@ -1062,10 +1180,10 @@ context_contract:
 context_contract:
   executor: small-model
   phase_type: rollout
-  usable_phase_budget: moderate
+  usable_phase_budget: 35k-45k
   expected_tool_calls: 4-8 reads, 1-3 edits, 3-5 validation commands for the selected batch only
   validation_output_budget: brief summaries with reserve for validate_skills, token_budget, pytest, and smoke-test status
-  validation_output_reserve: at least 25 percent of phase context for validation and one targeted correction
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
   compaction_trigger: summarize changed paths and validation
   stop_rule: stop after the Phase 8A target batch; do not start additional skills without a new Phase 8A selection
 ```
@@ -1078,7 +1196,7 @@ context_contract:
 
 **Actions:**
 1. Edit only the Phase 8A target skill or skills.
-2. If two skills were selected and the first skill raises context or validation risk, stop after the first and update Phase 7A/`NEXT_PROMPT.md`.
+2. If two skills were selected and the first skill raises context or validation risk, stop after the first and update Phase 8A/`NEXT_PROMPT.md`.
 3. Do not start any deferred skill in this phase.
 
 **Validation:**
@@ -1095,7 +1213,7 @@ context_contract:
 context_contract:
   executor: human-or-frontier-review
   phase_type: validation
-  usable_phase_budget: small
+  usable_phase_budget: 20k-40k
   expected_tool_calls: 2-4 reads, 2-4 validation commands
   validation_output_budget: compact final evidence
   compaction_trigger: summarize evidence before final report

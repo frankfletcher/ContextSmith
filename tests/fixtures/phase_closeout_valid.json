@@ -1,0 +1,12 @@
+{
+    "artifact_type": "phase_closeout",
+    "phase_id": "phase-1a",
+    "objective_met": true,
+    "artifacts_produced": ["ARTIFACT_VOCABULARY.md"],
+    "evidence_ids": ["ev-001"],
+    "validation_results": [{"check": "artifacts_defined", "result": "pass"}],
+    "blockers": [],
+    "carry_forward": ["artifact names for next phase"],
+    "next_phase_id": "phase-1b",
+    "status": "passed"
+}
