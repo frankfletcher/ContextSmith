@@ -1,0 +1,55 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "writing_editing",
+    "triggers": ["write", "edit", "rewrite", "draft", "proofread", "copy", "email"],
+    "required_artifacts": [
+        "requirements_chain",
+        "phase_contract",
+        "evidence_ledger",
+        "approval_record",
+        "phase_closeout"
+    ],
+    "validation_gates": {
+        "source_or_intent_preserved": {
+            "description": "Source material or user intent is preserved, or a blocker is recorded",
+            "required": true,
+            "check_type": "artifact_check"
+        },
+        "audience_tone_format_recorded": {
+            "description": "Audience, tone, and output format are recorded or a blocker is recorded",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "unsupported_facts_absent": {
+            "description": "Final draft does not add factual claims unsupported by source or user instruction",
+            "required": true,
+            "check_type": "artifact_check"
+        },
+        "constraints_traced": {
+            "description": "Requested length, format, content, and wording constraints trace to output evidence",
+            "required": true,
+            "check_type": "artifact_check"
+        },
+        "external_finalization_approved": {
+            "description": "Sending, publishing, submitting, or representing text as final waits for user approval",
+            "required": true,
+            "check_type": "user_confirmation"
+        }
+    },
+    "approval_gates": [
+        "send_to_recipient",
+        "publish_externally",
+        "submit_text",
+        "represent_as_final"
+    ],
+    "external_action_boundaries": {
+        "read_source_material": "allowed",
+        "write_local_draft": "allowed",
+        "revise_text": "allowed",
+        "send_to_recipient": "requires_approval",
+        "publish_externally": "requires_approval",
+        "submit_text": "requires_approval",
+        "represent_as_final": "requires_approval"
+    },
+    "residual_risk": "Edited text can still shift meaning, tone, or factual nuance. Sending, publishing, submitting, or representing text as final requires explicit user approval."
+}

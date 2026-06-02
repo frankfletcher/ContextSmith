@@ -3,7 +3,7 @@
 ## Artifact Manifest
 - artifact_type: artifact-index
 - parent_task: TASK.md
-- status: planning artifacts initialized
+- status: Phase 3 audit complete
 - behavioral_contract: Track generated files, future source changes, and validation evidence.
 
 ## Task-State Files
@@ -35,8 +35,9 @@
 | CLI adapter | 2C | Complete — `runtime/cli.py`, `tests/test_cli.py` |
 | Pytest fixture tests | 2D | Complete — 17 new fixtures, 24 new tests, 1 validator bug fix |
 | Installed-workflow smoke test | 2E | Complete — smoke test evidence below |
-| Starter domain packs | 3A-3F | Pending |
-| Domain pack review notes | 3G | Pending |
+| Starter domain packs | 3A-3F | Complete — `runtime/domain_packs/general_fallback.json`, `runtime/domain_packs/software_engineering.json`, `runtime/domain_packs/scheduling.json`, `runtime/domain_packs/travel_purchase.json`, `runtime/domain_packs/writing_editing.json`, `runtime/domain_packs/research_summary.json` |
+| Domain pack review notes | 3G | Complete — recorded in STATUS.md, CONTEXT.md, CHECKLIST.md, and PHASE_LOG.md |
+| Phase 3 audit report | 3A-3G | Complete — `PHASE_3_AUDIT.md` |
 | `contextsmith-run` pilot integration | 4A | Pending |
 | Thin-skill writing guide | 4B | Pending |
 | Next Prompt Compiler specification | 5A | Pending |
@@ -81,6 +82,22 @@
 - 2026-06-02: Phase 2C CLI adapter created: `runtime/cli.py` with 6 subcommands, exit codes, compact output, and `--help`. 25 new tests in `tests/test_cli.py`. All 57 tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
 - 2026-06-02: Phase 2D pytest fixture tests expanded: 17 new fixtures in `tests/fixtures/`, 24 new tests in `tests/test_validator.py` (+4) and `tests/test_cli.py` (+2). Validator bug fix: `runtime/validator.py:85` empty source detection (`not isinstance` → `isinstance`). All 81 tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
 - 2026-06-02: Phase 2E installed-workflow smoke test passed: staged `contextsmith-run` skill, copied runtime files to `.agent_work/staged_skills/contextsmith-run/runtime/`, invoked CLI from staged path. `--help` works, domain_pack PASS (valid fixture) and FAIL (invalid_domain fixture) both succeed from staged directory. No packaging redesign required. All 81 tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
+- 2026-06-02: Phase 3A general fallback domain pack complete: created `runtime/domain_packs/general_fallback.json`, `tests/fixtures/domain_pack_general_fallback.json`, and validator tests for both. `python -m runtime.cli domain-pack runtime/domain_packs/general_fallback.json` passed. `python -m runtime.cli domain-pack tests/fixtures/domain_pack_general_fallback.json` passed. All 85 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
+- 2026-06-02: Phase 3B software engineering domain pack complete: created `runtime/domain_packs/software_engineering.json`, `tests/fixtures/domain_pack_software_engineering.json`, and validator tests for both. `python -m runtime.cli domain-pack runtime/domain_packs/software_engineering.json` passed. `python -m runtime.cli domain-pack tests/fixtures/domain_pack_software_engineering.json` passed. All 87 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
+- 2026-06-02: Phase 3C scheduling domain pack complete: created `runtime/domain_packs/scheduling.json`, `tests/fixtures/domain_pack_scheduling.json`, and validator tests for both. `python runtime/cli.py domain-pack runtime/domain_packs/scheduling.json` passed. `python runtime/cli.py domain-pack tests/fixtures/domain_pack_scheduling.json` passed. All 89 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
+- 2026-06-02: Phase 3D travel/purchase domain pack complete: created `runtime/domain_packs/travel_purchase.json`, `tests/fixtures/domain_pack_travel_purchase.json`, and validator tests for both. `python -m runtime.cli domain-pack runtime/domain_packs/travel_purchase.json` passed. `python -m runtime.cli domain-pack tests/fixtures/domain_pack_travel_purchase.json` passed. All 91 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
+- 2026-06-02: Phase 3E writing/editing domain pack complete: created `runtime/domain_packs/writing_editing.json`, `tests/fixtures/domain_pack_writing_editing.json`, and validator tests for both. `python -m runtime.cli domain-pack runtime/domain_packs/writing_editing.json` passed. `python -m runtime.cli domain-pack tests/fixtures/domain_pack_writing_editing.json` passed. All 93 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
+- 2026-06-02: Phase 3F research summary domain pack complete: created `runtime/domain_packs/research_summary.json`, `tests/fixtures/domain_pack_research_summary.json`, and validator tests for both. `python -m runtime.cli domain-pack runtime/domain_packs/research_summary.json` passed. `python -m runtime.cli domain-pack tests/fixtures/domain_pack_research_summary.json` passed. All 95 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
+- 2026-06-02: Phase 3G domain pack review complete: reviewed all six starter packs; corrected `general_fallback` to `triggers: ["*"]`; added `validate_domain_pack()` enforcement and pytest coverage for rule 10. `python -m pytest tests/ -v` passed with 96 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. CLI validation passed for all six runtime domain packs.
+- 2026-06-02: Phase 3 audit complete: all six starter domain packs pass schema compliance, plan compliance, and Rule 9 approval boundary alignment. Audit verdict: PASS. Created `PHASE_3_AUDIT.md` with detailed findings.
+
+## Phase 3G Changed Artifacts
+| File | Change |
+|---|---|
+| `runtime/domain_packs/general_fallback.json` | Corrected fallback trigger to wildcard `*` |
+| `tests/fixtures/domain_pack_general_fallback.json` | Matched fixture to runtime pack wildcard trigger |
+| `runtime/validator.py` | Added schema rule 10 enforcement for `general_fallback` |
+| `tests/test_validator.py` | Added regression test for non-wildcard fallback trigger rejection |
 
 ## Phase 0 Files Inspected
 | File | Purpose |

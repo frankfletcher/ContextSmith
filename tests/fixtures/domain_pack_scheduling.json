@@ -1,0 +1,56 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "scheduling",
+    "triggers": ["meeting", "calendar", "schedule", "availability", "timezone"],
+    "required_artifacts": [
+        "requirements_chain",
+        "phase_contract",
+        "evidence_ledger",
+        "approval_record",
+        "phase_closeout"
+    ],
+    "validation_gates": {
+        "participants_known": {
+            "description": "All required and optional participants are identified",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "timezones_resolved": {
+            "description": "Participant time zones are resolved or a blocker is recorded",
+            "required": true,
+            "check_type": "value_check"
+        },
+        "duration_known": {
+            "description": "Meeting duration is specified before proposing slots",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "candidate_slots_listed": {
+            "description": "Candidate slots are listed with date, time, timezone, and availability status",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "invite_send_approved": {
+            "description": "Sending invites or scheduling messages waits for explicit user approval",
+            "required": true,
+            "check_type": "user_confirmation"
+        },
+        "sent_item_evidence_recorded": {
+            "description": "If an invite or message is sent, final send evidence is recorded",
+            "required": true,
+            "check_type": "artifact_check"
+        }
+    },
+    "approval_gates": ["send_invite", "send_message", "modify_calendar", "cancel_event", "delete_event"],
+    "external_action_boundaries": {
+        "read_calendar_availability": "allowed",
+        "draft_invite": "allowed",
+        "propose_slots": "allowed",
+        "send_invite": "requires_approval",
+        "send_message": "requires_approval",
+        "modify_calendar": "requires_approval",
+        "cancel_event": "requires_approval",
+        "delete_event": "requires_approval"
+    },
+    "residual_risk": "Availability and time zone data can change between slot proposal and sending. Invites, messages, calendar changes, cancellations, and deletions require explicit user approval."
+}

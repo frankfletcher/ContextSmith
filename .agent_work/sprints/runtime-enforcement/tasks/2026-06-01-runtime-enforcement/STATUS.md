@@ -3,12 +3,12 @@
 ## Artifact Manifest
 - artifact_type: status
 - parent_task: TASK.md
-- current_phase: Phase 2E complete
-- next_required_action: Phase 3A (General Fallback Domain Pack)
-- validation_state: `python -m pytest tests/ -v`, `python scripts/validate_skills.py`, and `python scripts/token_budget.py --strict` passed after JSON-only audit fixes
+- current_phase: Phase 3 audit complete
+- next_required_action: Phase 4A (ContextSmith-Run Pilot Integration)
+- validation_state: `python -m pytest tests/ -v` (96 pass), `python scripts/validate_skills.py` (OK), `python scripts/token_budget.py --strict` (OK), CLI validation for all six runtime domain packs (6/6 PASS), Phase 3 audit (PASS)
 
 ## Current Phase
-Phase 2D complete. Phase 2E (Installed-Workflow Smoke Test) authorized to proceed.
+Phase 3 audit complete (PASS). Phase 4A (ContextSmith-Run Pilot Integration) authorized to proceed.
 
 ## Completed
 - Created task-state package for deterministic runtime enforcement planning.
@@ -44,9 +44,17 @@ Phase 2D complete. Phase 2E (Installed-Workflow Smoke Test) authorized to procee
 - Completed Phase 2C: CLI Adapter — created `runtime/cli.py` with argparse-based CLI, 6 subcommands (`requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`), exit codes (0=pass, 1=fail, 2=error), compact output format, and `--help` for CLI and each subcommand. Added 25 pytest tests in `tests/test_cli.py` covering help, passing fixtures, failing fixtures, file errors, and programmatic API. All 57 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, iteration 1 fixed import path for direct script execution, iteration 2 no-op by evidence.
 - Completed Phase 2D: Pytest Fixture Tests — expanded test coverage from 57 to 81 tests (+24) with 17 new fixtures covering wrong artifact_type (4 validators), enum validation, empty source, non-boolean fields, approval_record status/approver/timestamp consistency, high-risk residual_risk, cross-artifact workflow orphan detection, warnings presence, YAML rejection, and CLI warnings display. Fixed validator bug: empty source detection (`not isinstance` → `isinstance`). All 81 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, both no-op by evidence.
 - Completed Phase 2E: Installed-Workflow Smoke Test — proved the validator can be called from a staged/installed workflow path. Staged `contextsmith-run` skill, copied runtime files to `.agent_work/staged_skills/contextsmith-run/runtime/`, invoked CLI from staged path. Both PASS and FAIL cases succeed. No packaging redesign required. Ralph loop: 2 iterations, both no-op by evidence.
+- Completed Phase 3A: General Fallback Domain Pack — created compact `general_fallback` domain pack and fixture, added validator tests for both, and validated with CLI. All 85 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, both no-op by evidence.
+- Completed Phase 3B: Software Engineering Domain Pack — created compact `software_engineering` domain pack and fixture, added validator tests for both, and validated with CLI. All 87 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, both no-op by evidence.
+- Completed Phase 3C: Scheduling Domain Pack — created compact `scheduling` domain pack and fixture, added validator tests for both, and validated with CLI. All 89 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, iteration 1 added sent-item evidence gate, iteration 2 no-op by evidence.
+- Completed Phase 3D: Travel/Purchase Domain Pack — created compact `travel_purchase` domain pack and fixture, added validator tests for both, and validated with CLI. All 91 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, both no-op by evidence.
+- Completed Phase 3E: Writing/Editing Domain Pack — created compact `writing_editing` domain pack and fixture, added validator tests for both, and validated with CLI. All 93 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, iteration 1 tightened blocker wording, iteration 2 no-op by evidence.
+- Completed Phase 3F: Research Summary Domain Pack — created compact `research_summary` domain pack and fixture, added validator tests for both, and validated with CLI. All 95 tests pass. `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict` pass. Ralph loop: 2 iterations, both no-op by evidence.
+- Completed Phase 3G: Domain Pack Review Gate — reviewed all six starter packs for compactness, approval-boundary alignment, deterministic-vs-human gate separation, and fallback coverage. Fixed `general_fallback` wildcard trigger drift and added validator/test coverage for rule 10. All 96 tests pass. `python scripts/validate_skills.py`, `python scripts/token_budget.py --strict`, and CLI validation for all six runtime domain packs pass. Ralph loop: 2 iterations, iteration 1 fixed rule 10 enforcement, iteration 2 no-op by evidence.
+- Completed Phase 3 Audit: Audited all six starter domain packs against PLAN.md specifications, Phase 1C schema, and Rule 9 approval boundary alignment. Verdict: PASS. Created `PHASE_3_AUDIT.md` with detailed findings. 96 pytest tests pass. `validate_skills.py` and `token_budget.py --strict` pass. CLI validation passes for all six runtime packs.
 
 ## Next Action
-Phase 3A: General Fallback Domain Pack — create the smallest domain pack that works for any prompt, skill, or agent task.
+Phase 4A: ContextSmith-Run Pilot Integration — update only `contextsmith-run` to emit or request runtime-checkable artifacts.
 
 ## Blockers
 None for planning.

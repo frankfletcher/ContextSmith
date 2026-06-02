@@ -1,0 +1,52 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "general_fallback",
+    "triggers": ["*"],
+    "required_artifacts": [
+        "requirements_chain",
+        "phase_contract",
+        "evidence_ledger",
+        "approval_record",
+        "phase_closeout"
+    ],
+    "validation_gates": {
+        "requirement_trace_exists": {
+            "description": "User requirements are traced to phase and evidence records",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "phase_contract_exists": {
+            "description": "A bounded phase contract records allowed actions and validation",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "evidence_ledger_exists": {
+            "description": "Claims have concrete evidence entries",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "validation_or_blocker_exists": {
+            "description": "Closeout records validation results or an explicit blocker",
+            "required": true,
+            "check_type": "artifact_check"
+        },
+        "external_action_approved": {
+            "description": "External actions have an approval record before execution",
+            "required": true,
+            "check_type": "user_confirmation"
+        },
+        "claims_match_evidence": {
+            "description": "Final claims do not exceed recorded evidence",
+            "required": true,
+            "check_type": "artifact_check"
+        }
+    },
+    "approval_gates": ["external_action"],
+    "external_action_boundaries": {
+        "read_local_context": "allowed",
+        "write_local_artifacts": "allowed",
+        "external_action": "requires_approval",
+        "irreversible_action": "blocked"
+    },
+    "residual_risk": "Unknown-domain tasks can miss domain-specific checks. Use the smallest safe action and record blockers when validation is uncertain."
+}

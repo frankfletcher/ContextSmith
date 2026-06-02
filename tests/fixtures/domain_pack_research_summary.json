@@ -1,0 +1,53 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "research_summary",
+    "triggers": ["research", "summarize", "source", "paper", "study", "evidence", "citation"],
+    "required_artifacts": [
+        "requirements_chain",
+        "phase_contract",
+        "evidence_ledger",
+        "approval_record",
+        "phase_closeout"
+    ],
+    "validation_gates": {
+        "sources_listed": {
+            "description": "All source materials are listed with file paths, URLs, or explicit unavailable notes",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "unsupported_claims_handled": {
+            "description": "Unsupported claims are flagged, qualified, removed, or recorded as blockers",
+            "required": true,
+            "check_type": "artifact_check"
+        },
+        "uncertainty_limitations_recorded": {
+            "description": "Uncertainty, source limitations, and scope limits are recorded",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "factual_claims_trace_to_evidence": {
+            "description": "Quotes, statistics, and factual claims trace to source evidence entries",
+            "required": true,
+            "check_type": "artifact_check"
+        },
+        "external_use_approved": {
+            "description": "External publication, submission, or citation in external work waits for explicit user approval",
+            "required": true,
+            "check_type": "user_confirmation"
+        }
+    },
+    "approval_gates": [
+        "publish_externally",
+        "submit_for_review",
+        "cite_in_external_work"
+    ],
+    "external_action_boundaries": {
+        "read_source_material": "allowed",
+        "write_local_summary": "allowed",
+        "quote_source_material": "allowed",
+        "publish_externally": "requires_approval",
+        "submit_for_review": "requires_approval",
+        "cite_in_external_work": "requires_approval"
+    },
+    "residual_risk": "Research summaries can omit context, overstate evidence, or misquote sources. Quotes, statistics, factual claims, and external use require source traceability and user review."
+}

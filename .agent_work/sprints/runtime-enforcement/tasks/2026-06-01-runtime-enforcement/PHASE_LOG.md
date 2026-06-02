@@ -169,3 +169,94 @@
 - Ralph: 2 iterations. Iteration 1: no material defects. Iteration 2: no-op by evidence.
 - Blockers: None.
 - Next: Phase 3A (General Fallback Domain Pack).
+
+## 2026-06-02: Phase 3A General Fallback Domain Pack Complete
+- Completed: Created the compact `general_fallback` domain pack for unknown or unspecified prompt, skill, and agent tasks.
+- Artifacts: `runtime/domain_packs/general_fallback.json`, `tests/fixtures/domain_pack_general_fallback.json`; added two validator tests in `tests/test_validator.py`.
+- Gates: Requirement trace, phase contract, evidence ledger, validation-or-blocker, external-action approval, and claims-match-evidence are represented as validation gates.
+- Boundaries: Local context reads and local artifact writes are allowed; external actions require approval; irreversible actions are blocked.
+- Validation: `python -m pytest tests/ -v` passed with 85 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. CLI validation passed for both the runtime pack and fixture.
+- Ralph: 2 iterations. Iteration 1: no material defects after validation; duplication between runtime pack and fixture accepted as explicit fixture coverage. Iteration 2: no-op by evidence.
+- Blockers: None.
+- Carry forward: Keep future domain packs compact data artifacts with approval gates aligned to `requires_approval` boundaries.
+- Do not carry forward: Do not add domain-specific instruction prose or non-JSON/YAML support in starter domain-pack phases.
+- Next: Phase 3B (Software Engineering Domain Pack).
+
+## 2026-06-02: Phase 3B Software Engineering Domain Pack Complete
+- Completed: Created the compact `software_engineering` domain pack for code, implementation, refactoring, tests, validation, and deployment boundaries.
+- Artifacts: `runtime/domain_packs/software_engineering.json`, `tests/fixtures/domain_pack_software_engineering.json`; added two validator tests in `tests/test_validator.py`.
+- Gates: Changed files listed, project validation recorded, tests addressed, code review completed, and destructive git operations approved/absent are represented as validation gates.
+- Boundaries: Source reads, local writes, and project validation are allowed; dependency additions, staging/production deploys, and destructive git operations require approval; git force push is blocked.
+- Validation: `python -m pytest tests/ -v` passed with 87 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. CLI validation passed for both the runtime pack and fixture.
+- Ralph: 2 iterations. Iteration 1: no material defects after validation; pack stays focused on gates rather than coding standards. Iteration 2: no-op by evidence.
+- Blockers: None.
+- Carry forward: Keep approval_gates aligned with every `requires_approval` boundary; starter packs should remain compact JSON data artifacts.
+- Do not carry forward: Do not expand domain packs into coding standards or deployment procedure guides.
+- Next: Phase 3C (Scheduling Domain Pack).
+
+## 2026-06-02: Phase 3C Scheduling Domain Pack Complete
+- Completed: Created the compact `scheduling` domain pack for meeting and calendar scheduling validation gates and approval boundaries.
+- Artifacts: `runtime/domain_packs/scheduling.json`, `tests/fixtures/domain_pack_scheduling.json`; added two validator tests in `tests/test_validator.py`.
+- Gates: Participants known, time zones resolved or blocker recorded, duration known, candidate slots listed, invite/message send approval, and sent-item evidence if an invite/message is sent.
+- Boundaries: Reading availability, drafting invites, and proposing slots are allowed; sending invites/messages, modifying calendars, cancelling events, and deleting events require explicit user approval.
+- Validation: `python -m pytest tests/ -v` passed with 89 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. CLI validation passed for both the runtime pack and fixture.
+- Ralph: 2 iterations. Iteration 1: added `sent_item_evidence_recorded` to satisfy the Phase 3C final invite/message evidence gate. Iteration 2: no material defects, no-op by evidence.
+- Blockers: None.
+- Carry forward: Travel/purchase is high risk; require approval for purchases, payments, and booking modifications, and include volatile price/availability residual risk.
+- Do not carry forward: Do not implement booking, payment, calendar, or messaging APIs in domain-pack phases.
+- Next: Phase 3D (Travel/Purchase Domain Pack).
+
+## 2026-06-02: Phase 3D Travel/Purchase Domain Pack Complete
+- Completed: Created the compact `travel_purchase` domain pack for travel search, price/terms validation, residual-risk disclosure, and explicit approval boundaries.
+- Artifacts: `runtime/domain_packs/travel_purchase.json`, `tests/fixtures/domain_pack_travel_purchase.json`; added two validator tests in `tests/test_validator.py`.
+- Gates: Travel constraints recorded, price source/timestamp recorded, fees/baggage/refund/cancellation terms recorded or unavailable noted, purchase approval required, and volatile fare/availability/policy risk disclosed.
+- Boundaries: Searching options, comparing prices, and drafting itineraries are allowed; purchases, payments, bookings, booking modifications, and cancellations require explicit user approval; storing payment credentials is blocked.
+- Validation: `python -m pytest tests/ -v` passed with 91 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. CLI validation passed for both the runtime pack and fixture.
+- Ralph: 2 iterations. Iteration 1: no material defects after validation; approval gates align with all `requires_approval` boundaries. Iteration 2: no material defects, no-op by evidence.
+- Blockers: None.
+- Carry forward: Writing/editing pack should validate source or intent preservation, audience/tone/format, unsupported-fact avoidance, constraint traceability, and approval before external sending or publication.
+- Do not carry forward: Do not expand starter domain packs into style manuals or implement external publishing/sending workflows.
+- Next: Phase 3E (Writing/Editing Domain Pack).
+
+## 2026-06-02: Phase 3E Writing/Editing Domain Pack Complete
+- Completed: Created the compact `writing_editing` domain pack for source/intent preservation, audience/tone/format validation, unsupported-fact avoidance, constraint traceability, and external finalization approval.
+- Artifacts: `runtime/domain_packs/writing_editing.json`, `tests/fixtures/domain_pack_writing_editing.json`; added two validator tests in `tests/test_validator.py`.
+- Gates: Source or intent preserved, audience/tone/format recorded or blocker recorded, unsupported facts absent, constraints traced, and external finalization approved.
+- Boundaries: Reading source material, local drafting, and revision are allowed; sending to a recipient, publishing externally, submitting text, and representing text as final require explicit user approval.
+- Validation: `python -m pytest tests/ -v` passed with 93 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. CLI validation passed for both the runtime pack and fixture.
+- Ralph: 2 iterations. Iteration 1: tightened audience/tone/format wording to require blocker recording when unknown. Iteration 2: no material defects, no-op by evidence.
+- Blockers: None.
+- Carry forward: Research summary pack should list sources, flag or remove unsupported claims, record uncertainty/limitations, trace factual claims/quotes/statistics to evidence, and require approval before external publication or submission.
+- Do not carry forward: Do not require live browsing, citation scraping, or complex evidence scoring in the compact research pack.
+- Next: Phase 3F (Research Summary Domain Pack).
+
+## 2026-06-02: Phase 3F Research Summary Domain Pack Complete
+- Completed: Created the compact `research_summary` domain pack for source listing, unsupported-claim handling, uncertainty/limitations, evidence traceability, and external-use approval boundaries.
+- Artifacts: `runtime/domain_packs/research_summary.json`, `tests/fixtures/domain_pack_research_summary.json`; added two validator tests in `tests/test_validator.py`.
+- Gates: Sources listed with paths/URLs/unavailable notes, unsupported claims flagged/qualified/removed or blocker-recorded, uncertainty and limitations recorded, quotes/statistics/factual claims traced to evidence, and external use approved.
+- Boundaries: Reading source material, writing local summaries, and quoting source material are allowed; external publication, submission for review, and citation in external work require explicit user approval.
+- Validation: `python -m runtime.cli domain-pack runtime/domain_packs/research_summary.json` passed. `python -m runtime.cli domain-pack tests/fixtures/domain_pack_research_summary.json` passed. `python -m pytest tests/ -v` passed with 95 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed.
+- Ralph: 2 iterations. Iteration 1: no material defects after validation; pack remains compact and avoids live browsing/citation scraping workflows. Iteration 2: no material defects, no-op by evidence.
+- Blockers: None.
+- Carry forward: Phase 3G should review all six starter packs for compactness, approval-boundary alignment, deterministic-vs-human gate separation, and fallback coverage.
+- Do not carry forward: Do not add new domains or implement live browsing, external publication, submission, citation, runner, MCP, or harness behavior during Phase 3G review.
+- Next: Phase 3G (Domain Pack Review Gate).
+
+## 2026-06-02: Phase 3G Domain Pack Review Gate Complete
+- Completed: Reviewed all six starter domain packs for compactness, approval-boundary alignment, deterministic-vs-human check separation, and fallback coverage before adding more domains.
+- Finding fixed: `general_fallback` used named fallback triggers even though schema rule 10 requires `triggers: ["*"]`. Corrected runtime pack and fixture, then added validator enforcement and regression coverage for rule 10.
+- Review result: Six starter packs are compact data artifacts; all `requires_approval` boundaries have matching `approval_gates`; human confirmation gates are explicit via `check_type: user_confirmation`; no new domains were created.
+- Validation: `python -m pytest tests/ -v` passed with 96 tests. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. CLI validation passed for all six runtime domain packs.
+- Ralph: 2 iterations. Iteration 1: fixed rule 10 enforcement and fallback trigger drift. Iteration 2: no material defects, no-op by evidence.
+- Blockers: None.
+- Carry forward: Phase 4A should integrate runtime-checkable artifact expectations into `contextsmith-run` only, keeping SKILL.md thin and avoiding duplicated schema prose.
+- Do not carry forward: Do not add new domains, edit runner/MCP/harness behavior, or claim harness hard blocking during Phase 4A.
+- Next: Phase 4A (ContextSmith-Run Pilot Integration).
+
+## 2026-06-02: Phase 3 (3A-3G) Audit Complete
+- Completed: Audited all six starter domain packs against PLAN.md specifications, Phase 1C schema, and Rule 9 approval boundary alignment.
+- Verdict: PASS. All six packs are schema-compliant, compact (52-58 lines), approval-boundary-aligned, and fully validated.
+- Evidence: `PHASE_3_AUDIT.md` created with detailed findings. 96 pytest tests pass. `validate_skills.py` passes. `token_budget.py --strict` passes. CLI validation passes for all six runtime packs.
+- Observations: (1) `check_type: "command"` in software_engineering is structural-only (field presence), not command execution — correct by design for Phase 3 data-only packs. (2) `approval_record` in all `required_artifacts` is consistent but potentially unnecessary for purely local domains. (3) Optional `example_good_closeout`/`example_blocked_closeout` absent from runtime packs — acceptable per schema, would aid small-model emit guidance.
+- Blockers: None.
+- Next: Phase 4A (ContextSmith-Run Pilot Integration).

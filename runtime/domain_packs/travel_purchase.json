@@ -1,0 +1,58 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "travel_purchase",
+    "triggers": ["flight", "hotel", "travel", "fare", "booking", "purchase", "refund"],
+    "required_artifacts": [
+        "requirements_chain",
+        "phase_contract",
+        "evidence_ledger",
+        "approval_record",
+        "phase_closeout"
+    ],
+    "validation_gates": {
+        "constraints_recorded": {
+            "description": "Dates, locations or airports, passenger count, and user constraints are recorded",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "price_source_timestamp_recorded": {
+            "description": "Price source and timestamp are recorded for each travel option",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "fees_terms_recorded": {
+            "description": "Fees, baggage, refund, and cancellation terms are recorded or marked unavailable",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "purchase_approval_required": {
+            "description": "Purchases, payments, bookings, modifications, and cancellations wait for explicit user approval",
+            "required": true,
+            "check_type": "user_confirmation"
+        },
+        "volatility_risk_disclosed": {
+            "description": "Residual risk for volatile fares, availability, and policy changes is disclosed",
+            "required": true,
+            "check_type": "artifact_check"
+        }
+    },
+    "approval_gates": [
+        "purchase_ticket",
+        "make_payment",
+        "book_travel",
+        "modify_booking",
+        "cancel_booking"
+    ],
+    "external_action_boundaries": {
+        "search_travel_options": "allowed",
+        "compare_prices": "allowed",
+        "draft_itinerary": "allowed",
+        "purchase_ticket": "requires_approval",
+        "make_payment": "requires_approval",
+        "book_travel": "requires_approval",
+        "modify_booking": "requires_approval",
+        "cancel_booking": "requires_approval",
+        "store_payment_credentials": "blocked"
+    },
+    "residual_risk": "Fares, availability, fees, baggage rules, refund terms, and cancellation policies can change after search. Purchases, payments, bookings, booking changes, and cancellations require explicit user approval."
+}

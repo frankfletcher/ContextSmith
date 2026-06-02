@@ -196,6 +196,60 @@ class TestValidateDomainPack:
         result = validate_domain_pack(_fixture("domain_pack_valid.json"))
         assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
 
+    def test_general_fallback_fixture_valid(self):
+        result = validate_domain_pack(_fixture("domain_pack_general_fallback.json"))
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_general_fallback_pack_valid(self):
+        pack = project_root / "runtime" / "domain_packs" / "general_fallback.json"
+        result = validate_domain_pack(pack)
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_software_engineering_fixture_valid(self):
+        result = validate_domain_pack(_fixture("domain_pack_software_engineering.json"))
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_software_engineering_pack_valid(self):
+        pack = project_root / "runtime" / "domain_packs" / "software_engineering.json"
+        result = validate_domain_pack(pack)
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_scheduling_fixture_valid(self):
+        result = validate_domain_pack(_fixture("domain_pack_scheduling.json"))
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_scheduling_pack_valid(self):
+        pack = project_root / "runtime" / "domain_packs" / "scheduling.json"
+        result = validate_domain_pack(pack)
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_travel_purchase_fixture_valid(self):
+        result = validate_domain_pack(_fixture("domain_pack_travel_purchase.json"))
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_travel_purchase_pack_valid(self):
+        pack = project_root / "runtime" / "domain_packs" / "travel_purchase.json"
+        result = validate_domain_pack(pack)
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_writing_editing_fixture_valid(self):
+        result = validate_domain_pack(_fixture("domain_pack_writing_editing.json"))
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_writing_editing_pack_valid(self):
+        pack = project_root / "runtime" / "domain_packs" / "writing_editing.json"
+        result = validate_domain_pack(pack)
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_research_summary_fixture_valid(self):
+        result = validate_domain_pack(_fixture("domain_pack_research_summary.json"))
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
+    def test_research_summary_pack_valid(self):
+        pack = project_root / "runtime" / "domain_packs" / "research_summary.json"
+        result = validate_domain_pack(pack)
+        assert result["passed"] is True, f"Unexpected violations: {result['violations']}"
+
     def test_missing_approval_gates(self):
         result = validate_domain_pack(_fixture("domain_pack_missing_approval_gates.json"))
         assert result["passed"] is False
@@ -257,6 +311,35 @@ class TestValidateDomainPack:
         result = validate_domain_pack(_fixture("domain_pack_wrong_artifact_type.json"))
         assert result["passed"] is False
         assert any("Wrong artifact_type" in v for v in result["violations"])
+
+    def test_general_fallback_requires_wildcard_trigger(self):
+        """Rule 10: general_fallback must use the wildcard trigger."""
+        data = {
+            "artifact_type": "domain_pack",
+            "domain": "general_fallback",
+            "triggers": ["unknown"],
+            "required_artifacts": ["requirements_chain"],
+            "validation_gates": {
+                "requirement_trace_exists": {
+                    "description": "Requirement trace exists",
+                    "required": True,
+                    "check_type": "field_presence",
+                }
+            },
+            "approval_gates": ["external_action"],
+            "external_action_boundaries": {
+                "external_action": "requires_approval",
+            },
+            "residual_risk": "Unknown-domain checks may miss domain specifics.",
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json",
+                                          delete=False) as f:
+            json.dump(data, f)
+            f.flush()
+            result = validate_domain_pack(f.name)
+        assert result["passed"] is False
+        assert any("general_fallback" in v and "triggers" in v
+                   for v in result["violations"])
 
 
 # --- Cross-artifact consistency ---

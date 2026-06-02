@@ -355,6 +355,10 @@ def validate_domain_pack(path: str | Path) -> dict:
                 violations.append(
                     f"Action '{action}' is 'requires_approval' but missing from approval_gates")
 
+    # Rule 10: general_fallback must match unknown domains with wildcard trigger
+    if data.get("domain") == "general_fallback" and data.get("triggers") != ["*"]:
+        violations.append("general_fallback domain pack must have triggers: ['*']")
+
     return _result(passed=len(violations) == 0, violations=violations)
 
 

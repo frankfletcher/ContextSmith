@@ -1,0 +1,56 @@
+{
+    "artifact_type": "domain_pack",
+    "domain": "software_engineering",
+    "triggers": ["code", "implement", "refactor", "bug", "test", "deploy"],
+    "required_artifacts": [
+        "requirements_chain",
+        "phase_contract",
+        "evidence_ledger",
+        "approval_record",
+        "phase_closeout"
+    ],
+    "validation_gates": {
+        "changed_files_listed": {
+            "description": "Closeout lists files changed during the phase",
+            "required": true,
+            "check_type": "field_presence"
+        },
+        "project_validation_recorded": {
+            "description": "Project validation command ran or blocker is recorded",
+            "required": true,
+            "check_type": "command"
+        },
+        "tests_addressed": {
+            "description": "Tests were added, updated, run, or a test gap is explained",
+            "required": true,
+            "check_type": "artifact_check"
+        },
+        "code_review_completed": {
+            "description": "Code review gate completed before closeout",
+            "required": true,
+            "check_type": "artifact_check"
+        },
+        "destructive_git_approved": {
+            "description": "Destructive git operations are absent or explicitly approved",
+            "required": true,
+            "check_type": "user_confirmation"
+        }
+    },
+    "approval_gates": [
+        "dependency_addition",
+        "deploy_staging",
+        "deploy_production",
+        "destructive_git_operation"
+    ],
+    "external_action_boundaries": {
+        "read_source_files": "allowed",
+        "write_local_files": "allowed",
+        "run_project_validation": "allowed",
+        "dependency_addition": "requires_approval",
+        "deploy_staging": "requires_approval",
+        "deploy_production": "requires_approval",
+        "destructive_git_operation": "requires_approval",
+        "git_force_push": "blocked"
+    },
+    "residual_risk": "Automated checks may miss regressions, security issues, or deployment-specific failures. Deployment, dependency additions, and destructive git operations require explicit approval."
+}
