@@ -100,6 +100,10 @@ The preview should state the inferred context, chosen parameters, low-confidence
 
 
 
+## Runtime Validation
+
+Validate audited artifacts with `python -m runtime.cli <subcommand> <artifact.json>`. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs under `runtime/domain_packs/`. Use `--validation none` to opt out. If runtime module unavailable, record blocker.
+
 ## Runtime Stability Notes
 
 If the user asks about local model loops, server settings, speculative decoding, KV cache precision, or long agentic coding instability, use `references/runtime-stability.md`. Treat runtime settings as experimental deployment guidance unless the harness can control them.

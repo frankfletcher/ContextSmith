@@ -8,11 +8,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SKILL_BUDGETS = {
     "contextsmith": 1000,
-    "contextsmith-agent-evaluator": 1900,
+    "contextsmith-agent-evaluator": 2100,
     "contextsmith-skill-migrator": 2500,
-    "contextsmith-skill-engineer": 3200,
-    "contextsmith-instruction-engineer": 3400,
-    "contextsmith-prompt-engineer": 3600,
+    "contextsmith-skill-engineer": 3400,
+    "contextsmith-instruction-engineer": 3600,
+    "contextsmith-prompt-engineer": 3800,
     "contextsmith-run": 4000,
 }
 
