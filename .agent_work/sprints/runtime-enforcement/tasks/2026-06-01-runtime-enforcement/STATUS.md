@@ -3,12 +3,12 @@
 ## Artifact Manifest
 - artifact_type: status
 - parent_task: TASK.md
-- current_phase: Phase 8C.5 complete
-- next_required_action: Phase 8C.6 (Plan Audit Example)
-- validation_state: `python -m pytest tests/ -v` (207 pass), `python scripts/validate_skills.py` (OK), `python scripts/token_budget.py --strict` (OK), CLI validation for all six runtime domain packs (6/6 PASS), Phase 6A/6B A-F audit complete (both A-level), Phase 7A documentation map complete, Phase 7D runtime workflow docs complete, Phase 8B ISSUE-1 resolved (sync_shared_refs.py fixed, 3 regression tests added)
+- current_phase: Phase 9 (Final Closeout Audit) complete. Task complete.
+- next_required_action: None — all phases complete. Task ready for closeout.
+- validation_state: `python -m pytest tests/ -v` (207 pass), `python scripts/validate_skills.py` (7/7 OK), `python scripts/token_budget.py --strict` (all OK, 1 WARN), CLI validation for all six runtime domain packs (6/6 PASS), Phase 6A/6B A-F audit complete (both A-level), Phase 7A documentation map complete, Phase 7D runtime workflow docs complete, Phase 8B ISSUE-1 resolved (sync_shared_refs.py fixed, 3 regression tests added), Phase 9 final closeout audit complete (all 8 checks pass)
 
 ## Current Phase
-Phase 6A (MCP Adapter Design) complete (PASS, A-level). Phase 6B (Harness Adapter Design) complete (PASS, A-level). Phase 7A (User Documentation Map) complete. Phase 7B (README Refresh) complete. Phase 7C (Quickstart Polish) complete. Phase 7D (Runtime Workflow Docs) complete. Phase 7E (Use-Case Workflow Docs) complete. Phase 7F (Examples Library) complete. Phase 7G (Documentation Quality Audit) complete. Phase 8A (Rollout Scope Selection) complete. Phase 8C.1 (Run Task-State Handoff Workflow Doc) complete. Phase 8C.2 (Schedule with Approval Gates Workflow Doc) complete. Phase 8C.3 (Compare Travel Options Workflow Doc) complete. Phase 8C.4 (Prompt Engineering Example) complete. Phase 8C.5 (Implementation Plan Creation Example) complete.
+Phase 6A (MCP Adapter Design) complete (PASS, A-level). Phase 6B (Harness Adapter Design) complete (PASS, A-level). Phase 7A (User Documentation Map) complete. Phase 7B (README Refresh) complete. Phase 7C (Quickstart Polish) complete. Phase 7D (Runtime Workflow Docs) complete. Phase 7E (Use-Case Workflow Docs) complete. Phase 7F (Examples Library) complete. Phase 7G (Documentation Quality Audit) complete. Phase 8A (Rollout Scope Selection) complete. Phase 8C.1 (Run Task-State Handoff Workflow Doc) complete. Phase 8C.2 (Schedule with Approval Gates Workflow Doc) complete. Phase 8C.3 (Compare Travel Options Workflow Doc) complete. Phase 8C.4 (Prompt Engineering Example) complete. Phase 8C.5 (Implementation Plan Creation Example) complete. Phase 8C.6 (Plan Audit Example) complete. Phase 8C.7 (Meeting Scheduling Example) complete. Phase 8C.8 (Travel Comparison Example) complete. Phase 8C.9 (Skill Migration Example) complete. Phase 8C.10 (Custom Domain Pack Example) complete. Phase 8C.11 (Agent Evaluation Example) complete.
 
 ## Completed
 - Created task-state package for deterministic runtime enforcement planning.
@@ -81,9 +81,12 @@ Phase 6A (MCP Adapter Design) complete (PASS, A-level). Phase 6B (Harness Adapte
 - **Phase 8C.4 complete**: Prompt Engineering Example — added Example 4 to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with Status, Scenario, Input, Prompt, What happens (7 steps), Expected output (Engineering Metadata, System Prompt, User Prompt Template, Context Strategy, Validation and Test Plan, Ralph Summary, Risks), and Recovery. Removed prompt engineering from Deferred Examples section. Updated TOC. Ralph loop: 2 iterations (iteration 1: no material defects; iteration 2: no-op by evidence). All validations pass: `validate_skills.py` OK, `token_budget.py --strict` OK.
 - **Phase 8C.5 complete**: Implementation Plan Creation Example — Example 5 already present in `docs/examples/EXAMPLES_LIBRARY.md` (created by prior session). Verified pattern compliance: Status, Scenario, Input, Prompt, What happens (7 steps), Expected output (Detected Project Profile, Changes Made, Safeguards, Validation Notes, Ralph Summary, Risks, Files Written), and Recovery. Deferred Examples section correctly excludes implementation plan creation (3 remain: plan audit, meeting scheduling, travel comparison). Ralph loop: 2 iterations (iteration 1: no material defects; iteration 2: no-op by evidence). All validations pass: `validate_skills.py` OK, `token_budget.py --strict` OK.
 
+- **Phase 8C.10 complete**: Custom Domain Pack Example — added Example 10 to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with Status, Scenario, Input, Command, What happens (6 steps), Expected output (JSON domain pack), Validation Output, and Recovery. Updated TOC. Ralph loop: 2 iterations (iteration 1: no material defects; iteration 2: no-op by evidence). All validations pass: `validate_skills.py` OK, `token_budget.py --strict` OK.
+
+- **Phase 8C.11 complete**: Agent Evaluation Example — added Example 11 to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with Status, Scenario, Input, Prompt, What happens (7 steps), Expected output (Summary Grade, Strengths, Weaknesses, A-F Rubric table, Loop/Git/Context Safety, Domain-Specific Risks, Duplicate/Conflicting Instructions, High-Risk Issues, Suggested Next Action), and Recovery. Updated TOC. Clarified audit-only default behavior in step 1. Ralph loop: 2 iterations (iteration 1 added audit-only mode clarification; iteration 2 no-op by evidence). All validations pass: `validate_skills.py` OK, `token_budget.py --strict` OK.
+
 ## Next Action
 1. Phase B0 (Runtime Framing Backfill Audit) — audit codebase artifacts for runtime framing deviations from updated PLAN.md. Task: `2026-06-03-runtime-backfill/`.
-2. Phase 8C.6 (Plan Audit Example) — create plan audit example for EXAMPLES_LIBRARY.md.
 
 ## Blockers
 - (none)

@@ -1,13 +1,19 @@
 """Tests for the orchestrated runner skeleton."""
 
 import json
+import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
 import pytest
 
 from runtime.runner import plan_status, next_gate
+
+
+CLI = Path(__file__).resolve().parent.parent / "runtime" / "cli.py"
+PROJECT_ROOT = CLI.parent.parent
 
 
 @pytest.fixture
@@ -126,9 +132,11 @@ def test_next_gate_missing_files():
 def test_runner_cli_plan_status(temp_task_dir):
     """Test runner CLI plan-status command via subprocess."""
     result = subprocess.run(
-        ['python', '-m', 'runtime.cli', 'plan-status', str(temp_task_dir)],
+        [sys.executable, str(CLI), 'plan-status', str(temp_task_dir)],
         capture_output=True,
-        text=True
+        text=True,
+        cwd=str(PROJECT_ROOT),
+        env={**os.environ, "PYTHONPATH": str(PROJECT_ROOT)},
     )
     assert result.returncode == 0
     data = json.loads(result.stdout)
@@ -140,9 +148,11 @@ def test_runner_cli_plan_status(temp_task_dir):
 def test_runner_cli_next_gate(temp_task_dir):
     """Test runner CLI next-gate command via subprocess."""
     result = subprocess.run(
-        ['python', '-m', 'runtime.cli', 'next-gate', str(temp_task_dir)],
+        [sys.executable, str(CLI), 'next-gate', str(temp_task_dir)],
         capture_output=True,
-        text=True
+        text=True,
+        cwd=str(PROJECT_ROOT),
+        env={**os.environ, "PYTHONPATH": str(PROJECT_ROOT)},
     )
     assert result.returncode == 0
     data = json.loads(result.stdout)
@@ -155,9 +165,11 @@ def test_runner_cli_next_gate(temp_task_dir):
 def test_runner_cli_help():
     """Test runner CLI help output."""
     result = subprocess.run(
-        ['python', '-m', 'runtime.cli', '--help'],
+        [sys.executable, str(CLI), '--help'],
         capture_output=True,
-        text=True
+        text=True,
+        cwd=str(PROJECT_ROOT),
+        env={**os.environ, "PYTHONPATH": str(PROJECT_ROOT)},
     )
     assert result.returncode == 0
     assert 'plan-status' in result.stdout
@@ -167,9 +179,11 @@ def test_runner_cli_help():
 def test_runner_cli_subcommand_help():
     """Test runner CLI subcommand help output."""
     result = subprocess.run(
-        ['python', '-m', 'runtime.cli', 'plan-status', '--help'],
+        [sys.executable, str(CLI), 'plan-status', '--help'],
         capture_output=True,
-        text=True
+        text=True,
+        cwd=str(PROJECT_ROOT),
+        env={**os.environ, "PYTHONPATH": str(PROJECT_ROOT)},
     )
     assert result.returncode == 0
     assert 'task_dir' in result.stdout

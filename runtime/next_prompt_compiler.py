@@ -28,8 +28,8 @@ def _extract_current_phase(status_text: str) -> str | None:
         raw = m.group(1).strip()
         # Strip surrounding backticks if present
         raw = raw.strip("`")
-        # Extract phase id like "Phase 5B" from "Phase 5B complete" or "Phase 5B (Next Prompt Compiler Implementation)"
-        phase_m = re.search(r"(Phase\s+[\w]+)", raw, re.IGNORECASE)
+        # Extract phase id like "Phase 5B" or "Phase 8C.11" from "Phase 5B complete" or "Phase 8C.11 complete"
+        phase_m = re.search(r"(Phase\s+[\w.]+)", raw, re.IGNORECASE)
         if phase_m:
             return phase_m.group(1)
         return raw
@@ -38,7 +38,7 @@ def _extract_current_phase(status_text: str) -> str | None:
     m = re.search(r"^\s*-?\s*next_required_action\s*:\s*(.+)$", status_text, re.MULTILINE)
     if m:
         raw = m.group(1).strip()
-        phase_m = re.search(r"(Phase\s+[\w]+)", raw, re.IGNORECASE)
+        phase_m = re.search(r"(Phase\s+[\w.]+)", raw, re.IGNORECASE)
         if phase_m:
             return phase_m.group(1)
         return raw
