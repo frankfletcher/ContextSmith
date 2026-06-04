@@ -1,54 +1,93 @@
 # Quick Start
 
-The easiest way to understand ContextSmith is to use it on one real artifact: a prompt, an `AGENTS.md` file, an implementation plan, a test suite, or a `SKILL.md`.
+Get your first useful ContextSmith result in under five minutes.
 
-You do not need to learn the whole package first. Pick the closest workflow and run it with a few high-signal controls.
+**Prerequisites:** ContextSmith skills installed in `~/.agents/skills/`. If you haven't installed yet, copy the `skills/` directory from the ContextSmith repo into `~/.agents/skills/`.
 
-## Good default controls
+Pick a path below, run the command, and check the expected output.
 
-If you are not sure which skill to use, start with the router:
+- [5-Minute Path: Improve a Prompt](#5-minute-path-improve-a-prompt)
+- [Next 30 Minutes: Plan, Audit, and Execute](#next-30-minutes-plan-audit-and-execute)
+- [All Paths](#all-paths)
+  - [Path 1: Improve a Prompt](#path-1-improve-a-prompt)
+  - [Path 2: Create or Improve AGENTS.md](#path-2-create-or-improve-agentsmd)
+  - [Path 3: Audit a Plan](#path-3-audit-a-plan)
+  - [Path 4: Execute a Task-State Handoff](#path-4-execute-a-task-state-handoff)
+  - [Path 5: Audit Tests](#path-5-audit-tests)
+  - [Path 6: Convert a Skill](#path-6-convert-a-skill)
+  - [Path 7: Migrate Many Skills](#path-7-migrate-many-skills)
+- [Good Default Controls](#good-default-controls)
+- [What to Read Next](#what-to-read-next)
 
-```bash
-/contextsmith help
+## 5-Minute Path: Improve a Prompt
+
+The fastest way to see ContextSmith work is to improve an existing prompt for a local model.
+
+Run the prompt-engineering skill:
+
+```
+/contextsmith-prompt-engineer \
+  --mode deep \
+  --target-profile qwen36 \
+  --context-length 32k \
+  --ralph 2 \
+  --artifact-verbosity compact
 ```
 
-The router selects one ContextSmith sub-skill based on intent. It does not override omitted parameters; the selected sub-skill applies its own defaults.
+Paste your prompt when asked.
 
-For local Qwen coding work:
+**Expected output:**
+- An optimized prompt tailored for the target model profile
+- A list of assumptions and what changed
+- A validation checklist you can use to test the result
 
-```bash
---mode guided --target-profile qwen36 --context-length 32k --domain coding
+If the output includes a clearer prompt with fewer instructions and better structure for your target model, it worked.
+
+## Next 30 Minutes: Plan, Audit, and Execute
+
+For multi-step projects, the standard execution path goes through runtime enforcement — validation gates, phase progression, and evidence collection happen automatically. This example creates repo instructions, audits them, and runs a phase with enforcement.
+
+**Step 1 — Create the plan.** Use the instruction engineer to generate repo instructions:
+
+```
+/contextsmith-instruction-engineer \
+  --project . \
+  --mode guided \
+  --target-profile qwen36 \
+  --harness opencode
 ```
 
-For quick cleanup:
+**Step 2 — Audit before using.** Check the instructions are reliable for your target model:
 
-```bash
---mode fast --target-profile generic-local --no-ralph
+```
+/contextsmith-agent-evaluator \
+  --mode audit-only \
+  --target AGENTS.md \
+  --executor-profile qwen36
 ```
 
-For important reusable artifacts:
+**Step 3 — Execute a task with enforcement.** Run a phase with validation gates:
 
-```bash
---mode deep --ralph 2 --output project-local
+```
+/contextsmith-run \
+  --run-mode phase \
+  --target .agent_work/sprints/<sprint>/tasks/<task> \
+  --validation strict \
+  --ralph 2
 ```
 
-For executing a prompt or handoff with enforced evidence:
+**Expected output after all three steps:**
+- A compact `AGENTS.md` with Git safety, loop safety, and project-specific standards
+- An audit report with strengths, weaknesses, and specific improvement recommendations
+- Execution results with validation evidence, self-audit, and Ralph summaries
 
-```bash
---run-mode phase --interaction refine --validation strict --ralph 2
+## All Paths
+
+### Path 1: Improve a Prompt
+
+Use this when a prompt is vague, bloated, or written for a frontier model but needs to run on a smaller/local model.
+
 ```
-
-For anything that may overwrite files:
-
-```bash
---mode review-gate --backup --stage --no-apply
-```
-
-## Path 1: Improve a prompt
-
-Use this when a prompt is vague, bloated, too frontier-model-oriented, or likely to be run by a smaller/local model.
-
-```bash
 /contextsmith-prompt-engineer \
   --mode deep \
   --target-profile qwen36 \
@@ -59,20 +98,17 @@ Use this when a prompt is vague, bloated, too frontier-model-oriented, or likely
   --education-level guided
 ```
 
-What you should get:
+**Expected output:**
+- Optimized prompt or prompt package
+- Assumptions and model/context strategy
+- Validation checklist
+- Ralph iteration report showing what improved and why
 
-- an optimized prompt or prompt package
-- assumptions and model/context strategy
-- validation checklist
-- optional test cases
-- optional Ralph iteration report
-- explanation of what improved and why
-
-## Path 2: Create or improve AGENTS.md
+### Path 2: Create or Improve AGENTS.md
 
 Use this when you want better repo instructions for a coding agent.
 
-```bash
+```
 /contextsmith-instruction-engineer \
   --project . \
   --mode guided \
@@ -82,20 +118,16 @@ Use this when you want better repo instructions for a coding agent.
   --harness opencode
 ```
 
-What you should get:
+**Expected output:**
+- Repo scan summary
+- Recommended instruction blocks
+- Concise `AGENTS.md` with Git safety, loop safety, and coding standards
 
-- repo scan summary
-- recommended instruction blocks
-- choices before broad instructions are added
-- Git safety and loop safety when relevant
-- coding/data-science standards when detected
-- concise `AGENTS.md` content, not a generic manifesto
+### Path 3: Audit a Plan
 
-## Path 3: Audit a plan before giving it to a small model
+Use this when a plan was created by a strong model and you want to verify a smaller model can execute it.
 
-Use this when a strong model or another tool created an implementation plan and you want to know if a smaller model can execute it.
-
-```bash
+```
 /contextsmith-agent-evaluator \
   --mode audit-only \
   --focus implementation-plan \
@@ -104,20 +136,18 @@ Use this when a strong model or another tool created an implementation plan and 
   --context-length 32k
 ```
 
-What you should get:
+**Expected output:**
+- Phase granularity grade
+- Atomicity grade
+- Context-fit grade
+- Missing task-memory notes and validation gaps
+- Recommendations for splitting or rewriting phases
 
-- phase granularity grade
-- atomicity grade
-- context-fit grade
-- missing task-memory notes
-- validation gaps
-- recommendations for splitting or rewriting phases
+### Path 4: Execute a Task-State Handoff
 
-## Path 4: Execute a prompt or task-state handoff
+Use this when you want ContextSmith controls enforced during execution, not only included in the prompt.
 
-Use this when you want ContextSmith controls to be enforced during execution, not only included in the prompt.
-
-```bash
+```
 /contextsmith-run \
   --run-mode phase \
   --target .agent_work/sprints/<sprint>/tasks/<task> \
@@ -128,20 +158,19 @@ Use this when you want ContextSmith controls to be enforced during execution, no
   --ralph 2
 ```
 
-What you should get:
+**Expected output:**
+- Compact execution contract
+- Domain-specific refinement questions when choices matter
+- Validation evidence or a recorded blocker
+- Self-audit and Ralph summary
+- Declared-vs-enforced status
+- Updated task state files
 
-- a compact execution contract
-- domain-specific refinement questions when choices matter
-- validation evidence or a blocker
-- self-audit and Ralph summary
-- declared-vs-enforced status
-- updated task state for phased work
-
-## Path 5: Audit tests for usefulness
+### Path 5: Audit Tests
 
 Use this when tests exist but you suspect they are shallow or agent-generated fluff.
 
-```bash
+```
 /contextsmith-agent-evaluator \
   --mode audit-only \
   --focus test-quality \
@@ -149,20 +178,18 @@ Use this when tests exist but you suspect they are shallow or agent-generated fl
   --domain coding
 ```
 
-What you should get:
+**Expected output:**
+- Baseline behavior coverage review
+- Edge-case realism assessment
+- Assertion-strength review
+- Regression-catching assessment
+- Over-mocking risks and recommended additions
 
-- baseline behavior coverage review
-- edge-case realism review
-- assertion-strength review
-- regression-catching assessment
-- over-mocking risks
-- recommended test additions
-
-## Path 6: Convert a skill safely
+### Path 6: Convert a Skill
 
 Use this when you have a `SKILL.md` and want it optimized for local/open-weight models without changing its behavior.
 
-```bash
+```
 /contextsmith-skill-engineer \
   --source ./my-skill/SKILL.md \
   --mode guided \
@@ -171,20 +198,17 @@ Use this when you have a `SKILL.md` and want it optimized for local/open-weight 
   --output staging
 ```
 
-What you should get:
+**Expected output:**
+- Source-contract extraction
+- Converted skill optimized for target profiles
+- Semantic diff showing what changed
+- Reference audit and target-profile metadata
 
-- source-contract extraction
-- converted skill
-- semantic diff
-- reference audit
-- target-profile metadata
-- rejected unsupported additions, if any
+### Path 7: Migrate Many Skills
 
-## Path 7: Migrate many skills without clobbering originals
+Use this when you want to stage changes across a whole skills directory without clobbering originals.
 
-Use this when you want to stage changes across a whole skills directory.
-
-```bash
+```
 /contextsmith-skill-migrator \
   --skills-dir ~/.agents/skills \
   --mode review-gate \
@@ -195,19 +219,35 @@ Use this when you want to stage changes across a whole skills directory.
   --no-apply
 ```
 
-What you should get:
+**Expected output:**
+- Inventory and risk classification
+- Backup of originals
+- Staging directory with manifest
+- Per-skill reports and restore instructions
 
-- inventory
-- risk classification
-- backup
-- staging directory
-- manifest
-- per-skill reports
-- restore instructions
+## Good Default Controls
 
-## What to read next
+Not sure which skill to use? Start with the router:
 
-- Not sure which skill to use? Read `WHICH_SKILL.md`.
-- Want flags and modes? Read `CONTROL_PARAMETERS.md`.
-- Working with a small context window? Read `SMALL_CONTEXT_WORKFLOWS.md`.
-- Creating repo instructions? Read `AGENTS_MD_GUIDE.md`.
+```
+/contextsmith help
+```
+
+The router selects a sub-skill based on intent and applies its own defaults for any parameters you omit.
+
+Common control combinations:
+
+| Use case | Controls |
+|----------|----------|
+| Local Qwen coding work | `--mode guided --target-profile qwen36 --context-length 32k --domain coding` |
+| Quick cleanup | `--mode fast --target-profile generic-local --no-ralph` |
+| Important reusable artifacts | `--mode deep --ralph 2 --output project-local` |
+| Execute with enforcement | `--run-mode phase --interaction refine --validation strict --ralph 2` |
+| Anything that may overwrite files | `--mode review-gate --backup --stage --no-apply` |
+
+## What to Read Next
+
+- Not sure which skill to use? Read [`WHICH_SKILL.md`](WHICH_SKILL.md).
+- Want the full flag and mode reference? Read [`CONTROL_PARAMETERS.md`](reference/CONTROL_PARAMETERS.md).
+- Working with a small context window? Read [`SMALL_CONTEXT_WORKFLOWS.md`](workflows/SMALL_CONTEXT_WORKFLOWS.md).
+- Creating repo instructions? Read [`AGENTS_MD_GUIDE.md`](workflows/AGENTS_MD_GUIDE.md).

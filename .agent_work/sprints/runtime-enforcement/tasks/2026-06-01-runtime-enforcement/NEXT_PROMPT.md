@@ -1,41 +1,46 @@
-# Next Prompt: Phase 5A Next Prompt Compiler Specification
+# Phase 8C.6: Plan Audit Example
 
-## Artifact Manifest
-- artifact_type: next_prompt
-- phase: 5A
-- target_profile: qwen36
-- parent_plan: PLAN.md
-- version: 1.0.0
+## Objective
+Create the plan audit example for `docs/examples/EXAMPLES_LIBRARY.md` — a copy-paste example showing how to use contextsmith-agent-evaluator to review a plan for completeness and small-model reliability.
 
-## Mission
+## Context
+Phase 8C.6 is the third of 5 deferred examples from Phase 7F. The example should show a realistic plan audit workflow with expected output.
 
-Specify a small tool that compiles the current phase into a detailed small-model execution prompt. The compiler reads task state and generates `NEXT_PROMPT.md` files. It does not run the model or execute phases.
+## Pattern
+Follow the same structure as the existing 5 examples in `docs/examples/EXAMPLES_LIBRARY.md`:
+- Status label (Implemented)
+- Scenario description
+- Input
+- Prompt or command
+- What happens (numbered steps)
+- Expected output (with Result, Validation, Ralph Summary, Risks sections)
+- Recovery note
 
-## Read Order
+## Steps
+1. Read `docs/examples/EXAMPLES_LIBRARY.md` for the existing example pattern.
+2. Read `skills/contextsmith-agent-evaluator/SKILL.md` for agent evaluation workflow details.
+3. Create the plan audit example covering:
+   - Scenario: auditing an implementation plan for completeness and small-model reliability
+   - Input: plan file or task-state directory, audit scope
+   - Prompt: invoke contextsmith-agent-evaluator with controls
+   - What happens: the agent audits the plan against rubric criteria
+   - Expected output: shows Result, Validation, Ralph Summary sections
+   - Recovery: what to do if the plan has material defects
+4. Update `docs/examples/EXAMPLES_LIBRARY.md` to add the new example and remove it from the Deferred Examples section.
+5. Validate: `python scripts/validate_skills.py`, `python scripts/token_budget.py --strict`.
+6. Self-audit: project voice, practical and copyable, expected outputs, no marketing language, stable headings.
+7. Ralph loop: 2 iterations.
 
-1. `STATUS.md` — current phase and next action
-2. `PLAN.md` — Phase 5A section
-3. `CONTEXT.md` — constraints and validation commands
-4. `ARTIFACTS.md` — Phase 4B changed artifacts and validation evidence
-5. `THIN_SKILL_WRITING_GUIDE.md` — thin-skill patterns for reference
-
-## Actions
-
-1. Review the Phase 5A specification requirements in PLAN.md.
-2. Design the compiler spec: inputs, output sections, template structure, and hard-stop rules.
-3. Prove the spec can generate a prompt shape matching the NEXT_PROMPT.md format used in this task.
-4. Include validation, audit, closeout, recovery, and hard-stop sections in the generated prompt spec.
+## Constraints
+- Bounded to one example. Do not create additional examples in this phase.
+- Do not modify existing examples.
+- Use the project voice from `shared/documentation-quality.md`.
+- Example must show expected outputs and be copy-paste usable.
 
 ## Validation
+- `python scripts/validate_skills.py`
+- `python scripts/token_budget.py --strict`
+- Self-audit: follows established example pattern, shows expected output, practical scenario
 
-- `python scripts/validate_skills.py` passes
-- `python scripts/token_budget.py --strict` passes
-- `python -m pytest tests/ -v` passes
-
-## Closeout
-
-Update `STATUS.md`, `PHASE_LOG.md`, `ARTIFACTS.md`, `CONTEXT.md`, `CHECKLIST.md`, and `NEXT_PROMPT.md` with compact facts only. Record changed files, commands run, validation result, blockers, carry-forward, do-not-carry-forward, and next action.
-
-## Hard Stop
-
-Do not proceed to Phase 5B. Do not implement the compiler. Do not invoke models or execute phases. Do not edit other skills or add new domain packs.
+## Stop Rule
+Stop when the plan audit example is added to EXAMPLES_LIBRARY.md, the deferred section is updated, validations pass, and Ralph loop completes 2 iterations.

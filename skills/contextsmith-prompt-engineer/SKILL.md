@@ -192,11 +192,10 @@ Return these sections unless the user requests otherwise:
 ## Loop/Git/File Safety, if relevant
 ## Persistent Task State, if relevant
 ## Subagent Delegation, if relevant
-## Runtime Recommendations, if requested or useful
-## Educational Change Report
+## Runtime Enforcement
 ```
 
-Runtime settings are recommendations unless the harness exposes control.
+Include runtime enforcement parameters in every generated artifact's Artifact Manifest. Generated prompts, plans, and instruction files should declare their validation level, domain pack, and phase closeout requirements so that downstream execution goes through runtime gates by default.
 
 ### 5. Add Context, Phase, and Loop Controls When Needed
 
@@ -225,13 +224,31 @@ Check:
 - instructions are de-duplicated and non-contradictory
 - validation/test plan exists for reusable prompts
 - declared parameters, required audits, and Ralph iterations have evidence or a blocker
-- educational report explains strengths, weaknesses, changes, and remaining risks
+ - educational report explains strengths, weaknesses, changes, and remaining risks
 
+### 8. Runtime Validation
 
+Validate generated artifacts using the runtime validator. This is the default — generated artifacts should pass structural validation before delivery.
+
+```bash
+# Validate a requirements chain
+python -m runtime.cli requirements <artifact.json>
+
+# Validate a phase contract
+python -m runtime.cli phase-contract <artifact.json>
+
+# Validate an evidence ledger
+python -m runtime.cli evidence <artifact.json>
+
+# Validate a full workflow (all artifacts)
+python -m runtime.cli workflow <directory>
+```
+
+Exit code 0 = pass, 1 = violations, 2 = error. Include validation results in the delivery report. If the runtime module is unavailable, record the blocker and proceed with internal audit only.
 
 ## Runtime Stability Notes
 
-If the user asks about local model loops, server settings, speculative decoding, KV cache precision, or long agentic coding instability, use `references/runtime-stability.md`. Treat runtime settings as experimental deployment guidance unless the harness can control them.
+If the user asks about local model loops, server settings, speculative decoding, KV cache precision, or long agentic coding instability, use `references/runtime-stability.md`. Runtime settings are deployment defaults when the harness supports them — not experimental guidance.
 
 ## Required Output
 

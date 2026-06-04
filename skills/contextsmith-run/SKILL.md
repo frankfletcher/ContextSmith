@@ -174,8 +174,8 @@ Do not load every manifest reference for a routine run.
 5. Ask refinement or approval questions if the interaction mode requires them.
 6. Compile the execution contract.
 7. Execute the smallest bounded unit: one prompt result, one file-edit task, or one current phase.
-8. Run domain validation or record why validation could not run.
-9. When runtime validators are available, validate emitted artifacts with `python -m runtime.cli` before proceeding.
+8. Validate emitted artifacts with `python -m runtime.cli` (deterministic structural checks). Skip only with `--validation none` or when the runtime module is absent.
+9. Run domain validation from `references/domain-packs.md` (quality checks: tests, lint, source support, tone preservation, etc.). Record why it could not run if unavailable.
 10. Run self-audit.
 11. Run required Ralph loop iterations.
 12. Record evidence and declared-vs-enforced status.
@@ -204,20 +204,20 @@ At phase closeout, update state artifacts with compact facts only: changed paths
 
 ## Validation Gate
 
-Use domain validation from `references/domain-packs.md`. For repo/code work, run available tests, lint, build, typecheck, or project validation commands when safe. For non-code work, validate against domain-specific evidence such as source support, tone preservation, metric correctness, leakage checks, or decision criteria.
+Two layers, both default:
 
-### Runtime Validators
+**Runtime validators** — deterministic structural checks. Use `python -m runtime.cli <subcommand> <artifact.json>`. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs ship under `runtime/domain_packs/` as compact JSON files. Opt out with `--validation none`. If the runtime module is unavailable, record the blocker.
 
-When `runtime/` is available, use `python -m runtime.cli <subcommand> <artifact.json>` for deterministic structural validation. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs ship under `runtime/domain_packs/` as compact JSON files.
+**Domain validation** — quality checks from `references/domain-packs.md`. For repo/code work, run available tests, lint, build, typecheck, or project validation commands when safe. For non-code work, validate against domain-specific evidence such as source support, tone preservation, metric correctness, leakage checks, or decision criteria.
 
-Validation levels:
+Validation levels (control the CLI/runtime layer; domain validation runs regardless):
 
 | Level | Requirement |
 |-------|-------------|
-| `none` | No validation gate; still report that validation was disabled. |
-| `basic` | Perform an internal sanity check against the request and domain constraints. |
-| `available` | Run available safe project/domain checks or explain why none exist. |
-| `strict` | Run available checks plus self-audit and required Ralph evidence; do not mark complete with missing validation evidence. |
+| `none` | Skip CLI/runtime checks; domain validation still runs. Report that CLI validation was disabled. |
+| `basic` | CLI structural checks plus internal sanity check against request and domain constraints. |
+| `available` | CLI checks plus available safe project/domain checks, or explain why none exist. |
+| `strict` | CLI checks plus project/domain checks plus self-audit and required Ralph evidence; do not mark complete with missing validation evidence. |
 
 If validation is required but impossible, record:
 
@@ -270,7 +270,7 @@ Use `references/evidence-ledger.md` when the evidence format is unclear. Each co
 
 ### Runtime Artifacts
 
-Emit runtime-checkable artifacts as JSON files. Validate with `python -m runtime.cli` before marking a phase complete. Schema details live in `runtime/validator.py`.
+Emit runtime-checkable artifacts as JSON files. This is the default output format for phased work. Validate with `python -m runtime.cli` before marking a phase complete. Schema details live in `runtime/validator.py`.
 
 ## Completion Criteria
 

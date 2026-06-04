@@ -163,6 +163,10 @@ Write per-skill and batch reports:
 
 Apply only after explicit approval. Restore only from recorded backup manifest.
 
+### 8. Runtime Validation
+
+Validate migration artifacts with `python -m runtime.cli <subcommand> <artifact.json>`. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs under `runtime/domain_packs/`. Use `--validation none` to opt out. If runtime module unavailable, record blocker.
+
 ## Never
 
 - edit source in place before backup

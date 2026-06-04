@@ -176,6 +176,10 @@ Check:
 - semantic diff and educational report included
 - declared parameters, required audits, and Ralph iterations have evidence or a blocker
 
+### 9. Runtime Validation
+
+Validate generated artifacts with `python -m runtime.cli <subcommand> <artifact.json>`. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs under `runtime/domain_packs/`. Use `--validation none` to opt out. If runtime module unavailable, record blocker.
+
 ## Required Output
 
 ```markdown

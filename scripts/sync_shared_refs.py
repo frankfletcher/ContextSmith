@@ -60,7 +60,8 @@ def sync_skill(source_skill_dir, dest_skill_dir, args):
         if not required:
             continue
 
-        src_path = REPO_ROOT / source
+        repo = getattr(args, 'repo_root', None) or REPO_ROOT
+        src_path = repo / source
         if not is_local and not source.startswith('shared/'):
             print(f"ERROR {source_skill_dir.name}: source '{source}' not in shared/")
             stats['errors'] += 1
@@ -84,7 +85,14 @@ def sync_skill(source_skill_dir, dest_skill_dir, args):
 
         # Determine relative path under references/
         if is_local:
-            dest_rel = src_path.name
+            # Use relative source path (src_path is absolute via REPO_ROOT / source)
+            src_rel = Path(source)
+            # Preserve directory structure for non-skill-local files (e.g., runtime/)
+            # Flatten skill-local files (skills/<skill>/file.md → file.md)
+            if src_rel.parts and src_rel.parts[0] == "skills":
+                dest_rel = src_rel.name
+            else:
+                dest_rel = str(src_rel)
         else:
             dest_rel = Path(source).relative_to('shared')
         dest_path = refs_dir / dest_rel
@@ -126,9 +134,10 @@ def update_manifest_hashes(source_skill_dir, args):
         return {'manifestsUpdated': 0, 'hashesUpdated': 0}
 
     hashes_updated = 0
+    repo = getattr(args, 'repo_root', None) or REPO_ROOT
     for entry in manifest.get('references', []):
         source = entry.get('source', '')
-        src_path = REPO_ROOT / source
+        src_path = repo / source
         if not src_path.exists():
             continue
 
@@ -177,7 +186,19 @@ def main():
         action="store_true",
         help="Recompute SHA-1 blob hashes and write back to reference_manifest.yml"
     )
+    parser.add_argument(
+        "--repo-root",
+        type=Path,
+        default=None,
+        help="Override repo root directory (for testing)"
+    )
     args = parser.parse_args()
+
+    # Allow overriding REPO_ROOT for testing
+    if args.repo_root:
+        repo_root = args.repo_root
+    else:
+        repo_root = REPO_ROOT
 
     # Resolve staging directory
     if args.in_place:
@@ -185,7 +206,7 @@ def main():
     else:
         staging_dir = args.staging_dir or DEFAULT_STAGING
 
-    skills_dir = REPO_ROOT / 'skills'
+    skills_dir = repo_root / 'skills'
     total = {'copied': 0, 'skipped': 0, 'warnings': 0, 'errors': 0, 'manifestsUpdated': 0, 'hashesUpdated': 0}
 
     for source_skill_dir in sorted(skills_dir.iterdir()):

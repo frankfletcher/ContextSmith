@@ -35,23 +35,25 @@ Instead:
 - human approval gates remain explicit for irreversible or external actions.
 
 ## Architecture Direction
-Build a small `contextsmith-runtime` layer with one validator core and optional adapters:
+Runtime reinforcement and orchestration is a first-class ContextSmith tool. It is the default execution path — users get validation, gate enforcement, and phase progression automatically — but it is opt-out, not mandatory. A workflow can skip runtime checks, but the standard path goes through them.
+
+Build a `contextsmith-runtime` layer with one validator core and integration surfaces:
 
 - **Universal protocol:** machine-readable requirements, phase contracts, evidence, approval, and closeout artifacts.
 - **Domain packs:** small validation profiles for software, writing, research, scheduling, travel, business, education, and general fallback.
-- **CLI adapter:** portable validator and runner commands.
-- **MCP adapter:** structured tool calls around the same validator core.
-- **Orchestrated runner:** sequential gate loop that controls prompt flow for workflows that opt into it.
-- **Harness adapter:** optional hard-blocking integration when a harness can actually enforce gates.
+- **CLI:** portable validator and runner commands. Primary interface for standalone use and scripting.
+- **MCP integration:** structured tool calls around the same validator core. Enables agent-side validation.
+- **Orchestrated runner:** sequential gate loop that controls prompt flow. Default execution mode for multi-phase workflows.
+- **Harness integration:** hard-blocking enforcement where the harness supports it. Elevates orchestrated gates to hard blocks.
 
 ## Enforcement Levels
-Use these labels everywhere. Do not blur them.
+Use these labels everywhere. Do not blur them. Orchestrated workflow enforcement is the default — workflows go through it unless explicitly opted out. Deterministic validation is the foundation. Harness hard blocking elevates gates where the harness supports it. Human approval remains explicit for irreversible actions.
 
 | Level | Meaning | Example |
 |---|---|---|
-| Deterministic validation | A tool checks artifacts and returns pass/fail evidence. | CLI validates an evidence ledger. |
-| Orchestrated workflow enforcement | A runner only advances if validators pass. Bypass is possible outside the runner. | Plan runner sends correction prompts until closeout passes. |
-| Harness hard blocking | The harness prevents finalization, tool use, or side effects until gates pass. | opencode permission hook blocks an external action. |
+| Deterministic validation | A tool checks artifacts and returns pass/fail evidence. Foundation for all enforcement. | CLI validates an evidence ledger. |
+| Orchestrated workflow enforcement | Default mode. A runner only advances if validators pass. Opt-out available, not the norm. | Plan runner sends correction prompts until closeout passes. |
+| Harness hard blocking | Elevates orchestrated gates to hard blocks where the harness supports it. | opencode permission hook blocks an external action. |
 | Human approval | A person must approve an irreversible, costly, private, or high-risk action. | Booking airfare or sending calendar invites. |
 
 ## Universal Use Cases
@@ -216,9 +218,9 @@ context_contract:
 - CLI plus MCP adapter.
 - CLI plus harness adapter.
 
-**Default recommendation:** Start with CLI validator plus universal protocol plus one or two domain packs. Add runner, MCP, and harness adapters only after the core checks are proven.
+**Default recommendation:** Start with CLI validator plus universal protocol plus one or two domain packs. The runner, MCP, and harness integration surfaces are default runtime capabilities, not optional add-ons — but they can be incrementally tested after the core checks are proven.
 
-**Education:** This prevents a small model from trying to implement every runtime surface at once. The core must be stable before adapters multiply behavior.
+**Education:** This prevents a small model from trying to implement every runtime surface at once. The core must be stable before the default runtime surfaces multiply behavior.
 
 **Outputs:**
 - Decision entry in `DECISIONS.md`.
@@ -720,7 +722,7 @@ context_contract:
   stop_rule: stop if guide becomes broader than one page
 ```
 
-**Key message:** Skills should become thin runtime contracts plus routing instructions. Validators own pass/fail rules. Runners own sequencing. Harnesses own hard blocking where possible.
+**Key message:** Skills should become thin runtime contracts plus routing instructions. The runtime is the default execution path — validators own pass/fail rules, runners own sequencing, and harnesses elevate gates to hard blocks where possible. Skills opt out of the runtime; they don't opt in.
 
 ## Phase 5A: Next Prompt Compiler Specification
 **Goal:** Specify a small tool that compiles the current phase into a detailed small-model execution prompt.
@@ -824,7 +826,7 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes if skill or reference files changed.
 
 ## Phase 5D: Orchestrated Runner Specification
-**Goal:** Specify a harness-independent runner without implementing it yet.
+**Goal:** Specify the default execution mode for multi-phase workflows. The runner is optional but default — workflows go through it unless explicitly opted out.
 
 ```yaml
 context_contract:
@@ -847,7 +849,7 @@ context_contract:
 7. Retry up to configured limit.
 8. Advance only on evidence or record blocker.
 
-**Education:** The runner is useful because it controls workflow order. It is not hard enforcement if users bypass it.
+**Education:** The runner is the default execution path because it controls workflow order and enforces validation gates. It is not hard enforcement — users can opt out and bypass it — but it is the standard path.
 
 ## Phase 5E: Runner Skeleton
 **Goal:** Implement the smallest CLI runner skeleton if Phase 5D is approved.
@@ -875,8 +877,8 @@ context_contract:
 - Bad fixture reports exact missing artifacts.
 - Pytest covers pass/fail runner behavior.
 
-## Phase 6A: MCP Adapter Design
-**Goal:** Design MCP tools around the same validator core.
+## Phase 6A: MCP Integration Design
+**Goal:** Extend the first-class runtime to agents via MCP tools. The runtime validator core is reused, not duplicated.
 
 ```yaml
 context_contract:
@@ -898,8 +900,8 @@ context_contract:
 - `compile_next_prompt`
 - `next_gate`
 
-## Phase 6B: Harness Adapter Design
-**Goal:** Identify hard-blocking opportunities without modifying user-level config.
+## Phase 6B: Harness Integration Design
+**Goal:** Elevate default runtime enforcement to hard blocks where the harness supports it, without modifying user-level config.
 
 ```yaml
 context_contract:
@@ -1144,7 +1146,7 @@ context_contract:
 - Documentation reduces cognitive load and time to first value.
 
 ## Phase 8A: Rollout Scope Selection
-**Goal:** Decide which skills should use the runtime protocol first.
+**Goal:** Decide which skills should have the first-class runtime enabled first. The runtime is the default execution path for rolled-out skills.
 
 ```yaml
 context_contract:
@@ -1174,7 +1176,7 @@ context_contract:
 - Phase 8B target count is explicit and is not greater than two.
 
 ## Phase 8B: Bounded Per-Skill Rollout
-**Goal:** Apply the pattern only to the exact skill or skills selected in Phase 8A.
+**Goal:** Enable the first-class runtime for the exact skill or skills selected in Phase 8A. The runtime is the default execution path for rolled-out skills.
 
 ```yaml
 context_contract:
@@ -1206,6 +1208,423 @@ context_contract:
 - Installed-workflow smoke test still passes or blocker recorded.
 - `ARTIFACTS.md` and `PHASE_LOG.md` list exact changed files and validation evidence.
 
+## Phase 8B1: Skill-Engineer Runtime Integration
+**Goal:** Make the first-class runtime available to `contextsmith-skill-engineer` following the Phase 8B pattern. The runtime is the default execution path for this skill.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: rollout
+  usable_phase_budget: 20k-35k
+  expected_tool_calls: 3-5 reads, 2-3 edits, 3-4 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize changed paths and validation
+  stop_rule: stop if SKILL.md approaches 500 lines, integration needs more than 3 edits, or validation output is verbose
+```
+
+**Actions:**
+1. Add 10 runtime file entries to `skills/contextsmith-skill-engineer/reference_manifest.yml` (validator.py, cli.py, __init__.py, 6 domain packs).
+2. Add compact runtime validation section to `skills/contextsmith-skill-engineer/SKILL.md` following thin-skill pattern.
+3. Update token budget in `scripts/token_budget.py` if needed.
+4. Run validation commands.
+
+**Validation:**
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+- `python -m pytest tests/ -v` passes.
+- Dry-run sync confirms correct routing.
+
+## Phase 8B2: Skill-Migrator Runtime Integration
+**Goal:** Make the first-class runtime available to `contextsmith-skill-migrator` following the Phase 8B pattern. The runtime is the default execution path for this skill.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: rollout
+  usable_phase_budget: 20k-35k
+  expected_tool_calls: 3-5 reads, 2-3 edits, 3-4 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize changed paths and validation
+  stop_rule: stop if SKILL.md approaches 500 lines, integration needs more than 3 edits, or validation output is verbose
+```
+
+**Actions:**
+1. Add 10 runtime file entries to `skills/contextsmith-skill-migrator/reference_manifest.yml`.
+2. Add compact runtime validation section to `skills/contextsmith-skill-migrator/SKILL.md`.
+3. Update token budget if needed.
+4. Run validation commands.
+
+**Validation:**
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+- `python -m pytest tests/ -v` passes.
+- Dry-run sync confirms correct routing.
+
+## Phase 8B3: Instruction-Engineer Runtime Integration
+**Goal:** Make the first-class runtime available to `contextsmith-instruction-engineer` following the Phase 8B pattern. The runtime is the default execution path for this skill.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: rollout
+  usable_phase_budget: 20k-35k
+  expected_tool_calls: 3-5 reads, 2-3 edits, 3-4 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize changed paths and validation
+  stop_rule: stop if SKILL.md approaches 500 lines, integration needs more than 3 edits, or validation output is verbose
+```
+
+**Actions:**
+1. Add 10 runtime file entries to `skills/contextsmith-instruction-engineer/reference_manifest.yml`.
+2. Add compact runtime validation section to `skills/contextsmith-instruction-engineer/SKILL.md`.
+3. Update token budget if needed.
+4. Run validation commands.
+
+**Validation:**
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+- `python -m pytest tests/ -v` passes.
+- Dry-run sync confirms correct routing.
+
+## Phase 8B4: Agent-Evaluator Runtime Integration
+**Goal:** Make the first-class runtime available to `contextsmith-agent-evaluator` following the Phase 8B pattern. The runtime is the default execution path for this skill.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: rollout
+  usable_phase_budget: 20k-35k
+  expected_tool_calls: 3-5 reads, 2-3 edits, 3-4 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize changed paths and validation
+  stop_rule: stop if SKILL.md approaches 500 lines, integration needs more than 3 edits, or validation output is verbose
+```
+
+**Actions:**
+1. Add 10 runtime file entries to `skills/contextsmith-agent-evaluator/reference_manifest.yml`.
+2. Add compact runtime validation section to `skills/contextsmith-agent-evaluator/SKILL.md`.
+3. Update token budget if needed.
+4. Run validation commands.
+
+**Validation:**
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+- `python -m pytest tests/ -v` passes.
+- Dry-run sync confirms correct routing.
+
+## Phase 8C.1: Run Task-State Handoff Workflow Doc
+**Goal:** Create a workflow doc for running a task-state handoff with validation. Docs should reflect the actual rolled-out skill behavior.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 35k-45k
+  expected_tool_calls: 3-5 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize workflow steps before editing
+  stop_rule: stop if more than one workflow page is attempted, or if workflow depends on unimplemented tooling
+```
+
+**Content:**
+- When to use task-state handoffs vs. single-prompt tasks.
+- How to structure `NEXT_PROMPT.md` for handoff.
+- Running with `--ralph` and `--validation` flags.
+- Reading phase closeout and deciding to continue or stop.
+- Expected artifacts and validation evidence.
+
+**Validation:**
+- File has a table of contents.
+- Workflow includes inputs, commands, expected artifacts, validation, and common failure modes.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.2: Schedule with Approval Gates Workflow Doc
+**Goal:** Create a non-coding workflow doc for scheduling with approval gates.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 35k-45k
+  expected_tool_calls: 3-5 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize workflow steps before editing
+  stop_rule: stop if more than one workflow page is attempted, or if workflow implies calendar API access
+```
+
+**Content:**
+- Collecting participants, time zones, and availability constraints.
+- Using the scheduling domain pack for validation.
+- Approval gates before sending invites or messages.
+- Evidence requirements: candidate slots, user approval, sent confirmation.
+- Common failure modes: missing time zones, unavailable participants, skipped approval.
+
+**Validation:**
+- File has a table of contents.
+- External actions clearly require human approval.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.3: Compare Travel Options Workflow Doc
+**Goal:** Create a non-coding workflow doc for travel comparison without purchasing.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 35k-45k
+  expected_tool_calls: 3-5 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize workflow steps before editing
+  stop_rule: stop if more than one workflow page is attempted, or if workflow implies booking capability
+```
+
+**Content:**
+- Recording dates, airports, passenger count, and constraints.
+- Using the travel_purchase domain pack for validation.
+- Price source, timestamp, and fee/refund evidence requirements.
+- Explicit no-purchase boundary: comparison only, approval required before any booking.
+- Residual risk disclosure: fares and policies may change.
+- Common failure modes: missing price timestamps, unstated constraints, implied booking capability.
+
+**Validation:**
+- File has a table of contents.
+- No purchase, payment, or irreversible action without explicit user approval.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.4: Prompt Engineering Example
+**Goal:** Add a prompt engineering example to the examples library.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 30k-45k
+  expected_tool_calls: 2-4 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize example before editing
+  stop_rule: stop if more than one example is attempted, or if example becomes synthetic
+```
+
+**Content:**
+- Scenario: create a model-aware prompt with targeted context length and domain-specific guidance.
+- Input: task description, target model profile, domain pack.
+- Command or prompt: contextsmith-prompt-engineer invocation.
+- Expected output: structured prompt with context budget, validation gates, and Ralph loop.
+- How to judge success: prompt fits target budget, includes required sections, passes validation.
+
+**Validation:**
+- Example is labeled as implemented.
+- Example shows expected output, not only input.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.5: Implementation Plan Creation Example
+**Goal:** Add an implementation plan creation example to the examples library.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 30k-45k
+  expected_tool_calls: 2-4 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize example before editing
+  stop_rule: stop if more than one example is attempted, or if example becomes synthetic
+```
+
+**Content:**
+- Scenario: generate a phased implementation plan with validation gates for a small project.
+- Input: project description, constraints, target profile.
+- Command or prompt: contextsmith-instruction-engineer invocation.
+- Expected output: PLAN.md with phase contracts, context budgets, and stop rules.
+- How to judge success: plan stays atomic, phases are small-model executable, validation gates are explicit.
+
+**Validation:**
+- Example is labeled as implemented.
+- Example shows expected output, not only input.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.6: Plan Audit Example
+**Goal:** Add a plan audit example to the examples library.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 30k-45k
+  expected_tool_calls: 2-4 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize example before editing
+  stop_rule: stop if more than one example is attempted, or if example becomes synthetic
+```
+
+**Content:**
+- Scenario: review an implementation plan for completeness and small-model reliability.
+- Input: existing PLAN.md, target profile.
+- Command or prompt: contextsmith-agent-evaluator invocation.
+- Expected output: audit report with grades, strengths, weaknesses, and recommendations.
+- How to judge success: audit catches real issues, recommendations are actionable, grades are justified.
+
+**Validation:**
+- Example is labeled as implemented.
+- Example shows expected output, not only input.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.7: Meeting Scheduling Example
+**Goal:** Add a meeting scheduling example to the examples library.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 30k-45k
+  expected_tool_calls: 2-4 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize example before editing
+  stop_rule: stop if more than one example is attempted, or if example implies calendar API access
+```
+
+**Content:**
+- Scenario: schedule a cross-timezone meeting with approval gates.
+- Input: participants, time zones, duration, preferred dates.
+- Command or prompt: contextsmith-run with scheduling domain pack.
+- Expected output: candidate slots, approval request, sent confirmation evidence.
+- How to judge success: time zones resolved, approval obtained before sending, evidence recorded.
+
+**Validation:**
+- Example is labeled as implemented.
+- No external calendar API calls implied.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.8: Travel Comparison Example
+**Goal:** Add a travel comparison example to the examples library.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 30k-45k
+  expected_tool_calls: 2-4 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize example before editing
+  stop_rule: stop if more than one example is attempted, or if example implies booking capability
+```
+
+**Content:**
+- Scenario: compare flight options for a business trip without purchasing.
+- Input: dates, airports, passenger count, budget constraint.
+- Command or prompt: contextsmith-run with travel_purchase domain pack.
+- Expected output: comparison table with prices, fees, refund terms, residual risk disclosure.
+- How to judge success: prices timestamped, fees disclosed, no booking implied, approval required for purchase.
+
+**Validation:**
+- Example is labeled as implemented.
+- No purchase, payment, or irreversible action implied.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.9: Skill Migration Example
+**Goal:** Add a skill migration example to the examples library.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 30k-45k
+  expected_tool_calls: 2-4 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize example before editing
+  stop_rule: stop if more than one example is attempted, or if example becomes synthetic
+```
+
+**Content:**
+- Scenario: migrate an existing skill for small-model compatibility with target-profile metadata.
+- Input: existing SKILL.md, target profile (e.g., generic-local).
+- Command or prompt: contextsmith-skill-migrator invocation.
+- Expected output: migrated SKILL.md with model profiles, context-aware workflows, and loop safety.
+- How to judge success: skill passes validation, stays under line budget, preserves source behavior.
+
+**Validation:**
+- Example is labeled as implemented.
+- Example shows expected output, not only input.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.10: Custom Domain Pack Example
+**Goal:** Add a custom domain pack creation example to the examples library.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 30k-45k
+  expected_tool_calls: 2-4 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize example before editing
+  stop_rule: stop if more than one example is attempted, or if example becomes a style manual
+```
+
+**Content:**
+- Scenario: create a custom domain pack for a new use case (e.g., education/lesson planning).
+- Input: domain name, triggers, required artifacts, validation gates, approval boundaries.
+- Command: validator CLI to validate the custom domain pack.
+- Expected output: compact JSON domain pack that passes structural validation.
+- How to judge success: pack is compact, separates deterministic checks from approval gates, passes validator.
+
+**Validation:**
+- Example is labeled as implemented.
+- Example shows expected output, not only input.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
+## Phase 8C.11: Agent Evaluation Example
+**Goal:** Add an agent evaluation example to the examples library.
+
+```yaml
+context_contract:
+  executor: small-model
+  phase_type: documentation
+  usable_phase_budget: 30k-45k
+  expected_tool_calls: 2-4 reads, 1 edit, 2 validation commands
+  validation_output_budget: brief
+  validation_output_reserve: at least 25 percent for validation output and one targeted correction
+  compaction_trigger: summarize example before editing
+  stop_rule: stop if more than one example is attempted, or if example becomes synthetic
+```
+
+**Content:**
+- Scenario: evaluate an agent workflow for small-model reliability and context safety.
+- Input: AGENTS.md or agent workflow file, target profile.
+- Command or prompt: contextsmith-agent-evaluator invocation.
+- Expected output: evaluation report with grades, strengths, weaknesses, loop safety assessment.
+- How to judge success: evaluation catches real issues, grades are justified, recommendations are actionable.
+
+**Validation:**
+- Example is labeled as implemented.
+- Example shows expected output, not only input.
+- `python scripts/validate_skills.py` passes.
+- `python scripts/token_budget.py --strict` passes.
+
 ## Phase 9: Final Closeout Audit
 **Goal:** Verify the implementation remains universal, small-model executable, and honest about enforcement limits.
 
@@ -1227,6 +1646,7 @@ context_contract:
 - Pytest validation passes.
 - Skills are thinner, not longer.
 - CLI/MCP/runner/harness claims are correctly labeled by enforcement level.
+- Runtime is the default execution path for all rolled-out skills.
 - Approval boundaries remain explicit.
 
 ## Plan Completion Criteria
@@ -1238,5 +1658,6 @@ context_contract:
 - Human/frontier review gates protect architecture choices.
 - Pytest tests cover positive and negative cases.
 - Installed-workflow smoke test proves runtime checks are usable outside planning context.
+- Runtime reinforcement and orchestration is the default execution path for all rolled-out skills.
 - No dependency beyond pytest is added without approval.
 - No `PACKAGE_SPEC.md`, user-level opencode config, destructive git operation, or mass migration occurs without approval.

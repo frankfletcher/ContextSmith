@@ -1,0 +1,4 @@
+- [x] Phase 1A: Setup
+- [x] Phase 1B: Design
+- [ ] Phase 1C: Implementation
+- [ ] Phase 1D: Review

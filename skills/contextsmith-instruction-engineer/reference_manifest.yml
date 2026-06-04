@@ -181,3 +181,48 @@ references:
   required: true
   local: true
   notes: Skill-specific help documentation.
+- source: runtime/validator.py
+  version: local
+  required: true
+  local: true
+  notes: Runtime validator core - deterministic structural checks for universal artifacts.
+- source: runtime/cli.py
+  version: local
+  required: true
+  local: true
+  notes: CLI adapter for runtime validator - 6 subcommands, exit codes 0/1/2.
+- source: runtime/__init__.py
+  version: local
+  required: true
+  local: true
+  notes: Runtime package marker.
+- source: runtime/domain_packs/general_fallback.json
+  version: local
+  required: true
+  local: true
+  notes: General fallback domain pack - handles unknown domains.
+- source: runtime/domain_packs/software_engineering.json
+  version: local
+  required: true
+  local: true
+  notes: Software engineering domain pack.
+- source: runtime/domain_packs/scheduling.json
+  version: local
+  required: true
+  local: true
+  notes: Scheduling domain pack.
+- source: runtime/domain_packs/travel_purchase.json
+  version: local
+  required: true
+  local: true
+  notes: Travel/purchase domain pack - high-risk external actions.
+- source: runtime/domain_packs/writing_editing.json
+  version: local
+  required: true
+  local: true
+  notes: Writing/editing domain pack.
+- source: runtime/domain_packs/research_summary.json
+  version: local
+  required: true
+  local: true
+  notes: Research summary domain pack.
