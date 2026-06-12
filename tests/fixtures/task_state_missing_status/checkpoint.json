@@ -1,0 +1,11 @@
+{
+  "workflow_id": "test-workflow-missing-status",
+  "version": 1,
+  "current_phase": "phase_1",
+  "current_state": "execute",
+  "last_updated": "2026-06-12T00:00:00Z",
+  "completed_phases": [],
+  "counters": {
+    "phase_1": {"retries": 0, "ralph_cycles": 0}
+  }
+}

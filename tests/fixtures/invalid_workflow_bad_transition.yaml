@@ -1,0 +1,14 @@
+workflow_id: test-bad-transition
+version: 1
+domain: audit
+mode: phased-run
+
+states:
+  load_task:
+    state: init
+    permissions: read-only
+    transitions:
+      - condition: pass
+
+phase_order:
+  - load_task

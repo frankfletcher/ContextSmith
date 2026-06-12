@@ -1,0 +1,15 @@
+workflow_id: test-bad-state
+version: 1
+domain: audit
+mode: phased-run
+
+states:
+  bad_step:
+    state: invalid_state
+    permissions: read-only
+    transitions:
+      - condition: pass
+        target: done
+
+phase_order:
+  - bad_step

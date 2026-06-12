@@ -1,0 +1,6 @@
+description: Creates and edits SKILL.md skills, prompts, and instruction files
+mode: subagent
+permission:
+  edit: allow
+  bash: allow
+  external_directory: deny

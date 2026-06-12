@@ -1,0 +1,14 @@
+workflow_id: test-missing-version
+domain: audit
+mode: phased-run
+
+states:
+  load_task:
+    state: init
+    permissions: read-only
+    transitions:
+      - condition: pass
+        target: done
+
+phase_order:
+  - load_task

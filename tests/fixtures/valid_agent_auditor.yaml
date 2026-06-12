@@ -1,0 +1,9 @@
+description: Audits prompts, skills, and agent artifacts for reliability
+mode: subagent
+steps: 10
+permission:
+  edit: deny
+  bash:
+    "*": deny
+    "python scripts/validate_skills.py": allow
+  webfetch: deny

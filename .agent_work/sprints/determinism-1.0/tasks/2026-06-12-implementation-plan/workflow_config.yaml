@@ -1,0 +1,842 @@
+workflow_id: determinism-implementation
+version: 1
+domain: coding
+mode: phased-run
+harness: opencode
+
+baseline:
+  required_steps:
+    - load_context
+    - phase_1a_verify_workflow_schema
+    - phase_1b_verify_agent_schema
+    - phase_1c_create_invalid_fixtures
+    - phase_1d_create_task_state_fixtures
+    - phase_1_audit
+    - phase_1_validate
+    - phase_2a_create_package
+    - phase_2b_implement_state_reader
+    - phase_2c_implement_checkpoint
+    - phase_2d_implement_step_compiler
+    - phase_2e_implement_main_loop
+    - phase_2f_implement_cli
+    - phase_2_audit
+    - phase_2_validate
+    - phase_3a_create_adapter_base
+    - phase_3b_implement_generic_adapter
+    - phase_3c_implement_opencode_adapter
+    - phase_3_audit
+    - phase_3_validate
+    - phase_4a_implement_file_validators
+    - phase_4b_implement_schema_validators
+    - phase_4c_implement_state_validator
+    - phase_4_audit
+    - phase_4_validate
+    - phase_5a_create_orchestrator_skill
+    - phase_5b_create_workflow_developer_skill
+    - phase_5c_update_router_skill
+    - phase_5_audit
+    - phase_5_validate
+    - phase_6a_create_main_entry
+    - phase_6b_create_unit_tests
+    - phase_6c_create_integration_tests
+    - phase_6d_update_validation_script
+    - phase_6_audit
+    - phase_6_validate
+    - close
+  required_gates:
+    - audit
+    - validate
+  required_files:
+    - STATUS.md
+    - PLAN.md
+    - CONTEXT.md
+    - CHECKLIST.md
+    - NEXT_PROMPT.md
+
+states:
+  load_context:
+    state: init
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: phase_1a_verify_workflow_schema
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+      - CONTEXT.md
+
+  # Phase 1: Schemas
+  phase_1a_verify_workflow_schema:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_1b_verify_agent_schema
+      - condition: output_invalid
+        target: phase_1a_verify_workflow_schema
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - tests/fixtures/valid_workflow_simple_audit.yaml
+      - tests/fixtures/valid_workflow_engineering.yaml
+      - tests/fixtures/validation_results_workflow.md
+    inputs:
+      - schemas/workflow_config.schema.json
+      - .agent_work/ideation/deep_determinism/workflow_config_sketch.md
+
+  phase_1b_verify_agent_schema:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_1c_create_invalid_fixtures
+      - condition: output_invalid
+        target: phase_1b_verify_agent_schema
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - tests/fixtures/valid_agent_auditor.yaml
+      - tests/fixtures/valid_agent_builder.yaml
+      - tests/fixtures/validation_results_agent.md
+    inputs:
+      - schemas/agent_config.schema.json
+      - .agent_work/ideation/deep_determinism/system_components.md
+
+  phase_1c_create_invalid_fixtures:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_1d_create_task_state_fixtures
+      - condition: output_invalid
+        target: phase_1c_create_invalid_fixtures
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - tests/fixtures/invalid_workflow_missing_field.yaml
+      - tests/fixtures/invalid_workflow_bad_state.yaml
+      - tests/fixtures/invalid_workflow_bad_transition.yaml
+      - tests/fixtures/invalid_agent_missing_permission.yaml
+      - tests/fixtures/invalid_agent_bad_mode.yaml
+    inputs:
+      - schemas/workflow_config.schema.json
+      - schemas/agent_config.schema.json
+
+  phase_1d_create_task_state_fixtures:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_1_audit
+      - condition: output_invalid
+        target: phase_1d_create_task_state_fixtures
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - tests/fixtures/task_state_valid/STATUS.md
+      - tests/fixtures/task_state_valid/PLAN.md
+      - tests/fixtures/task_state_valid/CONTEXT.md
+      - tests/fixtures/task_state_valid/CHECKLIST.md
+      - tests/fixtures/task_state_valid/NEXT_PROMPT.md
+      - tests/fixtures/task_state_valid/checkpoint.json
+    inputs:
+      - .agent_work/ideation/deep_determinism/state_artifact_strategy.md
+      - shared/persistent-task-state.md
+
+  phase_1_audit:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    ralph_max_cycles: 3
+    transitions:
+      - condition: pass
+        target: phase_1_validate
+      - condition: fail
+        target: phase_1a_verify_workflow_schema
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - tests/fixtures/
+      - PLAN.md
+
+  phase_1_validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: phase_2a_create_package
+      - condition: fail
+        target: phase_1a_verify_workflow_schema
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - tests/fixtures/
+      - CHECKLIST.md
+
+  # Phase 2: Core Orchestrator
+  phase_2a_create_package:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_2b_implement_state_reader
+      - condition: output_invalid
+        target: phase_2a_create_package
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/__init__.py
+      - orchestrator/constants.py
+      - orchestrator/exceptions.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_idea.md
+      - .agent_work/ideation/deep_determinism/implementation_guide.md
+
+  phase_2b_implement_state_reader:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_2c_implement_checkpoint
+      - condition: output_invalid
+        target: phase_2b_implement_state_reader
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/state_reader.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/state_artifact_strategy.md
+      - .agent_work/ideation/deep_determinism/orchestrator_idea.md
+      - tests/fixtures/task_state_valid/
+
+  phase_2c_implement_checkpoint:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_2d_implement_step_compiler
+      - condition: output_invalid
+        target: phase_2c_implement_checkpoint
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/checkpoint.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_idea.md
+
+  phase_2d_implement_step_compiler:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_2e_implement_main_loop
+      - condition: output_invalid
+        target: phase_2d_implement_step_compiler
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/step_compiler.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_and_harness.md
+      - .agent_work/ideation/deep_determinism/workflow_config_sketch.md
+
+  phase_2e_implement_main_loop:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_2f_implement_cli
+      - condition: output_invalid
+        target: phase_2e_implement_main_loop
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/orchestrator.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_idea.md
+      - orchestrator/state_reader.py
+      - orchestrator/checkpoint.py
+      - orchestrator/step_compiler.py
+
+  phase_2f_implement_cli:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_2_audit
+      - condition: output_invalid
+        target: phase_2f_implement_cli
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/cli.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_idea.md
+      - orchestrator/orchestrator.py
+
+  phase_2_audit:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    ralph_max_cycles: 3
+    transitions:
+      - condition: pass
+        target: phase_2_validate
+      - condition: fail
+        target: phase_2a_create_package
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - orchestrator/
+      - PLAN.md
+
+  phase_2_validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: phase_3a_create_adapter_base
+      - condition: fail
+        target: phase_2a_create_package
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - orchestrator/
+      - CHECKLIST.md
+
+  # Phase 3: Harness Adapters
+  phase_3a_create_adapter_base:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_3b_implement_generic_adapter
+      - condition: output_invalid
+        target: phase_3a_create_adapter_base
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/adapters/__init__.py
+      - orchestrator/adapters/base.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_and_harness.md
+
+  phase_3b_implement_generic_adapter:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_3c_implement_opencode_adapter
+      - condition: output_invalid
+        target: phase_3b_implement_generic_adapter
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/adapters/generic.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/harness_agnostic_distribution.md
+      - orchestrator/adapters/base.py
+
+  phase_3c_implement_opencode_adapter:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_3_audit
+      - condition: output_invalid
+        target: phase_3c_implement_opencode_adapter
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/adapters/opencode.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_and_harness.md
+      - .agent_work/ideation/deep_determinism/harness-opencode.md
+      - orchestrator/adapters/base.py
+
+  phase_3_audit:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    ralph_max_cycles: 3
+    transitions:
+      - condition: pass
+        target: phase_3_validate
+      - condition: fail
+        target: phase_3a_create_adapter_base
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - orchestrator/adapters/
+      - PLAN.md
+
+  phase_3_validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: phase_4a_implement_file_validators
+      - condition: fail
+        target: phase_3a_create_adapter_base
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - orchestrator/adapters/
+      - CHECKLIST.md
+
+  # Phase 4: Validators
+  phase_4a_implement_file_validators:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_4b_implement_schema_validators
+      - condition: output_invalid
+        target: phase_4a_implement_file_validators
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/validators.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/state_artifact_strategy.md
+
+  phase_4b_implement_schema_validators:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_4c_implement_state_validator
+      - condition: output_invalid
+        target: phase_4b_implement_schema_validators
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/validators.py
+    inputs:
+      - schemas/workflow_config.schema.json
+      - schemas/agent_config.schema.json
+      - orchestrator/validators.py
+
+  phase_4c_implement_state_validator:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_4_audit
+      - condition: output_invalid
+        target: phase_4c_implement_state_validator
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/validators.py
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_idea.md
+      - orchestrator/validators.py
+
+  phase_4_audit:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    ralph_max_cycles: 3
+    transitions:
+      - condition: pass
+        target: phase_4_validate
+      - condition: fail
+        target: phase_4a_implement_file_validators
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - orchestrator/validators.py
+      - PLAN.md
+
+  phase_4_validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: phase_5a_create_orchestrator_skill
+      - condition: fail
+        target: phase_4a_implement_file_validators
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - orchestrator/validators.py
+      - CHECKLIST.md
+
+  # Phase 5: Skills
+  phase_5a_create_orchestrator_skill:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_5b_create_workflow_developer_skill
+      - condition: output_invalid
+        target: phase_5a_create_orchestrator_skill
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - skills/contextsmith-orchestrator/SKILL.md
+      - skills/contextsmith-orchestrator/reference_manifest.yml
+    inputs:
+      - .agent_work/ideation/deep_determinism/orchestrator_skill_draft.md
+      - .agent_work/ideation/deep_determinism/orchestrator_as_skill.md
+
+  phase_5b_create_workflow_developer_skill:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: phase_5c_update_router_skill
+      - condition: output_invalid
+        target: phase_5b_create_workflow_developer_skill
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - skills/contextsmith-workflow-developer/SKILL.md
+      - skills/contextsmith-workflow-developer/reference_manifest.yml
+      - skills/contextsmith-workflow-developer/references/domain-templates/
+    inputs:
+      - .agent_work/ideation/deep_determinism/workflow_developer_skill.md
+      - .agent_work/ideation/deep_determinism/domain-templates/
+
+  phase_5c_update_router_skill:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_5_audit
+      - condition: output_invalid
+        target: phase_5c_update_router_skill
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - skills/contextsmith/SKILL.md
+    inputs:
+      - skills/contextsmith/SKILL.md
+      - .agent_work/ideation/deep_determinism/orchestrator_as_skill.md
+
+  phase_5_audit:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    ralph_max_cycles: 3
+    transitions:
+      - condition: pass
+        target: phase_5_validate
+      - condition: fail
+        target: phase_5a_create_orchestrator_skill
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - skills/contextsmith-orchestrator/
+      - skills/contextsmith-workflow-developer/
+      - skills/contextsmith/SKILL.md
+      - PLAN.md
+
+  phase_5_validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: phase_6a_create_main_entry
+      - condition: fail
+        target: phase_5a_create_orchestrator_skill
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - skills/
+      - CHECKLIST.md
+
+  # Phase 6: Integration and Testing
+  phase_6a_create_main_entry:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_6b_create_unit_tests
+      - condition: output_invalid
+        target: phase_6a_create_main_entry
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - orchestrator/__main__.py
+    inputs:
+      - orchestrator/cli.py
+
+  phase_6b_create_unit_tests:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 900
+    transitions:
+      - condition: output_valid
+        target: phase_6c_create_integration_tests
+      - condition: output_invalid
+        target: phase_6b_create_unit_tests
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - tests/test_orchestrator_state.py
+      - tests/test_checkpoint.py
+      - tests/test_step_compiler.py
+      - tests/test_validators.py
+      - tests/test_adapters.py
+    inputs:
+      - orchestrator/
+      - tests/test_validator.py
+
+  phase_6c_create_integration_tests:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 900
+    transitions:
+      - condition: output_valid
+        target: phase_6d_update_validation_script
+      - condition: output_invalid
+        target: phase_6c_create_integration_tests
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - tests/test_orchestrator_integration.py
+    inputs:
+      - orchestrator/
+      - tests/test_cli.py
+
+  phase_6d_update_validation_script:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: phase_6_audit
+      - condition: output_invalid
+        target: phase_6d_update_validation_script
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - scripts/validate_skills.py
+    inputs:
+      - scripts/validate_skills.py
+      - skills/
+
+  phase_6_audit:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    ralph_max_cycles: 3
+    transitions:
+      - condition: pass
+        target: phase_6_validate
+      - condition: fail
+        target: phase_6a_create_main_entry
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - orchestrator/
+      - tests/
+      - skills/
+      - PLAN.md
+
+  phase_6_validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: close
+      - condition: fail
+        target: phase_6a_create_main_entry
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - orchestrator/
+      - tests/
+      - CHECKLIST.md
+
+  # Closeout
+  close:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: close
+    expected_outputs:
+      - SUMMARY.md
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+      - AUDIT_REPORT.md
+
+phase_order:
+  - load_context
+  - phase_1a_verify_workflow_schema
+  - phase_1b_verify_agent_schema
+  - phase_1c_create_invalid_fixtures
+  - phase_1d_create_task_state_fixtures
+  - phase_1_audit
+  - phase_1_validate
+  - phase_2a_create_package
+  - phase_2b_implement_state_reader
+  - phase_2c_implement_checkpoint
+  - phase_2d_implement_step_compiler
+  - phase_2e_implement_main_loop
+  - phase_2f_implement_cli
+  - phase_2_audit
+  - phase_2_validate
+  - phase_3a_create_adapter_base
+  - phase_3b_implement_generic_adapter
+  - phase_3c_implement_opencode_adapter
+  - phase_3_audit
+  - phase_3_validate
+  - phase_4a_implement_file_validators
+  - phase_4b_implement_schema_validators
+  - phase_4c_implement_state_validator
+  - phase_4_audit
+  - phase_4_validate
+  - phase_5a_create_orchestrator_skill
+  - phase_5b_create_workflow_developer_skill
+  - phase_5c_update_router_skill
+  - phase_5_audit
+  - phase_5_validate
+  - phase_6a_create_main_entry
+  - phase_6b_create_unit_tests
+  - phase_6c_create_integration_tests
+  - phase_6d_update_validation_script
+  - phase_6_audit
+  - phase_6_validate
+  - close
+
+validation:
+  schema: schemas/workflow_config.schema.json
+  required_checks:
+    - file_exists
+    - json_schema

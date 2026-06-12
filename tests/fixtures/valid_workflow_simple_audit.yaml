@@ -1,0 +1,102 @@
+workflow_id: simple-audit
+version: 1
+domain: audit
+mode: phased-run
+harness: auto
+
+baseline:
+  required_steps:
+    - load_task_state
+    - audit_current_phase
+    - write_report
+    - close_phase
+    - write_next_prompt
+  required_gates:
+    - audit
+  required_files:
+    - STATUS.md
+    - PLAN.md
+    - CONTEXT.md
+
+states:
+  load_task_state:
+    state: plan
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: audit_current_phase
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+
+  audit_current_phase:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 3
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: write_report
+      - condition: fail
+        target: audit_current_phase
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - PLAN.md
+      - CONTEXT.md
+
+  write_report:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: write_next_prompt
+      - condition: fail
+        target: write_report
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - SUMMARY.md
+    inputs:
+      - AUDIT_REPORT.md
+
+  write_next_prompt:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: write_next_prompt
+    expected_outputs:
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+      - AUDIT_REPORT.md
+
+phase_order:
+  - load_task_state
+  - audit_current_phase
+  - write_report
+  - write_next_prompt
+
+validation:
+  schema: schemas/phase_contract.schema.json
+  required_checks:
+    - file_exists
+    - json_schema

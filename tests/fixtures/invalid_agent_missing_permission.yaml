@@ -1,0 +1,3 @@
+description: Test agent missing permission block
+mode: subagent
+steps: 5

@@ -1,0 +1,171 @@
+workflow_id: skill-engineering
+version: 1
+domain: coding
+mode: phased-run
+harness: opencode
+
+baseline:
+  required_steps:
+    - load_context
+    - implement_change
+    - audit_output
+    - review_via_ralph
+    - validate
+    - close
+  required_gates:
+    - audit
+    - validate
+    - ralph_review
+  required_files:
+    - STATUS.md
+    - PLAN.md
+    - CONTEXT.md
+    - CHECKLIST.md
+    - ARTIFACTS.md
+    - NEXT_PROMPT.md
+
+states:
+  load_context:
+    state: init
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 30
+    transitions:
+      - condition: pass
+        target: implement_change
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+
+  implement_change:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: audit_output
+      - condition: output_invalid
+        target: implement_change
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - ARTIFACTS.md
+      - PHASE_LOG.md
+    inputs:
+      - NEXT_PROMPT.md
+      - CONTEXT.md
+
+  audit_output:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: review_via_ralph
+      - condition: fail
+        target: implement_change
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+    inputs:
+      - ARTIFACTS.md
+      - PLAN.md
+
+  review_via_ralph:
+    state: ralph_critique
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: validate
+      - condition: fail
+        target: ralph_revise
+      - condition: max_cycles_reached
+        target: validate
+    ralph_max_cycles: 2
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - ARTIFACTS.md
+      - AUDIT_REPORT.md
+
+  ralph_revise:
+    state: ralph_revise
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: review_via_ralph
+      - condition: fail
+        target: review_via_ralph
+    expected_outputs:
+      - ARTIFACTS.md
+    inputs:
+      - AUDIT_REPORT.md
+
+  validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: close
+      - condition: fail
+        target: implement_change
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - ARTIFACTS.md
+      - CHECKLIST.md
+
+  close:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: close
+    expected_outputs:
+      - SUMMARY.md
+      - EDUCATIONAL_REPORT.md
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+      - AUDIT_REPORT.md
+
+phase_order:
+  - load_context
+  - implement_change
+  - audit_output
+  - review_via_ralph
+  - ralph_revise
+  - validate
+  - close
+
+validation:
+  schema: schemas/workflow_config.schema.json
+  required_checks:
+    - file_exists
+    - json_schema
+    - command_exit_zero

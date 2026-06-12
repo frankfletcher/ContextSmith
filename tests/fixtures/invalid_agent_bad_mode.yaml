@@ -1,0 +1,4 @@
+description: Test agent with invalid mode
+mode: invalid_mode
+permission:
+  edit: allow

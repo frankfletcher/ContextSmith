@@ -8,7 +8,7 @@ execute
 
 ## Progress
 - Phase: 1 of 3
-- Checklist: 2/5 complete
+- Checklist: 0/5 complete
 - Retries remaining: 3
 
 ## Next Action
