@@ -16,6 +16,7 @@ tmp
 graphify-out/manifest.json
 graphify-out/cost.json
 graphify-out/cache/
+graphify-out/
 
 # Superpowers agent workflow artifacts
 .agent_work/superpowers/

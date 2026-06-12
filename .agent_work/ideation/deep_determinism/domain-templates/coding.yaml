@@ -1,0 +1,126 @@
+# Coding Domain Template
+
+Default workflow shape for software engineering tasks.
+
+## Default Phases
+
+```yaml
+phases:
+  - load_context
+  - implement_change
+  - audit_output
+  - validate
+  - close
+```
+
+## Default Gates
+
+```yaml
+gates:
+  - audit
+  - validate
+```
+
+## Default State Definitions
+
+```yaml
+states:
+  load_context:
+    state: init
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: implement_change
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+      - CONTEXT.md
+
+  implement_change:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: audit_output
+      - condition: output_invalid
+        target: implement_change
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - ARTIFACTS.md
+      - PHASE_LOG.md
+    inputs:
+      - NEXT_PROMPT.md
+      - CONTEXT.md
+
+  audit_output:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: validate
+      - condition: fail
+        target: implement_change
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+    inputs:
+      - ARTIFACTS.md
+      - PLAN.md
+
+  validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: close
+      - condition: fail
+        target: implement_change
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - ARTIFACTS.md
+      - CHECKLIST.md
+
+  close:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: close
+    expected_outputs:
+      - SUMMARY.md
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+      - AUDIT_REPORT.md
+```
+
+## Customization Triggers
+
+- If user mentions "test" → add test validation step after implement_change
+- If user mentions "deploy" → add external-action permission to close phase
+- If user mentions "review" → keep audit gate
+- If user mentions "quick" or "fast" → reduce max_retries to 1, skip audit

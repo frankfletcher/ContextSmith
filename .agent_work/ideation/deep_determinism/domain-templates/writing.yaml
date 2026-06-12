@@ -1,0 +1,128 @@
+# Writing Domain Template
+
+Default workflow shape for writing and editing tasks.
+
+## Default Phases
+
+```yaml
+phases:
+  - load_context
+  - draft
+  - review
+  - revise
+  - close
+```
+
+## Default Gates
+
+```yaml
+gates:
+  - review
+```
+
+## Default State Definitions
+
+```yaml
+states:
+  load_context:
+    state: init
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: draft
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+      - CONTEXT.md
+
+  draft:
+    state: execute
+    agent: contextsmith-writer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: review
+      - condition: output_invalid
+        target: draft
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - draft.md
+      - ARTIFACTS.md
+      - PHASE_LOG.md
+    inputs:
+      - NEXT_PROMPT.md
+      - CONTEXT.md
+
+  review:
+    state: audit
+    agent: contextsmith-reviewer
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: close
+      - condition: fail
+        target: revise
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - REVIEW_NOTES.md
+    inputs:
+      - draft.md
+      - PLAN.md
+
+  revise:
+    state: fix
+    agent: contextsmith-writer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: review
+      - condition: output_invalid
+        target: revise
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - draft.md
+      - ARTIFACTS.md
+    inputs:
+      - REVIEW_NOTES.md
+      - draft.md
+
+  close:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: close
+    expected_outputs:
+      - SUMMARY.md
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+      - draft.md
+```
+
+## Customization Triggers
+
+- If user mentions "publish" → add external-action permission to close phase
+- If user mentions "tone" or "style" → add style validation step
+- If user mentions "SEO" → add keyword validation step
+- If user mentions "quick" → reduce max_retries, skip review

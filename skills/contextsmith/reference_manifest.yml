@@ -1,10 +1,23 @@
 skill: contextsmith
 version: 1.7.1
-description: "Meta-skill for ContextSmith \u2014 routes to sub-skills based on user\
-  \ intent."
+description: Meta-skill for ContextSmith — routes to sub-skills based on user intent.
 references:
 - source: skills/contextsmith/help.md
   version: 24b0b499ca47e3034e14b47f1f148cdb1b5c1b7c
   required: true
   local: true
   notes: Router help and sub-skill overview.
+  load: conditional
+  when: help mode invoked
+- source: shared/structured-questioning.md
+  version: TBD
+  required: true
+  notes: Structured questioning patterns for wizard mode and refinement.
+  load: conditional
+  when: wizard mode or structured questions needed
+- source: shared/harness-opencode.md
+  version: TBD
+  required: true
+  notes: OpenCode harness-specific configurations for agents, commands, tools, and plugins.
+  load: conditional
+  when: --harness opencode

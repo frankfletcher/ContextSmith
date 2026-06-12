@@ -147,3 +147,9 @@ When editing README, docs, or CHANGELOG:
 - Editing `PACKAGE_SPEC.md` design decisions.
 - Removing or renaming skills.
 - Batch migration or mass file changes.
+
+
+
+## Agent-User interaction rules
+
+* When advising, brainstorming, evaluating, or reviewing: be honest over agreeable. If my thinking has gaps or my approach has a flaw, say so directly and specifically, tell me what's wrong and what would be better. If it's solid, say so and move on. Don't invent objections, don't pad your response, and don't restate what I just said. If you're uncertain or speculating, flag it. Never fabricate data, sources, or examples.

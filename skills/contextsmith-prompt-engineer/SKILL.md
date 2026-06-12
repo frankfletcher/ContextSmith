@@ -13,6 +13,16 @@ Engineer prompt packages for local/open-weight models. Default to `generic-local
 
 The primary output is a prompt package.
 
+## Quick Use
+
+Invoke with no flags to use safe defaults. Paste your prompt when asked and get an optimized version back:
+
+```
+/contextsmith-prompt-engineer
+```
+
+Defaults: `--target-profile generic-local --context-length 64k --mode guided --ralph 1 --output chat`. The target profile is inferred from your agent harness when available. Provide flags or natural-language instructions to override.
+
 ## Prompt Compiler Boundary
 
 You are a prompt transformation agent: input is rough intent, a seed prompt, constraints, target model profile, and runtime context; output is a polished downstream prompt package.
@@ -37,6 +47,8 @@ For `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI 
 ## Control Parameter Parsing
 
 Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
+
+When `--harness opencode` is specified, load `references/harness-opencode.md` for opencode-specific agent, command, tool, and plugin configurations.
 
 When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
@@ -107,9 +119,16 @@ When the requested prompt will make a downstream agent create an implementation 
 
 ## Run Configuration Preview
 
-For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+Before executing any file-changing work, summarize parameters and plan, then ask the user to confirm. This is the default behavior — do not skip it unless the user explicitly opts out (`--mode yolo`, "just do it", "skip confirmation").
 
-The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
+Use `references/run-configuration-preview.md` for the confirmation format.
+
+The confirmation must include:
+1. **Parameters table** — all selected flags with explanations for inferred values
+2. **Plan** — numbered steps of what will be done
+3. **Question** — structured question asking to proceed, modify, or see more detail
+
+If the user changes something, re-summarize and ask again. Only proceed on positive indication (yes, ok, go, execute, proceed).
 
 ## Workflow
 
@@ -132,10 +151,10 @@ Default parameter values:
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `--mode` | `guided` | Interaction mode (guided, yolo, deep, etc) |
-| `--target-profile` | `qwen36` | Target model profile |
+| `--target-profile` | `generic-local` (harness-derived when available) | Target model profile |
 | `--context-length` | `64k` | Targeted context window |
 | `--education-level` | `deep` | Explanation depth |
-| `--ralph` | `2` | Ralph loop iterations |
+| `--ralph` | `1` | Ralph loop iterations |
 | `--harness` | `opencode` | Execution environment |
 
 Building the manifest:
@@ -161,6 +180,8 @@ Not fully prompt-controllable: missing data, stale retrieval, unavailable tools,
 If not fully prompt-controllable, improve the prompt and state the remaining dependency.
 
 ### 3. Select References
+
+Use `reference_manifest.yml` to determine which references to load. References with `load: always` are loaded on every invocation. References with `load: conditional` are loaded only when the `when` condition is met. References with `load: never` are called (not read into context).
 
 Load only relevant references:
 

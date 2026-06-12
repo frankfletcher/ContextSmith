@@ -1,0 +1,126 @@
+# Migration Domain Template
+
+Default workflow shape for migration and refactoring tasks.
+
+## Default Phases
+
+```yaml
+phases:
+  - load_context
+  - plan_migration
+  - execute_migration
+  - validate
+  - close
+```
+
+## Default Gates
+
+```yaml
+gates:
+  - validate
+```
+
+## Default State Definitions
+
+```yaml
+states:
+  load_context:
+    state: init
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: plan_migration
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+      - CONTEXT.md
+
+  plan_migration:
+    state: plan
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: execute_migration
+      - condition: fail
+        target: blocked
+    expected_outputs:
+      - MIGRATION_PLAN.md
+      - CHECKLIST.md
+    inputs:
+      - STATUS.md
+      - CONTEXT.md
+
+  execute_migration:
+    state: execute
+    agent: contextsmith-migrator
+    permissions: edit
+    max_retries: 3
+    timeout_s: 900
+    transitions:
+      - condition: output_valid
+        target: validate
+      - condition: output_invalid
+        target: execute_migration
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - ARTIFACTS.md
+      - PHASE_LOG.md
+    inputs:
+      - MIGRATION_PLAN.md
+      - CONTEXT.md
+
+  validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: close
+      - condition: fail
+        target: execute_migration
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - VALIDATION_REPORT.md
+    inputs:
+      - ARTIFACTS.md
+      - MIGRATION_PLAN.md
+      - CHECKLIST.md
+
+  close:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: close
+    expected_outputs:
+      - SUMMARY.md
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+      - VALIDATION_REPORT.md
+```
+
+## Customization Triggers
+
+- If user mentions "rollback" → add rollback plan to MIGRATION_PLAN.md
+- If user mentions "staged" or "incremental" → split execute_migration into smaller phases
+- If user mentions "backup" → add backup step before execute_migration
+- If user mentions "quick" → reduce max_retries, skip validation

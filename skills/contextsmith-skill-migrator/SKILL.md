@@ -11,6 +11,16 @@ metadata:
 
 Safely migrate directories of skills to local/open-weight model engineering standards.
 
+## Quick Use
+
+Invoke with no flags to use safe defaults. Point at a skills directory and get an audit and migration plan:
+
+```
+/contextsmith-skill-migrator
+```
+
+Defaults: `--target-profile generic-local --context-length 64k --mode guided --ralph 1 --output staging --backup --stage --no-apply`. The target profile is inferred from your agent harness when available. Provide flags or natural-language instructions to override.
+
 
 ## Help Mode
 
@@ -21,6 +31,8 @@ Return the requested usage guidance from `references/help.md` and `references/he
 ## Control Parameter Parsing
 
 Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
+
+When `--harness opencode` is specified, load `references/harness-opencode.md` for opencode-specific agent, command, tool, and plugin configurations.
 
 Examples:
 
@@ -73,11 +85,20 @@ Keep model-facing artifacts compact when `targeted_context_length` is tight. Put
 
 ## Run Configuration Preview
 
-For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+Before executing any file-changing work, summarize parameters and plan, then ask the user to confirm. This is the default behavior — do not skip it unless the user explicitly opts out (`--mode yolo`, "just do it", "skip confirmation").
 
-The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
+Use `references/run-configuration-preview.md` for the confirmation format.
+
+The confirmation must include:
+1. **Parameters table** — all selected flags with explanations for inferred values
+2. **Plan** — numbered steps of what will be done
+3. **Question** — structured question asking to proceed, modify, or see more detail
+
+If the user changes something, re-summarize and ask again. Only proceed on positive indication (yes, ok, go, execute, proceed).
 
 ## Workflow
+
+Use `reference_manifest.yml` to determine which references to load. References with `load: always` are loaded on every invocation. References with `load: conditional` are loaded only when the `when` condition is met. References with `load: never` are called (not read into context).
 
 ### 1. Inventory
 

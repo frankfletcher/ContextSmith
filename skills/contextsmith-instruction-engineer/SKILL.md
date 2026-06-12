@@ -14,11 +14,21 @@ Default parameter values for generated instruction files:
 | Parameter | Default |
 |-----------|---------|
 | --mode | guided |
-| --target-profile | qwen36 |
+| --target-profile | generic-local (harness-derived when available) |
 | --context-length | 64k |
 | --education-level | deep |
-| --ralph | 2 |
+| --ralph | 1 |
 | --harness | opencode |
+
+## Quick Use
+
+Invoke with no flags to use safe defaults. Point at a project directory and get an optimized instruction file:
+
+```
+/contextsmith-instruction-engineer
+```
+
+Defaults: `--target-profile generic-local --context-length 64k --mode guided --ralph 1 --output chat`. The target profile is inferred from your agent harness when available. Provide flags or natural-language instructions to override.
 
 Every generated instruction file (AGENTS.md, CLAUDE.md, etc.) MUST include an `## Artifact Manifest` section per `references/artifact-manifest-core.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing child scope with justification (`narrowed`), (4) selecting references — instruction files always include instruction-deduplication, instruction-precedence, loop-safety, git-safety, conditionally domain-profiles and coding-standards, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
 
@@ -37,6 +47,8 @@ For `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI 
 ## Control Parameter Parsing
 
 Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
+
+When `--harness opencode` is specified, load `references/harness-opencode.md` for opencode-specific agent, command, tool, and plugin configurations.
 
 When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
@@ -97,11 +109,20 @@ For coding domains, every generated implementation plan must include test strate
 
 ## Run Configuration Preview
 
-For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+Before executing any file-changing work, summarize parameters and plan, then ask the user to confirm. This is the default behavior — do not skip it unless the user explicitly opts out (`--mode yolo`, "just do it", "skip confirmation").
 
-The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
+Use `references/run-configuration-preview.md` for the confirmation format.
+
+The confirmation must include:
+1. **Parameters table** — all selected flags with explanations for inferred values
+2. **Plan** — numbered steps of what will be done
+3. **Question** — structured question asking to proceed, modify, or see more detail
+
+If the user changes something, re-summarize and ask again. Only proceed on positive indication (yes, ok, go, execute, proceed).
 
 ## Workflow
+
+Use `reference_manifest.yml` to determine which references to load. References with `load: always` are loaded on every invocation. References with `load: conditional` are loaded only when the `when` condition is met. References with `load: never` are called (not read into context).
 
 ### 1. Classify the Instruction Target
 

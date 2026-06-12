@@ -1,0 +1,126 @@
+# Research Domain Template
+
+Default workflow shape for research and analysis tasks.
+
+## Default Phases
+
+```yaml
+phases:
+  - load_context
+  - research
+  - synthesize
+  - audit
+  - close
+```
+
+## Default Gates
+
+```yaml
+gates:
+  - audit
+```
+
+## Default State Definitions
+
+```yaml
+states:
+  load_context:
+    state: init
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: research
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+      - CONTEXT.md
+
+  research:
+    state: execute
+    agent: contextsmith-researcher
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: synthesize
+      - condition: output_invalid
+        target: research
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - EVIDENCE.md
+      - PHASE_LOG.md
+    inputs:
+      - NEXT_PROMPT.md
+      - CONTEXT.md
+
+  synthesize:
+    state: execute
+    agent: contextsmith-synthesizer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: audit
+      - condition: output_invalid
+        target: synthesize
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - REPORT.md
+      - ARTIFACTS.md
+    inputs:
+      - EVIDENCE.md
+      - PLAN.md
+
+  audit:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: pass
+        target: close
+      - condition: fail
+        target: synthesize
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+    inputs:
+      - REPORT.md
+      - EVIDENCE.md
+
+  close:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: close
+    expected_outputs:
+      - SUMMARY.md
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+      - REPORT.md
+```
+
+## Customization Triggers
+
+- If user mentions "sources" or "citations" → add citation validation step
+- If user mentions "data" or "statistics" → add data validation step
+- If user mentions "quick" → reduce max_retries, skip audit

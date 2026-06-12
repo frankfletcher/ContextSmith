@@ -1,0 +1,103 @@
+# General Domain Template
+
+Fallback workflow shape for tasks that don't fit a specific domain.
+
+## Default Phases
+
+```yaml
+phases:
+  - load_context
+  - execute
+  - validate
+  - close
+```
+
+## Default Gates
+
+```yaml
+gates:
+  - validate
+```
+
+## Default State Definitions
+
+```yaml
+states:
+  load_context:
+    state: init
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: execute
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+      - CONTEXT.md
+
+  execute:
+    state: execute
+    agent: contextsmith-builder
+    permissions: edit
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: output_valid
+        target: validate
+      - condition: output_invalid
+        target: execute
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - ARTIFACTS.md
+      - PHASE_LOG.md
+    inputs:
+      - NEXT_PROMPT.md
+      - CONTEXT.md
+
+  validate:
+    state: validate
+    agent: contextsmith-validator
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 120
+    transitions:
+      - condition: pass
+        target: close
+      - condition: fail
+        target: execute
+      - condition: max_retries
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - ARTIFACTS.md
+      - CHECKLIST.md
+
+  close:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: close
+    expected_outputs:
+      - SUMMARY.md
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+```
+
+## Customization Triggers
+
+- If user mentions "review" → add audit gate before validate
+- If user mentions "ralph" or "improve" → add ralph_critique and ralph_revise phases
+- If user mentions "quick" → reduce max_retries, skip validation

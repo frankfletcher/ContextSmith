@@ -5,193 +5,309 @@ references:
 - source: shared/control-parameters-core.md
   version: e5dfcf00636d99ffc45e5566efcd0a4f19252322
   required: true
+  load: always
 - source: shared/control-parameters.md
-  version: 4e378b3850b0ddee23e82f95bb145e60d965850d
+  version: 5e9e315eb52e2f9323183017f02f3bc120e0f2a1
   required: true
+  load: conditional
+  when: user asks for full parameter reference
 - source: shared/artifact-manifest-core.md
   version: 43d9ba9dedcb4010de4894a69dfae9f6391ebb18
   required: true
+  load: always
 - source: shared/artifact-manifest.md
   version: 783571f82366920bf3a7b437dd6246dcdee1406c
   required: true
+  load: conditional
+  when: artifact manifest schema detail needed
 - source: shared/behavioral-contracts.md
   version: a701cb7251289c8c73fa4fcf8feddb7691dd1f50
   required: true
+  load: always
 - source: shared/interaction-modes.md
   version: 13e79f4f9de2d6b505f7f06d5488c22a1d8fb8bf
   required: true
+  load: conditional
+  when: mode behavior unclear
 - source: shared/domain-intent.md
   version: 320def729d99d3d9a69ad854b055a14b1f511497
   required: true
+  load: conditional
+  when: classifying task domain
 - source: shared/side-effect-matrix.md
   version: 646b309d8ccf59b5e2aac7493671cf8c93f0edcd
   required: true
+  load: conditional
+  when: classifying side effects
 - source: shared/source-artifact-boundary.md
   version: 13ceca79595055038a682673abe00ca318c0f2f2
   required: true
+  load: conditional
+  when: source artifacts contain executable instructions
 - source: shared/context-management.md
   version: 6e7d2dafcf947ef4305060efc8ce2b2d95682e14
   required: true
+  load: conditional
+  when: complex context (long docs, RAG, multi-turn)
 - source: shared/targeted-context-length.md
   version: 608c36fa0181b44a0b5893506a7d3e7c6f4b915e
   required: true
+  load: conditional
+  when: user provides targeted context length
 - source: shared/model-capability-tiers.md
   version: feabc377d10fbc5ecd19746e7853f7100d8f61f9
   required: true
+  load: conditional
+  when: using target-capability or planner/executor
 - source: shared/small-model-atomicity.md
   version: 17fd68dba5eed082bd24c05cfabf6cb65ad82dce
   required: true
+  load: conditional
+  when: target is small local model
 - source: shared/model-profiles/qwen36.md
   version: e145d6042e7022cf864f18724dcd69e227cbda71
   required: true
+  load: conditional
+  when: target-profile is qwen36
 - source: shared/model-profiles/generic-local.md
   version: cbb79354512b0a3ebc809efb301f64dde3f95478
   required: true
+  load: conditional
+  when: target-profile is generic-local
 - source: shared/loop-safety.md
   version: bc8cd164a91b84fa5f32259ac53e392954e7e0c7
   required: true
+  load: conditional
+  when: tool use or agentic loops
 - source: shared/git-safety.md
   version: 32748a1b9b452cb4ef49d3fd02ac25a6a4b43ee8
   required: true
+  load: conditional
+  when: coding or repo work
 - source: shared/git-hygiene.md
   version: 2cfd279d185b4f68301015f823266181783bbba6
   required: true
+  load: conditional
+  when: coding or repo work
 - source: shared/output-location.md
   version: 05578904e3553f62fe4c057d95ce423169d2f1ee
   required: true
+  load: conditional
+  when: determining output file location
 - source: shared/persistent-task-state.md
   version: 6b5ba1d26fa47851ce06882c878434be62d21f9f
   required: true
+  load: conditional
+  when: phased or long-running work
 - source: shared/phased-planning.md
   version: ecf597cdb54453a77c1b757af0cca8d1066ea12b
   required: true
+  load: conditional
+  when: phased or long-running work
 - source: shared/implementation-plan-audit.md
   version: 746fc6944ce6e1dedc631326237481e69a4a45cd
   required: true
+  load: conditional
+  when: implementation plan work
 - source: shared/phase-code-review.md
   version: fdd1f6359db85717634e3516e747611f03dc924d
   required: true
+  load: conditional
+  when: coding phase review
 - source: shared/evaluation-rubrics.md
   version: 6492250665a63970e092f729c280ecdb9fa5046b
   required: true
+  load: conditional
+  when: grading or Ralph loop active
 - source: shared/ralph-loop.md
   version: 5950e79ed5008cb26d7bde97db6ab90b0280ae08
   required: true
+  load: conditional
+  when: Ralph iterations > 0
 - source: shared/run-configuration-preview.md
   version: 4612b87bb23a1ca88b8419145e1fd381b90ca68a
   required: true
+  load: conditional
+  when: mode is guided, deep, review-gate, or file-changing
 - source: shared/education-levels.md
   version: efe335df0531804f485656fcb9604d6287f60661
   required: true
+  load: conditional
+  when: education-level is deep or teaching
 - source: shared/documentation-quality.md
   version: fe5be97e08f59cff8efff178fa40c9da6518a082
   required: true
+  load: conditional
+  when: generating or editing documentation
 - source: shared/coding-standards.md
   version: 209414e6853a9d7581d8a81ee0b93142b185b13e
   required: true
+  load: conditional
+  when: coding domain
 - source: shared/ui-standards.md
   version: b3212b4a28834d78ccd4112460f145bfe1b33fde
   required: true
+  load: conditional
+  when: frontend or UI domain
 - source: shared/domain-profiles/coding.md
   version: 7403afd9f32001ffec5b1f5a3ba4a88cf687d26f
   required: true
+  load: conditional
+  when: domain includes coding
 - source: shared/domain-profiles/data-science-ml.md
   version: 2adc5016894941d8048fd14fe96ecc3e0a1b7d19
   required: true
+  load: conditional
+  when: domain includes data-science-ml
 - source: shared/domain-profiles/ai-modalities.md
   version: 5c9033caac419850711ecb8a1deaafc9f626c3e3
   required: true
+  load: conditional
+  when: domain includes ai-modalities
 - source: shared/domain-profiles/documents.md
   version: 71ac6fb88770ad55e696cf8f0c62488481296df0
   required: true
+  load: conditional
+  when: domain includes documents
 - source: shared/domain-profiles/email.md
   version: 0041dfc9254ba3bc38fbf2d8662de3af0945396d
   required: true
+  load: conditional
+  when: domain includes email
 - source: shared/domain-profiles/research.md
   version: a8756a9d90d73f91cc55873fe9cecad4b7c7d663
   required: true
+  load: conditional
+  when: domain includes research
 - source: skills/contextsmith-run/execution-contract.md
   version: a230b23490cc6aac79ca21d0f24e34ea8d5f616f
   required: true
   local: true
   notes: Runtime contract compilation and declared-vs-enforced checks.
+  load: conditional
+  when: contract schema detail needed
 - source: skills/contextsmith-run/execution-contract-core.md
   version: 9fcb16bdee375f7c3608cb68eade8bfcb671154c
   required: true
   local: true
   notes: Always-loaded runtime obligations for cache-efficient enforcement.
+  load: conditional
+  when: always-loaded runtime obligations
 - source: skills/contextsmith-run/interaction-refinement.md
   version: eddae8ab8ceb93c077f9b5c1e5148e54bf43c9f7
   required: true
   local: true
   notes: Refine-mode question rules and parameter mapping.
+  load: conditional
+  when: refine mode interaction
 - source: skills/contextsmith-run/domain-packs.md
   version: 69909bfa101fd567ce928a5879bfaa9c0a0c8e3a
   required: true
   local: true
   notes: Domain-specific refinement, validation, self-audit, and Ralph lenses.
+  load: conditional
+  when: domain-specific refinement or validation
 - source: skills/contextsmith-run/task-state-execution.md
   version: ee2f4c96da9770d2479bee345c45989ec94e2996
   required: true
   local: true
   notes: Phase and NEXT_PROMPT task-state execution rules.
+  load: conditional
+  when: phased task-state execution
 - source: skills/contextsmith-run/evidence-ledger.md
   version: ea9ba3555809dbb9a8d99b4e4f9e2a65cf7d6d48
   required: true
   local: true
   notes: Evidence format for runtime obligation enforcement.
+  load: conditional
+  when: evidence format detail needed
 - source: skills/contextsmith-run/evidence-ledger-core.md
   version: 77fe847ed4f71e04a1350fa6df9a3828cd9ae7a3
   required: true
   local: true
   notes: Always-loaded evidence requirements for cache-efficient enforcement.
+  load: conditional
+  when: always-loaded evidence requirements
 - source: skills/contextsmith-run/help.md
   version: 68dd885f87197776a791d2070ebf2f242e09db87
   required: true
   local: true
   notes: Skill-specific help documentation.
+  load: conditional
+  when: help mode invoked
+- source: shared/harness-opencode.md
+  version: TBD
+  required: true
+  notes: OpenCode harness-specific configurations for agents, commands, tools, and plugins.
+  load: conditional
+  when: --harness opencode
+- source: shared/structured-questioning.md
+  version: TBD
+  required: true
+  notes: Structured questioning patterns for refinement and confirmation.
+  load: conditional
+  when: refine mode or structured questions needed
 - source: runtime/validator.py
-  version: local
+  version: 97171dc757bee11ad7ee661708406e98b4414a1e
   required: true
   local: true
-  notes: Runtime validator core — deterministic structural checks for universal artifacts.
+  notes: "Runtime validator core \u2014 deterministic structural checks for universal\
+    \ artifacts."
+  load: never
+  when: Called via CLI, not loaded into context
 - source: runtime/cli.py
-  version: local
+  version: 9c85ff6347b4962cdc22690e1b278eeb1399156a
   required: true
   local: true
-  notes: CLI adapter for runtime validator — 6 subcommands, exit codes 0/1/2.
+  notes: "CLI adapter for runtime validator \u2014 6 subcommands, exit codes 0/1/2."
+  load: never
+  when: Called via CLI, not loaded into context
 - source: runtime/__init__.py
-  version: local
+  version: e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
   required: true
   local: true
   notes: Runtime package marker.
+  load: never
+  when: Called via CLI, not loaded into context
 - source: runtime/domain_packs/general_fallback.json
-  version: local
+  version: 8d834daf105a32be424d452d3690f628969442f2
   required: true
   local: true
-  notes: General fallback domain pack — handles unknown domains.
+  notes: "General fallback domain pack \u2014 handles unknown domains."
+  load: never
+  when: Called via CLI, not loaded into context
 - source: runtime/domain_packs/software_engineering.json
-  version: local
+  version: bd9e41e9bb6be3df0d548652f18a6a7c92f1737a
   required: true
   local: true
   notes: Software engineering domain pack.
+  load: never
+  when: Called via CLI, not loaded into context
 - source: runtime/domain_packs/scheduling.json
-  version: local
+  version: 3fc79805083e52b6329dc61871805febf69c8928
   required: true
   local: true
   notes: Scheduling domain pack.
+  load: never
+  when: Called via CLI, not loaded into context
 - source: runtime/domain_packs/travel_purchase.json
-  version: local
+  version: 90a6b423231fd8339b89f699493be31c15659c6b
   required: true
   local: true
-  notes: Travel/purchase domain pack — high-risk external actions.
+  notes: "Travel/purchase domain pack \u2014 high-risk external actions."
+  load: never
+  when: Called via CLI, not loaded into context
 - source: runtime/domain_packs/writing_editing.json
-  version: local
+  version: 4c66a9fa33d4a8d3d4db91152e5ab7d7329af071
   required: true
   local: true
   notes: Writing/editing domain pack.
+  load: never
+  when: Called via CLI, not loaded into context
 - source: runtime/domain_packs/research_summary.json
-  version: local
+  version: ac5f6c4cbb063a2f48c78b7c670760f5be0cc9b3
   required: true
   local: true
   notes: Research summary domain pack.
+  load: never
+  when: Called via CLI, not loaded into context

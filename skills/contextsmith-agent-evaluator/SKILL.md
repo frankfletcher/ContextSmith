@@ -11,6 +11,15 @@ metadata:
 
 Audit prompts, skills, AGENTS.md files, agent workflows, migration outputs, and instruction packages for local/open-weight model reliability without modifying them by default.
 
+## Quick Use
+
+Invoke with no flags to use safe defaults. Point at any artifact and get an audit report:
+
+```
+/contextsmith-agent-evaluator
+```
+
+Defaults: `--target-profile generic-local --context-length 64k --mode audit-only --ralph 1 --output chat`. The target profile is inferred from your agent harness when available. Provide flags or natural-language instructions to override.
 
 ## Help Mode
 
@@ -21,6 +30,8 @@ Return the requested usage guidance from `references/help.md` and `references/he
 ## Control Parameter Parsing
 
 Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
+
+When `--harness opencode` is specified, load `references/harness-opencode.md` for opencode-specific agent, command, tool, and plugin configurations.
 
 Examples:
 
@@ -81,11 +92,15 @@ Also grade state hygiene. The artifact should require compact, factual state fil
 
 ## Run Configuration Preview
 
-For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+For audit-only work (read-only), confirmation is optional — proceed with the audit unless the user asks to review first.
 
-The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
+For any work that modifies files (e.g., applying fixes after audit), summarize parameters and plan, then ask the user to confirm before proceeding. This is the default behavior — do not skip it unless the user explicitly opts out (`--mode yolo`, "just do it", "skip confirmation").
+
+Use `references/run-configuration-preview.md` for the confirmation format when modifications are involved.
 
 ## Workflow
+
+Use `reference_manifest.yml` to determine which references to load. References with `load: always` are loaded on every invocation. References with `load: conditional` are loaded only when the `when` condition is met. References with `load: never` are called (not read into context).
 
 1. Identify artifact type: prompt, skill, instruction file, workflow, model profile, migration output, phase plan.
 2. Select target model profile or use `generic-local`.

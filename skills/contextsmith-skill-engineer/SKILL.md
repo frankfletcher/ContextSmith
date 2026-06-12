@@ -14,11 +14,21 @@ Default parameter values for generated skills:
 | Parameter | Default |
 |-----------|---------|
 | --mode | guided |
-| --target-profile | qwen36 |
+| --target-profile | generic-local (harness-derived when available) |
 | --context-length | 64k |
 | --education-level | deep |
-| --ralph | 2 |
+| --ralph | 1 |
 | --harness | opencode |
+
+## Quick Use
+
+Invoke with no flags to use safe defaults. Point at a SKILL.md and get an optimized version:
+
+```
+/contextsmith-skill-engineer
+```
+
+Defaults: `--target-profile generic-local --context-length 64k --mode guided --ralph 1 --output chat`. The target profile is inferred from your agent harness when available. Provide flags or natural-language instructions to override.
 
 Every generated SKILL.md MUST include an `## Artifact Manifest` section per `references/artifact-manifest-core.md`. Build the manifest by: (1) starting with defaults, overriding user-provided values (`user-set`), (2) inheriting from parent artifact if regenerating (`inherited`), (3) narrowing child scope with justification (`narrowed`), (4) selecting references — generated skills always include control-parameters, loop-safety, skill-interoperability, conditionally upstream-artifact-audit and reference-optimization, (5) embedding behavioral contracts from `references/behavioral-contracts.md`.
 
@@ -38,6 +48,8 @@ For `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI 
 ## Control Parameter Parsing
 
 Accept both natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog.
+
+When `--harness opencode` is specified, load `references/harness-opencode.md` for opencode-specific agent, command, tool, and plugin configurations.
 
 When CLI flags and prose conflict, prefer explicit current-user prose or ask one concise clarification question if the intended priority is unclear.
 
@@ -86,11 +98,20 @@ Keep model-facing artifacts compact when `targeted_context_length` is tight. Put
 
 ## Run Configuration Preview
 
-For guided, deep, review-gate, AGENTS.md, migration, or file-changing work, show a compact run configuration preview when important parameters were inferred. Use `references/run-configuration-preview.md`.
+Before executing any file-changing work, summarize parameters and plan, then ask the user to confirm. This is the default behavior — do not skip it unless the user explicitly opts out (`--mode yolo`, "just do it", "skip confirmation").
 
-The preview should state the inferred context, chosen parameters, low-confidence assumptions, and planned approach. Ask the user whether to proceed or change a parameter unless the user explicitly selected yolo/fast behavior.
+Use `references/run-configuration-preview.md` for the confirmation format.
+
+The confirmation must include:
+1. **Parameters table** — all selected flags with explanations for inferred values
+2. **Plan** — numbered steps of what will be done
+3. **Question** — structured question asking to proceed, modify, or see more detail
+
+If the user changes something, re-summarize and ask again. Only proceed on positive indication (yes, ok, go, execute, proceed, etc.).
 
 ## Workflow
+
+Use `reference_manifest.yml` to determine which references to load. References with `load: always` are loaded on every invocation. References with `load: conditional` are loaded only when the `when` condition is met. References with `load: never` are called (not read into context).
 
 ### 1. Determine Task Type
 
@@ -120,13 +141,27 @@ Use `references/instruction-deduplication.md` to avoid duplicating existing loop
 
 Inventory `references/`, `scripts/`, `assets/`, and `agents/`. Use `references/reference-optimization.md`. Modify references only when they are behavioral, duplicated, stale, model-hostile, or needed for progressive disclosure.
 
-### 4. Rewrite or Create the Skill
+### 4. Confirm Before Building
+
+Before writing any files, present a run configuration preview:
+
+1. **Parameters** — show all selected flags with explanations for inferred values
+2. **Plan** — numbered steps: what will be created/modified, in what order
+3. **Question** — ask the user to confirm, modify, or see more detail
+
+Use the structured question tool (e.g., `AskUserQuestion`) for the confirmation. Only proceed on positive indication (yes, ok, go, execute, proceed).
+
+If the user changes parameters, re-summarize and ask again.
+
+Skip this step only with `--mode yolo` or explicit "just do it" / "skip confirmation".
+
+### 5. Rewrite or Create the Skill
 
 Use a concise main `SKILL.md` with progressive disclosure. Keep core workflow, non-negotiable rules, and validation gates inline. Move long templates, examples, model profiles, runtime notes, failure tables, and detailed protocols to references.
 
 Add engineering metadata using `references/engineering-metadata.md`.
 
-### 5. Add Domain and Safeguards When Relevant
+### 6. Add Domain and Safeguards When Relevant
 
 Use `references/domain-intent.md`, `side-effect-matrix.md`, and domain profiles.
 
@@ -138,7 +173,7 @@ For AGENTS.md/instruction-related skills, add instruction scan/de-duplication.
 
 For data science/ML/AI skills, use `domain-profiles/data-science-ml.md` and `domain-profiles/ai-modalities.md` when relevant.
 
-### 6. Add Context, Phase, and Memory Support
+### 7. Add Context, Phase, and Memory Support
 
 If the skill may handle long docs, repos, files, logs, tool outputs, RAG, graph/index data, or multi-turn state, add context strategy from `context-management.md`.
 
@@ -155,11 +190,11 @@ When adding this contract, define the minimum responsibility of each state file 
 
 If scoped review reduces context pressure or improves validation, add subagent delegation.
 
-### 7. Ralph Loop
+### 8. Ralph Loop
 
 Run the declared Ralph iterations (`--ralph`, default `2`) unless explicitly disabled. Save each iteration to the canonical task folder, grade A-F, and stop early only with recorded evidence that further iterations would be no-op or bloat. Do not iterate for cosmetics.
 
-### 8. Validate
+### 9. Validate
 
 Check:
 
@@ -176,7 +211,7 @@ Check:
 - semantic diff and educational report included
 - declared parameters, required audits, and Ralph iterations have evidence or a blocker
 
-### 9. Runtime Validation
+### 10. Runtime Validation
 
 Validate generated artifacts with `python -m runtime.cli <subcommand> <artifact.json>`. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs under `runtime/domain_packs/`. Use `--validation none` to opt out. If runtime module unavailable, record blocker.
 

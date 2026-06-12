@@ -1,0 +1,105 @@
+# Audit Domain Template
+
+Default workflow shape for audit and review tasks.
+
+## Default Phases
+
+```yaml
+phases:
+  - load_context
+  - audit_output
+  - report
+  - close
+```
+
+## Default Gates
+
+```yaml
+gates:
+  - audit
+```
+
+## Default State Definitions
+
+```yaml
+states:
+  load_context:
+    state: init
+    agent: contextsmith-planner
+    permissions: read-only
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: audit_output
+      - condition: fail
+        target: blocked
+    expected_outputs: []
+    inputs:
+      - STATUS.md
+      - PLAN.md
+      - CONTEXT.md
+
+  audit_output:
+    state: audit
+    agent: contextsmith-auditor
+    permissions: read-only
+    max_retries: 3
+    timeout_s: 600
+    transitions:
+      - condition: pass
+        target: report
+      - condition: fail
+        target: audit_output
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+    inputs:
+      - PLAN.md
+      - CONTEXT.md
+
+  report:
+    state: execute
+    agent: contextsmith-reporter
+    permissions: edit
+    max_retries: 2
+    timeout_s: 300
+    transitions:
+      - condition: output_valid
+        target: close
+      - condition: output_invalid
+        target: report
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - SUMMARY.md
+      - EDUCATIONAL_REPORT.md
+    inputs:
+      - AUDIT_REPORT.md
+      - EVIDENCE.md
+
+  close:
+    state: closeout
+    agent: contextsmith-closer
+    permissions: edit
+    max_retries: 2
+    timeout_s: 60
+    transitions:
+      - condition: pass
+        target: done
+      - condition: fail
+        target: close
+    expected_outputs:
+      - NEXT_PROMPT.md
+    inputs:
+      - STATUS.md
+      - AUDIT_REPORT.md
+```
+
+## Customization Triggers
+
+- If user mentions "fix" or "remediate" → add fix phase after audit
+- If user mentions "grade" or "score" → add grading criteria to AUDIT_REPORT.md
+- If user mentions "quick" → reduce max_retries, skip educational report

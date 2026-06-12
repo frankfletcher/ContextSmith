@@ -63,3 +63,92 @@ Accept both natural-language controls and CLI-style flags at the meta-skill leve
 ## Help Mode
 
 If the user invokes this skill with `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI-style equivalents such as `--help`, do not route to a sub-skill. Return a concise overview from `references/help.md` and list the available sub-skills with one-line descriptions.
+
+## Wizard Mode
+
+When this skill is invoked with no clear intent, no flags, and no specific sub-skill name, enter wizard mode. Wizard mode asks one question at a time using the harness's structured question tool (e.g., `AskUserQuestion` in OpenCode) to determine intent, model profile, and context budget, then dispatches to the appropriate sub-skill.
+
+Skip the wizard when the user provides any of: a sub-skill name, CLI flags, or natural-language intent that maps clearly to a sub-skill.
+
+For questioning format and page-flow patterns, see `references/structured-questioning.md`.
+
+### Wizard Questions
+
+Ask exactly these three questions in order. Use the structured question tool for each. After Q3, present a confirmation table and ask for approval.
+
+**Q1: "What are you working on?"**
+
+| Option | Maps to |
+|--------|---------|
+| A prompt | `contextsmith-prompt-engineer` |
+| A skill (SKILL.md) | `contextsmith-skill-engineer` |
+| Repo instructions (AGENTS.md, etc.) | `contextsmith-instruction-engineer` |
+| Something to review or audit | `contextsmith-agent-evaluator` |
+| I want to run or execute something | `contextsmith-run` |
+| A directory of skills to migrate | `contextsmith-skill-migrator` |
+| Not sure yet | Ask Q2 with a freeform description |
+
+If the user cannot describe their task after Q2, dispatch to `contextsmith-agent-evaluator` with `--mode audit-only --target .` to review the current project.
+
+**Q2: "Which model will use the result?"**
+
+| Option | Maps to |
+|--------|---------|
+| Qwen 3 (6B) | `--target-profile qwen36` |
+| Qwen 3 (14B) | `--target-profile qwen3-14b` |
+| Qwen 3 (32B) | `--target-profile qwen3-32b` |
+| Gemma 4 | `--target-profile gemma4` |
+| Llama 3.x | `--target-profile llama3` |
+| Generic local model | `--target-profile generic-local` |
+| Not sure (use generic-local) | `--target-profile generic-local` |
+
+If the agent harness identifies its model (e.g., the user is running in opencode, cursor, or another harness that exposes model info), use that information to pre-select the profile and note the inference in the confirmation table.
+
+**Q3: "How much context can it work with?"**
+
+| Option | Maps to |
+|--------|---------|
+| 8K — very small | `--context-length 8k` |
+| 64K — common modern | `--context-length 64k` |
+| 128K — larger local or frontier | `--context-length 128k` |
+| Not sure (use 64k) | `--context-length 64k` |
+
+### Confirmation
+
+After Q3, display the full command and parameter table:
+
+```
+→ ContextSmith will run:
+
+  /contextsmith-<sub-skill> \
+    --target-profile <profile> \
+    --context-length <length> \
+    --mode guided \
+    --ralph 1
+
+  Parameters:
+  ┌──────────────────┬────────────────────────────────────────┐
+  │ Target profile   │ <profile> (inferred from harness/info) │
+  │ Context length   │ <length>                                │
+  │ Mode             │ guided                                  │
+  │ Ralph iterations │ 1                                       │
+  │ Output           │ chat (no files written)                  │
+  └──────────────────┴────────────────────────────────────────┘
+
+  [Yes, run it] [No, let me modify → restart at Q2]
+```
+
+- **Yes**: dispatch to the sub-skill with the inferred parameters.
+- **No**: re-enter the wizard at Q2 (not Q1 — the user already chose their task type).
+
+### Defaults When Skipping Wizard
+
+When the user provides flags or intent but omits some parameters, apply these defaults:
+
+| Parameter | Default | Logic |
+|-----------|---------|-------|
+| `--target-profile` | Harness-derived if available, else `generic-local` | Infer from the agent environment when possible |
+| `--context-length` | `64k` | Safer modern default for most local models |
+| `--mode` | `guided` | Best for interactive work |
+| `--ralph` | `1` | One improvement pass is usually enough |
+| `--output` | `chat` for zero-flag invocations | Do not write files without explicit direction |

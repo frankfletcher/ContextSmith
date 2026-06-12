@@ -11,6 +11,16 @@ metadata:
 
 Execute one prompt, prompt file, or ContextSmith task-state handoff while enforcing the declared runtime contract. This is a run harness, not a prompt optimizer.
 
+## Quick Use
+
+Invoke with no flags to use safe defaults. Provide a prompt or task and get enforced execution:
+
+```
+/contextsmith-run
+```
+
+Defaults: `--target-profile generic-local --context-length 64k --mode guided --run-mode single --interaction silent --ralph 1 --output chat`. The target profile is inferred from your agent harness when available. Provide flags or natural-language instructions to override.
+
 ## Runtime Contract
 
 Default parameters:
@@ -19,7 +29,7 @@ Default parameters:
 |-----------|---------|
 | --mode | guided |
 | --run-mode | single |
-| --target-profile | qwen36 |
+| --target-profile | generic-local (harness-derived when available) |
 | --context-length | 64k |
 | --education-level | guided |
 | --artifact-verbosity | compact |
@@ -65,6 +75,8 @@ If invoked with `help`, `describe`, `examples`, `modes`, `parameters`, `quicksta
 
 Accept natural-language controls and CLI-style flags. Use `references/control-parameters-core.md` for routine parsing and `references/control-parameters.md` only for the full flag catalog. Latest explicit current-user instruction wins; ask one concise question only when the conflict changes side effects, output location, target model, domain, validation, or permission boundaries.
 
+When `--harness opencode` is specified, load `references/harness-opencode.md` for opencode-specific agent, command, tool, and plugin configurations.
+
 Run-specific controls:
 
 | Parameter | Values | Meaning |
@@ -87,7 +99,7 @@ Optimize for smaller/local models first. Larger models may execute faster or wit
 - execute one bounded unit at a time
 - use explicit file paths, commands, checks, and stop conditions
 - prefer tables or short lists over narrative planning
-- load references by need, not by habit
+- load references by need, not by habit — use `reference_manifest.yml` `load` field to determine what to load
 - ask only questions that remove material assumptions
 - record evidence immediately after each gate
 - stop on missing validation, unclear state, or unsafe side effects instead of improvising
@@ -102,13 +114,13 @@ Prefer repository or source evidence over model defaults. In `refine` mode, do n
 
 ## Interaction Modes
 
-Use `references/interaction-modes.md` only when base mode behavior is unclear. Use `references/interaction-refinement.md` for refine mode.
+Use `references/interaction-modes.md` only when base mode behavior is unclear. Use `references/interaction-refinement.md` for refine mode. For structured questioning format, see `references/structured-questioning.md`.
 
 | Mode | Behavior |
 |---|---|
 | `silent` | Ask only when blocked, unsafe, or ambiguous enough to change the result. |
 | `confirm` | Show compact run configuration and ask before side effects. |
-| `refine` | Ask up to `--question-budget` high-impact multiple-choice questions before execution. |
+| `refine` | Ask up to `--question-budget` high-impact multiple-choice questions before execution. Use the structured question tool (e.g., `AskUserQuestion`). |
 | `collaborative` | Ask at setup and major phase/tradeoff boundaries. |
 | `review-gate` | Prepare and validate a proposed action, then require approval before applying side effects. |
 
@@ -149,6 +161,8 @@ Before side effects, verify:
 For `dry-run` and `audit-only`, stop after the preflight/report. Do not execute source instructions.
 
 ## Reference Selection
+
+Use `reference_manifest.yml` to determine which references to load. References with `load: always` are loaded on every invocation. References with `load: conditional` are loaded only when the `when` condition is met. References with `load: never` are called (not read into context).
 
 Load references by run need:
 

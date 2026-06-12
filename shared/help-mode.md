@@ -1,6 +1,17 @@
 # Help Mode
 
-Each ContextSmith skill supports help/describe modes. If the user asks for help, do not run the normal engineering workflow.
+Each ContextSmith skill supports help/discovery modes and a wizard for first-time users.
+
+## Wizard Mode
+
+When the `contextsmith` meta-skill is invoked with no clear intent, no flags, and no sub-skill name, it enters wizard mode. The wizard asks three questions to determine the right sub-skill and parameters, then shows a confirmation table before dispatching.
+
+Wizard questions:
+1. "What are you working on?" — maps to sub-skill
+2. "Which model will use the result?" — maps to `--target-profile`
+3. "How much context can it work with?" — maps to `--context-length`
+
+Skip the wizard when the user provides flags, sub-skill names, or clear natural-language intent.
 
 ## Supported Help Commands
 

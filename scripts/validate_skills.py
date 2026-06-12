@@ -80,6 +80,12 @@ def validate_manifest(skill_dir, skill_name):
         if not ref.get('version'):
             print(f"WARN {skill_name}: reference '{source}' missing version")
 
+        # Check load field present
+        if 'load' not in ref:
+            print(f"WARN {skill_name}: reference '{source}' missing load field (always/conditional/never)")
+        elif ref['load'] == 'conditional' and 'when' not in ref:
+            print(f"WARN {skill_name}: conditional reference '{source}' missing when field")
+
     return warn, err
 
 for skill in sorted(skills.iterdir()):

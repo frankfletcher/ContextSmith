@@ -1,0 +1,272 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "WorkflowConfig",
+  "description": "Schema for ContextSmith workflow configuration files. Defines the state machine, phase ordering, validation gates, and execution parameters for orchestrated agent workflows.",
+  "type": "object",
+  "required": ["workflow_id", "version", "domain", "mode"],
+  "additionalProperties": false,
+  "properties": {
+    "workflow_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]+$",
+      "minLength": 1,
+      "description": "Unique identifier for this workflow. Used in checkpoints and logs. Must be lowercase alphanumeric with hyphens or underscores."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Schema version. Must match the orchestrator's expected version."
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["coding", "documentation", "migration", "audit", "planning", "general"],
+      "description": "Domain category that determines which validators and references apply."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["phased-run"],
+      "description": "Execution mode. Currently only 'phased-run' is supported."
+    },
+    "harness": {
+      "type": "string",
+      "default": "auto",
+      "description": "Which harness adapter to use. 'auto' = detect from environment, or a registered adapter name."
+    },
+    "baseline": {
+      "$ref": "#/definitions/BaselineBlock",
+      "default": {},
+      "description": "Baseline requirements that the orchestrator enforces."
+    },
+    "overlay": {
+      "$ref": "#/definitions/OverlayBlock",
+      "default": {},
+      "description": "Optional overlay that modifies the baseline workflow."
+    },
+    "states": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/StateDefinition"
+      },
+      "default": {},
+      "description": "State machine definitions for each phase step. Keys are phase step names."
+    },
+    "phase_order": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Ordered list of phase step names that form the workflow."
+    },
+    "validation": {
+      "$ref": "#/definitions/ValidationBlock",
+      "default": {},
+      "description": "Global validation rules applied after phase execution."
+    },
+    "metadata": {
+      "$ref": "#/definitions/MetadataBlock",
+      "default": {},
+      "description": "Metadata for documentation and display."
+    }
+  },
+  "definitions": {
+    "BaselineBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required_steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Steps that must be present in phase_order after overlay resolution."
+        },
+        "required_gates": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Gates that must pass before the workflow can complete."
+        },
+        "required_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Files that must exist in the task-state directory."
+        }
+      }
+    },
+    "OverlayBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "add_steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OverlayStep"
+          },
+          "default": [],
+          "description": "Steps to insert into the phase order after specified anchor points."
+        },
+        "remove_steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Steps to remove from the phase order."
+        },
+        "allow_remove_required": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, the overlay can remove required steps. Requires --force flag at runtime."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Human-readable notes about the overlay's purpose."
+        }
+      }
+    },
+    "OverlayStep": {
+      "type": "object",
+      "required": ["step"],
+      "additionalProperties": false,
+      "properties": {
+        "step": {
+          "type": "string",
+          "description": "Name of the step to insert."
+        },
+        "after": {
+          "type": ["string", "null"],
+          "default": null,
+          "description": "Anchor step name to insert after. Null = insert at beginning."
+        }
+      }
+    },
+    "StateDefinition": {
+      "type": "object",
+      "required": ["state", "permissions"],
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["init", "plan", "execute", "audit", "fix", "validate", "ralph_critique", "ralph_revise", "closeout", "done", "blocked"],
+          "description": "The canonical state machine state this phase corresponds to."
+        },
+        "agent": {
+          "type": "string",
+          "default": "contextsmith-builder",
+          "description": "Agent profile to use for this phase."
+        },
+        "permissions": {
+          "type": "string",
+          "enum": ["read-only", "edit", "external-action"],
+          "description": "Permission level for this phase."
+        },
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 3,
+          "description": "Maximum retries before transitioning to blocked."
+        },
+        "timeout_s": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 300,
+          "description": "Wall-clock timeout in seconds."
+        },
+        "optional": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this step can be removed by overlay."
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Transition"
+          },
+          "default": [],
+          "description": "Valid exit transitions from this state."
+        },
+        "expected_outputs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Files this phase is expected to produce."
+        },
+        "inputs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Files this phase reads as input."
+        },
+        "checkpoint_before_run": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, write checkpoint before dispatching (in addition to after)."
+        },
+        "ralph_max_cycles": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "For ralph_critique states: max critique-revise cycles before forced advance."
+        }
+      }
+    },
+    "Transition": {
+      "type": "object",
+      "required": ["condition", "target"],
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "type": "string",
+          "description": "Condition that triggers this transition. Common values: pass, fail, output_valid, output_invalid, max_retries, max_cycles_reached, unstructured, always."
+        },
+        "target": {
+          "type": "string",
+          "description": "Target state name, or special values: retry-same-state, blocked, done."
+        }
+      }
+    },
+    "ValidationBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "type": "string",
+          "description": "Schema file path for phase contract validation (relative to project root)."
+        },
+        "required_checks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["file_exists", "json_schema", "regex_match", "command_exit_zero", "content_non_empty"]
+          },
+          "default": [],
+          "description": "Checks to run after phase execution."
+        },
+        "relaxed": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, validation failures are reported but do not block advancement."
+        }
+      }
+    },
+    "MetadataBlock": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable workflow name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of what this workflow does."
+        },
+        "author": {
+          "type": "string",
+          "description": "Author or owning team."
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Arbitrary key-value pairs for display."
+        }
+      }
+    }
+  }
+}

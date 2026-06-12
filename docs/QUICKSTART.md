@@ -1,6 +1,27 @@
 # Quick Start
 
-Get your first useful ContextSmith result in under five minutes.
+Get your first useful ContextSmith result in under two minutes — or dive into the full five-minute paths below.
+
+## Zero to Output (30 seconds)
+
+New to ContextSmith? Type the skill name with no flags and answer a few questions:
+
+```
+/contextsmith
+```
+
+The wizard asks what you're working on, which model to target, and how much context it has. Then it shows you the command it will run and asks for confirmation. Three clicks, zero flag memorization.
+
+Each sub-skill also works with zero flags, using safe defaults (generic-local model, 64k context, guided mode):
+
+```
+/contextsmith-prompt-engineer        # paste a prompt, get an optimized version
+/contextsmith-instruction-engineer  # scan your project, get an AGENTS.md
+/contextsmith-agent-evaluator       # audit any artifact
+/contextsmith-skill-engineer        # optimize a SKILL.md
+/contextsmith-skill-migrator        # migrate a directory of skills
+/contextsmith-run                   # execute with enforcement
+```
 
 **Prerequisites:** ContextSmith skills installed in `~/.agents/skills/`. If you haven't installed yet, copy the `skills/` directory from the ContextSmith repo into `~/.agents/skills/`.
 

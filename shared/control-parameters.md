@@ -2,6 +2,18 @@
 
 ContextSmith skills accept both natural-language controls and CLI-style flags. CLI-style flags are recommended for repeatable workflows and future CLI/UI compatibility.
 
+## Defaults
+
+When no flags or intent are provided, skills use these defaults:
+
+| Parameter | Default | Logic |
+|-----------|---------|-------|
+| `--target-profile` | Harness-derived if available, else `generic-local` | Infer from the agent environment; fall back to a safe general-purpose local profile |
+| `--context-length` | `64k` | Safer modern default for most local models |
+| `--mode` | `guided` | Best for interactive work |
+| `--ralph` | `1` | One improvement pass is usually enough |
+| `--output` | `chat` for zero-flag invocations | Do not write files without explicit direction |
+
 ## Parsing Rules
 
 1. Parse CLI-style flags first.

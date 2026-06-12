@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "AgentConfig",
+  "description": "Schema for OpenCode agent definition files (YAML frontmatter in .opencode/agents/*.md). Defines agent role, permissions, and execution limits.",
+  "type": "object",
+  "required": ["description", "mode", "permission"],
+  "additionalProperties": false,
+  "properties": {
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable description of what this agent does."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["primary", "subagent"],
+      "description": "Agent mode. 'primary' = direct interaction, 'subagent' = invoked by primary."
+    },
+    "steps": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum number of tool calls per invocation. If omitted, no cap."
+    },
+    "permission": {
+      "$ref": "#/definitions/PermissionBlock",
+      "description": "Permission boundaries for this agent."
+    }
+  },
+  "definitions": {
+    "PermissionBlock": {
+      "type": "object",
+      "required": ["edit"],
+      "additionalProperties": false,
+      "properties": {
+        "edit": {
+          "type": "string",
+          "enum": ["allow", "deny"],
+          "description": "Whether the agent can modify files."
+        },
+        "bash": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": ["allow", "deny"],
+              "description": "Simple allow/deny for all bash commands."
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "enum": ["allow", "deny"]
+              },
+              "description": "Pattern-based bash rules. Key '*' is the default. Specific command patterns override the default.",
+              "example": {
+                "*": "deny",
+                "python scripts/validate_skills.py": "allow"
+              }
+            }
+          ],
+          "description": "Bash command permissions. Can be a simple allow/deny string or an object with pattern-based rules."
+        },
+        "webfetch": {
+          "type": "string",
+          "enum": ["allow", "deny"],
+          "description": "Whether the agent can fetch URLs."
+        },
+        "external_directory": {
+          "type": "string",
+          "enum": ["allow", "deny"],
+          "description": "Whether the agent can access directories outside the project."
+        }
+      }
+    }
+  }
+}
