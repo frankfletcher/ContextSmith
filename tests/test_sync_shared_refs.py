@@ -7,10 +7,8 @@ local files (e.g., runtime/validator.py -> references/runtime/validator.py).
 import os
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
-import pytest
 
 SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "sync_shared_refs.py"
 

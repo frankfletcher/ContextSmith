@@ -156,7 +156,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "next-prompt":
         return _handle_next_prompt(args)
-    
+
     # Check if this is a runner command (returns dict instead of int)
     if args.command in RUNNER_COMMANDS:
         result = validator_fn(args.task_dir if hasattr(args, 'task_dir') else ".")

@@ -1,6 +1,5 @@
 """Tests for the Next Prompt Compiler."""
 
-import os
 import sys
 import tempfile
 from pathlib import Path

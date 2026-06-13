@@ -1,0 +1,33 @@
+"""Exit codes and canonical state names for the orchestrator."""
+
+EXIT_DONE = 0
+EXIT_BLOCKED = 1
+EXIT_CONTINUE = 2
+
+STATE_INIT = "init"
+STATE_PLAN = "plan"
+STATE_EXECUTE = "execute"
+STATE_AUDIT = "audit"
+STATE_FIX = "fix"
+STATE_VALIDATE = "validate"
+STATE_RALPH_CRITIQUE = "ralph_critique"
+STATE_RALPH_REVISE = "ralph_revise"
+STATE_CLOSEOUT = "closeout"
+STATE_DONE = "done"
+STATE_BLOCKED = "blocked"
+
+CANONICAL_STATES = [
+    STATE_INIT,
+    STATE_PLAN,
+    STATE_EXECUTE,
+    STATE_AUDIT,
+    STATE_FIX,
+    STATE_VALIDATE,
+    STATE_RALPH_CRITIQUE,
+    STATE_RALPH_REVISE,
+    STATE_CLOSEOUT,
+    STATE_DONE,
+    STATE_BLOCKED,
+]
+
+TERMINAL_STATES = [STATE_DONE, STATE_BLOCKED]

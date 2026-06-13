@@ -1,0 +1,12 @@
+[project]
+name = "contextsmith"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "jsonschema>=4.26.0",
+    "pytest>=9.0.3",
+    "pyyaml>=6.0.3",
+    "ruff>=0.15.17",
+]

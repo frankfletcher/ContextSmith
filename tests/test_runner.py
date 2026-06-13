@@ -21,7 +21,7 @@ def temp_task_dir():
     """Create a temporary task directory with minimal task-state files."""
     with tempfile.TemporaryDirectory() as tmpdir:
         task_dir = Path(tmpdir)
-        
+
         # Create STATUS.md
         (task_dir / "STATUS.md").write_text("""# Status: Test Task
 
@@ -45,7 +45,7 @@ Phase 5E (Runner Skeleton)
 - `python scripts/validate_skills.py`
 - `python -m pytest tests/ -v`
 """)
-        
+
         # Create PLAN.md with Phase 5E section
         (task_dir / "PLAN.md").write_text("""# Universal Runtime Enforcement Implementation Plan
 
@@ -70,7 +70,7 @@ context_contract:
 - Bad fixture reports exact missing artifacts
 - Pytest covers pass/fail runner behavior
 """)
-        
+
         # Create CONTEXT.md
         (task_dir / "CONTEXT.md").write_text("""# Context: Runtime Enforcement
 
@@ -79,14 +79,14 @@ context_contract:
 - `python scripts/token_budget.py --strict` after skill or shared-reference changes.
 - `python -m pytest tests/ -v` after runtime validator, domain-pack, CLI, or runner test changes.
 """)
-        
+
         yield task_dir
 
 
 def test_plan_status_basic(temp_task_dir):
     """Test plan_status returns basic phase information."""
     result = plan_status(temp_task_dir)
-    
+
     assert result['phase'] == 'Phase 5E'
     assert result['status']['current_phase'] == 'Phase 5E'
     assert result['has_status'] is True
@@ -97,7 +97,7 @@ def test_plan_status_basic(temp_task_dir):
 def test_next_gate_basic(temp_task_dir):
     """Test next_gate returns validation commands and blockers."""
     result = next_gate(temp_task_dir)
-    
+
     assert result['phase'] == 'Phase 5E'
     assert len(result['blockers']) > 0
     assert 'packaging flattening' in result['blockers'][0].lower()
@@ -112,7 +112,7 @@ def test_plan_status_missing_files():
     """Test plan_status handles missing task-state files gracefully."""
     with tempfile.TemporaryDirectory() as tmpdir:
         result = plan_status(Path(tmpdir))
-        
+
         assert result['phase'] is None
         assert result['has_status'] is False
         assert result['has_plan'] is False
@@ -123,7 +123,7 @@ def test_next_gate_missing_files():
     """Test next_gate handles missing task-state files gracefully."""
     with tempfile.TemporaryDirectory() as tmpdir:
         result = next_gate(Path(tmpdir))
-        
+
         assert result['phase'] is None
         assert result['blockers'] == []
         assert result['validation_commands'] == []

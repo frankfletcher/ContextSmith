@@ -15,14 +15,14 @@ After each implementation phase, before writing RESULT.json:
 
 - [x] All expected output files exist
 - [x] All expected output files are non-empty
-- [ ] Code compiles (for Python phases): `python -c "import orchestrator.<module>"`
+- [x] Code compiles (for Python phases): `python -c "import orchestrator.<module>"`
 - [ ] Tests pass (if tests exist): `pytest tests/test_<module>.py -v`
 - [x] No TODOs, FIXMEs, or HACKs in written files
 - [x] No placeholders (..., TBD, PLACEHOLDER) in written files
-- [ ] Imports resolve (no circular imports)
-- [ ] Docstrings present on all public functions
-- [ ] Style matches existing code conventions
-- [ ] Implementation matches spec in deep_determinism/
+- [x] Imports resolve (no circular imports)
+- [x] Docstrings present on all public functions
+- [x] Style matches existing code conventions
+- [x] Implementation matches spec in deep_determinism/
 
 ## Phase 1: Verify Schemas and Create Test Fixtures
 
@@ -63,79 +63,143 @@ After each implementation phase, before writing RESULT.json:
 ## Phase 2: Core Orchestrator Module
 
 ### Sub-phase 2a: Create orchestrator package structure
-- [ ] Create orchestrator/ directory
-- [ ] Create __init__.py with public API
-- [ ] Create constants.py with exit codes and states
-- [ ] Create exceptions.py with custom exceptions
-- [ ] Verify import works
+- [x] Create orchestrator/ directory
+- [x] Create __init__.py with public API
+- [x] Create constants.py with exit codes and states
+- [x] Create exceptions.py with custom exceptions
+- [x] Verify import works
 
 ### Sub-phase 2b: Implement state reader
-- [ ] Create state_reader.py
-- [ ] Implement read_status()
-- [ ] Implement read_plan()
-- [ ] Implement read_context()
-- [ ] Implement read_checkpoint()
-- [ ] Add validation for each parser
-- [ ] Test with valid fixture
+- [x] Create state_reader.py
+- [x] Implement read_status()
+- [x] Implement read_plan()
+- [x] Implement read_context()
+- [x] Implement read_checkpoint()
+- [x] Add validation for each parser
+- [x] Test with valid fixture
 
 ### Sub-phase 2c: Implement checkpoint manager
-- [ ] Create checkpoint.py
-- [ ] Implement read_checkpoint()
-- [ ] Implement write_checkpoint() with atomic writes
-- [ ] Implement update_checkpoint() for counters
-- [ ] Implement validate_checkpoint()
-- [ ] Test round-trip write/read
+- [x] Create checkpoint.py
+- [x] Implement read_checkpoint()
+- [x] Implement write_checkpoint() with atomic writes
+- [x] Implement update_checkpoint() for counters
+- [x] Implement validate_checkpoint()
+- [x] Test round-trip write/read
 
 ### Sub-phase 2d: Implement step compiler
-- [ ] Create step_compiler.py
-- [ ] Define StepContract and HarnessResult (or import)
-- [ ] Implement compile_step_contract()
-- [ ] Implement resolve_next_state()
-- [ ] Implement _matches_condition()
-- [ ] Test with test fixture
+- [x] Create step_compiler.py
+- [x] Define StepContract and HarnessResult (or import)
+- [x] Implement compile_step_contract()
+- [x] Implement resolve_next_state()
+- [x] Implement _matches_condition()
+- [x] Test with test fixture
 
 ### Sub-phase 2e: Implement main loop
-- [ ] Create orchestrator.py
-- [ ] Implement run() for single step
-- [ ] Implement run_workflow() for outer loop
-- [ ] Implement should_stop() for STOP file
-- [ ] Implement register_signal_handlers()
-- [ ] Wire together all components
-- [ ] Test with --dry-run
+- [x] Create orchestrator.py
+- [x] Implement run() for single step
+- [x] Implement run_workflow() for outer loop
+- [x] Implement should_stop() for STOP file
+- [x] Implement register_signal_handlers()
+- [x] Wire together all components
+- [x] Test with --dry-run
 
 ### Sub-phase 2f: Implement CLI interface
-- [ ] Create cli.py
-- [ ] Implement argument parsing
-- [ ] Implement subcommands (run, init, validate, inspect, diff, resume)
-- [ ] Wire to orchestrator functions
-- [ ] Test --help output
+- [x] Create cli.py
+- [x] Implement argument parsing
+- [x] Implement subcommands (run, init, validate, inspect, diff, resume)
+- [x] Wire to orchestrator functions
+- [x] Test --help output
+
+### Bug Fix Pass
+- [x] Fix _list() strip bug in state_reader.py
+- [x] Fix max_retries condition in step_compiler.py
+- [x] Fix _update_status destroying STATUS.md structure
+- [x] Fix _update_status writing "unknown" for phase
+- [x] Reconcile duplicate read_checkpoint functions
+- [x] Add YAML config loading support
+- [x] Fix datetime.utcnow() deprecation warnings
+- [x] Fix update_checkpoint mutation bug
+- [x] Fix CLI argparse conflicts
+- [x] Fix run_workflow silently dropping flags
+- [x] Add file locking for state directory
+- [x] Add config validation against schemas
+- [x] Add report file protection system
+- [x] Test all fixes end-to-end
 
 ## Phase 3: Harness Adapters
 
 ### Sub-phase 3a: Create adapter base classes
-- [ ] Create adapters/ directory
-- [ ] Create __init__.py with ADAPTER_REGISTRY
-- [ ] Create base.py with StepContract dataclass
-- [ ] Create base.py with HarnessResult dataclass
-- [ ] Create base.py with HarnessAdapter ABC
-- [ ] Create base.py with HarnessRegistry
-- [ ] Create base.py with error types
-- [ ] Verify import works
+- [x] Create adapters/ directory
+- [x] Create __init__.py with ADAPTER_REGISTRY
+- [x] Create base.py with StepContract dataclass
+- [x] Create base.py with HarnessResult dataclass
+- [x] Create base.py with HarnessAdapter ABC
+- [x] Create base.py with HarnessRegistry
+- [x] Create base.py with error types
+- [x] Verify import works
 
 ### Sub-phase 3b: Implement generic adapter
-- [ ] Create generic.py
-- [ ] Implement GenericAdapter class
-- [ ] Implement name, validate_environment, execute, cancel, get_capabilities
-- [ ] Register with HarnessRegistry
-- [ ] Test with test fixture
+- [x] Create generic.py
+- [x] Implement GenericAdapter class
+- [x] Implement name, validate_environment, execute, cancel, get_capabilities
+- [x] Register with HarnessRegistry
+- [x] Test with test fixture
 
 ### Sub-phase 3c: Implement OpenCode adapter
-- [ ] Create opencode.py
-- [ ] Implement OpenCodeAdapter class
-- [ ] Implement _build_command() with verified flags
-- [ ] Implement _read_result() for RESULT.json
-- [ ] Register with HarnessRegistry
-- [ ] Test validate_environment()
+- [x] Create opencode.py
+- [x] Implement OpenCodeAdapter class
+- [x] Implement _build_command() with verified flags
+- [x] Implement _read_result() for RESULT.json
+- [x] Register with HarnessRegistry
+- [x] Test validate_environment()
+
+## Phase 3.5: Integration and Bug Fixes
+
+### Critical Integration
+- [x] Wire adapters into orchestrator.py
+- [x] Replace simulated execution with actual adapter calls
+- [x] Add adapter discovery and environment validation
+- [x] Wire HarnessResult into state transition logic
+
+### Adapter Bug Fixes
+- [x] Fix OpenCodeAdapter.cancel() — use Popen instead of run
+- [x] Fix GenericAdapter test_mode — write artifacts to disk
+- [x] Rename await_human to poll_human — clarify polling behavior
+- [x] Fix OpenCodeAdapter exit code handling — prioritize RESULT.json
+
+### Architectural Improvements
+- [x] Add logging module — replace all print() statements
+- [x] Add config validation — validate workflow config against schema
+- [x] Fix unused imports — remove Path and Optional from step_compiler.py
+- [x] Fix HarnessRegistry error handling — create HarnessNotFoundError
+
+### Tests
+- [x] Create tests/test_adapters.py
+- [x] Test HarnessRegistry registration and discovery
+- [x] Test GenericAdapter execute, test_mode, poll_human
+- [x] Test OpenCodeAdapter command building, validation, capabilities
+- [x] Test StepContract and HarnessResult dataclasses
+- [x] Test exception types
+- [x] All 28 tests passing
+
+### Code Quality
+- [x] Install ruff
+- [x] Run ruff check --fix on all Python code
+- [x] Run ruff format on all Python code
+- [x] Fix all line-too-long errors manually
+- [x] All ruff checks pass (E, F, W, I)
+- [x] Update AGENTS.md with ruff commands
+- [x] Update PLAN.md with ruff in validation pipeline
+
+### Environment Setup
+- [x] Install uv package manager
+- [x] Initialize uv project (pyproject.toml already existed)
+- [x] Add dependencies: ruff, pytest, pyyaml, jsonschema
+- [x] Create .venv with uv venv
+- [x] Sync dependencies with uv sync
+- [x] Update AGENTS.md with uv workflow
+- [x] Update PLAN.md with uv commands
+- [x] Verify all commands work with uv run
 
 ## Phase 4: Validators
 

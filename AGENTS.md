@@ -15,6 +15,19 @@ ContextSmith/
 │   ├── contextsmith-agent-evaluator/
 │   └── contextsmith-run/
 ├── shared/                          # Canonical agent references (42 files)
+├── orchestrator/                    # Python orchestrator package (deterministic workflow execution)
+│   ├── __init__.py
+│   ├── orchestrator.py              # Main loop: run(), run_workflow()
+│   ├── state_reader.py              # Parse task-state artifacts
+│   ├── checkpoint.py                # Checkpoint management
+│   ├── step_compiler.py             # StepContract compilation
+│   ├── validators.py                # Artifact and schema validation
+│   ├── cli.py                       # CLI interface
+│   └── adapters/                    # Harness adapters
+│       ├── base.py                  # StepContract, HarnessResult, HarnessAdapter ABC
+│       ├── generic.py               # File-based fallback adapter
+│       └── opencode.py              # OpenCode subprocess adapter
+├── tests/                           # Python test suite
 ├── docs/                            # User-facing documentation
 │   ├── workflows/
 │   ├── concepts/
@@ -31,12 +44,22 @@ ContextSmith/
 ## Setup and Validation Commands
 
 ```bash
-python scripts/validate_skills.py
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Sync dependencies and create .venv
+uv sync
+
+# Run validation
+uv run python scripts/validate_skills.py
+uv run ruff check orchestrator/ --select E,F,W,I
+uv run ruff format orchestrator/ --check
+uv run pytest tests/ -v
 ```
 
-No package manager, build system, or test framework. The validation script checks SKILL.md frontmatter, line counts, and reference directory presence.
+No package manager or build system. The validation script checks SKILL.md frontmatter, line counts, and reference directory presence. Ruff handles Python linting, formatting, and import sorting. Pytest runs the test suite.
 
-Note: The validation script requires PyYAML. Install with `pip install pyyaml` if needed.
+Note: All Python commands should be run with `uv run` to use the project's virtual environment. Dependencies are managed in `pyproject.toml` and locked in `uv.lock`.
 
 ## Development Workflow
 
@@ -55,12 +78,14 @@ Note: The validation script requires PyYAML. Install with `pip install pyyaml` i
 
 ## Coding Standards
 
-This repo has one Python file and many Markdown/YAML files.
+This repo has Python files in `orchestrator/` and `scripts/`, plus many Markdown/YAML files.
 
 ### Python
-- The single file is `scripts/validate_skills.py`. Keep it readable and self-contained.
+- All Python code must pass `ruff check --select E,F,W,I` and `ruff format --check`.
+- Run `ruff check --fix` and `ruff format` before committing.
+- The orchestrator package is in `orchestrator/`. Tests are in `tests/`.
 - Ask for approval before adding new dependencies.
-- Follow PEP 8.
+- Follow PEP 8 (enforced by ruff).
 
 ### Markdown / YAML
 - SKILL.md frontmatter: YAML between `---` fences with `name`, `description`, and `metadata.version`.

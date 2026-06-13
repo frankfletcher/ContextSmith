@@ -1,0 +1,16 @@
+[flake8]
+max-line-length = 120
+extend-ignore =
+    E127,
+    E231,
+    E302,
+    E305,
+    E401,
+    E402,
+    E501,
+    W391
+extend-exclude =
+    .venv,
+    .agent_work,
+    graphify-out,
+    skills/*/references/runtime

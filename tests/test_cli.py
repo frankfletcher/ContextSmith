@@ -1,10 +1,9 @@
 import json
+import os
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
-
-import pytest
 
 CLI = Path(__file__).resolve().parent.parent / "runtime" / "cli.py"
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -30,11 +29,6 @@ def _temp_fixture(data: dict) -> str:
     with os.fdopen(fd, "w") as f:
         json.dump(data, f)
     return path
-
-
-import os
-
-
 # --- Help ---
 
 class TestCliHelp:
@@ -161,45 +155,59 @@ class TestCliFail:
 # --- File errors exit 2 ---
 
 class TestCliErrors:
-    def test_nonexistent_file(self):
-        result = _run_cli("requirements", "/nonexistent/artifact.json")
+    @staticmethod
+    def _assert_cli_file_error(*args):
+        """Assert CLI returns file/usage error (exit code 2)."""
+        result = _run_cli(*args)
         assert result.returncode == 2
         assert "ERROR" in result.stderr
+
+    def test_nonexistent_file(self):
+        self._assert_cli_file_error("requirements", "/nonexistent/artifact.json")
 
     def test_invalid_json(self):
         fd, path = tempfile.mkstemp(suffix=".json")
         with os.fdopen(fd, "w") as f:
             f.write("{not valid json}")
-        result = _run_cli("requirements", path)
-        assert result.returncode == 2
-        assert "ERROR" in result.stderr
+        self._assert_cli_file_error("requirements", path)
 
     def test_no_subcommand(self):
         result = _run_cli(str(FIXTURES / "requirements_chain_valid.json"))
         assert result.returncode != 0
 
     def test_yaml_file_error(self):
-        result = _run_cli("requirements", str(FIXTURES / "requirements_chain_invalid.yml"))
-        assert result.returncode == 2
-        assert "ERROR" in result.stderr
+        self._assert_cli_file_error(
+            "requirements",
+            str(FIXTURES / "requirements_chain_invalid.yml"),
+        )
 
 
 # --- Programmatic API ---
 
 class TestCliMain:
-    def test_main_returns_zero_on_pass(self):
+    @staticmethod
+    def _run_main(*args):
+        """Run runtime.cli.main with the provided arguments."""
         from runtime.cli import main
-        code = main(["requirements", str(FIXTURES / "requirements_chain_valid.json")])
+
+        return main(list(args))
+
+    def test_main_returns_zero_on_pass(self):
+        code = self._run_main(
+            "requirements",
+            str(FIXTURES / "requirements_chain_valid.json"),
+        )
         assert code == 0
 
     def test_main_returns_one_on_fail(self):
-        from runtime.cli import main
-        code = main(["requirements", str(FIXTURES / "requirements_chain_missing_id.json")])
+        code = self._run_main(
+            "requirements",
+            str(FIXTURES / "requirements_chain_missing_id.json"),
+        )
         assert code == 1
 
     def test_main_returns_two_on_missing_file(self):
-        from runtime.cli import main
-        code = main(["requirements", "/nonexistent/artifact.json"])
+        code = self._run_main("requirements", "/nonexistent/artifact.json")
         assert code == 2
 
 

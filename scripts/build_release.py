@@ -139,7 +139,7 @@ def bump_version(skill_name, new_version):
         # Try to replace metadata.version
         fm_block = re.sub(
             r"(^|\n)\s*(metadata:\s*\n\s*version:\s*)\S+",
-            rf"\g<0>",
+            r"\g<0>",
             fm_block,
         )
         # More precise: find metadata.version line
@@ -164,7 +164,7 @@ def bump_version(skill_name, new_version):
         return "\n".join(new_lines)
 
     # Simpler and more reliable: regex replace on the full text
-    pattern = r"(^---\n.*?^---\n)(?=\n)"
+        # pattern = r"(^---\n.*?^---\n)(?=\n)"
     m = re.match(r"(^---\n)(.*?)(\n---\n)", text, re.S | re.M)
     if m:
         frontmatter_yaml = m.group(2)
@@ -194,13 +194,12 @@ def step_version_bump(new_version, dry_run=False):
     """Bump version across all skills."""
     print(f"\n=== Step D: Version bump to {new_version} ===")
 
-    if not dry_run:
-        if not check_git_clean():
-            print(
-                "ERROR: Working tree is dirty. Commit or stash changes before "
-                "bumping versions."
-            )
-            return False
+    if not dry_run and not check_git_clean():
+        print(
+            "ERROR: Working tree is dirty. Commit or stash changes before "
+            "bumping versions."
+        )
+        return False
 
     skills = discover_skills()
     for skill_name in skills:
@@ -230,10 +229,9 @@ def step_package(dist_dir, dry_run=False):
 
         # Read version from manifest
         manifest_path = SKILLS_DIR / skill_name / "reference_manifest.yml"
-        version = "0.0.0"
         if manifest_path.exists():
             manifest = yaml.safe_load(manifest_path.read_text())
-            version = manifest.get("version", "0.0.0")
+            manifest.get("version", "0.0.0")
 
         ok, _ = run_cmd(
             ["bash", str(REPO_ROOT / "scripts" / "package_skill.sh"),
@@ -279,7 +277,7 @@ def step_bundle(dist_dir, dry_run=False):
     docs_src = REPO_ROOT / "docs"
     if docs_src.exists():
         shutil.copytree(docs_src, staging / "docs")
-        print(f"  COPY docs/")
+        print("  COPY docs/")
 
     # Copy skills/ (SKILL.md only — references synced next)
     skills = discover_skills()
@@ -369,7 +367,7 @@ def generate_summary(dist_dir, dry_run=False, bundle_entry=None, individual=Fals
         zip_name = f"{skill_name}-{version}.zip"
         sha_name = f"{skill_name}-{version}.sha256"
         zip_path = dist_dir / zip_name
-        sha_path = dist_dir / sha_name
+        dist_dir / sha_name
 
         if not zip_path.exists():
             print(f"  WARN: {zip_name} not found in {dist_dir}")
@@ -483,7 +481,7 @@ def main():
         parser.print_help()
         sys.exit(0)
 
-    print(f"ContextSmith Release Builder")
+        print("ContextSmith Release Builder")
     print(f"Repo: {REPO_ROOT}")
     print(f"Dist: {dist_dir}")
 

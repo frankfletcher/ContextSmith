@@ -1,23 +1,11 @@
 {
   "status": "pass",
-  "reason": "All 4 task-state fixtures validated as expected. Valid fixture passes all checks, 3 invalid fixtures fail with specific errors matching their intended violations.",
+  "reason": "Phase 3 (Harness Adapters) complete. All 3 sub-phases implemented: adapter base classes (StepContract, HarnessResult, HarnessAdapter ABC, HarnessRegistry, error types), generic adapter (file-based fallback), and OpenCode adapter (subprocess-based). All imports work, no TODOs, integration with orchestrator.py and cli.py verified.",
   "artifacts": [
-    "tests/fixtures/task_state_valid/STATUS.md",
-    "tests/fixtures/task_state_valid/PLAN.md",
-    "tests/fixtures/task_state_valid/CONTEXT.md",
-    "tests/fixtures/task_state_valid/checkpoint.json",
-    "tests/fixtures/task_state_missing_status/PLAN.md",
-    "tests/fixtures/task_state_missing_status/CONTEXT.md",
-    "tests/fixtures/task_state_missing_status/checkpoint.json",
-    "tests/fixtures/task_state_empty_plan/STATUS.md",
-    "tests/fixtures/task_state_empty_plan/PLAN.md",
-    "tests/fixtures/task_state_empty_plan/CONTEXT.md",
-    "tests/fixtures/task_state_empty_plan/checkpoint.json",
-    "tests/fixtures/task_state_invalid_checkpoint/STATUS.md",
-    "tests/fixtures/task_state_invalid_checkpoint/PLAN.md",
-    "tests/fixtures/task_state_invalid_checkpoint/CONTEXT.md",
-    "tests/fixtures/task_state_invalid_checkpoint/checkpoint.json",
-    "tests/fixtures/validation_results_task_state.md"
+    "orchestrator/adapters/__init__.py",
+    "orchestrator/adapters/base.py",
+    "orchestrator/adapters/generic.py",
+    "orchestrator/adapters/opencode.py"
   ],
   "issues": [],
   "next_action": "done"

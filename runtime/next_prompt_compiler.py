@@ -263,7 +263,7 @@ def compile_next_prompt(
     stop_rule = _extract_stop_rule(context_contract)
     education = _extract_education(block_text) if include_education else None
     validation_commands = _extract_validation_commands(context_text)
-    constraints = _extract_constraints(context_text)
+    _extract_constraints(context_text)
     phase_goal = _extract_phase_goal(heading, block_text)
     next_phase = _find_next_phase(plan_text, current_phase)
 

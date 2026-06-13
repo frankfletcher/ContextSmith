@@ -13,15 +13,23 @@ Total: 6 major phases × ~5 sub-phases × (implement + audit + 3 Ralph cycles + 
 
 ## Prerequisites
 
-Before starting, verify these are installed:
+Before starting, set up the development environment:
 
 ```bash
-python -c "import jsonschema; print('jsonschema OK')"
-python -c "import yaml; print('PyYAML OK')"
-python -c "import pytest; print('pytest OK')"
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Sync dependencies and create .venv
+uv sync
+
+# Verify dependencies
+uv run python -c "import jsonschema; print('jsonschema OK')"
+uv run python -c "import yaml; print('PyYAML OK')"
+uv run python -c "import pytest; print('pytest OK')"
+uv run ruff --version
 ```
 
-If any fail, install with `pip install jsonschema pyyaml pytest`.
+All Python commands should be run with `uv run` to use the project's virtual environment.
 
 ## Artifact Templates
 
@@ -81,38 +89,23 @@ For each phase, run these commands to validate:
 
 ```bash
 # Validate skills
-python scripts/validate_skills.py
+uv run python scripts/validate_skills.py
+
+# Lint and format Python code
+uv run ruff check orchestrator/ --select E,F,W,I
+uv run ruff format orchestrator/ --check
 
 # Run tests
-pytest tests/ -v
+uv run pytest tests/ -v
 
 # Validate orchestrator module
-python -c "from orchestrator import run; print('import OK')"
+uv run python -c "from orchestrator import run; print('import OK')"
 
 # Validate adapters
-python -c "from orchestrator.adapters.base import HarnessAdapter; print('adapters OK')"
+uv run python -c "from orchestrator.adapters.base import HarnessAdapter; print('adapters OK')"
 ```
 
-## File Size Constraints
-
-Keep files small for small models:
-
-| File | Max Lines | Purpose |
-|------|-----------|---------|
-| `orchestrator/__init__.py` | 30 | Public API exports |
-| `orchestrator/constants.py` | 40 | Exit codes, state names |
-| `orchestrator/exceptions.py` | 30 | Custom exceptions |
-| `orchestrator/state_reader.py` | 100 | Parse STATUS.md, PLAN.md, CONTEXT.md, checkpoint.json |
-| `orchestrator/checkpoint.py` | 80 | Read/write checkpoint.json |
-| `orchestrator/step_compiler.py` | 120 | Compile StepContract, resolve transitions |
-| `orchestrator/orchestrator.py` | 150 | Main loop, run_workflow, run |
-| `orchestrator/cli.py` | 100 | Argument parsing, subcommands |
-| `orchestrator/validators.py` | 150 | File, schema, state validation |
-| `orchestrator/adapters/base.py` | 120 | ABC, dataclasses, registry, errors |
-| `orchestrator/adapters/generic.py` | 80 | Generic adapter |
-| `orchestrator/adapters/opencode.py` | 120 | OpenCode adapter |
-
-Total: ~1120 lines of Python code.
+All Python code must pass ruff linting and formatting checks. Run `uv run ruff check --fix` and `uv run ruff format` to auto-fix issues before committing.
 
 ## Import Pattern
 
@@ -199,14 +192,15 @@ After every implementation phase, before writing RESULT.json, the agent must sel
 
 1. **Artifacts exist** — all expected_outputs are written to disk
 2. **Artifacts non-empty** — no zero-byte files
-3. **Code compiles** — `python -c "import orchestrator.<module>"` succeeds (for Python phases)
-4. **Tests pass** — `pytest tests/test_<module>.py -v` succeeds (if tests exist)
-5. **No TODOs left** — grep for `TODO`, `FIXME`, `HACK` in written files
-6. **No placeholder content** — no `...`, `TBD`, `PLACEHOLDER` in written files
-7. **Imports resolve** — no circular imports, no missing dependencies
-8. **Docstrings present** — all public functions have docstrings
-9. **Consistent style** — matches existing code conventions in the project
-10. **Spec alignment** — implementation matches the spec files in deep_determinism/
+3. **Code compiles** — `uv run python -c "import orchestrator.<module>"` succeeds (for Python phases)
+4. **Tests pass** — `uv run pytest tests/test_<module>.py -v` succeeds (if tests exist)
+5. **Ruff passes** — `uv run ruff check orchestrator/ --select E,F,W,I` and `uv run ruff format --check` succeed (for Python phases)
+6. **No TODOs left** — grep for `TODO`, `FIXME`, `HACK` in written files
+7. **No placeholder content** — no `...`, `TBD`, `PLACEHOLDER` in written files
+8. **Imports resolve** — no circular imports, no missing dependencies
+9. **Docstrings present** — all public functions have docstrings
+10. **Consistent style** — matches existing code conventions in the project
+11. **Spec alignment** — implementation matches the spec files in deep_determinism/
 
 ### Self-Audit Result
 
@@ -251,7 +245,7 @@ After every implementation phase, write an `EDUCATIONAL_REPORT.md` that explains
 
 ### Educational Report Template
 
-```markdown
+````markdown
 # Educational Report: <Phase Name>
 
 ## What Was Done
@@ -279,13 +273,16 @@ def function2(arg1: Path) -> list[str]:
 ```
 
 ### Data Flow
-<input> → <processing> → <output>
 
-## For Small Models
+```
+<input> → <processing> → <output>
+```
+
+### For Small Models
 - <Concrete example of how to use this code>
 - <Common mistakes to avoid>
 - <What to check if something goes wrong>
-```
+````
 
 ## Rollback Instructions
 
@@ -598,65 +595,93 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 
 ## Phase 4: Validators
 
-**Goal:** Implement validation functions for artifacts and workflow state.
+**Goal:** Implement validation functions for artifacts and workflow state. **Test-first approach:** Write tests before implementation.
 
 ### Sub-phase 4a: Implement file validators
 
-**Task:** Implement file existence, non-empty, and section presence checks.
+**Task:** Implement file existence, non-empty, and section presence checks. Write tests first.
 
 **Files to read:**
 - `.agent_work/ideation/deep_determinism/state_artifact_strategy.md` (validation pseudocode)
 
 **Steps:**
-1. Create `orchestrator/validators.py`
-2. Implement `validate_file_exists(path) -> list[str]` — check file exists
-3. Implement `validate_file_nonempty(path) -> list[str]` — check file not empty
-4. Implement `validate_required_sections(path, sections) -> list[str]` — check sections present
-5. Implement `validate_artifact(file_path, required_sections) -> list[str]` — combine all checks
-6. Implement `validate_artifacts(state_dir, expected_outputs, config) -> ValidationResult`
+1. Create `tests/test_validators.py` with test cases for all validators
+2. Create `orchestrator/validators.py`
+3. Implement `validate_file_exists(path) -> list[str]` — check file exists
+4. Implement `validate_file_nonempty(path) -> list[str]` — check file not empty
+5. Implement `validate_required_sections(path, sections) -> list[str]` — check sections present
+6. Implement `validate_artifact(file_path, required_sections) -> list[str]` — combine all checks
+7. Implement `validate_artifacts(state_dir, expected_outputs, config) -> ValidationResult`
+8. Run tests, fix any failures
 
 **Expected outputs:**
+- `tests/test_validators.py` — comprehensive test suite
 - `orchestrator/validators.py` — all validation functions
 
-**Validation:** Validate test fixtures, verify pass/fail results match expectations.
+**Validation:** `pytest tests/test_validators.py` passes.
 
 ### Sub-phase 4b: Implement schema validators
 
-**Task:** Implement JSON/YAML schema validation.
+**Task:** Implement JSON/YAML schema validation. Write tests first.
 
 **Files to read:**
 - `schemas/workflow_config.schema.json`
 - `schemas/agent_config.schema.json`
 
 **Steps:**
-1. Add `validate_schema(data, schema_path) -> list[str]` to validators.py
-2. Add `validate_workflow_config(config_path) -> list[str]` — validate against schema
-3. Add `validate_agent_config(agent_path) -> list[str]` — validate against schema
-4. Add `validate_checkpoint(checkpoint_path, config) -> list[str]` — validate checkpoint
+1. Add test cases to `tests/test_validators.py` for schema validation
+2. Add `validate_schema(data, schema_path) -> list[str]` to validators.py
+3. Add `validate_workflow_config(config_path) -> list[str]` — validate against schema
+4. Add `validate_agent_config(agent_path) -> list[str]` — validate against schema
+5. Add `validate_checkpoint(checkpoint_path, config) -> list[str]` — validate checkpoint
+6. Run tests, fix any failures
 
 **Expected outputs:**
+- Updated `tests/test_validators.py` — schema validation tests
 - Updated `orchestrator/validators.py` — schema validation functions
 
-**Validation:** Validate valid configs pass, invalid configs fail with specific errors.
+**Validation:** `pytest tests/test_validators.py` passes. Validate valid configs pass, invalid configs fail with specific errors.
 
 ### Sub-phase 4c: Implement state consistency validator
 
-**Task:** Validate consistency between STATUS.md, checkpoint.json, and workflow config.
+**Task:** Validate consistency between STATUS.md, checkpoint.json, and workflow config. Write tests first.
 
 **Files to read:**
 - `.agent_work/ideation/deep_determinism/orchestrator_idea.md` (error handling matrix)
 
 **Steps:**
-1. Add `validate_state_consistency(status, checkpoint, config) -> list[str]`
-2. Check: STATUS.md current_phase is valid state in config
-3. Check: checkpoint.json current_phase matches STATUS.md
-4. Check: checkpoint counters are within limits
-5. Check: completed_phases exist in config phase_order
+1. Add test cases to `tests/test_validators.py` for state consistency
+2. Add `validate_state_consistency(status, checkpoint, config) -> list[str]`
+3. Check: STATUS.md current_phase is valid state in config
+4. Check: checkpoint.json current_phase matches STATUS.md
+5. Check: checkpoint counters are within limits
+6. Check: completed_phases exist in config phase_order
+7. Run tests, fix any failures
 
 **Expected outputs:**
+- Updated `tests/test_validators.py` — state consistency tests
 - Updated `orchestrator/validators.py` — state consistency check
 
-**Validation:** Test with consistent state (pass) and inconsistent state (fail with specific error).
+**Validation:** `pytest tests/test_validators.py` passes. Test with consistent state (pass) and inconsistent state (fail with specific error).
+
+### Sub-phase 4d: Wire validators into orchestrator
+
+**Task:** Integrate validators into orchestrator execution flow.
+
+**Steps:**
+1. Import validators in orchestrator.py
+2. Call validate_artifacts() after harness execution
+3. Call validate_state_consistency() before state transitions
+4. Call validate_workflow_config() at startup
+5. Handle validation failures appropriately (retry, block, or error)
+6. Write integration tests in `tests/test_orchestrator_integration.py`
+7. Run all tests, fix any failures
+
+**Expected outputs:**
+- Updated `orchestrator/orchestrator.py` — validators integrated
+- `tests/test_orchestrator_integration.py` — integration tests
+
+**Validation:** `pytest tests/` passes. End-to-end workflow execution validates artifacts at each step.
 
 ---
 

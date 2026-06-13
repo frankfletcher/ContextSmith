@@ -1,0 +1,50 @@
+{
+  "workflow_id": "default-workflow",
+  "version": 1,
+  "states": {
+    "execute": {
+      "agent": "contextsmith-builder",
+      "permissions": "edit",
+      "max_retries": 3,
+      "transitions": [
+        {
+          "condition": "output_valid",
+          "target": "audit"
+        },
+        {
+          "condition": "output_invalid",
+          "target": "execute"
+        },
+        {
+          "condition": "max_retries",
+          "target": "blocked"
+        }
+      ]
+    },
+    "audit": {
+      "agent": "contextsmith-auditor",
+      "permissions": "read-only",
+      "max_retries": 2,
+      "transitions": [
+        {
+          "condition": "pass",
+          "target": "done"
+        },
+        {
+          "condition": "fail",
+          "target": "execute"
+        }
+      ]
+    },
+    "done": {
+      "agent": "none",
+      "permissions": "read-only",
+      "transitions": []
+    },
+    "blocked": {
+      "agent": "none",
+      "permissions": "read-only",
+      "transitions": []
+    }
+  }
+}

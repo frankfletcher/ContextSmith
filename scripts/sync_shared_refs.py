@@ -8,7 +8,6 @@ skills/*/references/ (needed for CI validation).
 
 import argparse
 import hashlib
-import os
 import shutil
 import sys
 from pathlib import Path
