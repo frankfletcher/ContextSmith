@@ -11,10 +11,12 @@ ContextSmith — meta-skills package for model-aware agent instruction engineeri
 ## Key Files
 
 ### Schemas (done)
+
 - `schemas/workflow_config.schema.json` — workflow config validation
 - `schemas/agent_config.schema.json` — agent config validation
 
 ### Spec Files (in `.agent_work/ideation/deep_determinism/`)
+
 - `orchestrator_idea.md` — state machine, CLI, checkpoint, error matrix
 - `orchestrator_and_harness.md` — HarnessAdapter ABC, StepContract, HarnessResult
 - `workflow_config_sketch.md` — config schema, examples, overlay mechanics
@@ -30,11 +32,13 @@ ContextSmith — meta-skills package for model-aware agent instruction engineeri
 - `domain-templates/` — 6 domain templates
 
 ### Runtime (exists)
+
 - `runtime/validator.py` — structural validators
 - `runtime/cli.py` — CLI entry point
 - `runtime/domain_packs/` — domain validation rules
 
 ### Shared References (exists)
+
 - `shared/persistent-task-state.md` — task state layout
 - `shared/control-parameters-core.md` — parameter parsing
 - `shared/run-configuration-preview.md` — confirmation pattern

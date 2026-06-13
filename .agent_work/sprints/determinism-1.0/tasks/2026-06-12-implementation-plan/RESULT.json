@@ -1,12 +1,18 @@
 {
   "status": "pass",
-  "reason": "Phase 3 (Harness Adapters) complete. All 3 sub-phases implemented: adapter base classes (StepContract, HarnessResult, HarnessAdapter ABC, HarnessRegistry, error types), generic adapter (file-based fallback), and OpenCode adapter (subprocess-based). All imports work, no TODOs, integration with orchestrator.py and cli.py verified.",
+  "reason": "Phase 4d complete: validators wired into orchestrator.py at 3 integration points (config startup, artifact post-execution, state consistency pre-transition). 49 tests passing. ruff clean.",
   "artifacts": [
-    "orchestrator/adapters/__init__.py",
-    "orchestrator/adapters/base.py",
-    "orchestrator/adapters/generic.py",
-    "orchestrator/adapters/opencode.py"
+    "orchestrator/orchestrator.py",
+    "tests/test_orchestrator_integration.py",
+    "tests/test_validators.py",
+    "orchestrator/validators.py",
+    ".agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/EDUCATIONAL_REPORT.md",
+    ".agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/AUDIT_REPORT.md",
+    ".agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/RESULT.json",
+    ".agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/STATUS.md",
+    ".agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/NEXT_PROMPT.md",
+    ".agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/CHECKLIST.md"
   ],
   "issues": [],
-  "next_action": "done"
+  "next_action": "phase_4_complete"
 }

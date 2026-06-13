@@ -7,9 +7,11 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 ## Issues Fixed
 
 ### 1. Adapters Wired into Orchestrator ✓
+
 **Problem:** orchestrator.py had simulated execution, didn't call HarnessRegistry.get() or adapter.execute()
 
-**Fix:** 
+**Fix:**
+
 - Imported discover_adapters and HarnessRegistry
 - Added adapter discovery and environment validation
 - Replaced simulated execution with actual adapter.execute() calls
@@ -18,9 +20,11 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 **Files Modified:** orchestrator/orchestrator.py
 
 ### 2. OpenCodeAdapter.cancel() Fixed ✓
+
 **Problem:** Used subprocess.run() which is synchronous, doesn't populate self._processes dict
 
 **Fix:**
+
 - Changed to subprocess.Popen() with stdout/stderr pipes
 - Store process in self._processes[step_id]
 - Implement proper wait with timeout
@@ -29,9 +33,11 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 **Files Modified:** orchestrator/adapters/opencode.py
 
 ### 3. GenericAdapter test_mode Fixed ✓
+
 **Problem:** Claimed files exist but didn't write them to disk
 
 **Fix:**
+
 - Added artifacts_content field to fixture format
 - Actually write fixture artifacts to disk
 - Update artifacts_written to reflect what was written
@@ -40,9 +46,11 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 **Files Modified:** orchestrator/adapters/generic.py
 
 ### 4. GenericAdapter await_human Renamed ✓
+
 **Problem:** Misleading name - polls once and returns immediately, doesn't actually wait
 
 **Fix:**
+
 - Renamed to poll_human() to clarify it's polling, not blocking
 - Updated docstring to explain polling behavior
 - Updated execute() to use poll_human instead of await_human
@@ -50,19 +58,23 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 **Files Modified:** orchestrator/adapters/generic.py
 
 ### 5. Logging Module Added ✓
+
 **Problem:** Used print() statements everywhere instead of logging module
 
 **Fix:**
-- Added logging import and logger = logging.getLogger(__name__)
+
+- Added logging import and logger = logging.getLogger(**name**)
 - Replaced all print() with logger.info(), logger.warning(), logger.error()
 - Proper log levels for different message types
 
 **Files Modified:** orchestrator/orchestrator.py
 
 ### 6. Config Validation Added ✓
+
 **Problem:** Loaded workflow config without validating against schema
 
 **Fix:**
+
 - Added config validation in orchestrator.py run() function
 - Validate workflow config against schema before execution
 - Return clear error messages for invalid configs
@@ -70,31 +82,38 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 **Files Modified:** orchestrator/orchestrator.py
 
 ### 7. Unused Imports Removed ✓
+
 **Problem:** step_compiler.py imported Path and Optional but didn't use them
 
 **Fix:**
+
 - Removed unused imports from step_compiler.py
 
 **Files Modified:** orchestrator/step_compiler.py
 
 ### 8. HarnessRegistry Error Handling Fixed ✓
+
 **Problem:** _detect_auto() used step_id="auto" hack in HarnessExecutionError
 
 **Fix:**
+
 - Created HarnessNotFoundError exception type
 - Updated _detect_auto() to raise HarnessNotFoundError
 - Exported HarnessNotFoundError from adapters and exceptions modules
 
-**Files Modified:** 
+**Files Modified:**
+
 - orchestrator/adapters/base.py
-- orchestrator/adapters/__init__.py
+- orchestrator/adapters/**init**.py
 - orchestrator/exceptions.py
-- orchestrator/__init__.py
+- orchestrator/**init**.py
 
 ### 9. OpenCodeAdapter Exit Code Handling Fixed ✓
+
 **Problem:** Didn't properly prioritize RESULT.json over exit code
 
 **Fix:**
+
 - _read_result() now checks RESULT.json first
 - Only uses exit code as fallback when RESULT.json missing
 - Proper status determination logic
@@ -102,9 +121,11 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 **Files Modified:** orchestrator/adapters/opencode.py
 
 ### 10. Comprehensive Tests Added ✓
+
 **Problem:** Zero test coverage for adapters
 
 **Fix:**
+
 - Created tests/test_adapters.py with 28 tests
 - Tests for HarnessRegistry registration and discovery
 - Tests for GenericAdapter execute, test_mode, poll_human
@@ -116,9 +137,11 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 **Files Created:** tests/test_adapters.py
 
 ### 11. Documentation Updated ✓
+
 **Problem:** Sprint artifacts didn't reflect integration phase
 
 **Fix:**
+
 - Created PHASE_3.5_INTEGRATION.md documenting all issues and fixes
 - Updated STATUS.md to reflect Phase 3.5 completion
 - Updated CHECKLIST.md with Phase 3.5 items
@@ -126,12 +149,14 @@ Phase 3.5 addressed 11 critical issues identified after Phase 3 completion. All 
 - Updated NEXT_PROMPT.md for Phase 4a with test-first instructions
 
 **Files Modified:**
+
 - .agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/STATUS.md
 - .agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/CHECKLIST.md
 - .agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/PLAN.md
 - .agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/NEXT_PROMPT.md
 
 **Files Created:**
+
 - .agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/PHASE_3.5_INTEGRATION.md
 
 ## Test Results
@@ -177,6 +202,7 @@ tests/test_adapters.py::TestExceptions::test_harness_not_found_error PASSED
 ## Architecture Improvements
 
 ### Before Phase 3.5
+
 - Adapters existed but weren't used
 - Simulated execution in orchestrator
 - No logging, only print statements
@@ -186,6 +212,7 @@ tests/test_adapters.py::TestExceptions::test_harness_not_found_error PASSED
 - Poor error handling
 
 ### After Phase 3.5
+
 - Adapters fully integrated into orchestrator
 - Real execution via adapter.execute()
 - Proper logging with levels
@@ -197,6 +224,7 @@ tests/test_adapters.py::TestExceptions::test_harness_not_found_error PASSED
 ## Next Steps
 
 Phase 4 (Validators) will use test-first approach:
+
 1. Write tests for validators
 2. Implement validators to make tests pass
 3. Wire validators into orchestrator
@@ -205,11 +233,12 @@ Phase 4 (Validators) will use test-first approach:
 ## Files Changed
 
 ### Modified (11 files)
+
 1. orchestrator/orchestrator.py
 2. orchestrator/step_compiler.py
 3. orchestrator/exceptions.py
-4. orchestrator/__init__.py
-5. orchestrator/adapters/__init__.py
+4. orchestrator/**init**.py
+5. orchestrator/adapters/**init**.py
 6. orchestrator/adapters/base.py
 7. orchestrator/adapters/generic.py
 8. orchestrator/adapters/opencode.py
@@ -219,12 +248,14 @@ Phase 4 (Validators) will use test-first approach:
 12. .agent_work/.../NEXT_PROMPT.md
 
 ### Created (2 files)
+
 1. tests/test_adapters.py
 2. .agent_work/.../PHASE_3.5_INTEGRATION.md
 
 ## Verification
 
 All fixes verified:
+
 - ✓ All imports work
 - ✓ All 28 tests pass
 - ✓ Adapters discovered and registered

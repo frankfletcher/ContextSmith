@@ -1,7 +1,7 @@
 # Status
 
 ## Current Phase
-phase_1
+Phase 1C
 
 ## Current State
 execute

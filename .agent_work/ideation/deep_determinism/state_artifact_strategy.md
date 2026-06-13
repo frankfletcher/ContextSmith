@@ -454,7 +454,7 @@ Completed <task-name>.
 Every phase must produce these fields in STATUS.md before the orchestrator advances:
 
 | Field | Source | Required By | Validation |
-|-------|--------|-------------|------------|
+| --- | --- | --- | --- |
 | Current Phase | STATUS.md | Every phase | Must match workflow config phase_order entry |
 | Current State | STATUS.md | Every phase | Must be a valid canonical state |
 | Next Action | STATUS.md | Every phase | Must be non-empty |
@@ -467,7 +467,7 @@ Every phase must produce these fields in STATUS.md before the orchestrator advan
 Each artifact has a minimum content requirement. **Required** artifacts must exist for the orchestrator to advance. **Optional** artifacts are validated only if they exist.
 
 | File | Required | Must Have Content | Must Have Required Sections |
-|------|----------|-------------------|---------------------------|
+| --- | --- | --- | --- |
 | STATUS.md | **Yes (always)** | Yes | `## Current Phase`, `## Current State`, `## Next Action` |
 | PLAN.md | **Yes (after plan)** | Yes | `## Phases`, `## Validation Gates` |
 | NEXT_PROMPT.md | **Yes (except terminal)** | Yes | `## Your Task`, `## Output Requirements`, `## Constraints` |
@@ -542,6 +542,12 @@ When the orchestrator updates artifacts, it follows these rules:
 5. **ARTIFACTS.md** is rewritten entirely (cumulative or phase-specific - configurable).
 6. **All other files** are written once (at creation) and not modified by the orchestrator.
 7. Agents may modify any file as part of their task, but the orchestrator re-validates after.
+8. **EDUCATIONAL_REPORT.md and AUDIT_REPORT.md are append-only.** Agents must never overwrite them. To append new phase content:
+   - Read the file to find its current end
+   - Add a `---` separator
+   - Add your new section with a `#` heading
+   - Use `bash` with `cat >> file << 'EOF' ... EOF` for a reliable append (the heredoc prevents variable expansion and the `>>` operator appends without truncating)
+   - Alternatively, use the `edit` tool with `oldString` set to the last unique paragraph of the existing file and `newString` = `oldString + "\n\n---\n\n" + new_content` — but the bash `>>` approach is preferred because it cannot clobber
 
 ### Write Atomicity
 

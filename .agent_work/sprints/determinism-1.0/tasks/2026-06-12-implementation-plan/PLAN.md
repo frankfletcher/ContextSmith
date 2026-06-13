@@ -3,6 +3,7 @@
 ## Phase Overview
 
 This plan has 6 major phases, each broken into sub-phases. Each phase follows:
+
 1. Implement
 2. Audit (pass/fail)
 3. Ralph critique (3 cycles)
@@ -66,10 +67,16 @@ All Python commands should be run with `uv run` to use the project's virtual env
 }
 ```
 
+### AUDIT_REPORT.md (Append-Only)
+
+Every phase must append its audit findings to `AUDIT_REPORT.md`. Never overwrite — this file accumulates rubric assessments across all phases.
+
+**Append rule:** Read the existing file, then append a new section. Use the same two methods as the Educational Report (bash `>>` heredoc preferred; `edit` tool fallback). The `write` tool is **forbidden** for this file.
+
 ### AUDIT_REPORT.md Template
 
 ```markdown
-# Audit Report
+# Audit Report: <Phase Name>
 
 ## Summary
 <one-line conclusion>
@@ -176,6 +183,7 @@ return ["Invalid state 'bad_state' in STATUS.md, not in config.states"]
 Format: `"<error type>: <details>"`
 
 Error types:
+
 - `Missing required file`
 - `Missing required section`
 - `File is empty`
@@ -201,6 +209,7 @@ After every implementation phase, before writing RESULT.json, the agent must sel
 9. **Docstrings present** — all public functions have docstrings
 10. **Consistent style** — matches existing code conventions in the project
 11. **Spec alignment** — implementation matches the spec files in deep_determinism/
+12. **Report files preserved** — verify `EDUCATIONAL_REPORT.md` and `AUDIT_REPORT.md` still contain all prior phase content (grep for earlier phase names). If any prior phase is missing, the file was clobbered — restore from git and re-append.
 
 ### Self-Audit Result
 
@@ -218,26 +227,54 @@ For phases that create YAML, Markdown, or config files:
 4. **References valid** — all referenced files exist
 5. **Consistent with spec** — matches the spec in deep_determinism/
 
-## Educational Report
+## Educational Report (Append-Only)
 
-After every implementation phase, write an `EDUCATIONAL_REPORT.md` that explains:
+After every implementation phase, **append to** `EDUCATIONAL_REPORT.md`. Never overwrite it — it accumulates history across all phases.
 
-### What Was Done
+### Append Mechanics (Required)
+
+Use one of these two methods:
+
+**Method A (preferred — cannot clobber):** Use bash heredoc:
+
+```bash
+cat >> .agent_work/sprints/determinism-1.0/tasks/.../EDUCATIONAL_REPORT.md << 'REPORT'
+
+---
+
+# Educational Report: <Phase Name>
+
+## What Was Done
+...
+REPORT
+```
+
+The `>>` operator appends. The `'REPORT'` heredoc delimiter (quoted) prevents variable expansion. This cannot clobber.
+
+**Method B (fragile — verify file length before and after):** Use the `edit` tool with `oldString` matching the last unique paragraph of the existing file, and `newString` = `oldString + "\n\n---\n\n" + new_content`. If the edit tool errors (e.g., whitespace mismatch), fall back to Method A. Never fall back to `write`.
+
+### What to Append Per Phase
+
+#### What Was Done
+
 - List every file created or modified
 - Summarize the key functions/classes added
 - Note any design decisions made
 
-### Why It Matters
+#### Why It Matters
+
 - How this phase contributes to the overall system
 - What problems this code solves
 - How it fits with the other components
 
-### How It Works
+#### How It Works
+
 - Explain the key algorithms or patterns used
 - Describe the data flow
 - Note any non-obvious implementation choices
 
-### For Small Models
+#### For Small Models
+
 - Keep explanations concrete and literal
 - Use examples from the actual code
 - Avoid abstract descriptions
@@ -287,6 +324,7 @@ def function2(arg1: Path) -> list[str]:
 ## Rollback Instructions
 
 If a phase fails and retries:
+
 1. Re-read STATUS.md to determine current phase
 2. Re-read NEXT_PROMPT.md for the bounded task
 3. Re-read CONTEXT.md for constraints
@@ -307,16 +345,19 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Verify the schema validates both example configs from workflow_config_sketch.md.
 
 **Files to read:**
+
 - `schemas/workflow_config.schema.json`
 - `.agent_work/ideation/deep_determinism/workflow_config_sketch.md` (lines 272-377, 383-557)
 
 **Steps:**
+
 1. Read the schema file
 2. Read both example configs
 3. Validate each against the schema using jsonschema library
 4. Record results
 
 **Expected outputs:**
+
 - `tests/fixtures/valid_workflow_simple_audit.yaml` — copy of simple audit example
 - `tests/fixtures/valid_workflow_engineering.yaml` — copy of engineering example
 - `tests/fixtures/validation_results.md` — validation pass/fail for each
@@ -328,16 +369,19 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Verify the schema validates agent config examples.
 
 **Files to read:**
+
 - `schemas/agent_config.schema.json`
 - `.agent_work/ideation/deep_determinism/system_components.md` (lines 179-204)
 
 **Steps:**
+
 1. Read the schema file
 2. Read agent config examples
 3. Validate each against the schema
 4. Record results
 
 **Expected outputs:**
+
 - `tests/fixtures/valid_agent_auditor.yaml` — auditor agent config
 - `tests/fixtures/valid_agent_builder.yaml` — builder agent config
 - `tests/fixtures/validation_results_agent.md` — validation pass/fail
@@ -349,10 +393,12 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Create test fixtures that should fail validation.
 
 **Files to read:**
+
 - `schemas/workflow_config.schema.json`
 - `schemas/agent_config.schema.json`
 
 **Steps:**
+
 1. Create workflow config with missing required field
 2. Create workflow config with invalid state reference
 3. Create workflow config with invalid transition target
@@ -360,6 +406,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Create agent config with invalid mode
 
 **Expected outputs:**
+
 - `tests/fixtures/invalid_workflow_missing_field.yaml`
 - `tests/fixtures/invalid_workflow_bad_state.yaml`
 - `tests/fixtures/invalid_workflow_bad_transition.yaml`
@@ -373,16 +420,19 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Create valid and invalid task-state directories for testing.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/state_artifact_strategy.md`
 - `shared/persistent-task-state.md`
 
 **Steps:**
+
 1. Create valid task-state directory with all required files
 2. Create task-state directory missing STATUS.md
 3. Create task-state directory with empty PLAN.md
 4. Create task-state directory with invalid checkpoint.json
 
 **Expected outputs:**
+
 - `tests/fixtures/task_state_valid/` — all files present and valid
 - `tests/fixtures/task_state_missing_status/` — STATUS.md missing
 - `tests/fixtures/task_state_empty_plan/` — PLAN.md empty
@@ -398,19 +448,22 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 
 ### Sub-phase 2a: Create orchestrator package structure
 
-**Task:** Create the orchestrator Python package with __init__.py and basic structure.
+**Task:** Create the orchestrator Python package with **init**.py and basic structure.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_idea.md` (function reference section)
 - `.agent_work/ideation/deep_determinism/implementation_guide.md`
 
 **Steps:**
+
 1. Create `orchestrator/` directory
 2. Create `orchestrator/__init__.py` with public API
 3. Create `orchestrator/constants.py` with exit codes and state names
 4. Create `orchestrator/exceptions.py` with custom exceptions
 
 **Expected outputs:**
+
 - `orchestrator/__init__.py` — exports run, run_workflow, init, validate, inspect
 - `orchestrator/constants.py` — EXIT_DONE, EXIT_BLOCKED, EXIT_CONTINUE, canonical states
 - `orchestrator/exceptions.py` — OrchestratorError, StateInconsistency, ConfigError
@@ -422,10 +475,12 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement parsing of STATUS.md, PLAN.md, CONTEXT.md into structured dicts.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/state_artifact_strategy.md` (required sections)
 - `.agent_work/ideation/deep_determinism/orchestrator_idea.md` (state reading)
 
 **Steps:**
+
 1. Create `orchestrator/state_reader.py`
 2. Implement `read_status(dir) -> dict` — parse STATUS.md sections
 3. Implement `read_plan(dir) -> dict` — parse PLAN.md checkboxes
@@ -434,6 +489,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 6. Add validation for each parser (required fields present)
 
 **Expected outputs:**
+
 - `orchestrator/state_reader.py` — all 4 parser functions
 
 **Validation:** Parse `tests/fixtures/task_state_valid/` without errors, return correct structure.
@@ -443,9 +499,11 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement checkpoint read/write with atomic writes.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_idea.md` (checkpoint format section)
 
 **Steps:**
+
 1. Create `orchestrator/checkpoint.py`
 2. Implement `read_checkpoint(dir) -> dict` — read and validate checkpoint.json
 3. Implement `write_checkpoint(dir, data) -> None` — atomic write (temp + rename)
@@ -453,6 +511,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Implement `validate_checkpoint(checkpoint, config) -> list[str]` — check consistency
 
 **Expected outputs:**
+
 - `orchestrator/checkpoint.py` — all 4 functions
 
 **Validation:** Write checkpoint, read it back, verify content matches.
@@ -462,10 +521,12 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Compile StepContract from config + state + plan.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_and_harness.md` (StepContract dataclass)
 - `.agent_work/ideation/deep_determinism/workflow_config_sketch.md` (state definitions)
 
 **Steps:**
+
 1. Create `orchestrator/step_compiler.py`
 2. Import StepContract, HarnessResult from adapters (or define locally)
 3. Implement `compile_step_contract(state, config, plan, context) -> StepContract`
@@ -473,6 +534,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Implement `_matches_condition(condition, result, validation) -> bool`
 
 **Expected outputs:**
+
 - `orchestrator/step_compiler.py` — compile and resolve functions
 
 **Validation:** Compile step contract from test fixture, verify all fields populated correctly.
@@ -482,9 +544,11 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement the orchestrator main loop (run_workflow, run).
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_idea.md` (main loop section)
 
 **Steps:**
+
 1. Create `orchestrator/orchestrator.py`
 2. Implement `run(config_path, state_dir, ...) -> int` — single step execution
 3. Implement `run_workflow(config_path, state_dir, ...) -> int` — outer loop
@@ -493,6 +557,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 6. Wire together: load config → read state → compile step → dispatch → validate → transition → checkpoint
 
 **Expected outputs:**
+
 - `orchestrator/orchestrator.py` — run, run_workflow, should_stop, register_signal_handlers
 
 **Validation:** Run with `--dry-run` flag, print next step without executing.
@@ -502,15 +567,18 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement the CLI entry point.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_idea.md` (CLI section)
 
 **Steps:**
+
 1. Create `orchestrator/cli.py`
 2. Implement argument parsing (config, state_dir, --harness, --single-step, --dry-run, --repair, --force, --test-mode, --verbose, --quiet)
 3. Implement subcommands: run, init, validate, inspect, diff, resume
 4. Wire to orchestrator functions
 
 **Expected outputs:**
+
 - `orchestrator/cli.py` — argument parsing and subcommand dispatch
 
 **Validation:** `python -m orchestrator --help` shows usage.
@@ -526,9 +594,11 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement HarnessAdapter ABC, HarnessResult, StepContract, error types.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_and_harness.md` (full file)
 
 **Steps:**
+
 1. Create `orchestrator/adapters/` directory
 2. Create `orchestrator/adapters/__init__.py` with ADAPTER_REGISTRY
 3. Create `orchestrator/adapters/base.py` with:
@@ -540,6 +610,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - `HarnessExecutionError` exception
 
 **Expected outputs:**
+
 - `orchestrator/adapters/base.py` — all types and classes
 
 **Validation:** `from orchestrator.adapters.base import HarnessAdapter` succeeds.
@@ -549,9 +620,11 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement the generic adapter (file-based, no agent runtime).
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/harness_agnostic_distribution.md` (generic adapter section)
 
 **Steps:**
+
 1. Create `orchestrator/adapters/generic.py`
 2. Implement `GenericAdapter(HarnessAdapter)`:
    - `name` → "generic"
@@ -562,6 +635,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 3. Register with HarnessRegistry
 
 **Expected outputs:**
+
 - `orchestrator/adapters/generic.py` — GenericAdapter class
 
 **Validation:** Create GenericAdapter, call execute with test fixture, verify HarnessResult returned.
@@ -571,10 +645,12 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement the OpenCode adapter (subprocess-based).
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_and_harness.md` (OpenCode adapter section)
 - `.agent_work/ideation/deep_determinism/harness-opencode.md`
 
 **Steps:**
+
 1. Create `orchestrator/adapters/opencode.py`
 2. Implement `OpenCodeAdapter(HarnessAdapter)`:
    - `name` → "opencode"
@@ -587,6 +663,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 3. Register with HarnessRegistry
 
 **Expected outputs:**
+
 - `orchestrator/adapters/opencode.py` — OpenCodeAdapter class
 
 **Validation:** Create OpenCodeAdapter, call validate_environment, verify returns [] on system with opencode installed.
@@ -602,9 +679,11 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement file existence, non-empty, and section presence checks. Write tests first.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/state_artifact_strategy.md` (validation pseudocode)
 
 **Steps:**
+
 1. Create `tests/test_validators.py` with test cases for all validators
 2. Create `orchestrator/validators.py`
 3. Implement `validate_file_exists(path) -> list[str]` — check file exists
@@ -615,6 +694,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 8. Run tests, fix any failures
 
 **Expected outputs:**
+
 - `tests/test_validators.py` — comprehensive test suite
 - `orchestrator/validators.py` — all validation functions
 
@@ -625,10 +705,12 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Implement JSON/YAML schema validation. Write tests first.
 
 **Files to read:**
+
 - `schemas/workflow_config.schema.json`
 - `schemas/agent_config.schema.json`
 
 **Steps:**
+
 1. Add test cases to `tests/test_validators.py` for schema validation
 2. Add `validate_schema(data, schema_path) -> list[str]` to validators.py
 3. Add `validate_workflow_config(config_path) -> list[str]` — validate against schema
@@ -637,6 +719,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 6. Run tests, fix any failures
 
 **Expected outputs:**
+
 - Updated `tests/test_validators.py` — schema validation tests
 - Updated `orchestrator/validators.py` — schema validation functions
 
@@ -647,9 +730,11 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Validate consistency between STATUS.md, checkpoint.json, and workflow config. Write tests first.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_idea.md` (error handling matrix)
 
 **Steps:**
+
 1. Add test cases to `tests/test_validators.py` for state consistency
 2. Add `validate_state_consistency(status, checkpoint, config) -> list[str]`
 3. Check: STATUS.md current_phase is valid state in config
@@ -659,6 +744,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 7. Run tests, fix any failures
 
 **Expected outputs:**
+
 - Updated `tests/test_validators.py` — state consistency tests
 - Updated `orchestrator/validators.py` — state consistency check
 
@@ -669,6 +755,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Integrate validators into orchestrator execution flow.
 
 **Steps:**
+
 1. Import validators in orchestrator.py
 2. Call validate_artifacts() after harness execution
 3. Call validate_state_consistency() before state transitions
@@ -678,6 +765,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 7. Run all tests, fix any failures
 
 **Expected outputs:**
+
 - Updated `orchestrator/orchestrator.py` — validators integrated
 - `tests/test_orchestrator_integration.py` — integration tests
 
@@ -694,10 +782,12 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Create the orchestrator skill for skill-only execution.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_skill_draft.md`
 - `.agent_work/ideation/deep_determinism/orchestrator_as_skill.md`
 
 **Steps:**
+
 1. Create `skills/contextsmith-orchestrator/` directory
 2. Create `skills/contextsmith-orchestrator/SKILL.md` from draft
 3. Create `skills/contextsmith-orchestrator/reference_manifest.yml`
@@ -705,6 +795,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Run `python scripts/validate_skills.py` to verify
 
 **Expected outputs:**
+
 - `skills/contextsmith-orchestrator/SKILL.md` — under 300 lines
 - `skills/contextsmith-orchestrator/reference_manifest.yml` — manifest
 
@@ -715,10 +806,12 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Create the workflow developer skill for generating configs.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/workflow_developer_skill.md`
 - `.agent_work/ideation/deep_determinism/domain-templates/`
 
 **Steps:**
+
 1. Create `skills/contextsmith-workflow-developer/` directory
 2. Create `skills/contextsmith-workflow-developer/SKILL.md`
 3. Create `skills/contextsmith-workflow-developer/reference_manifest.yml`
@@ -726,6 +819,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Run `python scripts/validate_skills.py` to verify
 
 **Expected outputs:**
+
 - `skills/contextsmith-workflow-developer/SKILL.md` — under 250 lines
 - `skills/contextsmith-workflow-developer/reference_manifest.yml` — manifest
 - `skills/contextsmith-workflow-developer/references/domain-templates/` — 6 templates
@@ -737,16 +831,19 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Update the contextsmith router to dispatch to orchestrator and workflow-developer.
 
 **Files to read:**
+
 - `skills/contextsmith/SKILL.md`
 - `.agent_work/ideation/deep_determinism/orchestrator_as_skill.md`
 
 **Steps:**
+
 1. Add `contextsmith-orchestrator` to routing table
 2. Add `contextsmith-workflow-developer` to routing table
 3. Update wizard Q1 options
 4. Run `python scripts/validate_skills.py` to verify
 
 **Expected outputs:**
+
 - Updated `skills/contextsmith/SKILL.md` — new routes added
 
 **Validation:** `python scripts/validate_skills.py` passes.
@@ -757,19 +854,22 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 
 **Goal:** Wire everything together and verify end-to-end.
 
-### Sub-phase 6a: Create orchestrator __main__.py
+### Sub-phase 6a: Create orchestrator **main**.py
 
 **Task:** Make the orchestrator runnable as `python -m orchestrator`.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/orchestrator_idea.md` (CLI section)
 
 **Steps:**
+
 1. Create `orchestrator/__main__.py`
 2. Import and call CLI main function
 3. Test `python -m orchestrator --help`
 
 **Expected outputs:**
+
 - `orchestrator/__main__.py` — entry point
 
 **Validation:** `python -m orchestrator --help` shows usage.
@@ -779,9 +879,11 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Create unit tests for all orchestrator components.
 
 **Files to read:**
+
 - `tests/test_validator.py` (existing test patterns)
 
 **Steps:**
+
 1. Create `tests/test_orchestrator_state.py` — test state reader
 2. Create `tests/test_checkpoint.py` — test checkpoint manager
 3. Create `tests/test_step_compiler.py` — test step compiler
@@ -789,6 +891,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Create `tests/test_adapters.py` — test harness adapters
 
 **Expected outputs:**
+
 - 5 new test files with comprehensive coverage
 
 **Validation:** `pytest tests/` passes.
@@ -798,9 +901,11 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Create end-to-end integration test.
 
 **Files to read:**
+
 - `tests/test_cli.py` (existing patterns)
 
 **Steps:**
+
 1. Create `tests/test_orchestrator_integration.py`
 2. Test: load config → execute all phases → verify done state
 3. Test: resume after simulated crash
@@ -808,6 +913,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Test: --dry-run mode
 
 **Expected outputs:**
+
 - `tests/test_orchestrator_integration.py` — integration tests
 
 **Validation:** `pytest tests/test_orchestrator_integration.py` passes.
@@ -817,14 +923,17 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Update validate_skills.py to recognize new skills.
 
 **Files to read:**
+
 - `scripts/validate_skills.py`
 
 **Steps:**
+
 1. Verify new skills are detected
 2. Add any missing validation rules
 3. Run full validation
 
 **Expected outputs:**
+
 - Updated `scripts/validate_skills.py` if needed
 
 **Validation:** `python scripts/validate_skills.py` passes for all skills.
@@ -833,16 +942,43 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 
 ## Ralph Loop Configuration
 
-Each major phase (2-6) will undergo 3 Ralph cycles:
-- Ralph critique: identify defects, gaps, improvements
-- Ralph revise: address critiques, improve quality
+Each sub-phase must undergo **3 Ralph iterations**. Each iteration is one full
+critique+revise cycle. Do not skip iterations or collapse them into a single pass.
 
-Ralph focuses on:
+### Ralph #1 (critique)
+
+- Review the implementation against the execution contract
+- Identify material defects, gaps, edge cases, or spec violations
+- Fix every material defect found
+- Record what was critiqued and what was fixed
+
+### Ralph #2 (re-check)
+
+- Re-review after fixes from #1
+- If no new material defects remain, record as no-op
+- If defects remain, fix them and record
+
+### Ralph #3 (final check)
+
+- Final review of the complete result
+- If no defects remain, record as no-op
+- Do not invent changes to satisfy the loop
+
+### Ralph Focus Areas
+
 - Code quality (readability, maintainability)
 - Test coverage (edge cases, error paths)
 - Documentation (comments, docstrings)
 - Consistency (with existing codebase conventions)
 - Small-model friendliness (atomic instructions, clear structure)
+
+### Ralph Enforcement
+
+Each iteration must have a compact log entry in the final output under `## Ralph Summary`.
+Ralph loops are critique/revision passes, not repeated blind tool calls.
+Do not rerun commands or edits unless the critique identifies a concrete reason.
+If no material defect remains before iteration N, record remaining iterations as
+no-op by evidence.
 
 ---
 

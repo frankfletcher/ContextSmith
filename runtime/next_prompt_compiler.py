@@ -20,15 +20,16 @@ def _read_file(task_dir: Path, filename: str) -> str | None:
 def _extract_current_phase(status_text: str) -> str | None:
     """Extract the current phase from STATUS.md.
 
-    Looks for `current_phase:` or `next_required_action:` fields.
+    Tries three formats in order:
+    1. `current_phase:` inline field (YAML-style)
+    2. `next_required_action:` inline field
+    3. `## Current Phase` Markdown section (value is the next non-empty line)
     """
     # Try current_phase field first
     m = re.search(r"^\s*-?\s*current_phase\s*:\s*(.+)$", status_text, re.MULTILINE)
     if m:
         raw = m.group(1).strip()
-        # Strip surrounding backticks if present
         raw = raw.strip("`")
-        # Extract phase id like "Phase 5B" or "Phase 8C.11" from "Phase 5B complete" or "Phase 8C.11 complete"
         phase_m = re.search(r"(Phase\s+[\w.]+)", raw, re.IGNORECASE)
         if phase_m:
             return phase_m.group(1)
@@ -42,6 +43,28 @@ def _extract_current_phase(status_text: str) -> str | None:
         if phase_m:
             return phase_m.group(1)
         return raw
+
+    # Fallback: parse ## Current Phase Markdown section
+    lines = status_text.splitlines()
+    for i, line in enumerate(lines):
+        if line.strip().startswith("## Current Phase"):
+            # Value is the next non-empty, non-heading line
+            for j in range(i + 1, len(lines)):
+                next_line = lines[j].strip()
+                if next_line and not next_line.startswith("#"):
+                    # Prefixed phase identifier: "Phase 1C", "Phase 2", etc.
+                    # Must start at beginning of line with capital P
+                    phase_m = re.match(r"(Phase\s+[\w.]+)", next_line)
+                    if phase_m:
+                        return phase_m.group(1)
+                    # Short slug like "phase_1", "4b", "load_task_state"
+                    if re.match(r"^[\w.]+$", next_line) and len(next_line) < 60:
+                        return next_line
+                    # Longer sentence = not a phase identifier
+                    return None
+                if next_line.startswith("## "):
+                    break
+            break
 
     return None
 
@@ -440,7 +463,19 @@ def compile_next_prompt(
     lines.append("- No broad architecture decisions made without evidence")
     lines.append("")
 
-    # 11. Expected Final Output Format
+    # 11. Ralph Loop Enforcement
+    lines.append("## Ralph Loop Enforcement")
+    lines.append("")
+    lines.append("3 iterations required. Each is critique+fix; do not skip or collapse.")
+    lines.append("")
+    lines.append("1. **Critique** — Review against contract, find defects, fix them")
+    lines.append("2. **Re-check** — After fixes, if no new defects → no-op; else fix")
+    lines.append("3. **Final check** — If no defects → no-op; do not invent changes")
+    lines.append("")
+    lines.append("Each iteration needs a compact log entry in Ralph Summary.")
+    lines.append("Ralph loops are critique/revision, not repeated tool calls.")
+
+    # 12. Expected Final Output Format
     lines.append("## Expected Output Format")
     lines.append("")
     lines.append("```")
@@ -454,7 +489,7 @@ def compile_next_prompt(
     lines.append("```")
     lines.append("")
 
-    # 12. Hard Stop
+    # 13. Hard Stop
     lines.append("## Hard Stop")
     lines.append("")
     if next_phase:
@@ -465,7 +500,7 @@ def compile_next_prompt(
     lines.append("Do not edit files outside the current phase scope.")
     lines.append("")
 
-    # 13. Deep Education Notes (optional)
+    # 14. Deep Education Notes (optional)
     if include_education:
         lines.append("## Education Notes")
         lines.append("")

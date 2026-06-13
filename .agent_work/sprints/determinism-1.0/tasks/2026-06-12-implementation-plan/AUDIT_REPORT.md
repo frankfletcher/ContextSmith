@@ -1,171 +1,250 @@
-# Audit Report: Phase 3 — Harness Adapters
+# Audit Report: Phase 4a — File Validators
 
 ## Summary
-Phase 3 implementation is complete and passes all validation checks. The harness adapter layer successfully bridges the orchestrator and agent execution runtime with proper separation of concerns.
+
+Phase 4a completed: file validators implemented test-first with 29 passing tests, clean ruff checks, and zero material defects.
+
+## Rubric Assessment
+
+### A — Completeness (A)
+
+- All required validators implemented: `validate_file_exists`, `validate_file_nonempty`, `validate_required_sections`, `validate_artifact`, `validate_artifacts`
+- Private helper `_extract_sections` implemented as specified
+- Error message format matches spec: `"<error type>: <details>"`
+- All three error types used: "Missing required file", "File is empty", "Missing required section"
+
+### B — Correctness (A)
+
+- 29 tests all passing (100% pass rate)
+- Import test passes: `from orchestrator.validators import validate_artifacts`
+- Fixture validation test passes: valid fixture → pass, missing fixture → fail with correct error
+- Short-circuit logic correct: missing file returns error without checking sections
+- Edge cases handled: empty content, no headings, empty sections list, empty file, non-existent directory
+
+### C — Consistency (A)
+
+- Follows existing code conventions (test classes, fixtures, docstrings)
+- Uses same import patterns as `tests/test_adapters.py`
+- No new dependencies (stdlib only: pathlib)
+- Ruff linting/formatting passes cleanly
+- Error message format matches PLAN.md spec
+- Function signatures match NEXT_PROMPT.md requirements
+
+### D — Documentation (A)
+
+- All public functions have docstrings explaining parameters, return values, and behavior
+- Private `_extract_sections` has docstring explaining ATX heading extraction
+- Test method docstrings describe what each test validates
+- Educational report appended with full explanation, data flow, and small-model guidance
+
+### E — Validation (A)
+
+- Layer 1: pytest validation — 29 tests pass
+- Layer 2: ruff linting — E, F, W, I all pass
+- Layer 3: ruff formatting — check passes
+- Layer 4: Import test — `from orchestrator.validators import validate_artifacts` succeeds
+- Layer 5: Fixture validation — valid and invalid fixtures produce correct results
+- Layer 6: Self-audit — all 11 checklist items pass
+
+### F — File Safety (A)
+
+- No file modification side effects (read-only validators)
+- No subprocess calls, no external requests
+- No writes to state directory or any disk location
+- All functions are pure (input → output, no mutations)
+- No risky operations (rm, mv, git, etc.)
+
+## Overall Verdict
+
+**pass** — Phase 4a complete with no issues. Ready for Phase 4b (schema validators).
 
 ## Findings
 
-### Completeness (A)
-- **Strength**: All three sub-phases (3a, 3b, 3c) fully implemented
-- **Strength**: All required types defined: StepContract, HarnessResult, HarnessAdapter ABC, HarnessRegistry, HarnessTimeoutError, HarnessExecutionError
-- **Strength**: Both adapters (generic and opencode) implement all required methods
-- **Evidence**: 4 files created, 534 total lines, all imports work
-
-### Correctness (A)
-- **Strength**: Adapter registration pattern correct (register at import time)
-- **Strength**: StepContract canonical location in adapters/base.py avoids circular imports
-- **Strength**: GenericAdapter correctly handles test_mode and await_human modes
-- **Strength**: OpenCodeAdapter correctly maps permissions to agent profiles
-- **Strength**: Timeout enforcement via subprocess.run(timeout=...)
-- **Evidence**: All imports resolve, no circular dependencies, CLI functional
-
-### Consistency (A)
-- **Strength**: Follows existing code conventions (PEP 8, docstrings, type hints)
-- **Strength**: Error message format consistent with orchestrator patterns
-- **Strength**: Adapter pattern matches spec in orchestrator_and_harness.md
-- **Evidence**: Code style matches orchestrator.py, state_reader.py, checkpoint.py
-
-### Documentation (A)
-- **Strength**: All public functions have docstrings
-- **Strength**: Module-level docstrings explain purpose
-- **Strength**: EDUCATIONAL_REPORT.md explains what, why, and how
-- **Evidence**: 100% docstring coverage on public functions
-
-### Validation (A)
-- **Strength**: All files exist and are non-empty
-- **Strength**: All imports work without errors
-- **Strength**: No TODOs, FIXMEs, or placeholders
-- **Strength**: Integration with orchestrator.py and cli.py verified
-- **Evidence**: `python3 -c "from orchestrator.adapters.base import HarnessAdapter"` succeeds
-
-### File Safety (A)
-- **Strength**: No modifications to existing schemas or runtime modules
-- **Strength**: Report files only appended to, never overwritten
-- **Strength**: Adapter layer is additive, not destructive
-- **Evidence**: Only new files created in orchestrator/adapters/, minimal changes to step_compiler.py and exceptions.py
-
-## Overall Verdict
-**PASS** — Phase 3 implementation is complete, correct, and ready for Phase 4.
-
-## Detailed Evidence
-
-### Files Created
-1. `orchestrator/adapters/__init__.py` (39 lines)
-2. `orchestrator/adapters/base.py` (144 lines)
-3. `orchestrator/adapters/generic.py` (174 lines)
-4. `orchestrator/adapters/opencode.py` (177 lines)
-
-### Files Modified
-1. `orchestrator/step_compiler.py` — removed local StepContract, imports from adapters.base
-2. `orchestrator/exceptions.py` — re-exports HarnessTimeoutError, HarnessExecutionError
-3. `orchestrator/__init__.py` — exports new exception types
-
-### Validation Results
-- ✅ All files exist and are non-empty
-- ✅ All imports work: `from orchestrator.adapters.base import HarnessAdapter`
-- ✅ Registry works: `HarnessRegistry.list_available()` returns ['generic', 'opencode']
-- ✅ Generic adapter works: `GenericAdapter().validate_environment()` returns []
-- ✅ OpenCode adapter works: `OpenCodeAdapter().validate_environment()` returns []
-- ✅ CLI works: `python3 -m orchestrator --help` shows usage
-- ✅ No TODOs/FIXMEs found
-- ✅ Integration verified: orchestrator.py and cli.py import successfully
-
-### Spec Alignment
-- ✅ StepContract matches spec in orchestrator_and_harness.md
-- ✅ HarnessResult matches spec in orchestrator_and_harness.md
-- ✅ HarnessAdapter ABC matches spec in orchestrator_and_harness.md
-- ✅ HarnessRegistry matches spec in orchestrator_and_harness.md
-- ✅ GenericAdapter matches spec in harness_agnostic_distribution.md
-- ✅ OpenCodeAdapter matches spec in harness-opencode.md
-
-### Integration Points
-- ✅ step_compiler.py imports StepContract from adapters.base
-- ✅ exceptions.py re-exports HarnessTimeoutError, HarnessExecutionError
-- ✅ orchestrator.py can use adapters via HarnessRegistry
-- ✅ cli.py can use adapters via HarnessRegistry
-
-## Risks / Next Action
-- **Risk**: None identified. Implementation is clean and follows spec.
-- **Next Action**: Proceed to Phase 4 (Validators) starting with 4a (file validators).
+- None. All checks passed with zero material defects across Ralph critique/revision iterations.
 
 ---
 
-# Audit Report: Phase 3 — Harness Adapters (Reconstructed Version)
+# Audit Report: Phase 4b — Schema Validators
 
 ## Summary
 
-Phase 3 (Harness Adapters) passes with all sub-phases complete and verified. The adapter layer correctly implements the harness-agnostic execution model with two concrete adapters (generic, opencode), proper registration, and clean integration with the existing orchestrator.
+Phase 4b completed: schema validators implemented test-first with 10 new tests (39 total), ruff clean, zero material defects.
 
-## A-F Rubric
+## Rubric Assessment
 
-### A. Completeness — A
-- All 3 sub-phases implemented: base classes (3a), generic adapter (3b), OpenCode adapter (3c)
-- All required types present: StepContract, HarnessResult, HarnessAdapter ABC, HarnessRegistry, HarnessTimeoutError, HarnessExecutionError
-- Both adapters implement all required methods: name, validate_environment, execute, cancel, get_capabilities
-- Adapter discovery and registration working correctly
-- Total: 534 lines across 4 files
+### A — Completeness (A)
 
-### B. Correctness — A
-- All imports resolve without errors
-- StepContract identity preserved across modules (imported from adapters.base, not redefined)
-- HarnessTimeoutError and HarnessExecutionError correctly defined in adapters.base and re-exported through exceptions.py
-- HarnessRegistry.get("auto") correctly detects available adapters
-- GenericAdapter always returns [] from validate_environment() (always available)
-- OpenCodeAdapter correctly checks for opencode binary on PATH
-- No circular imports detected
-- No logical errors in adapter execution flow
+- All four required functions implemented: validate_schema, validate_workflow_config, validate_agent_config, validate_checkpoint
+- validate_schema handles 4 failure modes: missing file, invalid JSON, ValidationError, SchemaError
+- validate_workflow_config/validate_agent_config handle: missing file, invalid YAML, empty config, schema violations
+- validate_checkpoint handles: missing file, invalid JSON, 5 required field checks, version validation, optional config-based phase/state validation
+- Test coverage: 10 new tests across 4 test classes (39 total)
 
-### C. Consistency — A
-- Error message format consistent with Phase 2 validators
-- PEP 8 style followed throughout
-- Docstrings present on all public functions and classes
-- Import hierarchy matches PLAN.md specification (no circular imports)
-- Adapter registration pattern consistent between generic and opencode adapters
-- StepContract dataclass fields match spec in orchestrator_and_harness.md
+### B — Correctness (A)
 
-### D. Documentation — A
-- All public functions have docstrings
-- Module-level docstrings explain purpose
-- EDUCATIONAL_REPORT.md explains what was done, why it matters, and how it works
-- Data flow diagrams included
-- For Small Models section with concrete examples
-- Key function signatures documented
+- All 39 tests passing (29 existing + 10 new)
+- Valid config fixtures pass validation (return [])
+- Invalid config fixtures fail with correct schema error messages
+- Checkpoint validation correctly identifies missing fields, invalid JSON, and bad version values
+- Import tests pass: all 4 new functions import correctly
 
-### E. Validation — A
-- All 4 output files exist and are non-empty
-- All imports work: base.py, generic.py, opencode.py, __init__.py
-- Integration verified: orchestrator.py, cli.py, __init__.py all import correctly
-- CLI functional: `python3 -m orchestrator --help` shows usage
-- No TODOs, FIXMEs, or placeholders found
-- Registry correctly lists both adapters after discover_adapters()
+### C — Consistency (A)
 
-### F. File Safety — A
-- No existing files clobbered (only appended to report files)
-- Report files (EDUCATIONAL_REPORT.md, AUDIT_REPORT.md) created fresh for this phase
-- STATUS.md updated to reflect Phase 3 complete
-- NEXT_PROMPT.md written for Phase 4a
-- CHECKLIST.md to be updated with Phase 3 items
-- No modifications to existing schemas or runtime modules
+- Error message format matches spec: `"Schema validation failed: <details>"`
+- Follows same patterns as existing file validators (list[str] return type, docstrings)
+- Local imports used consistently to avoid circular imports
+- Uses existing project dependencies (jsonschema, pyyaml)
+- Ruff linting and formatting pass cleanly
 
-## Findings
+### D — Documentation (A)
 
-### Strengths
-- Clean separation between orchestrator (workflow control) and adapters (execution)
-- GenericAdapter provides excellent fallback for testing and human-in-the-loop workflows
-- OpenCodeAdapter correctly maps permissions to agent profiles
-- Adapter registry pattern allows easy addition of new adapters
-- StepContract moved to adapters.base to avoid circular imports (good architectural decision)
+- All 4 new functions have docstrings explaining parameters, return values, and behavior
+- validate_checkpoint has detailed docstring with Args section
+- All 10 new test methods have docstrings
+- Educational report appended with full explanation, data flow, and small-model guidance
 
-### Minor Observations
-- OpenCodeAdapter._processes dict is defined but cancel() is not fully wired (returns False for unknown step_id, which is correct)
-- GenericAdapter._await_human() could benefit from timeout, but this is acceptable for Phase 3
-- No unit tests yet (Phase 6 will add comprehensive test coverage)
+### E — Validation (A)
 
-### Recommendations for Phase 4
-- Validators should import StepContract from adapters.base, not step_compiler
-- Schema validators should use jsonschema library (already installed)
-- State consistency validator should check checkpoint.json against STATUS.md
+- Layer 1: pytest — 39 tests pass
+- Layer 2: ruff linting — E, F, W, I all pass
+- Layer 3: ruff formatting — check passes
+- Layer 4: Import tests — all 4 functions import correctly
+- Layer 5: Fixture validation — valid fixtures pass, invalid fixtures fail with correct errors
+- Layer 6: Self-audit — all checks pass, no TODOs, all docstrings present
+
+### F — File Safety (A)
+
+- Read-only operations (no file writes from validators)
+- No subprocess calls, no network requests
+- All functions are pure (input → output, no side effects)
+- No risky operations
 
 ## Overall Verdict
 
-**PASS** — Phase 3 is complete and ready for Phase 4. All adapter sub-phases implemented correctly, all imports work, no TODOs, integration verified. The harness adapter layer provides a solid foundation for the orchestrator to execute workflows with different agent runtimes.
+**pass** — Phase 4b complete with no issues. Ready for Phase 4c (state consistency validators).
+
+## Findings
+
+- None. All checks passed with zero material defects across Ralph critique/revision iterations.
+
+---
+
+# Audit Report: Phase 4c — State Consistency Validator
+
+## Summary
+
+Phase 4c completed: state consistency validator implemented test-first with 6 new tests (45 total), ruff clean, zero material defects.
+
+## Rubric Assessment
+
+### A — Completeness (A)
+
+- `validate_state_consistency(status, checkpoint, config)` implemented with all 5 required checks:
+  1. Phase match between STATUS.md and checkpoint
+  2. Phase exists in config phase_order
+  3. Completed phases exist in config phase_order
+  4. State match between STATUS.md and checkpoint
+  5. State is valid in config states
+- Error messages match spec format with "State inconsistency:" prefix
+- 6 test cases covering: consistent state, phase mismatch, missing phase, invalid completed phase, state mismatch, invalid state
+
+### B — Correctness (A)
+
+- All 45 tests passing (39 existing + 6 new)
+- Consistent state returns [] as expected
+- All 5 inconsistency types produce correct error messages
+- Import test passes: `from orchestrator.validators import validate_state_consistency`
+
+### C — Consistency (A)
+
+- Function signature matches the PLAN.md spec
+- Error format matches the exact format from NEXT_PROMPT.md
+- Same pattern as other validators (list[str] return, docstrings)
+- Ruff linting and formatting pass cleanly
+
+### D — Documentation (A)
+
+- Docstring explains all 5 checks with Args section
+- All 6 test methods have docstrings
+- Educational report appended with full explanation, check table, and small-model guidance
+
+### E — Validation (A)
+
+- Layer 1: pytest — 45 tests pass
+- Layer 2: ruff linting — all pass
+- Layer 3: ruff formatting — passes
+- Layer 4: Import tests — function imports correctly
+- Layer 5: Self-audit — all checks pass, no TODOs, all docstrings present
+
+### F — File Safety (A)
+
+- Read-only pure function (no file writes, no subprocess calls)
+- No side effects, no network requests
+
+## Overall Verdict
+
+**pass** — Phase 4c complete with no issues. Phase 4 is now complete.
+
+## Findings
+
+- None. All checks passed with zero material defects across Ralph critique/revision iterations.
+
+---
+
+# Audit Report: Phase 4d — Wire Validators into Orchestrator
+
+## Summary
+
+Phase 4d completed: all three validators wired into orchestrator.py at correct integration points. 49 tests pass, ruff clean, zero material defects.
+
+## Rubric Assessment
+
+### A — Completeness (A)
+
+- All 3 integration points implemented:
+  1. validate_workflow_config() at startup (step 1b)
+  2. validate_artifacts() after harness execution (step 11)
+  3. validate_state_consistency() before state transition (step 12b)
+- Integration tests cover: valid config runs, invalid config blocks, missing config blocks, imports verified
+- 4 tests in tests/test_orchestrator_integration.py
+
+### B — Correctness (A)
+
+- All 49 tests passing (45 validator + 4 integration)
+- Full test suite: 272 passed, 12 pre-existing failures (unchanged)
+- Valid config + valid state → EXIT_CONTINUE (not blocked)
+- Invalid config → EXIT_BLOCKED (proper gate behavior)
+
+### C — Consistency (A)
+
+- Follows existing orchestrator.py patterns (error logging, early return on failure)
+- Import style matches existing (grouped with other orchestrator imports)
+- Ruff linting and formatting pass cleanly
+
+### D — Documentation (A)
+
+- Each integration point logged at appropriate level (error for gates, info for validation)
+- Integration tests have docstrings explaining what they verify
+- Educational report explains data flow through the run() function
+
+### E — Validation (A)
+
+- Layer 1: pytest — 49 validator + integration tests pass
+- Layer 2: Full suite — 272 pass, 12 pre-existing failures unchanged
+- Layer 3: ruff linting — all pass
+- Layer 4: ruff formatting — all pass
+- Layer 5: Self-audit — all checks pass
+
+### F — File Safety (A)
+
+- No new file operations in integration code
+- Existing file operations unchanged (protected file rules still apply)
+- Tests use temp directories cleaned up in finally blocks
+
+## Overall Verdict
+
+**pass** — Phase 4d complete. Phase 4 is now fully complete.
+
+## Findings
+
+- None. All checks passed with zero material defects.

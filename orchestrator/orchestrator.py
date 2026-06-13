@@ -38,6 +38,11 @@ from orchestrator.step_compiler import (
     compile_step_contract,
     resolve_next_state,
 )
+from orchestrator.validators import (
+    validate_artifacts,
+    validate_state_consistency,
+    validate_workflow_config,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -165,8 +170,172 @@ def _exit_code_for_state(next_state: str) -> int:
     return (
         EXIT_DONE
         if next_state == "done"
-        else EXIT_BLOCKED if next_state == "blocked" else EXIT_CONTINUE
+        else EXIT_BLOCKED
+        if next_state == "blocked"
+        else EXIT_CONTINUE
     )
+
+
+def _prepare_run_context(config_path: Path, state_dir: Path):
+    """Load and validate config/state, returning context or an exit code."""
+    try:
+        config = _load_workflow_config(config_path)
+    except Exception as e:
+        logger.error(f"[orchestrator] Error loading config: {e}")
+        return EXIT_BLOCKED
+
+    if config_errors := validate_workflow_config(config_path):
+        logger.error(f"[orchestrator] Config validation failed: {config_errors}")
+        return EXIT_BLOCKED
+
+    try:
+        status, plan, context, checkpoint = _read_state_bundle(state_dir)
+    except (FileNotFoundError, ValueError) as e:
+        logger.error(f"[orchestrator] Error reading state: {e}")
+        return EXIT_BLOCKED
+
+    if checkpoint and (errors := validate_checkpoint(checkpoint, config)):
+        logger.error(f"[orchestrator] State inconsistency: {errors}")
+        return EXIT_BLOCKED
+
+    current_state = status.get("current_state", "init")
+    current_phase = status.get("current_phase", "unknown")
+    if current_state in TERMINAL_STATES:
+        logger.info(f"[orchestrator] Already in terminal state: {current_state}")
+        return _exit_code_for_state(current_state)
+
+    return config, status, plan, context, checkpoint, current_state, current_phase
+
+
+def _prepare_step_contract(current_state: str, config: dict, plan: dict, context: dict):
+    """Compile step contract with state-specific validation."""
+    try:
+        return compile_step_contract(current_state, config, plan, context)
+    except Exception as e:
+        logger.error(f"[orchestrator] Error compiling step contract: {e}")
+        return None
+
+
+def _validate_state_for_dispatch(status: dict, checkpoint: dict | None, config: dict) -> bool:
+    """Validate state consistency before dispatching to a harness."""
+    if checkpoint and (
+        state_errors := validate_state_consistency(status, checkpoint, config)
+    ):
+        logger.error(f"[orchestrator] State consistency errors: {state_errors}")
+        return False
+    return True
+
+
+def _get_ready_adapter(harness: str):
+    """Get a harness adapter and validate its execution environment."""
+    try:
+        adapter = _get_harness_adapter(harness)
+    except KeyError as e:
+        logger.error(f"[orchestrator] Harness not found: {e}")
+        return None
+
+    if env_errors := adapter.validate_environment():
+        logger.error(f"[orchestrator] Harness environment errors: {env_errors}")
+        return None
+
+    return adapter
+
+
+def _apply_runtime_options(step_contract, force: bool, test_mode: bool, fixture: Optional[str]) -> None:
+    """Apply CLI/runtime flags to step contract extra payload."""
+    if force:
+        step_contract.extra["force"] = True
+    if test_mode:
+        step_contract.extra["test_mode"] = True
+    if fixture:
+        step_contract.extra["fixture"] = fixture
+
+
+def _execute_and_validate_step(adapter, step_contract, state_dir: Path, current_state: str, config: dict):
+    """Execute the step via harness and build unified validation results."""
+    logger.info(f"[{current_state}] Dispatching to harness: {adapter.name}")
+    logger.info(f"  Step: {step_contract.step_id}, state: {step_contract.state}")
+
+    try:
+        harness_result = adapter.execute(step_contract, state_dir)
+        logger.info(f"[{current_state}] Harness result: {harness_result.status}")
+    except Exception as e:
+        logger.error(f"[{current_state}] Harness execution failed: {e}")
+        return None
+
+    logger.info(f"[{current_state}] Validating artifacts...")
+    file_validation = validate_artifacts(state_dir, step_contract.expected_outputs, config)
+    harness_passed = harness_result.status == "pass"
+    files_passed = file_validation["passed"]
+    all_failures = list(file_validation["failures"])
+    all_failures.extend(harness_result.issues)
+    validation = {
+        "passed": harness_passed and files_passed,
+        "failures": all_failures,
+        "files_checked": file_validation["files_checked"],
+        "files_passed": file_validation["files_passed"],
+    }
+
+    logger.info(
+        f"[{current_state}] Validation: {'PASS' if validation['passed'] else 'FAIL'}"
+    )
+    if not validation["passed"]:
+        for err in validation["failures"]:
+            logger.warning(f"  - {err}")
+
+    return harness_result, validation
+
+
+def _resolve_transition(
+    current_state: str,
+    current_phase: str,
+    checkpoint: dict | None,
+    validation: dict,
+    harness_result,
+    config: dict,
+):
+    """Resolve next state and result payload from execution outcome."""
+    counters = checkpoint.get("counters", {}) if checkpoint else {}
+    result = {
+        "status": "pass" if validation["passed"] else "fail",
+        "artifacts": harness_result.artifacts_written,
+        "validation_passed": validation["passed"],
+    }
+    next_state = resolve_next_state(
+        current_state,
+        current_phase,
+        result,
+        validation,
+        config,
+        counters,
+    )
+    return result, next_state
+
+
+def _persist_transition(
+    state_dir: Path,
+    checkpoint: dict | None,
+    config: dict,
+    current_phase: str,
+    current_state: str,
+    next_state: str,
+    result: dict,
+    validation: dict,
+    step_contract,
+    context: dict,
+) -> None:
+    """Persist checkpoint and generated workflow artifacts after a transition."""
+    checkpoint = (
+        update_checkpoint(checkpoint, current_phase, current_state, next_state, result)
+        if checkpoint
+        else _build_initial_checkpoint(config, current_phase, next_state, result)
+    )
+    write_checkpoint(state_dir, checkpoint)
+
+    _update_status(state_dir, current_phase, next_state, result)
+    _write_phase_log(state_dir, current_state, next_state, result, validation)
+    if next_state not in TERMINAL_STATES:
+        _generate_next_prompt(state_dir, next_state, step_contract, context)
 
 
 def run(
@@ -194,115 +363,59 @@ def run(
     """
     config_path = Path(config_path)
     state_dir = Path(state_dir)
-    _ = (force, test_mode, fixture)
+    prepared = _prepare_run_context(config_path, state_dir)
+    if isinstance(prepared, int):
+        return prepared
 
-    # 1. Load workflow config
-    try:
-        config = _load_workflow_config(config_path)
-    except Exception as e:
-        logger.error(f"[orchestrator] Error loading config: {e}")
+    config, status, plan, context, checkpoint, current_state, current_phase = prepared
+    step_contract = _prepare_step_contract(current_state, config, plan, context)
+    if step_contract is None:
         return EXIT_BLOCKED
 
-    # 2. Read state
-    try:
-        status, plan, context, checkpoint = _read_state_bundle(state_dir)
-    except (FileNotFoundError, ValueError) as e:
-        logger.error(f"[orchestrator] Error reading state: {e}")
+    if not _validate_state_for_dispatch(status, checkpoint, config):
         return EXIT_BLOCKED
 
-    # 3. Validate state consistency
-    if checkpoint and (errors := validate_checkpoint(checkpoint, config)):
-        logger.error(f"[orchestrator] State inconsistency: {errors}")
-        return EXIT_BLOCKED
+    _apply_runtime_options(step_contract, force, test_mode, fixture)
 
-    # 4. Determine current state
-    current_state = status.get("current_state", "init")
-    current_phase = status.get("current_phase", "unknown")
-
-    if current_state in TERMINAL_STATES:
-        logger.info(f"[orchestrator] Already in terminal state: {current_state}")
-        return EXIT_DONE if current_state == "done" else EXIT_BLOCKED
-
-    # 5. Compile step contract
-    try:
-        step_contract = compile_step_contract(current_state, config, plan, context)
-    except Exception as e:
-        logger.error(f"[orchestrator] Error compiling step contract: {e}")
-        return EXIT_BLOCKED
-
-    # 6. Dry run: print next step and return
     if dry_run:
         _log_dry_run_step(current_state, current_phase, step_contract)
         return EXIT_CONTINUE
 
-    # 7. Discover adapters and get the requested harness
-    try:
-        adapter = _get_harness_adapter(harness)
-    except KeyError as e:
-        logger.error(f"[orchestrator] Harness not found: {e}")
+    adapter = _get_ready_adapter(harness)
+    if adapter is None:
         return EXIT_BLOCKED
 
-    # 8. Validate harness environment
-    if env_errors := adapter.validate_environment():
-        logger.error(f"[orchestrator] Harness environment errors: {env_errors}")
-        return EXIT_BLOCKED
-
-    # 9. Set task_state_dir on contract
     step_contract.task_state_dir = str(state_dir)
-
-    # 10. Dispatch to harness adapter
-    logger.info(f"[{current_state}] Dispatching to harness: {harness}")
-    logger.info(f"  Step: {step_contract.step_id}, state: {step_contract.state}")
-
-    try:
-        harness_result = adapter.execute(step_contract, state_dir)
-        logger.info(f"[{current_state}] Harness result: {harness_result.status}")
-    except Exception as e:
-        logger.error(f"[{current_state}] Harness execution failed: {e}")
+    execution = _execute_and_validate_step(
+        adapter, step_contract, state_dir, current_state, config
+    )
+    if execution is None:
         return EXIT_BLOCKED
 
-    # 11. Validate result
-    logger.info(f"[{current_state}] Validating artifacts...")
-    validation = {
-        "passed": harness_result.status == "pass",
-        "failures": harness_result.issues,
-    }
-    logger.info(
-        f"[{current_state}] Validation: {'PASS' if validation['passed'] else 'FAIL'}"
-    )
-
-    # 12. Resolve next state
-    counters = checkpoint.get("counters", {}) if checkpoint else {}
-    result = {
-        "status": harness_result.status,
-        "artifacts": harness_result.artifacts_written,
-        "validation_passed": validation["passed"],
-    }
-    next_state = resolve_next_state(
-        current_state, current_phase, result, validation, config, counters
+    harness_result, validation = execution
+    result, next_state = _resolve_transition(
+        current_state,
+        current_phase,
+        checkpoint,
+        validation,
+        harness_result,
+        config,
     )
     logger.info(f"[{current_state}] {harness_result.status} -> {next_state}")
 
-    # 13. Update checkpoint
-    checkpoint = (
-        update_checkpoint(checkpoint, current_phase, current_state, next_state, result)
-        if checkpoint
-        else _build_initial_checkpoint(config, current_phase, next_state, result)
+    _persist_transition(
+        state_dir,
+        checkpoint,
+        config,
+        current_phase,
+        current_state,
+        next_state,
+        result,
+        validation,
+        step_contract,
+        context,
     )
 
-    write_checkpoint(state_dir, checkpoint)
-
-    # 14. Update STATUS.md
-    _update_status(state_dir, current_phase, next_state, result)
-
-    # 15. Write PHASE_LOG.md entry
-    _write_phase_log(state_dir, current_state, next_state, result, validation)
-
-    # 16. Generate NEXT_PROMPT.md if continuing
-    if next_state not in TERMINAL_STATES:
-        _generate_next_prompt(state_dir, next_state, step_contract, context)
-
-    # 17. Return exit code
     return _exit_code_for_state(next_state)
 
 
@@ -522,6 +635,39 @@ Execute the next phase of the workflow.
 - Follow the step contract
 - Validate outputs
 - Write structured results
+
+## Ralph Loop Enforcement
+
+3 iterations required. Each is critique+fix. Do not skip or collapse.
+1. **Critique** — Review against contract, find material defects, fix them
+2. **Re-check** — After fixes, if no new defects → no-op; else fix
+3. **Final check** — If no defects → no-op; do not invent changes
+Each iteration needs a compact log entry in Ralph Summary.
+Ralph loops are critique/revision, not repeated tool calls.
+
+## Self-Audit
+Before closeout, verify:
+- Original phase goal satisfied or blocker recorded
+- All validation commands executed or blocker documented
+- Side-effect boundaries respected
+- Task state updated with compact facts
+
+## Expected Output Format
+
+```
+## Result
+## Evidence
+## Self-Audit
+## Ralph Summary
+## Validation
+## Declared vs Enforced
+## Risks / Next Action
+```
+
+## Hard Stop
+Current phase is {step_contract.step_id}. Do not proceed beyond it.
+Do not implement features outside this phase scope.
+Do not edit files outside the current phase scope.
 
 ## Context
 Continue from previous phase.
