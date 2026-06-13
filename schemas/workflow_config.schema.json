@@ -203,6 +203,16 @@
           "type": "integer",
           "minimum": 0,
           "description": "For ralph_critique states: max critique-revise cycles before forced advance."
+        },
+        "validation_mode": {
+          "type": "string",
+          "enum": ["strict", "relaxed", "none"],
+          "default": "strict",
+          "description": "Artifact validation strictness. strict=block on failure, relaxed=warn and pass, none=skip."
+        },
+        "model_pin": {
+          "type": "string",
+          "description": "Pin a specific model for this state. Passed through to harness adapter."
         }
       }
     },

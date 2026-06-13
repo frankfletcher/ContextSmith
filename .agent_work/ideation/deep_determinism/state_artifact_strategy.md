@@ -549,6 +549,20 @@ When the orchestrator updates artifacts, it follows these rules:
    - Use `bash` with `cat >> file << 'EOF' ... EOF` for a reliable append (the heredoc prevents variable expansion and the `>>` operator appends without truncating)
    - Alternatively, use the `edit` tool with `oldString` set to the last unique paragraph of the existing file and `newString` = `oldString + "\n\n---\n\n" + new_content` — but the bash `>>` approach is preferred because it cannot clobber
 
+### Append Validation
+
+When the orchestrator dispatches an agent to edit a file whose purpose is to maintain a record (PHASE_LOG.md, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, DECISIONS.md, or any file declared append-only), it must validate that the agent appended rather than overwrote:
+
+1. **Snapshot**: Before dispatching, copy the file's current content to a temporary location or hash it.
+2. **Execute**: Dispatch the agent as normal.
+3. **Verify**: After the agent completes, check whether the original content is still present at the start of the file. If the original content prefix matches, the agent appended correctly.
+4. **Pass**: If appended correctly, discard the snapshot and continue.
+5. **Fail**: If the original content was removed (overwrite), prepend the snapshot content to the file automatically. No need to re-issue the instruction to the agent — the orchestrator handles the fix directly.
+
+This check applies only to files declared append-only in the state definition's `expected_outputs` metadata. STATUS.md, CHECKLIST.md, and NEXT_PROMPT.md are deliberately rewritten each phase and do not require append validation.
+
+Implementation note: The snapshot can be a simple byte comparison of the first N bytes of the file (where N = size of the pre-dispatch file). If the post-dispatch file starts with the same bytes, the agent appended. If not, the file was overwritten.
+
 ### Write Atomicity
 
 To prevent partial writes during crashes:

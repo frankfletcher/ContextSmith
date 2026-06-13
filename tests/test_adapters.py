@@ -171,7 +171,7 @@ class TestGenericAdapter:
             },
             "validation": {"passed": True},
             "issues": [],
-            "next_action": "done"
+            "next_action": "done",
         }
         fixture_file = temp_state_dir / "fixture.json"
         fixture_file.write_text(json.dumps(fixture_data))

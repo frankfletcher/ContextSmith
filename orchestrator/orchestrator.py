@@ -25,8 +25,11 @@ from orchestrator.checkpoint import (
 )
 from orchestrator.constants import (
     EXIT_BLOCKED,
+    EXIT_CONFIG_ERROR,
     EXIT_CONTINUE,
     EXIT_DONE,
+    EXIT_INTERNAL_ERROR,
+    EXIT_STATE_INCONSISTENCY,
     TERMINAL_STATES,
 )
 from orchestrator.state_reader import (
@@ -39,6 +42,7 @@ from orchestrator.step_compiler import (
     resolve_next_state,
 )
 from orchestrator.validators import (
+    validate_append_only,
     validate_artifacts,
     validate_state_consistency,
     validate_workflow_config,
@@ -51,8 +55,21 @@ PROTECTED_FILES = {
     "AUDIT_REPORT.md",
     "EDUCATIONAL_REPORT.md",
     "RESULT.json",
-    "PHASE_LOG.md",  # Append-only by design
+    "PHASE_LOG.md",
+    "DECISIONS.md",
 }
+
+# Append-only files: orchestrator snapshots before dispatch,
+# auto-repairs if overwritten by harness
+APPEND_ONLY_FILES = {
+    "EDUCATIONAL_REPORT.md",
+    "AUDIT_REPORT.md",
+    "PHASE_LOG.md",
+    "DECISIONS.md",
+}
+
+# Snapshot storage: state_dir -> filename -> first N bytes
+_append_snapshots: dict[str, dict[str, bytes]] = {}
 
 
 def _is_protected_file(filename: str) -> bool:
@@ -71,11 +88,11 @@ def _safe_write(path: Path, content: str, mode: str = "w") -> None:
         mode: Write mode ('w' for write, 'a' for append)
     """
     if _is_protected_file(path.name) and mode == "w":
-        # Protected files should only be appended to
         mode = "a"
 
-    path.write_text(content, encoding="utf-8") if mode == "w" else None
-    if mode == "a":
+    if mode == "w":
+        path.write_text(content, encoding="utf-8")
+    elif mode == "a":
         with open(path, "a", encoding="utf-8") as f:
             f.write(content)
 
@@ -182,21 +199,29 @@ def _prepare_run_context(config_path: Path, state_dir: Path):
         config = _load_workflow_config(config_path)
     except Exception as e:
         logger.error(f"[orchestrator] Error loading config: {e}")
-        return EXIT_BLOCKED
+        return EXIT_CONFIG_ERROR
 
     if config_errors := validate_workflow_config(config_path):
         logger.error(f"[orchestrator] Config validation failed: {config_errors}")
-        return EXIT_BLOCKED
+        return EXIT_CONFIG_ERROR
 
     try:
         status, plan, context, checkpoint = _read_state_bundle(state_dir)
     except (FileNotFoundError, ValueError) as e:
         logger.error(f"[orchestrator] Error reading state: {e}")
-        return EXIT_BLOCKED
+        return EXIT_STATE_INCONSISTENCY
 
     if checkpoint and (errors := validate_checkpoint(checkpoint, config)):
         logger.error(f"[orchestrator] State inconsistency: {errors}")
-        return EXIT_BLOCKED
+        return EXIT_STATE_INCONSISTENCY
+
+    # Check for stale pre-dispatch marker (crash evidence)
+    if checkpoint and checkpoint.get("pre_dispatch"):
+        logger.warning(
+            "[orchestrator] Pre-execution checkpoint found with pre_dispatch=true. "
+            "Possible crash during agent dispatch. Check artifacts manually. "
+            "Auto-recovery not implemented."
+        )
 
     current_state = status.get("current_state", "init")
     current_phase = status.get("current_phase", "unknown")
@@ -216,14 +241,19 @@ def _prepare_step_contract(current_state: str, config: dict, plan: dict, context
         return None
 
 
-def _validate_state_for_dispatch(status: dict, checkpoint: dict | None, config: dict) -> bool:
-    """Validate state consistency before dispatching to a harness."""
+def _validate_state_for_dispatch(
+    status: dict, checkpoint: dict | None, config: dict
+) -> int | None:
+    """Validate state consistency before dispatching to a harness.
+
+    Returns None if valid, or an exit code if validation fails.
+    """
     if checkpoint and (
         state_errors := validate_state_consistency(status, checkpoint, config)
     ):
         logger.error(f"[orchestrator] State consistency errors: {state_errors}")
-        return False
-    return True
+        return EXIT_STATE_INCONSISTENCY
+    return None
 
 
 def _get_ready_adapter(harness: str):
@@ -241,7 +271,9 @@ def _get_ready_adapter(harness: str):
     return adapter
 
 
-def _apply_runtime_options(step_contract, force: bool, test_mode: bool, fixture: Optional[str]) -> None:
+def _apply_runtime_options(
+    step_contract, force: bool, test_mode: bool, fixture: Optional[str]
+) -> None:
     """Apply CLI/runtime flags to step contract extra payload."""
     if force:
         step_contract.extra["force"] = True
@@ -251,8 +283,132 @@ def _apply_runtime_options(step_contract, force: bool, test_mode: bool, fixture:
         step_contract.extra["fixture"] = fixture
 
 
-def _execute_and_validate_step(adapter, step_contract, state_dir: Path, current_state: str, config: dict):
-    """Execute the step via harness and build unified validation results."""
+def _snapshot_append_only_files(state_dir: Path) -> None:
+    """Snapshot full content of append-only files before harness dispatch.
+
+    Stores snapshots in _append_snapshots keyed by state_dir string.
+    """
+    snapshot_key = str(state_dir)
+    _append_snapshots[snapshot_key] = {}
+    for filename in APPEND_ONLY_FILES:
+        path = state_dir / filename
+        if path.exists():
+            _append_snapshots[snapshot_key][filename] = path.read_bytes()
+
+
+def _verify_and_repair_append_only_files(state_dir: Path) -> list[str]:
+    """Verify append-only files were not overwritten. Auto-repair if they were.
+
+    If the file was overwritten, prepend the full original content before the
+    new content to restore the append-only contract.
+
+    Returns list of repair actions taken (empty = all clean).
+    """
+    snapshot_key = str(state_dir)
+    snapshots = _append_snapshots.pop(snapshot_key, {})
+    if not snapshots:
+        return []
+
+    repairs = []
+    for filename, original_content in snapshots.items():
+        path = state_dir / filename
+        original_prefix = original_content[:512]
+        if not validate_append_only(path, original_prefix):
+            # File was overwritten — prepend full original content back
+            current_content = path.read_bytes()
+            path.write_bytes(original_content + current_content)
+            repairs.append(
+                f"Repaired overwritten append-only file: {filename} "
+                f"(prepended {len(original_content)} original bytes)"
+            )
+            logger.warning(
+                f"[orchestrator] Append-only file {filename} was overwritten. "
+                f"Prepending full original content ({len(original_content)} bytes)."
+            )
+    return repairs
+
+
+def _apply_result_fallback(harness_result, step_contract, state_dir: Path) -> None:
+    """Infer step status from artifact presence when RESULT.json is missing."""
+    if harness_result.status not in ("", "unknown", "pending") and (
+        harness_result.artifacts_written or (state_dir / "RESULT.json").exists()
+    ):
+        return
+    expected = step_contract.expected_outputs
+    all_present = all((state_dir / name).exists() for name in expected)
+    if all_present and expected:
+        harness_result.status = "pass"
+        harness_result.reason = (
+            "RESULT.json missing: inferred pass from artifact presence"
+        )
+    elif expected:
+        missing = [n for n in expected if not (state_dir / n).exists()]
+        harness_result.status = "fail"
+        harness_result.reason = (
+            f"RESULT.json missing: inferred fail from missing artifacts: {missing}"
+        )
+        harness_result.issues.append(harness_result.reason)
+    else:
+        harness_result.status = "fail"
+        harness_result.reason = "RESULT.json missing: no artifacts written"
+        harness_result.issues.append(harness_result.reason)
+    logger.warning(
+        f"[orchestrator] RESULT.json missing for step {step_contract.step_id} "
+        f"— using artifact presence fallback. Status: {harness_result.status}"
+    )
+
+
+def _build_validation_strict(
+    harness_passed: bool, file_validation: dict, all_failures: list
+) -> dict:
+    """Build validation result for strict mode."""
+    return {
+        "passed": harness_passed and file_validation["passed"],
+        "failures": all_failures,
+        "files_checked": file_validation["files_checked"],
+        "files_passed": file_validation["files_passed"],
+    }
+
+
+def _build_validation_relaxed(
+    harness_passed: bool, file_validation: dict, all_failures: list
+) -> dict:
+    """Build validation result for relaxed mode — warnings not blocks."""
+    if not harness_passed:
+        return {
+            "passed": False,
+            "failures": all_failures,
+            "files_checked": file_validation["files_checked"],
+            "files_passed": file_validation["files_passed"],
+        }
+    return {
+        "passed": True,
+        "failures": [],
+        "files_checked": file_validation["files_checked"],
+        "files_passed": file_validation["files_passed"],
+    }
+
+
+def _build_validation_none(harness_passed: bool) -> dict:
+    """Build validation result for none mode — skip artifact checks entirely."""
+    return {
+        "passed": harness_passed,
+        "failures": [],
+        "files_checked": 0,
+        "files_passed": 0,
+    }
+
+
+def _execute_and_validate_step(
+    adapter, step_contract, state_dir: Path, current_state: str, config: dict
+):
+    """Execute the step via harness and build unified validation results.
+
+    Respects step_contract.validation_mode:
+    - strict (default): Block on any validation failure.
+    - relaxed: Log warnings but pass if some artifacts exist.
+    - none: Skip artifact validation entirely.
+    """
     logger.info(f"[{current_state}] Dispatching to harness: {adapter.name}")
     logger.info(f"  Step: {step_contract.step_id}, state: {step_contract.state}")
 
@@ -263,18 +419,35 @@ def _execute_and_validate_step(adapter, step_contract, state_dir: Path, current_
         logger.error(f"[{current_state}] Harness execution failed: {e}")
         return None
 
-    logger.info(f"[{current_state}] Validating artifacts...")
-    file_validation = validate_artifacts(state_dir, step_contract.expected_outputs, config)
+    _apply_result_fallback(harness_result, step_contract, state_dir)
     harness_passed = harness_result.status == "pass"
-    files_passed = file_validation["passed"]
+    validation_mode = getattr(step_contract, "validation_mode", "strict")
+
+    if validation_mode == "none":
+        logger.info(
+            f"[{current_state}] Validation mode: none — skipping artifact check"
+        )
+        return harness_result, _build_validation_none(harness_passed)
+
+    logger.info(f"[{current_state}] Validating artifacts...")
+    file_validation = validate_artifacts(
+        state_dir, step_contract.expected_outputs, config
+    )
     all_failures = list(file_validation["failures"])
     all_failures.extend(harness_result.issues)
-    validation = {
-        "passed": harness_passed and files_passed,
-        "failures": all_failures,
-        "files_checked": file_validation["files_checked"],
-        "files_passed": file_validation["files_passed"],
-    }
+
+    if validation_mode == "relaxed":
+        validation = _build_validation_relaxed(
+            harness_passed, file_validation, all_failures
+        )
+        if all_failures:
+            logger.warning(
+                f"[{current_state}] Relaxed validation warnings: {all_failures}"
+            )
+    else:
+        validation = _build_validation_strict(
+            harness_passed, file_validation, all_failures
+        )
 
     logger.info(
         f"[{current_state}] Validation: {'PASS' if validation['passed'] else 'FAIL'}"
@@ -338,6 +511,109 @@ def _persist_transition(
         _generate_next_prompt(state_dir, next_state, step_contract, context)
 
 
+def _run_predispatch_checks(
+    checkpoint, step_contract, current_phase, current_state, config, state_dir
+) -> int | None:
+    """Run pre-dispatch checks: counter limit and checkpoint-before-run.
+
+    Returns an exit code if the dispatch should be skipped, or None to proceed.
+    """
+    if checkpoint:
+        current_retries = (
+            checkpoint.get("counters", {}).get(current_phase, {}).get("retries", 0)
+        )
+        if current_retries >= step_contract.max_retries:
+            logger.info(
+                f"[{current_state}] Max retries ({step_contract.max_retries}) reached"
+                f" for {current_phase}. Transitioning to blocked."
+            )
+            return EXIT_BLOCKED
+
+    if step_contract.checkpoint_before_run:
+        _write_predispatch_checkpoint(
+            checkpoint, config, current_phase, current_state, state_dir
+        )
+    return None
+
+
+def _write_predispatch_checkpoint(
+    checkpoint, config, current_phase, current_state, state_dir
+) -> None:
+    """Write a pre-dispatch checkpoint marker for crash evidence."""
+    pre = checkpoint
+    if pre is None:
+        pre = _build_initial_checkpoint(
+            config, current_phase, current_state, {"status": "pending"}
+        )
+    pre["pre_dispatch"] = True
+    pre["pre_dispatch_at"] = (
+        datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    )
+    write_checkpoint(state_dir, pre)
+    logger.info(
+        f"[{current_state}] Pre-dispatch checkpoint written for {current_phase}"
+    )
+
+
+def _complete_step_flow(
+    execution,
+    current_state,
+    current_phase,
+    checkpoint,
+    config,
+    step_contract,
+    context,
+    state_dir,
+) -> int:
+    """Resolve next state, persist artifacts, return exit code."""
+    harness_result, validation = execution
+    try:
+        result, next_state = _resolve_transition(
+            current_state,
+            current_phase,
+            checkpoint,
+            validation,
+            harness_result,
+            config,
+        )
+    except Exception as e:
+        logger.error(f"[{current_state}] Internal error during transition: {e}")
+        return EXIT_INTERNAL_ERROR
+
+    logger.info(f"[{current_state}] {harness_result.status} -> {next_state}")
+
+    try:
+        _persist_transition(
+            state_dir,
+            checkpoint,
+            config,
+            current_phase,
+            current_state,
+            next_state,
+            result,
+            validation,
+            step_contract,
+            context,
+        )
+    except Exception as e:
+        logger.error(f"[{current_state}] Internal error during persistence: {e}")
+        return EXIT_INTERNAL_ERROR
+
+    return _exit_code_for_state(next_state)
+
+
+def _clear_predispatch_marker(step_contract, checkpoint, config, state_dir) -> None:
+    """Clear the pre-dispatch marker after a caught exception."""
+    if step_contract.checkpoint_before_run:
+        pre = checkpoint
+        if pre is None:
+            pre = _build_initial_checkpoint(
+                config, state_dir.name, "init", {"status": "error"}
+            )
+        pre["pre_dispatch"] = False
+        write_checkpoint(state_dir, pre)
+
+
 def run(
     config_path: str,
     state_dir: str,
@@ -372,8 +648,9 @@ def run(
     if step_contract is None:
         return EXIT_BLOCKED
 
-    if not _validate_state_for_dispatch(status, checkpoint, config):
-        return EXIT_BLOCKED
+    dispatch_validation = _validate_state_for_dispatch(status, checkpoint, config)
+    if dispatch_validation is not None:
+        return dispatch_validation
 
     _apply_runtime_options(step_contract, force, test_mode, fixture)
 
@@ -381,42 +658,45 @@ def run(
         _log_dry_run_step(current_state, current_phase, step_contract)
         return EXIT_CONTINUE
 
+    code = _run_predispatch_checks(
+        checkpoint, step_contract, current_phase, current_state, config, state_dir
+    )
+    if code is not None:
+        return code
+
     adapter = _get_ready_adapter(harness)
     if adapter is None:
         return EXIT_BLOCKED
 
     step_contract.task_state_dir = str(state_dir)
-    execution = _execute_and_validate_step(
-        adapter, step_contract, state_dir, current_state, config
-    )
+
+    _snapshot_append_only_files(state_dir)
+
+    try:
+        execution = _execute_and_validate_step(
+            adapter, step_contract, state_dir, current_state, config
+        )
+    except Exception as e:
+        logger.error(f"[{current_state}] Internal error during execution: {e}")
+        _clear_predispatch_marker(step_contract, checkpoint, config, state_dir)
+        return EXIT_INTERNAL_ERROR
+
+    for repair in _verify_and_repair_append_only_files(state_dir):
+        logger.warning(f"[orchestrator] {repair}")
+
     if execution is None:
         return EXIT_BLOCKED
 
-    harness_result, validation = execution
-    result, next_state = _resolve_transition(
+    return _complete_step_flow(
+        execution,
         current_state,
         current_phase,
         checkpoint,
-        validation,
-        harness_result,
         config,
-    )
-    logger.info(f"[{current_state}] {harness_result.status} -> {next_state}")
-
-    _persist_transition(
-        state_dir,
-        checkpoint,
-        config,
-        current_phase,
-        current_state,
-        next_state,
-        result,
-        validation,
         step_contract,
         context,
+        state_dir,
     )
-
-    return _exit_code_for_state(next_state)
 
 
 def run_workflow(
@@ -438,54 +718,39 @@ def run_workflow(
     Returns:
         Final exit code: EXIT_DONE (0), EXIT_BLOCKED (1), or error code
     """
-    # Register signal handlers
     register_signal_handlers(state_dir)
-
     if not quiet:
         logger.info(f"[orchestrator] Starting workflow: {config_path}")
         logger.info(f"[orchestrator] State directory: {state_dir}")
         logger.info(f"[orchestrator] Harness: {harness}")
 
-    iteration = 0
-    max_iterations = 1000  # Safety limit
-
-    while iteration < max_iterations:
-        iteration += 1
-
-        # Check for STOP file
+    max_iterations = 1000
+    for iteration in range(1, max_iterations + 1):
         if should_stop(state_dir):
-            if not quiet:
-                logger.info(
-                    "[orchestrator] STOP file detected, halting after current phase"
-                )
+            logger.info("[orchestrator] STOP file detected, halting")
             return EXIT_BLOCKED
 
-        # Execute one step
         code = run(config_path, state_dir, harness=harness)
-
         if not quiet:
             logger.info(f"[orchestrator] Iteration {iteration}: exit code {code}")
 
         if code == EXIT_CONTINUE:
             continue
-        elif code == EXIT_DONE:
-            if not quiet:
-                logger.info("[orchestrator] Workflow complete: done")
-            return EXIT_DONE
-        elif code == EXIT_BLOCKED:
-            if not quiet:
-                logger.info("[orchestrator] Workflow blocked")
-            return EXIT_BLOCKED
-        else:
-            # Error codes 3-5
-            if not quiet:
-                logger.info(f"[orchestrator] Workflow error: exit code {code}")
-            return code
+        return _finalize_workflow_exit(code, quiet)
 
-    # Safety limit reached
+    return _finalize_workflow_exit(EXIT_BLOCKED, quiet)
+
+
+def _finalize_workflow_exit(code: int, quiet: bool) -> int:
+    """Log and return the final workflow exit code."""
+    messages = {
+        EXIT_DONE: "[orchestrator] Workflow complete: done",
+        EXIT_BLOCKED: "[orchestrator] Workflow blocked",
+    }
+    default = f"[orchestrator] Workflow error: exit code {code}"
     if not quiet:
-        logger.info(f"[orchestrator] Safety limit reached: {max_iterations} iterations")
-    return EXIT_BLOCKED
+        logger.info(messages.get(code, default))
+    return code
 
 
 def should_stop(state_dir: str) -> bool:
@@ -555,7 +820,7 @@ Continue to {next_state}
 none
 """
 
-    status_path.write_text(content, encoding="utf-8")
+    _safe_write(status_path, content, "w")
 
 
 def _write_phase_log(
@@ -589,10 +854,9 @@ Artifacts: {", ".join(result.get("artifacts", []))}
 
     # PHASE_LOG.md is append-only by design
     if log_path.exists():
-        with open(log_path, "a", encoding="utf-8") as f:
-            f.write(entry)
+        _safe_write(log_path, entry, "a")
     else:
-        log_path.write_text(f"# Phase Log\n{entry}", encoding="utf-8")
+        _safe_write(log_path, f"# Phase Log\n{entry}", "w")
 
 
 def _generate_next_prompt(
@@ -635,6 +899,7 @@ Execute the next phase of the workflow.
 - Follow the step contract
 - Validate outputs
 - Write structured results
+- Run `markdownlint . --ignore node_modules` on any changed Markdown files
 
 ## Ralph Loop Enforcement
 

@@ -4,7 +4,11 @@ import json
 import tempfile
 from pathlib import Path
 
-from orchestrator.constants import EXIT_BLOCKED
+from orchestrator.constants import (
+    EXIT_BLOCKED,
+    EXIT_CONFIG_ERROR,
+    EXIT_STATE_INCONSISTENCY,
+)
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
@@ -126,7 +130,9 @@ class TestConfigValidationIntegration:
                 harness="generic",
                 dry_run=True,
             )
-            assert code == EXIT_BLOCKED, "Invalid config should block at startup"
+            assert code == EXIT_CONFIG_ERROR, (
+                "Invalid config should return config error"
+            )
         finally:
             import shutil
 
@@ -152,7 +158,9 @@ class TestConfigValidationIntegration:
                 harness="generic",
                 dry_run=True,
             )
-            assert code == EXIT_BLOCKED, "Missing config should block"
+            assert code == EXIT_CONFIG_ERROR, (
+                "Missing config should return config error"
+            )
         finally:
             import shutil
 

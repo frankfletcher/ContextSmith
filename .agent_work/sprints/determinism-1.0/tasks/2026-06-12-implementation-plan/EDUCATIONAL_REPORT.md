@@ -682,3 +682,299 @@ run() flow with validators:
 - `uv run pytest tests/test_orchestrator_integration.py -v` — 4 integration tests pass
 - `uv run pytest tests/ -q` — no regressions in existing tests
 - Check that `orchestrator.orchestrator` has all three validator functions in its namespace
+
+## Phase 5: Orchestrator Skill and Workflow Developer
+
+Date: 2026-06-13
+Agent: contextsmith-run (phase executor)
+
+### Sub-phase 5a: Create orchestrator SKILL.md
+
+**What was done:**
+- Created `skills/contextsmith-orchestrator/` directory
+- Created `SKILL.md` (276 lines) from `orchestrator_skill_draft.md` — covers the state machine loop, artifact validation, RESULT.json, checkpoint.json, transition resolution, retry logic, Ralph loop, termination, harness companions, artifact templates (STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md), and reference loading
+- Created `reference_manifest.yml` with 10 shared reference entries (run-configuration-preview, persistent-task-state, harness-opencode, ralph-loop, evaluation-rubrics, loop-safety, git-safety, control-parameters-core, side-effect-matrix, small-model-atomicity)
+- Copied 10 shared reference files into `references/`
+
+**Ralph results:**
+- Ralph #1: Found 2 material defects — missing artifact templates (added STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md templates) and removed harness-generic.md reference (file doesn't exist yet)
+- Ralph #2: No new material defects — no-op
+- Ralph #3: No material defects remain — no-op
+
+**Validation:** `python scripts/validate_skills.py` — OK, 276 lines, version 1.0.0
+
+### Sub-phase 5b: Create workflow developer SKILL.md
+
+**What was done:**
+- Created `skills/contextsmith-workflow-developer/` directory
+- Created `SKILL.md` (160 lines) from `workflow_developer_skill.md` — covers intent gathering via structured questions, domain templates, customization rules, output format, validation, and after-generation options
+- Created `reference_manifest.yml` with 9 reference entries (structured-questioning, persistent-task-state, workflow_config.schema.json, 6 domain templates)
+- Copied 6 domain templates (audit, coding, general, migration, research, writing) to `references/domain-templates/`
+
+**Ralph results:**
+- Ralph #1: Found 1 material defect — reference loading table referenced `workflow_config_sketch.md` overlay section (deep_determinism spec file not available in standalone installations); removed it
+- Ralph #2: No new material defects — no-op
+- Ralph #3: No material defects remain — no-op
+
+**Validation:** `python scripts/validate_skills.py` — OK, 160 lines, version 1.0.0
+
+### Sub-phase 5c: Update router skill
+
+**What was done:**
+- Added `contextsmith-orchestrator` and `contextsmith-workflow-developer` to routing table in `skills/contextsmith/SKILL.md`
+- Added 2 new cross-skill coordination chains (Generate then run, Plan then execute)
+- Updated wizard Q1 options: split "I want to run or execute something" into 3 specific options (workflow config execution, workflow plan generation, prompt/handoff execution)
+
+**Ralph results:**
+- Ralph #1: No material defects found — routing table complete, wizard Q1 covers all new skills
+- Ralph #2: No new material defects — no-op
+- Ralph #3: No material defects remain — no-op
+
+**Validation:** `python scripts/validate_skills.py` — OK, 160 lines, version 1.7.1
+
+### Files Created/Modified
+
+| Path | Action | Size |
+|------|--------|------|
+| skills/contextsmith-orchestrator/SKILL.md | Created | 276 lines |
+| skills/contextsmith-orchestrator/reference_manifest.yml | Created | 10 refs |
+| skills/contextsmith-orchestrator/references/ | Created | 10 shared ref files |
+| skills/contextsmith-workflow-developer/SKILL.md | Created | 160 lines |
+| skills/contextsmith-workflow-developer/reference_manifest.yml | Created | 9 refs |
+| skills/contextsmith-workflow-developer/references/domain-templates/ | Created | 6 template files |
+| skills/contextsmith/SKILL.md | Modified | +6 lines (routing + wizard) |
+| CHECKLIST.md | Modified | Phase 5 items marked complete |
+| STATUS.md | Modified | Updated to phase_5_complete |
+
+### Notes
+
+- Both new skills pass `python scripts/validate_skills.py` with no errors or warnings
+- 9 skills total now in the repository (7 original + 2 new)
+- The orchestrator skill is under 300 lines (276) as specified
+- The workflow developer skill is under 250 lines (160) as specified
+- Domain templates are 6 YAML files covering all specified domains
+
+---
+
+# Educational Report: Phase 5.5 — Targeted Quality Fixes
+
+Date: 2026-06-13
+Agent: contextsmith-run (phase executor)
+
+## What Was Done
+
+Phase 5.5 addressed 7 targeted quality fixes before the Phase 6 collapse. Each sub-phase was independent:
+
+### Sub-phase 5.5a: Fix ruff line-too-long errors
+
+**Files modified:**
+- `orchestrator/orchestrator.py` — fixed 4 E501 errors (lines 219, 244, 254, 267)
+
+**How:** Each function signature was broken across multiple lines using parentheses. The `validate_artifacts` call at line 267 was shortened with an intermediate variable (`expected = step_contract.expected_outputs`).
+
+**Result:** `ruff check orchestrator/ --select E501` passes clean.
+
+### Sub-phase 5.5b: Replace HARD STOP with .phase_gate flag pattern
+
+**Files modified:**
+- `skills/contextsmith-orchestrator/SKILL.md` — added `.phase_gate` guard to NEXT_PROMPT.md template
+- `shared/persistent-task-state.md` — added Phase Gate Convention section
+
+**How:** Added a gate section at the top of the NEXT_PROMPT.md template: "Do NOT execute until `<task-dir>/.phase_gate` exists." Documented the convention in shared/persistent-task-state.md with `touch` command and "ready" marker.
+
+### Sub-phase 5.5c: Remove deep_determinism spec file references
+
+**Files modified:**
+- `skills/contextsmith-orchestrator/SKILL.md` — replaced 4 deep_determinism paths with inline references
+
+**How:** The Reference Loading table referenced `.agent_work/ideation/deep_determinism/` files for workflow config format, artifact templates, transition rules, and checkpoint format. Since these templates are already documented inline in the SKILL.md, the references were replaced with "Inline in ## Artifact Templates above" etc.
+
+### Sub-phase 5.5d: Create shared/harness-generic.md
+
+**Files created:**
+- `shared/harness-generic.md` (39 lines) — generic harness companion
+- `skills/contextsmith-orchestrator/references/harness-generic.md` — local copy
+
+**Files modified:**
+- `skills/contextsmith-orchestrator/reference_manifest.yml` — added harness-generic entry
+- `skills/contextsmith-orchestrator/SKILL.md` — added Generic to Harness Companions table
+
+**How:** Followed the companion template from orchestrator_as_skill.md (3 sections: Agent Launch, Permission Model, Result Protocol). The generic companion documents skill-only mode behavior (no subprocess, self-enforced permissions, file-based result protocol).
+
+### Sub-phase 5.5e: Update versioning scheme (policy only)
+
+**Files modified:**
+- `PACKAGE_SPEC.md` — added v2.0.0 Design Decisions section
+- `AGENTS.md` — added Versioning Convention section
+
+**How:** Documented the move to project-level versioning. Per-skill `metadata.version` is deprecated in favor of the single project version. Actual version stamp happens at Phase 6e end.
+
+### Sub-phase 5.5f: Add meta-config detail to Phase 6
+
+**Files modified:**
+- `PLAN.md` — expanded Phase 6d with concrete state definitions
+
+**How:** Added 6 concrete phase definitions (gather_requirements, select_domain_template, customize_config, validate_config, confirm_config, output_config) with full YAML config including permissions, max_retries, transitions, expected_outputs, and phase_prompt for each.
+
+### Sub-phase 5.5g: Update Ralph rationale
+
+Already documented in PLAN.md Ralph Loop Configuration section (lines 1260-1262): "No-op iterations are valid evidence."
+
+## Why It Matters
+
+Phase 5.5 fixes all pre-conditions for Phase 6 (the collapse phase):
+- Ruff errors would break the CI of Phase 6's Python-heavy work
+- deep_determinism paths made the orchestrator SKILL.md non-portable
+- Missing harness-generic.md meant Phase 6c reference migration would create a gap
+- Undocumented versioning policy would cause confusion at Phase 6e stamp
+- The .phase_gate convention ensures future phase handoffs have a review gate
+- Expanded Phase 6d gives concrete guidance for the meta-config conversion
+
+---
+
+# Educational Report: Phase 6a — Juice contextsmith-run (Read-Only Catalog)
+
+## What Was Done
+- Cataloged contextsmith-run SKILL.md: 342 lines, 18 sections (Runtime Contract, Supported Inputs, Control Parameters, Local-Model Execution Rules, Domain Routing, Interaction Modes, Execution Contract Compiler, Preflight Gate, Reference Selection, Execution Workflow, Task-State Execution, Validation Gate, Self-Audit Gate, Ralph Loop Enforcement, Evidence Ledger, Completion Criteria, Failure Handling, Required Output, Artifact Manifest)
+- Cataloged 8 local-only references (804 total lines): execution-contract-core.md (47), execution-contract.md (72), evidence-ledger-core.md (37), evidence-ledger.md (61), domain-packs.md (397), interaction-refinement.md (77), task-state-execution.md (68), help.md (45)
+- read reference_manifest.yml — 40 reference entries
+- Identified shared ref gap: orchestrator is missing ~25 shared refs that run had (control-parameters, artifact-manifest, behavioral-contracts, interaction-modes, domain-intent, source-artifact-boundary, context-management, targeted-context-length, model-capability-tiers, model-profiles, git-hygiene, output-location, phased-planning, implementation-plan-audit, phase-code-review, education-levels, documentation-quality, coding-standards, ui-standards, 6 domain-profiles, structured-questioning)
+
+## Why It Matters
+- This catalog is the blueprint for absorbing contextsmith-run patterns into the orchestrator skill
+- The orchestrator needs all the execution contract, validation, evidence, domain routing, and interaction mode patterns that run provided
+- Shared references should be added to orchestrator manifest only when the updated SKILL.md references them
+
+## For Small Models
+- 6a was read-only — no files changed
+- 8 local refs under skills/contextsmith-run/references/ must be copied to skills/contextsmith-orchestrator/references/
+- ~25 shared refs to evaluate for inclusion in orchestrator manifest
+
+---
+
+# Educational Report: Phase 6 — Collapse + Determinism Hardening
+
+## What Was Done
+Phase 6 completed all 17 sub-phases (6a-6q) implementing the collapse of contextsmith-run into the orchestrator and hardening determinism.
+
+### Sub-phase 6a: Juice contextsmith-run (read-only)
+- Cataloged 342-line SKILL.md with 18 sections, 8 local refs (804 lines total)
+- Identified ~25 shared ref gap between run and orchestrator manifests
+
+### Sub-phase 6b: Enhance orchestrator SKILL.md
+- Rewrote orchestrator SKILL.md to absorb all run patterns: Supported Inputs, Runtime Contract, Control Parameters, Local-Model Rules, Domain Routing, Interaction Modes, Execution Contract Compiler, Preflight Gate, Reference Selection, full 14-step Execution Workflow, Task-State Execution, Validation Gate (two-layer), Self-Audit Gate, Ralph Loop Enforcement, Evidence Ledger, Completion Criteria, Failure Handling, Required Output format, Artifact Manifest
+- Kept existing orchestrator loop, state determination, artifact validation, transition resolution, retry logic, termination, artifact templates, harness companions
+- Kept heavy reference content (domain-packs.md 397 lines) as separate reference files
+
+### Sub-phase 6c: Move references
+- Copied 8 local refs from run to orchestrator: execution-contract-core.md, execution-contract.md, evidence-ledger-core.md, evidence-ledger.md, domain-packs.md, interaction-refinement.md, task-state-execution.md, help.md
+- Updated reference_manifest.yml with 38 entries including all shared refs from run
+
+### Sub-phase 6d: Meta-config conversion
+- Created skills/contextsmith-workflow-developer/workflow_config.yaml with 6 phases (gather_requirements → select_domain_template → customize_config → validate_config → confirm_config → output_config)
+- Reduced SKILL.md from 160 to 60 lines as thin delegator
+- Config validates against schema
+
+### Sub-phase 6e: Delete contextsmith-run
+- Deleted skills/contextsmith-run/ directory
+- Removed from router (skills/contextsmith/SKILL.md): routing table, cross-skill chains, wizard Q1
+- Updated 7 cross-referenced files: shared/harness-opencode.md, shared/run-configuration-preview.md, shared/structured-questioning.md, AGENTS.md, README.md, PACKAGE_SPEC.md
+- Updated all 6 skill copies of harness-opencode.md, help.md files (5 files)
+- Updated docs: QUICKSTART.md, WHICH_SKILL.md, RUN_TASK_STATE_HANDOFF.md, COMPARE_TRAVEL_OPTIONS.md, RUNTIME_ENFORCEMENT.md, SCHEDULE_WITH_APPROVAL_GATES.md, EXAMPLES_LIBRARY.md
+- Applied version 2.0.0 to all 7 surviving skills
+
+### Sub-phase 6f: __main__.py
+- Created orchestrator/__main__.py (python -m orchestrator entry point)
+
+### Sub-phase 6g: Append validation
+- Added validate_append_only() to validators.py — checks file still starts with original prefix
+- Added _snapshot_append_only_files() and _verify_and_repair_append_only_files() to orchestrator.py
+- Snapshot-before-dispatch and auto-repair on overwrite integrated into run()
+
+### Sub-phase 6h: Wire validation_mode
+- Added validation_mode (strict/relaxed/none) to workflow_config.schema.json StateDefinition
+- Wired into _execute_and_validate_step() — strict blocks, relaxed warns+passes, none skips
+
+### Sub-phase 6i: Checkpoint_before_run
+- Pre-dispatch checkpoint write with pre_dispatch=true marker before adapter.execute()
+- Startup detection of stale pre_dispatch markers with warning
+- Post-execution checkpoint clears marker
+
+### Sub-phase 6j: Exit codes 3-5
+- Added EXIT_CONFIG_ERROR=3, EXIT_STATE_INCONSISTENCY=4, EXIT_INTERNAL_ERROR=5 to constants.py
+- Wired: config load fail → 3, state inconsistency → 4, internal errors → 5
+- Updated test_orchestrator_integration.py for new exit codes
+
+### Sub-phase 6k: Pre-dispatch counter check
+- Added retry counter check before dispatch: if retries >= max_retries, skip and EXIT_BLOCKED
+
+### Sub-phase 6l: timeout_s (pre-existing in schema and step_compiler)
+### Sub-phase 6m: model_pin added to schema, step_compiler already reads it
+### Sub-phase 6n: ralph_max_cycles (pre-existing in schema and step_compiler)
+
+### Sub-phase 6p: RESULT.json fallback
+- Added artifact-presence fallback in _execute_and_validate_step()
+- Documents in orchestrator SKILL.md Artifact Validation section
+
+### Sub-phase 6q: Agent output is evidence
+- Added docstring to resolve_next_state() asserting orchestrator transition authority
+- Verified no next_action usage in state transition code
+- Paragraph already in SKILL.md from 6b rewrite
+
+## Why It Matters
+The collapse completes the architecture unification: one orchestrator skill handles all execution (workflow configs, raw prompts, task-state handoffs) instead of splitting across run + orchestrator. The 10 hardening sub-phases close determinism gaps that existed in the data model but were never wired to the execution loop — validation modes, crash evidence, distinct exit codes, pre-dispatch gates, and explicit transition authority.
+
+## For Small Models
+- contextsmith-run is deleted — no more confusion about which skill handles execution
+- 8 local reference files exist in both skill root and references/ dir
+- Exit codes: 0=done, 1=blocked, 2=continue, 3=config error, 4=state inconsistency, 5=internal error
+- Append-only files auto-repair: if agent overwrites instead of appending, orchestrator prepends original content
+- validation_mode: strict=default, relaxed=warn only, none=skip artifact checks
+
+---
+
+# Educational Report: Phase 6.75 — Complexity Cleanup + Radon Integration
+
+## What Was Done
+- Installed `uvx radon cc` and `uvx radon mi` for cyclomatic complexity and maintainability index
+- Created `shared/complexity-gate.md` — canonical reference for the complexity enforcement policy
+- Added to orchestrator `reference_manifest.yml` and SKILL.md reference loading table
+- Added complexity policy to AGENTS.md
+- Added Phase 6.75 to PLAN.md with 4 sub-phases
+- Added phases 8-9 to PLAN.md
+
+### Refactoring Results
+
+| Function | Before | After | File |
+|----------|--------|-------|------|
+| `_execute_and_validate_step` | C (19) | B (8) | orchestrator.py |
+| `run` | C (18) | B (8) | orchestrator.py |
+| `run_workflow` | C (13) | B (6) | orchestrator.py |
+| `validate_checkpoint_file` | C (17) | B (8) | validators.py |
+| `validate_state_consistency` | C (15) | B (6) | validators.py |
+| `cmd_validate` | C (13) | B (7) | cli.py |
+| `cmd_diff` | C (12) | B (10) | cli.py |
+| `cmd_resume` | C (11) | B (8) | cli.py |
+| `validate_checkpoint` | C (13) | B (6) | checkpoint.py |
+
+All 9 C-ranked functions refactored to B. No C/D/E/F functions remain in orchestrator/. All files maintainability ≥ A.
+
+### Key Extractions
+- `_apply_result_fallback()` — RESULT.json fallback logic from `_execute_and_validate_step`
+- `_build_validation_strict/relaxed/none()` — validation mode builders
+- `_run_predispatch_checks()`, `_write_predispatch_checkpoint()`, `_clear_predispatch_marker()` — pre-dispatch logic from `run()`
+- `_complete_step_flow()` — post-execution resolution + persistence from `run()`
+- `_finalize_workflow_exit()` — exit code logging from `run_workflow()`
+- `_validate_checkpoint_version()`, `_validate_checkpoint_config_ref()` — from validators.py
+- `_check_phase_consistency()`, `_check_completed_phases()`, `_check_state_consistency()` — state consistency splitters
+- `_check_required_fields()`, `_check_canonical_state()`, `_check_counters()`, `_check_last_result()` — checkpoint splitters
+- `_validate_required_files()`, `_validate_checkpoint()`, `_validate_state_files()` — CLI validate splitters
+- `_require_path()`, `_find_workflow_config()` — CLI shared helpers
+- `_safe_write()` was dead code — now wired into `_update_status()` and `_write_phase_log()`
+
+## For Small Models
+- Run `uvx radon cc <file> -s -a | grep -E " - [CDEF] "` to find high-complexity functions
+- Run `uvx radon mi <file> -s | grep -E " - [BCDEF] "` to find low-maintainability files
+- Extract large if/elif chains into helper functions — each helper is one concern
+- Keep each function doing one thing: extract, always return early style
+- `uvx` auto-installs packages, no need for `uv add`

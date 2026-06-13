@@ -40,7 +40,7 @@ Identify which actions require explicit user approval and which don't. Use `shar
 
 ## Step 2: Invoke the Skill with Approval Gates Configured
 
-Use `contextsmith-run` with `--interaction review-gate` and the appropriate domain flag.
+Use `contextsmith-orchestrator` with `--interaction review-gate` and the appropriate domain flag.
 
 **Example prompt:**
 ```

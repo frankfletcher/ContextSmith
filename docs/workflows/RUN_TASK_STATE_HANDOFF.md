@@ -1,6 +1,6 @@
 # Run a Task-State Handoff: Step-by-Step
 
-Use this workflow when you want to resume a multi-phase ContextSmith task from a `NEXT_PROMPT.md` handoff file. The `contextsmith-run` skill reads the handoff, executes the next phase, and updates task state.
+Use this workflow when you want to resume a multi-phase ContextSmith task from a `NEXT_PROMPT.md` handoff file. The `contextsmith-orchestrator` skill reads the handoff, executes the next phase, and updates task state.
 
 ## Table of Contents
 
@@ -8,7 +8,7 @@ Use this workflow when you want to resume a multi-phase ContextSmith task from a
 - [Inputs](#inputs)
 - [Step 1: Locate Your Task State](#step-1-locate-your-task-state)
 - [Step 2: Read NEXT_PROMPT.md](#step-2-read-next_promptmd)
-- [Step 3: Invoke contextsmith-run](#step-3-invoke-contextsmith-run)
+- [Step 3: Invoke contextsmith-orchestrator](#step-3-invoke-contextsmith-orchestrator)
 - [Step 4: Validate the Phase Output](#step-4-validate-the-phase-output)
 - [Step 5: Review Updated Task State](#step-5-review-updated-task-state)
 - [Expected Artifacts](#expected-artifacts)
@@ -41,9 +41,9 @@ ls .agent_work/sprints/<sprint>/tasks/
 
 The handoff file contains the next phase's objective, steps, constraints, and validation commands. Read it to understand what the agent should do next.
 
-## Step 3: Invoke contextsmith-run
+## Step 3: Invoke contextsmith-orchestrator
 
-Point the `contextsmith-run` skill at the handoff file with any controls:
+Point the `contextsmith-orchestrator` skill at the handoff file with any controls:
 
 ```
 Run the prompt in this file:

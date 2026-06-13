@@ -15,7 +15,7 @@ The value of custom agents is not temperature control but **permission boundarie
 | Skill Migrator (batch migrate) | `@contextsmith-migrator` or built-in `Build` | — | edit allow, bash ask, git allow |
 | Prompt Engineer (create/edit) | `@contextsmith-prompter` or built-in `Build` | — | edit allow, bash allow, external_directory deny |
 | Instruction Engineer (AGENTS.md) | `@contextsmith-builder` or built-in `Build` | — | edit allow, bash allow |
-| Run (execute handoff) | `@contextsmith-runner` or built-in `Build` | as declared | per handoff contract |
+| Orchestrator (execute handoff) | `@contextsmith-orchestrator` or built-in `Build` | as declared | per handoff contract |
 
 If custom agents are not available, use the built-in Plan agent for audit-only work and Build for file-changing work. Recommend the user set up custom agents for repeatable workflows.
 

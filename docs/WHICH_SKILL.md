@@ -38,7 +38,7 @@ Example:
 Use:
 
 ```text
-contextsmith-run
+contextsmith-orchestrator
 ```
 
 Good for:
@@ -51,7 +51,7 @@ Good for:
 Example:
 
 ```bash
-/contextsmith-run --run-mode phase --target .agent_work/sprints/<sprint>/tasks/<task> --interaction refine --validation strict --ralph 2
+/contextsmith-orchestrator --run-mode phase --target .agent_work/sprints/<sprint>/tasks/<task> --interaction refine --validation strict --ralph 2
 ```
 
 ## I have a SKILL.md

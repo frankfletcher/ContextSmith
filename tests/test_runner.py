@@ -47,7 +47,9 @@ Phase 5E (Runner Skeleton)
 """)
 
         # Create PLAN.md with Phase 5E section
-        (task_dir / "PLAN.md").write_text("""# Universal Runtime Enforcement Implementation Plan
+        (
+            task_dir / "PLAN.md"
+        ).write_text("""# Universal Runtime Enforcement Implementation Plan
 
 ## Phase 5E: Runner Skeleton
 **Goal:** Implement the smallest CLI runner skeleton if Phase 5D is approved.
@@ -87,25 +89,25 @@ def test_plan_status_basic(temp_task_dir):
     """Test plan_status returns basic phase information."""
     result = plan_status(temp_task_dir)
 
-    assert result['phase'] == 'Phase 5E'
-    assert result['status']['current_phase'] == 'Phase 5E'
-    assert result['has_status'] is True
-    assert result['has_plan'] is True
-    assert result['has_context'] is True
+    assert result["phase"] == "Phase 5E"
+    assert result["status"]["current_phase"] == "Phase 5E"
+    assert result["has_status"] is True
+    assert result["has_plan"] is True
+    assert result["has_context"] is True
 
 
 def test_next_gate_basic(temp_task_dir):
     """Test next_gate returns validation commands and blockers."""
     result = next_gate(temp_task_dir)
 
-    assert result['phase'] == 'Phase 5E'
-    assert len(result['blockers']) > 0
-    assert 'packaging flattening' in result['blockers'][0].lower()
-    assert len(result['validation_commands']) > 0
+    assert result["phase"] == "Phase 5E"
+    assert len(result["blockers"]) > 0
+    assert "packaging flattening" in result["blockers"][0].lower()
+    assert len(result["validation_commands"]) > 0
     # Check that at least one validation command mentions pytest
-    validation_text = ' '.join(result['validation_commands']).lower()
-    assert 'pytest' in validation_text
-    assert result['next_action'] == 'Run validation commands'
+    validation_text = " ".join(result["validation_commands"]).lower()
+    assert "pytest" in validation_text
+    assert result["next_action"] == "Run validation commands"
 
 
 def test_plan_status_missing_files():
@@ -113,10 +115,10 @@ def test_plan_status_missing_files():
     with tempfile.TemporaryDirectory() as tmpdir:
         result = plan_status(Path(tmpdir))
 
-        assert result['phase'] is None
-        assert result['has_status'] is False
-        assert result['has_plan'] is False
-        assert result['has_context'] is False
+        assert result["phase"] is None
+        assert result["has_status"] is False
+        assert result["has_plan"] is False
+        assert result["has_context"] is False
 
 
 def test_next_gate_missing_files():
@@ -124,15 +126,15 @@ def test_next_gate_missing_files():
     with tempfile.TemporaryDirectory() as tmpdir:
         result = next_gate(Path(tmpdir))
 
-        assert result['phase'] is None
-        assert result['blockers'] == []
-        assert result['validation_commands'] == []
+        assert result["phase"] is None
+        assert result["blockers"] == []
+        assert result["validation_commands"] == []
 
 
 def test_runner_cli_plan_status(temp_task_dir):
     """Test runner CLI plan-status command via subprocess."""
     result = subprocess.run(
-        [sys.executable, str(CLI), 'plan-status', str(temp_task_dir)],
+        [sys.executable, str(CLI), "plan-status", str(temp_task_dir)],
         capture_output=True,
         text=True,
         cwd=str(PROJECT_ROOT),
@@ -140,15 +142,15 @@ def test_runner_cli_plan_status(temp_task_dir):
     )
     assert result.returncode == 0
     data = json.loads(result.stdout)
-    assert data['phase'] == 'Phase 5E'
-    assert data['has_status'] is True
-    assert data['has_plan'] is True
+    assert data["phase"] == "Phase 5E"
+    assert data["has_status"] is True
+    assert data["has_plan"] is True
 
 
 def test_runner_cli_next_gate(temp_task_dir):
     """Test runner CLI next-gate command via subprocess."""
     result = subprocess.run(
-        [sys.executable, str(CLI), 'next-gate', str(temp_task_dir)],
+        [sys.executable, str(CLI), "next-gate", str(temp_task_dir)],
         capture_output=True,
         text=True,
         cwd=str(PROJECT_ROOT),
@@ -156,38 +158,38 @@ def test_runner_cli_next_gate(temp_task_dir):
     )
     assert result.returncode == 0
     data = json.loads(result.stdout)
-    assert data['phase'] == 'Phase 5E'
-    assert 'blockers' in data
-    assert len(data['blockers']) > 0
-    assert 'validation_commands' in data
+    assert data["phase"] == "Phase 5E"
+    assert "blockers" in data
+    assert len(data["blockers"]) > 0
+    assert "validation_commands" in data
 
 
 def test_runner_cli_help():
     """Test runner CLI help output."""
     result = subprocess.run(
-        [sys.executable, str(CLI), '--help'],
+        [sys.executable, str(CLI), "--help"],
         capture_output=True,
         text=True,
         cwd=str(PROJECT_ROOT),
         env={**os.environ, "PYTHONPATH": str(PROJECT_ROOT)},
     )
     assert result.returncode == 0
-    assert 'plan-status' in result.stdout
-    assert 'next-gate' in result.stdout
+    assert "plan-status" in result.stdout
+    assert "next-gate" in result.stdout
 
 
 def test_runner_cli_subcommand_help():
     """Test runner CLI subcommand help output."""
     result = subprocess.run(
-        [sys.executable, str(CLI), 'plan-status', '--help'],
+        [sys.executable, str(CLI), "plan-status", "--help"],
         capture_output=True,
         text=True,
         cwd=str(PROJECT_ROOT),
         env={**os.environ, "PYTHONPATH": str(PROJECT_ROOT)},
     )
     assert result.returncode == 0
-    assert 'task_dir' in result.stdout
+    assert "task_dir" in result.stdout
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

@@ -159,7 +159,9 @@ class TestCompileNextPrompt:
         task_dir = FIXTURES / "task_state_valid"
         normal = compile_next_prompt(task_dir, compact=False)
         compact_out = compile_next_prompt(task_dir, compact=True)
-        assert len(compact_out) < len(normal), "Compact mode should produce shorter output"
+        assert len(compact_out) < len(normal), (
+            "Compact mode should produce shorter output"
+        )
 
     def test_compact_omits_education(self):
         task_dir = FIXTURES / "task_state_valid"
@@ -173,9 +175,7 @@ class TestEdgeCases:
     def test_last_phase_hard_stop_no_next(self):
         """Last phase should not mention a next phase in Hard Stop."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1Z\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1Z\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1Z: Final\n- **Goal:** Finish everything.\n"
             )
@@ -189,12 +189,8 @@ class TestEdgeCases:
     def test_empty_plan_phase_block(self):
         """Phase block with no content should still generate valid prompt."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Empty\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Empty\n\n## Phase 1B: Next\n")
             content = compile_next_prompt(tmp)
             assert "## Mission" in content
             assert "## Hard Stop" in content
@@ -202,9 +198,7 @@ class TestEdgeCases:
     def test_phase_with_yaml_context_contract(self):
         """Phase with a YAML context_contract should extract fields."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: With Contract\n"
                 "```yaml\n"
@@ -223,9 +217,7 @@ class TestEdgeCases:
     def test_phase_with_inline_content_in_mission(self):
         """Phase block title should appear in the generated prompt Mission section."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: With Content\n"
                 "This phase requires careful attention to detail.\n"
@@ -240,12 +232,8 @@ class TestEdgeCases:
     def test_context_validation_commands_extracted(self):
         """Validation commands from CONTEXT.md should appear in output."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             Path(tmp, "CONTEXT.md").write_text(
                 "## Validation Commands\n"
                 "- `python -m pytest tests/ -v`\n"
@@ -258,15 +246,10 @@ class TestEdgeCases:
     def test_context_constraints_extracted(self):
         """Constraints from CONTEXT.md should be available in output."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             Path(tmp, "CONTEXT.md").write_text(
-                "## Constraints\n"
-                "- Do not edit files outside workspace\n"
+                "## Constraints\n- Do not edit files outside workspace\n"
             )
             content = compile_next_prompt(tmp)
             # Constraints appear in the read order or allowed/disallowed section
@@ -275,12 +258,8 @@ class TestEdgeCases:
     def test_compact_mode_still_has_hard_stop(self):
         """Compact mode should still include hard stop section."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             content = compile_next_prompt(tmp, compact=True)
             assert "## Hard Stop" in content
             assert "## Mission" in content
@@ -288,9 +267,7 @@ class TestEdgeCases:
     def test_include_education_with_no_education_section(self):
         """Education flag with no education content should show default note."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: No Education\n\n## Phase 1B: Next\n"
             )
@@ -302,9 +279,7 @@ class TestEdgeCases:
     def test_include_education_with_education_section(self):
         """Education flag should add Education Notes section with guidance."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: With Education\n"
                 "## Education\n"
@@ -319,9 +294,7 @@ class TestEdgeCases:
     def test_phase_override_invalid_raises_error(self):
         """Phase override to non-existent phase should raise ValueError."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: Exists\n\n## Phase 1B: Next\n"
             )
@@ -331,9 +304,7 @@ class TestEdgeCases:
     def test_markdown_fences_balanced_with_education(self):
         """Generated prompt with education should still have balanced fences."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: With Education\n"
                 "## Education\n"
@@ -347,12 +318,8 @@ class TestEdgeCases:
     def test_markdown_fences_balanced_compact(self):
         """Generated prompt in compact mode should have balanced fences."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             content = compile_next_prompt(tmp, compact=True)
             triple_fences = content.count("```")
             assert triple_fences % 2 == 0, "Unbalanced fences in compact mode"
@@ -360,9 +327,7 @@ class TestEdgeCases:
     def test_generated_prompt_no_execute_instructions(self):
         """Generated prompt should not contain instructions to execute the next phase."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: Current\n- **Goal:** Do work.\n"
                 "\n## Phase 1B: Next\n- **Goal:** More work.\n"
@@ -377,9 +342,7 @@ class TestEdgeCases:
     def test_hard_boundary_includes_stop_rule(self):
         """Hard boundary in Mission should include the stop_rule from context contract."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: With Stop\n"
                 "```yaml\n"
@@ -394,21 +357,18 @@ class TestEdgeCases:
     def test_read_order_includes_status_first(self):
         """Read order should list STATUS.md as the first item."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             content = compile_next_prompt(tmp)
             read_order_idx = content.index("## Read Order")
             # Find next section heading after Read Order
             next_section = re.search(
-                r"\n##\s+\S+", content[read_order_idx + len("## Read Order"):]
+                r"\n##\s+\S+", content[read_order_idx + len("## Read Order") :]
             )
             read_order_section = content[
-                read_order_idx:
-                read_order_idx + len("## Read Order") + (next_section.start() if next_section else 500)
+                read_order_idx : read_order_idx
+                + len("## Read Order")
+                + (next_section.start() if next_section else 500)
             ]
             # First numbered item should reference STATUS.md
             first_item_match = re.search(r"1\.\s+(.+)", read_order_section)
@@ -418,21 +378,18 @@ class TestEdgeCases:
     def test_closeout_mentions_required_files(self):
         """Closeout section should mention required task-state files."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             content = compile_next_prompt(tmp)
             closeout_idx = content.index("## Closeout")
             # Find next section after Closeout
             next_section = re.search(
-                r"\n##\s+\S+", content[closeout_idx + len("## Closeout"):]
+                r"\n##\s+\S+", content[closeout_idx + len("## Closeout") :]
             )
             closeout_section = content[
-                closeout_idx:
-                closeout_idx + len("## Closeout") + (next_section.start() if next_section else 500)
+                closeout_idx : closeout_idx
+                + len("## Closeout")
+                + (next_section.start() if next_section else 500)
             ]
             assert "STATUS.md" in closeout_section
             assert "PHASE_LOG.md" in closeout_section
@@ -441,55 +398,50 @@ class TestEdgeCases:
     def test_recovery_has_numbered_steps(self):
         """Recovery section should have numbered steps."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             content = compile_next_prompt(tmp)
             recovery_idx = content.index("## Recovery")
             next_section = re.search(
-                r"\n##\s+\S+", content[recovery_idx + len("## Recovery"):]
+                r"\n##\s+\S+", content[recovery_idx + len("## Recovery") :]
             )
             recovery_section = content[
-                recovery_idx:
-                recovery_idx + len("## Recovery") + (next_section.start() if next_section else 500)
+                recovery_idx : recovery_idx
+                + len("## Recovery")
+                + (next_section.start() if next_section else 500)
             ]
             # Should have at least 4 numbered steps
             steps = re.findall(r"^\d+\.", recovery_section, re.MULTILINE)
-            assert len(steps) >= 4, f"Expected at least 4 recovery steps, found {len(steps)}"
+            assert len(steps) >= 4, (
+                f"Expected at least 4 recovery steps, found {len(steps)}"
+            )
 
     def test_self_audit_has_checklist_items(self):
         """Self-Audit section should have verification items."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             content = compile_next_prompt(tmp)
             audit_idx = content.index("## Self-Audit")
             next_section = re.search(
-                r"\n##\s+\S+", content[audit_idx + len("## Self-Audit"):]
+                r"\n##\s+\S+", content[audit_idx + len("## Self-Audit") :]
             )
             audit_section = content[
-                audit_idx:
-                audit_idx + len("## Self-Audit") + (next_section.start() if next_section else 500)
+                audit_idx : audit_idx
+                + len("## Self-Audit")
+                + (next_section.start() if next_section else 500)
             ]
             items = re.findall(r"^\s*-\s+", audit_section, re.MULTILINE)
-            assert len(items) >= 3, f"Expected at least 3 self-audit items, found {len(items)}"
+            assert len(items) >= 3, (
+                f"Expected at least 3 self-audit items, found {len(items)}"
+            )
 
     def test_artifact_manifest_has_correct_phase(self):
         """Artifact manifest should reflect the current phase."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 3D\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 3D\n")
             Path(tmp, "PLAN.md").write_text(
-                "## Phase 3D: Specific\n- **Goal:** Test.\n"
-                "\n## Phase 3E: Next\n"
+                "## Phase 3D: Specific\n- **Goal:** Test.\n\n## Phase 3E: Next\n"
             )
             content = compile_next_prompt(tmp)
             assert "- phase: Phase 3D" in content
@@ -497,12 +449,8 @@ class TestEdgeCases:
     def test_optional_files_in_read_order(self):
         """Optional task-state files should appear in read order when present."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
-            Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Test\n\n## Phase 1B: Next\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
+            Path(tmp, "PLAN.md").write_text("## Phase 1A: Test\n\n## Phase 1B: Next\n")
             Path(tmp, "CHECKLIST.md").write_text("## Checklist\n- [ ] Item\n")
             Path(tmp, "DECISIONS.md").write_text("## Decisions\n- Decision 1\n")
             Path(tmp, "ARTIFACTS.md").write_text("## Artifacts\n- artifact1\n")
@@ -516,12 +464,9 @@ class TestEdgeCases:
     def test_hard_stop_mentions_current_phase(self):
         """Hard Stop should explicitly mention the current phase."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 5B\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 5B\n")
             Path(tmp, "PLAN.md").write_text(
-                "## Phase 5B: Current\n- **Goal:** Work.\n"
-                "\n## Phase 5C: Next\n"
+                "## Phase 5B: Current\n- **Goal:** Work.\n\n## Phase 5C: Next\n"
             )
             content = compile_next_prompt(tmp)
             hard_stop_idx = content.index("## Hard Stop")
@@ -531,9 +476,7 @@ class TestEdgeCases:
     def test_generated_prompt_size_within_budget(self):
         """Generated prompt should stay within small-model context budget (Phase 5A spec risk)."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(tmp, "PLAN.md").write_text(
                 "## Phase 1A: Test\n- **Goal:** Work.\n"
                 "\n## Phase 1B: Next\n- **Goal:** More work.\n"
@@ -547,12 +490,9 @@ class TestEdgeCases:
     def test_status_plan_disagreement_raises_error(self):
         """STATUS.md phase that doesn't match any PLAN.md phase should raise ValueError."""
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, "STATUS.md").write_text(
-                "- current_phase: Phase 9Z\n"
-            )
+            Path(tmp, "STATUS.md").write_text("- current_phase: Phase 9Z\n")
             Path(tmp, "PLAN.md").write_text(
-                "## Phase 1A: Exists\n- **Goal:** Work.\n"
-                "\n## Phase 1B: Next\n"
+                "## Phase 1A: Exists\n- **Goal:** Work.\n\n## Phase 1B: Next\n"
             )
             with pytest.raises(ValueError):
                 compile_next_prompt(tmp)
@@ -560,16 +500,14 @@ class TestEdgeCases:
     def test_output_flag_content_matches_api(self):
         """--output flag should produce same content as programmatic API."""
         from runtime.cli import main
+
         with tempfile.TemporaryDirectory() as tmp:
             task_dir = tmp + "/task"
             output_file = tmp + "/output.md"
             Path(task_dir).mkdir()
-            Path(task_dir, "STATUS.md").write_text(
-                "- current_phase: Phase 1A\n"
-            )
+            Path(task_dir, "STATUS.md").write_text("- current_phase: Phase 1A\n")
             Path(task_dir, "PLAN.md").write_text(
-                "## Phase 1A: Test\n- **Goal:** Work.\n"
-                "\n## Phase 1B: Next\n"
+                "## Phase 1A: Test\n- **Goal:** Work.\n\n## Phase 1B: Next\n"
             )
             # CLI output
             main(["next-prompt", task_dir, "--output", output_file])
@@ -675,24 +613,28 @@ import re
 class TestCliNextPrompt:
     def test_help_works(self):
         from runtime.cli import main
+
         with pytest.raises(SystemExit) as exc:
             main(["next-prompt", "--help"])
         assert exc.value.code == 0
 
     def test_dry_run_prints_to_stdout(self):
         from runtime.cli import main
+
         task_dir = str(FIXTURES / "task_state_valid")
         code = main(["next-prompt", task_dir, "--dry-run"])
         assert code == 0
 
     def test_missing_task_dir_file_error(self):
         from runtime.cli import main
+
         with tempfile.TemporaryDirectory() as tmp:
             code = main(["next-prompt", tmp])
             assert code == 2
 
     def test_programmatic_api_pass(self):
         from runtime.cli import main
+
         task_dir = str(FIXTURES / "task_state_valid")
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "output.md"

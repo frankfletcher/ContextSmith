@@ -100,13 +100,17 @@ class TestValidateRequiredSections:
     def test_all_present(self):
         """Test returns [] when all required sections are present."""
         path = FIXTURES_DIR / "task_state_valid" / "STATUS.md"
-        errors = validate_required_sections(path, ["Current Phase", "Current State", "Next Action"])
+        errors = validate_required_sections(
+            path, ["Current Phase", "Current State", "Next Action"]
+        )
         assert errors == []
 
     def test_some_missing(self):
         """Test returns error when some sections are missing."""
         path = FIXTURES_DIR / "task_state_valid" / "STATUS.md"
-        errors = validate_required_sections(path, ["Current Phase", "Fake Section", "Nonexistent"])
+        errors = validate_required_sections(
+            path, ["Current Phase", "Fake Section", "Nonexistent"]
+        )
         assert len(errors) == 2
         assert all("Missing required section" in e for e in errors)
 
@@ -162,7 +166,9 @@ class TestValidateArtifact:
     def test_missing_sections(self):
         """Test artifact fails when required sections missing."""
         path = FIXTURES_DIR / "task_state_valid" / "STATUS.md"
-        errors = validate_artifact(path, ["Current Phase", "Section That Does Not Exist"])
+        errors = validate_artifact(
+            path, ["Current Phase", "Section That Does Not Exist"]
+        )
         assert len(errors) == 1
         assert "Missing required section" in errors[0]
 
@@ -184,7 +190,9 @@ class TestValidateArtifacts:
     def test_all_pass(self):
         """Test all artifacts pass validation."""
         state_dir = FIXTURES_DIR / "task_state_valid"
-        result = validate_artifacts(state_dir, ["STATUS.md", "PLAN.md", "CONTEXT.md"], {})
+        result = validate_artifacts(
+            state_dir, ["STATUS.md", "PLAN.md", "CONTEXT.md"], {}
+        )
         assert result["passed"] is True
         assert result["failures"] == []
         assert result["files_checked"] == 3
@@ -208,7 +216,9 @@ class TestValidateArtifacts:
     def test_some_fail(self):
         """Test some artifacts fail validation."""
         state_dir = FIXTURES_DIR / "task_state_missing_status"
-        result = validate_artifacts(state_dir, ["STATUS.md", "PLAN.md", "CONTEXT.md"], {})
+        result = validate_artifacts(
+            state_dir, ["STATUS.md", "PLAN.md", "CONTEXT.md"], {}
+        )
         assert result["passed"] is False
         assert "STATUS.md" in result["failures"][0]
         assert result["files_checked"] == 3
@@ -261,6 +271,7 @@ class TestValidateSchema:
     def test_valid_data(self):
         """Test valid data passes schema validation."""
         from orchestrator.validators import validate_schema
+
         schema_path = SCHEMAS_DIR / "workflow_config.schema.json"
         data = {
             "workflow_id": "test-valid",
@@ -273,6 +284,7 @@ class TestValidateSchema:
     def test_invalid_data(self):
         """Test invalid data fails schema validation."""
         from orchestrator.validators import validate_schema
+
         schema_path = SCHEMAS_DIR / "workflow_config.schema.json"
         data = {"workflow_id": "test-invalid"}  # missing version, domain, mode
         errors = validate_schema(data, schema_path)
@@ -282,6 +294,7 @@ class TestValidateSchema:
     def test_missing_schema_file(self):
         """Test schema validation with missing schema file."""
         from orchestrator.validators import validate_schema
+
         schema_path = FIXTURES_DIR / "nonexistent_schema.json"
         data = {"key": "value"}
         errors = validate_schema(data, schema_path)
@@ -295,12 +308,14 @@ class TestValidateWorkflowConfig:
     def test_valid_config(self):
         """Test valid workflow config passes."""
         from orchestrator.validators import validate_workflow_config
+
         path = FIXTURES_DIR / "valid_workflow_simple_audit.yaml"
         assert validate_workflow_config(path) == []
 
     def test_missing_field(self):
         """Test workflow with missing field fails validation."""
         from orchestrator.validators import validate_workflow_config
+
         path = FIXTURES_DIR / "invalid_workflow_missing_field.yaml"
         errors = validate_workflow_config(path)
         assert len(errors) >= 1
@@ -313,12 +328,14 @@ class TestValidateAgentConfig:
     def test_valid_config(self):
         """Test valid agent config passes."""
         from orchestrator.validators import validate_agent_config
+
         path = FIXTURES_DIR / "valid_agent_auditor.yaml"
         assert validate_agent_config(path) == []
 
     def test_missing_permission(self):
         """Test agent with missing permission fails."""
         from orchestrator.validators import validate_agent_config
+
         path = FIXTURES_DIR / "invalid_agent_missing_permission.yaml"
         errors = validate_agent_config(path)
         assert len(errors) >= 1
@@ -331,12 +348,14 @@ class TestValidateCheckpointFile:
     def test_valid(self):
         """Test valid checkpoint passes."""
         from orchestrator.validators import validate_checkpoint_file
+
         path = FIXTURES_DIR / "task_state_valid" / "checkpoint.json"
         assert validate_checkpoint_file(path) == []
 
     def test_invalid_json(self):
         """Test malformed checkpoint JSON fails."""
         from orchestrator.validators import validate_checkpoint_file
+
         path = FIXTURES_DIR / "task_state_invalid_checkpoint" / "checkpoint.json"
         errors = validate_checkpoint_file(path)
         assert len(errors) >= 1
@@ -347,6 +366,7 @@ class TestValidateCheckpointFile:
         import json
         import tempfile
         from orchestrator.validators import validate_checkpoint_file
+
         data = {"workflow_id": "partial"}  # missing version, current_phase, etc.
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(data, f)
@@ -373,6 +393,7 @@ class TestValidateStateConsistency:
     def test_consistent_state(self):
         """Test consistent STATUS.md, checkpoint, and config passes."""
         from orchestrator.validators import validate_state_consistency
+
         status = {"current_phase": "phase_1", "current_state": "execute"}
         checkpoint = {
             "current_phase": "phase_1",
@@ -384,6 +405,7 @@ class TestValidateStateConsistency:
     def test_inconsistent_phase(self):
         """Test when STATUS.md phase doesn't match checkpoint."""
         from orchestrator.validators import validate_state_consistency
+
         status = {"current_phase": "phase_1", "current_state": "execute"}
         checkpoint = {
             "current_phase": "phase_2",  # mismatch
@@ -399,6 +421,7 @@ class TestValidateStateConsistency:
     def test_phase_not_in_phase_order(self):
         """Test when checkpoint phase is not in config phase_order."""
         from orchestrator.validators import validate_state_consistency
+
         status = {"current_phase": "phase_unknown", "current_state": "execute"}
         checkpoint = {
             "current_phase": "phase_unknown",
@@ -412,6 +435,7 @@ class TestValidateStateConsistency:
     def test_completed_phase_not_in_phase_order(self):
         """Test when a completed phase is not in config phase_order."""
         from orchestrator.validators import validate_state_consistency
+
         status = {"current_phase": "phase_2", "current_state": "audit"}
         checkpoint = {
             "current_phase": "phase_2",
@@ -426,6 +450,7 @@ class TestValidateStateConsistency:
     def test_inconsistent_state(self):
         """Test when STATUS.md state doesn't match checkpoint."""
         from orchestrator.validators import validate_state_consistency
+
         status = {"current_phase": "phase_1", "current_state": "execute"}
         checkpoint = {
             "current_phase": "phase_1",
@@ -441,6 +466,7 @@ class TestValidateStateConsistency:
     def test_state_not_in_config(self):
         """Test when checkpoint state is not valid in config."""
         from orchestrator.validators import validate_state_consistency
+
         status = {"current_phase": "phase_1", "current_state": "nonsense"}
         checkpoint = {
             "current_phase": "phase_1",

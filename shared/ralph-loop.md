@@ -12,8 +12,21 @@ Do not use for short one-off tasks unless requested.
 
 - Default maximum: 2 iterations.
 - Hard maximum: 3 unless the user explicitly overrides.
-- Stop if all categories are B or better and no high-risk issue remains.
-- Stop if the next iteration would add bloat, semantic drift, or only cosmetic polishing.
+- Stop if no material defect remains and next iteration would add bloat, semantic drift, or only cosmetic polishing.
+
+## Per-Iteration Structure
+
+All iterations use the same structure — there is no #1/#2/#3 role distinction. Each iteration does:
+
+1. **Critique** — Identify material defects, gaps, edge cases, or spec violations.
+2. **Strategic review** — Ask: "Beyond baseline, how can this be improved? What is the gap between 'done' and 'well done'? Is there a better approach?" Act on material insights.
+3. **Cross-reference** — Before acting, check if the improvement is already planned in a downstream phase or task-state item. If yes, enrich that phase's detail instead of implementing early.
+4. **Fix** — Apply material defect fixes and scoped improvements. For complex improvements not already planned, add a new phase to the plan rather than implementing inline.
+5. **Record** — Log what was critiqued, fixed, and decided. If no material defect remains, record as no-op with reason.
+
+No-op iterations are valid evidence. Do not invent changes to satisfy the iteration count.
+
+## A-F End Evaluation
 
 ## A-F End Evaluation
 

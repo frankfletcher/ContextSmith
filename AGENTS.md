@@ -13,7 +13,7 @@ ContextSmith/
 │   ├── contextsmith-skill-migrator/
 │   ├── contextsmith-instruction-engineer/
 │   ├── contextsmith-agent-evaluator/
-│   └── contextsmith-run/
+│   └── contextsmith-orchestrator/
 ├── shared/                          # Canonical agent references (42 files)
 ├── orchestrator/                    # Python orchestrator package (deterministic workflow execution)
 │   ├── __init__.py
@@ -47,6 +47,9 @@ ContextSmith/
 # Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
+# Install markdownlint (required for Markdown validation)
+npm install -g markdownlint-cli
+
 # Sync dependencies and create .venv
 uv sync
 
@@ -54,10 +57,12 @@ uv sync
 uv run python scripts/validate_skills.py
 uv run ruff check orchestrator/ --select E,F,W,I
 uv run ruff format orchestrator/ --check
+uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "
+markdownlint .agent_work/ orchestrator/ docs/ --ignore node_modules
 uv run pytest tests/ -v
 ```
 
-No package manager or build system. The validation script checks SKILL.md frontmatter, line counts, and reference directory presence. Ruff handles Python linting, formatting, and import sorting. Pytest runs the test suite.
+The validation script checks SKILL.md frontmatter, line counts, and reference directory presence. Ruff handles Python linting, formatting, and import sorting. Radon checks cyclomatic complexity (no C/D/E/F allowed). Markdownlint validates all Markdown files. Pytest runs the test suite.
 
 Note: All Python commands should be run with `uv run` to use the project's virtual environment. Dependencies are managed in `pyproject.toml` and locked in `uv.lock`.
 
@@ -108,6 +113,16 @@ Requires approval:
 Safe inspection: `git status`, `git diff`, `git diff --staged`, `git log --oneline -n 20`, `git branch --show-current`.
 
 Before editing, check `git status --short`. Do not overwrite user changes. If a rebase or merge conflict is in progress, stop and ask.
+
+## File Operation Safety
+
+Always read before writing:
+
+1. To check if a file exists, use `test -f <path>` or the `read` tool. Do NOT use `ls` for existence checks — `ls` can produce false negatives.
+2. Before creating or overwriting any file, read it first. If the read succeeds (returns content), use `edit` to modify it or `>>` to append — never use `write` on a file whose current content you haven't verified.
+3. For append-only report files (EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, REPORT.md, and any `*_REPORT.md`), always use `>>` heredoc. Never use `write`. For persistent state files that accumulate history (DECISIONS.md, PHASE_LOG.md, and any file expected to preserve prior entries), use `>>` heredoc to append new entries — never `write` the whole file. As a general rule: identify each file's purpose. If its purpose is to maintain a record — history, decisions, logs, phase notes, reports, or any cumulative artifact — use append (`>>` heredoc) to add new entries and never clobber prior records.
+4. When a `write` call is necessary (new file that definitely doesn't exist), first confirm with `test -f` that the path is clear.
+5. After any file operation, verify the result: read the file or check with `test -f`/`stat` to confirm the expected content is there.
 
 ## Agentic Loop Safety
 
@@ -164,6 +179,10 @@ When editing README, docs, or CHANGELOG:
 - Run `python scripts/validate_skills.py` after skill changes.
 - Refer to `shared/documentation-quality.md` and `docs/contributing/documentation-review-checklist.md` for full review criteria.
 
+## Versioning Convention
+
+ContextSmith uses project-level versioning. The canonical version lives in `PACKAGE_SPEC.md`. After the determinism sprint, all skills move to 2.0.0. Per-skill `metadata.version` in SKILL.md frontmatter mirrors the project version but is no longer independently meaningful — do not bump individual skills. See `docs/reference/VERSIONING.md` for the full policy.
+
 ## Human Approval Required
 
 - Git operations listed under Git Safety.
@@ -178,3 +197,21 @@ When editing README, docs, or CHANGELOG:
 ## Agent-User interaction rules
 
 * When advising, brainstorming, evaluating, or reviewing: be honest over agreeable. If my thinking has gaps or my approach has a flaw, say so directly and specifically, tell me what's wrong and what would be better. If it's solid, say so and move on. Don't invent objections, don't pad your response, and don't restate what I just said. If you're uncertain or speculating, flag it. Never fabricate data, sources, or examples.
+
+## Write Simple Code First
+
+Before writing any Python function, apply the patterns in `shared/coding-standards.md` (the **Write Simple Code First** section). These prevent complex code from being written at all — no if/elif chains of 3+, no boolean parameters, no functions whose name contains "and", no nesting deeper than 3 levels. Extract early, extract often.
+
+**Measure, don't assume.** After writing, run:
+
+```bash
+uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "
+uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "
+```
+
+- `radon cc`: cyclomatic complexity per function. A (1-5) = low, B (6-10) = moderate, C+ = complex. **Target: all touched functions ≤ B.**
+- `radon mi`: maintainability index per file. A (20-100) = high, B (10-19) = moderate, C (0-9) = difficult. **Target: all touched files ≥ A.**
+
+**The gate is a backup.** Do not write code assuming you'll fix it after radon complains. Write it clean in one pass. If radon flags a function, do not just rename variables — extract, restructure, eliminate branches. Loop until the function is naturally ≤ B.
+
+For the full complexity prevention reference, see `shared/coding-standards.md`. For the gate procedure, see `shared/complexity-gate.md`.

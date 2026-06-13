@@ -174,6 +174,38 @@ def validate_agent_config(config_path: Path) -> list[str]:
     return validate_schema(config, schema_path)
 
 
+def _validate_checkpoint_version(data: dict) -> list[str]:
+    """Check version field is a positive integer."""
+    if "version" not in data:
+        return []
+    version = data["version"]
+    if not isinstance(version, int) or version < 1:
+        return [f"Invalid value for version: must be integer >= 1, got {version!r}"]
+    return []
+
+
+def _validate_checkpoint_config_ref(data: dict, config: dict) -> list[str]:
+    """Cross-reference checkpoint phase/state against config phase_order and states."""
+    errors = []
+    states = config.get("states", {})
+    phase_order = config.get("phase_order", [])
+    current_phase = data.get("current_phase", "")
+    current_state = data.get("current_state", "")
+
+    if current_phase and phase_order and current_phase not in phase_order:
+        errors.append(
+            f"Invalid value for current_phase: '{current_phase}' not in phase_order"
+        )
+    if current_state and states:
+        known_states = {s.get("state") for s in states.values() if isinstance(s, dict)}
+        if current_state not in known_states:
+            errors.append(
+                f"Invalid value for current_state:"
+                f" '{current_state}' not in known states"
+            )
+    return errors
+
+
 def validate_checkpoint_file(
     checkpoint_path: Path, config: dict | None = None
 ) -> list[str]:
@@ -201,47 +233,89 @@ def validate_checkpoint_file(
     except json.JSONDecodeError as e:
         return [f"Schema validation failed: invalid checkpoint JSON: {e}"]
 
-    required_fields = [
+    _CHECKPOINT_REQUIRED = [
         "workflow_id",
         "version",
         "current_phase",
         "current_state",
         "last_updated",
     ]
-    errors = []
-    for field in required_fields:
-        if field not in data:
-            errors.append(f"Missing required field: {field}")
-
-    if "version" in data:
-        version = data["version"]
-        if not isinstance(version, int) or version < 1:
-            errors.append(
-                f"Invalid value for version: must be integer >= 1, got {version!r}"
-            )
-
+    errors = [
+        f"Missing required field: {f}" for f in _CHECKPOINT_REQUIRED if f not in data
+    ]
+    errors.extend(_validate_checkpoint_version(data))
     if config is not None:
-        states = config.get("states", {})
-        phase_order = config.get("phase_order", [])
-        current_phase = data.get("current_phase", "")
-        current_state = data.get("current_state", "")
+        errors.extend(_validate_checkpoint_config_ref(data, config))
+    return errors
 
-        if current_phase and phase_order and current_phase not in phase_order:
+
+def validate_append_only(
+    file_path: Path, original_prefix: bytes, check_bytes: int = 512
+) -> bool:
+    """Check that a file starts with the same bytes as before modification.
+
+    Used to verify that append-only files were appended to, not overwritten.
+    Compares the first check_bytes of the current file against the snapshot.
+
+    Args:
+        file_path: Path to the file to check.
+        original_prefix: The first N bytes of the file before modification.
+        check_bytes: Number of bytes to compare (default 512).
+
+    Returns:
+        True if the file still starts with the original prefix, False if overwritten.
+    """
+    if not file_path.exists():
+        return False
+    current = file_path.read_bytes()[:check_bytes]
+    return current == original_prefix[:check_bytes]
+
+
+def _check_phase_consistency(
+    status_phase: str, checkpoint_phase: str, phase_order: list, errors: list
+) -> None:
+    """Check STATUS.md / checkpoint phase consistency and validity."""
+    if status_phase and status_phase != checkpoint_phase:
+        errors.append(
+            f"State inconsistency: STATUS.md current_phase "
+            f"'{status_phase}' != checkpoint current_phase '{checkpoint_phase}'"
+        )
+    if checkpoint_phase and phase_order and checkpoint_phase not in phase_order:
+        errors.append(
+            f"State inconsistency: checkpoint current_phase "
+            f"'{checkpoint_phase}' not in config phase_order"
+        )
+
+
+def _check_completed_phases(
+    completed_phases: list, phase_order: list, errors: list
+) -> None:
+    """Check completed phases are in config phase_order."""
+    if not completed_phases or not phase_order:
+        return
+    for cp in completed_phases:
+        if cp not in phase_order:
             errors.append(
-                f"Invalid value for current_phase: '{current_phase}' not in phase_order"
+                f"State inconsistency: completed phase '{cp}' not in config phase_order"
             )
 
-        if current_state and states:
-            known_states = {
-                s.get("state") for s in states.values() if isinstance(s, dict)
-            }
-            if current_state not in known_states:
-                errors.append(
-                    f"Invalid value for current_state:"
-                    f" '{current_state}' not in known states"
-                )
 
-    return errors
+def _check_state_consistency(
+    status_state: str, checkpoint_state: str, states: dict, errors: list
+) -> None:
+    """Check STATUS.md / checkpoint state consistency and validity."""
+    if status_state and status_state != checkpoint_state:
+        errors.append(
+            f"State inconsistency: STATUS.md current_state "
+            f"'{status_state}' != checkpoint current_state '{checkpoint_state}'"
+        )
+    if checkpoint_state and states:
+        known_states = {s.get("state") for s in states.values() if isinstance(s, dict)}
+        if checkpoint_state not in known_states:
+            errors.append(
+                f"State inconsistency: checkpoint current_state "
+                f"'{checkpoint_state}' not a valid state in config"
+            )
 
 
 def validate_state_consistency(
@@ -257,48 +331,21 @@ def validate_state_consistency(
     Returns:
         List of error strings (empty = consistent).
     """
-    errors = []
-
-    status_phase = status.get("current_phase", "")
-    status_state = status.get("current_state", "")
-    checkpoint_phase = checkpoint.get("current_phase", "")
-    checkpoint_state = checkpoint.get("current_state", "")
+    errors: list[str] = []
     phase_order = config.get("phase_order", [])
     states = config.get("states", {})
 
-    if status_phase != checkpoint_phase:
-        errors.append(
-            f"State inconsistency: STATUS.md current_phase "
-            f"'{status_phase}' != checkpoint current_phase '{checkpoint_phase}'"
-        )
-
-    if checkpoint_phase and phase_order and checkpoint_phase not in phase_order:
-        errors.append(
-            f"State inconsistency: checkpoint current_phase "
-            f"'{checkpoint_phase}' not in config phase_order"
-        )
-
-    completed_phases = checkpoint.get("completed_phases", [])
-    if completed_phases and phase_order:
-        for cp in completed_phases:
-            if cp not in phase_order:
-                errors.append(
-                    f"State inconsistency: completed phase "
-                    f"'{cp}' not in config phase_order"
-                )
-
-    if status_state != checkpoint_state:
-        errors.append(
-            f"State inconsistency: STATUS.md current_state "
-            f"'{status_state}' != checkpoint current_state '{checkpoint_state}'"
-        )
-
-    if checkpoint_state and states:
-        known_states = {s.get("state") for s in states.values() if isinstance(s, dict)}
-        if checkpoint_state not in known_states:
-            errors.append(
-                f"State inconsistency: checkpoint current_state "
-                f"'{checkpoint_state}' not a valid state in config"
-            )
-
+    _check_phase_consistency(
+        status.get("current_phase", ""),
+        checkpoint.get("current_phase", ""),
+        phase_order,
+        errors,
+    )
+    _check_completed_phases(checkpoint.get("completed_phases", []), phase_order, errors)
+    _check_state_consistency(
+        status.get("current_state", ""),
+        checkpoint.get("current_state", ""),
+        states,
+        errors,
+    )
     return errors

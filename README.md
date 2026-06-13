@@ -51,7 +51,7 @@ bash scripts/install_all.sh dist
   --domain coding
 
 # Execute a task-state handoff with enforcement
-/contextsmith-run \
+/contextsmith-orchestrator \
   --run-mode phase \
   --target .agent_work/sprints/<sprint>/tasks/<task> \
   --validation strict \
@@ -69,7 +69,7 @@ Not sure which sub-skill to use? Try `/contextsmith help`.
 | `contextsmith-skill-migrator` | Migrate skills between profiles or installations |
 | `contextsmith-instruction-engineer` | Create or edit AGENTS.md, CLAUDE.md, or repo instructions |
 | `contextsmith-agent-evaluator` | Audit or grade an existing artifact |
-| `contextsmith-run` | Execute a prompt or task-state handoff with controls |
+| `contextsmith-orchestrator` | Execute a prompt, workflow config, or task-state handoff with controls |
 
 ## Runtime Enforcement
 
@@ -94,7 +94,7 @@ python -m runtime.cli domain-pack runtime/domain_packs/software_engineering.json
 python -m runtime.cli closeout .agent_work/.../closeout.json
 ```
 
-**Available:** Validator CLI, 6 domain packs (software, writing, research, scheduling, travel/purchase, general fallback), Next Prompt Compiler, Runner skeleton, contextsmith-run pilot integration.
+**Available:** Validator CLI, 6 domain packs (software, writing, research, scheduling, travel/purchase, general fallback), Next Prompt Compiler, Orchestrator with contract enforcement.
 
 **Active development:** MCP adapter, Harness adapter.
 

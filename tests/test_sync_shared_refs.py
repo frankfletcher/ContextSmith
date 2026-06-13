@@ -4,6 +4,7 @@ ISSUE-1: sync_shared_refs.py flattened local:true entries to references/ root,
 breaking runtime/ module paths. Fix preserves directory structure for non-skill
 local files (e.g., runtime/validator.py -> references/runtime/validator.py).
 """
+
 import os
 import subprocess
 import sys
@@ -69,9 +70,13 @@ class TestDirectoryStructurePreservation:
 
         # Run sync with dry-run, overriding REPO_ROOT
         result = _run_sync(
-            "--skill", "test-skill", "--dry-run",
-            "--staging-dir", str(tmp_path / ".agent_work" / "staged_skills"),
-            "--repo-root", str(tmp_path),
+            "--skill",
+            "test-skill",
+            "--dry-run",
+            "--staging-dir",
+            str(tmp_path / ".agent_work" / "staged_skills"),
+            "--repo-root",
+            str(tmp_path),
             cwd=tmp_path,
         )
 
@@ -110,9 +115,13 @@ class TestDirectoryStructurePreservation:
 
         # Run sync with dry-run
         result = _run_sync(
-            "--skill", "test-skill", "--dry-run",
-            "--staging-dir", str(tmp_path / ".agent_work" / "staged_skills"),
-            "--repo-root", str(tmp_path),
+            "--skill",
+            "test-skill",
+            "--dry-run",
+            "--staging-dir",
+            str(tmp_path / ".agent_work" / "staged_skills"),
+            "--repo-root",
+            str(tmp_path),
             cwd=tmp_path,
         )
 
@@ -155,9 +164,13 @@ class TestDirectoryStructurePreservation:
 
         # Run sync with dry-run
         result = _run_sync(
-            "--skill", "test-skill", "--dry-run",
-            "--staging-dir", str(tmp_path / ".agent_work" / "staged_skills"),
-            "--repo-root", str(tmp_path),
+            "--skill",
+            "test-skill",
+            "--dry-run",
+            "--staging-dir",
+            str(tmp_path / ".agent_work" / "staged_skills"),
+            "--repo-root",
+            str(tmp_path),
             cwd=tmp_path,
         )
 

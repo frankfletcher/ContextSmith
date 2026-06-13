@@ -135,6 +135,63 @@ def update_checkpoint(
     return updated
 
 
+_CHECKPOINT_REQUIRED_FIELDS = [
+    "workflow_id",
+    "version",
+    "current_phase",
+    "current_state",
+    "last_updated",
+    "completed_phases",
+    "counters",
+    "last_result",
+]
+
+
+def _check_required_fields(checkpoint: dict) -> list[str]:
+    """Check all required checkpoint fields are present."""
+    return [
+        f"Missing required field: {f}"
+        for f in _CHECKPOINT_REQUIRED_FIELDS
+        if f not in checkpoint
+    ]
+
+
+def _check_canonical_state(checkpoint: dict) -> list[str]:
+    """Validate current_state is a known canonical state."""
+    if "current_state" not in checkpoint:
+        return []
+    state = checkpoint["current_state"]
+    return (
+        []
+        if state in CANONICAL_STATES
+        else [f"Invalid state '{state}' in checkpoint, not in canonical states"]
+    )
+
+
+def _check_counters(checkpoint: dict) -> list[str]:
+    """Validate counter values are non-negative."""
+    if "counters" not in checkpoint:
+        return []
+    errors = []
+    for phase, counts in checkpoint["counters"].items():
+        if "retries" in counts and counts["retries"] < 0:
+            errors.append(f"Negative retry count for phase {phase}")
+        if "ralph_cycles" in counts and counts["ralph_cycles"] < 0:
+            errors.append(f"Negative Ralph cycle count for phase {phase}")
+    return errors
+
+
+def _check_last_result(checkpoint: dict) -> list[str]:
+    """Validate last_result has required fields."""
+    if "last_result" not in checkpoint:
+        return []
+    return (
+        []
+        if "status" in checkpoint["last_result"]
+        else ["Missing 'status' in last_result"]
+    )
+
+
 def validate_checkpoint(checkpoint: dict, config: dict) -> list[str]:
     """Validate checkpoint consistency.
 
@@ -148,45 +205,10 @@ def validate_checkpoint(checkpoint: dict, config: dict) -> list[str]:
         List of validation error messages (empty = valid)
     """
     errors = []
-
-    # Required fields
-    required_fields = [
-        "workflow_id",
-        "version",
-        "current_phase",
-        "current_state",
-        "last_updated",
-        "completed_phases",
-        "counters",
-        "last_result",
-    ]
-
-    for field in required_fields:
-        if field not in checkpoint:
-            errors.append(f"Missing required field: {field}")
-
-    # Validate current_state is a canonical state
-    if "current_state" in checkpoint:
-        state = checkpoint["current_state"]
-        if state not in CANONICAL_STATES:
-            errors.append(
-                f"Invalid state '{state}' in checkpoint, not in canonical states"
-            )
-
-    # Validate counters are non-negative
-    if "counters" in checkpoint:
-        for phase, counts in checkpoint["counters"].items():
-            if "retries" in counts and counts["retries"] < 0:
-                errors.append(f"Negative retry count for phase {phase}")
-            if "ralph_cycles" in counts and counts["ralph_cycles"] < 0:
-                errors.append(f"Negative Ralph cycle count for phase {phase}")
-
-    # Validate last_result has required fields
-    if "last_result" in checkpoint:
-        last_result = checkpoint["last_result"]
-        if "status" not in last_result:
-            errors.append("Missing 'status' in last_result")
-
+    errors.extend(_check_required_fields(checkpoint))
+    errors.extend(_check_canonical_state(checkpoint))
+    errors.extend(_check_counters(checkpoint))
+    errors.extend(_check_last_result(checkpoint))
     return errors
 
 

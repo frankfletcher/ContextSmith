@@ -198,35 +198,34 @@ def cmd_init(args):
     return 0
 
 
-def cmd_validate(args):
-    """Validate task-state artifacts against schemas."""
-    state_dir = Path(args.state)
-
-    if not state_dir.exists():
-        print(f"Error: State directory does not exist: {state_dir}")
-        return 1
-
+def _validate_required_files(state_dir: Path) -> list[str]:
+    """Check required task-state files exist."""
     errors = []
+    errors.extend(
+        f"Missing required file: {filename}"
+        for filename in ["STATUS.md", "PLAN.md", "CONTEXT.md"]
+        if not (state_dir / filename).exists()
+    )
+    return errors
 
-    # Check required files
-    required_files = ["STATUS.md", "PLAN.md", "CONTEXT.md"]
-    for filename in required_files:
-        filepath = state_dir / filename
-        if not filepath.exists():
-            errors.append(f"Missing required file: {filename}")
 
-    # Try to read and validate checkpoint
+def _validate_checkpoint(state_dir: Path) -> list[str]:
+    """Read and validate checkpoint.json."""
+    errors = []
     checkpoint_path = state_dir / "checkpoint.json"
-    if checkpoint_path.exists():
-        try:
-            checkpoint = read_checkpoint(state_dir, required=False)
-            # Validate checkpoint structure
-            checkpoint_errors = validate_checkpoint(checkpoint, {})
-            errors.extend(checkpoint_errors)
-        except Exception as e:
-            errors.append(f"Error reading checkpoint.json: {e}")
+    if not checkpoint_path.exists():
+        return errors
+    try:
+        cp = read_checkpoint(state_dir, required=False)
+        errors.extend(validate_checkpoint(cp, {}))
+    except Exception as e:
+        errors.append(f"Error reading checkpoint.json: {e}")
+    return errors
 
-    # Try to read state files
+
+def _validate_state_files(state_dir: Path) -> list[str]:
+    """Read and validate STATUS.md, PLAN.md, CONTEXT.md."""
+    errors = []
     try:
         status = read_status(state_dir)
         if not status.get("current_phase"):
@@ -245,16 +244,28 @@ def cmd_validate(args):
         read_context(state_dir)
     except Exception as e:
         errors.append(f"Error reading CONTEXT.md: {e}")
+    return errors
 
-    # Print results
+
+def cmd_validate(args):
+    """Validate task-state artifacts against schemas."""
+    state_dir = Path(args.state)
+    if not state_dir.exists():
+        print(f"Error: State directory does not exist: {state_dir}")
+        return 1
+
+    errors = []
+    errors.extend(_validate_required_files(state_dir))
+    errors.extend(_validate_checkpoint(state_dir))
+    errors.extend(_validate_state_files(state_dir))
+
     if errors:
         print("Validation FAILED:")
         for error in errors:
             print(f"  - {error}")
         return 1
-    else:
-        print("Validation PASSED")
-        return 0
+    print("Validation PASSED")
+    return 0
 
 
 def cmd_inspect(args):
@@ -313,33 +324,31 @@ def cmd_inspect(args):
     return 0
 
 
+def _require_path(path: Path, label: str) -> int | None:
+    """Check a path exists. Returns exit code 1 if not, None otherwise."""
+    if not path:
+        print(f"Error: {label} is required")
+        return 1
+    if not path.exists():
+        print(f"Error: {label} does not exist: {path}")
+        return 1
+    return None
+
+
 def cmd_diff(args):
     """Compare two workflow runs phase by phase."""
     run_a = Path(args.path_a) if hasattr(args, "path_a") and args.path_a else None
     run_b = Path(args.path_b) if hasattr(args, "path_b") and args.path_b else None
 
-    if not run_a:
-        print("Error: path_a is required")
-        return 1
-    if not run_b:
-        print("Error: path_b is required")
-        return 1
-
-    if not run_a.exists():
-        print(f"Error: Run A does not exist: {run_a}")
-        return 1
-    if not run_b.exists():
-        print(f"Error: Run B does not exist: {run_b}")
-        return 1
+    for path, label in [(run_a, "path_a"), (run_b, "path_b")]:
+        if (code := _require_path(path, label)) is not None:
+            return code
 
     print("=== Comparing Runs ===\n")
     print(f"Run A: {run_a}")
     print(f"Run B: {run_b}\n")
 
-    # Read phase logs from both runs
-    phase_log_a = run_a / "PHASE_LOG.md"
-    phase_log_b = run_b / "PHASE_LOG.md"
-
+    phase_log_a, phase_log_b = run_a / "PHASE_LOG.md", run_b / "PHASE_LOG.md"
     if not phase_log_a.exists():
         print("Error: Run A missing PHASE_LOG.md")
         return 1
@@ -347,7 +356,6 @@ def cmd_diff(args):
         print("Error: Run B missing PHASE_LOG.md")
         return 1
 
-    # Simple diff: compare file contents
     content_a = phase_log_a.read_text(encoding="utf-8")
     content_b = phase_log_b.read_text(encoding="utf-8")
 
@@ -355,54 +363,46 @@ def cmd_diff(args):
         print("Phase logs are identical")
     else:
         _print_phase_log_diff(content_a, content_b)
-
     return 0
+
+
+def _find_workflow_config(state_dir: Path) -> Path | None:
+    """Find workflow.json in parent or .contextsmith directory."""
+    c1 = state_dir.parent / "workflow.json"
+    c2 = Path(".contextsmith") / "workflow.json"
+    candidates = [c1, c2]
+    return next(
+        (candidate for candidate in candidates if candidate.exists()), None
+    )
 
 
 def cmd_resume(args):
     """Resume a blocked workflow."""
     state_dir = Path(args.path) if hasattr(args, "path") and args.path else None
+    if (code := _require_path(state_dir, "State directory")) is not None:
+        return code
 
-    if not state_dir:
-        print("Error: path is required")
-        return 1
-
-    if not state_dir.exists():
-        print(f"Error: State directory does not exist: {state_dir}")
-        return 1
-
-    # Read current state
     try:
         status = read_status(state_dir)
-        current_state = status.get("current_state", "unknown")
-
-        if current_state != "blocked":
-            print(f"Warning: Workflow is not blocked (current state: {current_state})")
+        if status.get("current_state", "unknown") != "blocked":
+            print(
+                f"Warning: Workflow is not blocked"
+                f" (current state: {status.get('current_state')})"
+            )
     except Exception as e:
         print(f"Error reading state: {e}")
         return 1
 
-    # Check for decision file
-    if args.decision:
-        decision_path = Path(args.decision)
-        if not decision_path.exists():
-            print(f"Error: Decision file does not exist: {decision_path}")
-            return 1
-        print(f"Using decision file: {decision_path}")
+    if args.decision and not Path(args.decision).exists():
+        print(f"Error: Decision file does not exist: {args.decision}")
+        return 1
 
-    # Update state to allow retry
+    config_path = _find_workflow_config(state_dir)
+    if config_path is None:
+        print("Error: Cannot find workflow.json")
+        return 1
+
     print("Resuming workflow...")
-
-    # Find workflow config
-    config_path = state_dir.parent / "workflow.json"
-    if not config_path.exists():
-        # Try .contextsmith directory
-        config_path = Path(".contextsmith") / "workflow.json"
-        if not config_path.exists():
-            print("Error: Cannot find workflow.json")
-            return 1
-
-    # Run workflow
     return run_workflow(
         config_path=str(config_path),
         state_dir=str(state_dir),

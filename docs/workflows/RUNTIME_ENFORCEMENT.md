@@ -29,7 +29,7 @@ If you have not yet completed the [quickstart](../QUICKSTART.md), do that first.
 - 6 domain packs (software engineering, writing, research, scheduling, travel/purchase, general fallback)
 - Next Prompt Compiler for generating phase handoff prompts
 - Runner skeleton for plan status and gate queries
-- Pilot integration in the `contextsmith-run` skill
+- Pilot integration in the `contextsmith-orchestrator` skill
 
 **Active development:**
 - MCP adapter for tool-based validation from any agent
@@ -85,7 +85,7 @@ PASS  runtime/domain_packs/software_engineering.json
 
 ## 3. Run One Phase at a Time
 
-Runtime enforcement works best when the agent executes one phase, validates, then moves to the next. Use the `contextsmith-run` skill with `--mode phase` or `--run-mode single-with-state`.
+Runtime enforcement works best when the agent executes one phase, validates, then moves to the next. Use the `contextsmith-orchestrator` skill with `--mode phase` or `--run-mode single-with-state`.
 
 **What you do:**
 Point the agent at your task directory and let it execute the current phase.
@@ -93,7 +93,7 @@ Point the agent at your task directory and let it execute the current phase.
 **Example prompt:**
 ```
 Run the current phase from .agent_work/sprints/my-task/tasks/2026-06-01-my-task/
-Use contextsmith-run with --ralph 2 and --validation available.
+Use contextsmith-orchestrator with --ralph 2 and --validation available.
 ```
 
 **What the agent does:**
@@ -255,7 +255,7 @@ The current CLI provides deterministic validation. Orchestrated and hard-blocked
 ### Scheduling a meeting
 
 ```
-Use contextsmith-run to schedule a team standup for Monday at 10am.
+Use contextsmith-orchestrator to schedule a team standup for Monday at 10am.
 Domain: scheduling. Require approval before sending calendar invites.
 ```
 

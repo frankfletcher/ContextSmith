@@ -1,0 +1,56 @@
+skill: contextsmith-workflow-developer
+version: "1.0.0"
+description: Shared and local reference dependencies for the ContextSmith Workflow Developer skill.
+references:
+- source: shared/structured-questioning.md
+  version: TBD
+  required: true
+  load: conditional
+  when: refine mode or structured questions needed
+- source: shared/persistent-task-state.md
+  version: 6b5ba1d26fa47851ce06882c878434be62d21f9f
+  required: true
+  load: conditional
+  when: generating task-state files
+- source: schemas/workflow_config.schema.json
+  version: TBD
+  required: true
+  local: true
+  load: conditional
+  when: validating generated config
+- source: skills/contextsmith-workflow-developer/references/domain-templates/coding.yaml
+  version: TBD
+  required: true
+  load: conditional
+  local: true
+  when: domain is coding
+- source: skills/contextsmith-workflow-developer/references/domain-templates/writing.yaml
+  version: TBD
+  required: true
+  load: conditional
+  local: true
+  when: domain is writing
+- source: skills/contextsmith-workflow-developer/references/domain-templates/research.yaml
+  version: TBD
+  required: true
+  load: conditional
+  local: true
+  when: domain is research
+- source: skills/contextsmith-workflow-developer/references/domain-templates/migration.yaml
+  version: TBD
+  required: true
+  load: conditional
+  local: true
+  when: domain is migration
+- source: skills/contextsmith-workflow-developer/references/domain-templates/audit.yaml
+  version: TBD
+  required: true
+  load: conditional
+  local: true
+  when: domain is audit
+- source: skills/contextsmith-workflow-developer/references/domain-templates/general.yaml
+  version: TBD
+  required: true
+  load: conditional
+  local: true
+  when: domain is general

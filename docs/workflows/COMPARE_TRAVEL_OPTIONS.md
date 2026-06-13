@@ -43,7 +43,7 @@ Constraints: no more than 1 layover, depart after 8am.
 
 ## Step 2: Invoke the Skill with Travel Domain
 
-Use `contextsmith-run` with the travel/purchase domain. The domain pack enforces that comparison is read-only and purchasing requires explicit approval.
+Use `contextsmith-orchestrator` with the travel/purchase domain. The domain pack enforces that comparison is read-only and purchasing requires explicit approval.
 
 **Example prompt:**
 ```

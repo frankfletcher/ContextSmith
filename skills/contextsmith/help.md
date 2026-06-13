@@ -15,7 +15,7 @@
 - `contextsmith-skill-migrator` for staged directory-wide skill migrations.
 - `contextsmith-instruction-engineer` for repo instruction files such as `AGENTS.md`.
 - `contextsmith-agent-evaluator` for audit-only reviews and grading.
-- `contextsmith-run` for executing prompts or task-state handoffs with declared controls.
+- `contextsmith-orchestrator` for executing prompts, task-state handoffs, and workflow configs with contract enforcement.
 
 ## Default Behavior
 

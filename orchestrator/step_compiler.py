@@ -68,12 +68,21 @@ def resolve_next_state(
     config: dict,
     counters: dict,
 ) -> str:
-    """Determine the next state based on current state, result, and validation.
+    """Deterministic state transition.
+
+    The orchestrator owns all state transitions. The agent's RESULT.json
+    provides evidence of completion (status, artifacts), but the orchestrator
+    alone decides the next state by matching transition conditions from the
+    workflow config against that evidence.
+
+    Rule: Agent output is evidence, not authority. The agent never chooses
+    its next state. If no transition condition matches, the orchestrator
+    transitions to 'blocked', not to whatever the agent requested.
 
     Args:
         current: Current state machine state
         current_phase: Current phase identifier (e.g., "phase_1")
-        result: Step execution result dict
+        result: Step execution result dict (status only, next_action is ignored)
         validation: Validation result dict
         config: Workflow config dict
         counters: Current counter values for this phase

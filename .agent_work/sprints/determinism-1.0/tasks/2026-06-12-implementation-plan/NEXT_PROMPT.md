@@ -1,66 +1,61 @@
-# Next Prompt: Phase 5a — Create Orchestrator SKILL.md
+## Gate: .phase_gate
 
-## HARD STOP — DO NOT EXECUTE IN CURRENT SESSION
+This prompt is queued for the next run. Do NOT execute until
+`.agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/.phase_gate` exists.
+If the file is missing, stop and report "Phase gate not set. Awaiting human instruction to proceed."
 
-This prompt is queued for the next run. Phase 4 is fully complete (all sub-phases a, b, c, d). Do not execute Phase 5 now.
+# Next Prompt: Phase 7 — Integration and Testing
 
 ## Current Status
 
-- Phase: 5a of 6
-- State: execute
-- Completed: Phases 1-4 — 284 tests passing, full suite green, ruff clean
-- Retries remaining: 3
+- Phase: 7 of 9 (3 sub-phases: 7a, 7b, 7c)
+- State: init
+- Completed: Phases 1-6 — all schemas, core module, adapters, validators, 2 skills, quality fixes, collapse + determinism hardening
 
 ## Pre-Flight: PLAN.md / CHECKLIST.md Sync
 
-Before starting this phase, check that all sub-phases listed in PLAN.md also exist in CHECKLIST.md. If PLAN.md has a sub-phase that CHECKLIST.md is missing, add it to CHECKLIST.md before proceeding. This prevents task gaps like the Phase 4d omission.
+Before starting, check that all sub-phases listed in PLAN.md Phase 7 also exist in CHECKLIST.md. If PLAN.md has a sub-phase that CHECKLIST.md is missing, add it to CHECKLIST.md before proceeding.
 
 ## Your Task
 
-Phase 5: Create SKILL.md files for the orchestrator skill-only path and workflow developer.
-See `PLAN.md` lines 728-827.
+Execute **all** of Phase 7 (sub-phases 7a, 7b, 7c). This is a full-phase execution. The phase is complete when all 3 sub-phases are done and validated.
 
-### Sub-phase 5a: Create orchestrator SKILL.md
+See `PLAN.md` Phase 7 for full detail on each sub-phase. Key additions from Phase 6 review:
 
-**Task:** Create the orchestrator skill for skill-only execution.
+| Sub-phase | Task | Key files |
+|-----------|------|-----------|
+| **7a** | Extend unit tests — **must add dedicated tests for 10 determinism features** (exit codes 0-5, validation_mode, checkpoint_before_run, pre-dispatch counter, RESULT.json fallback, append validation, model_pin, agent-evidence rules). Create `tests/test_orchestrator_determinism.py`. | tests/ |
+| **7b** | Extend integration tests — add exit code 3/4/5 propagation, append-only file snapshot+repair, pre-dispatch marker detection | tests/test_orchestrator_integration.py |
+| **7c** | Update validation script, document SKILL.md file trim opportunity for Phase 8 | scripts/validate_skills.py |
 
-**Files to read:**
+## Execution Order
 
-- `.agent_work/ideation/deep_determinism/orchestrator_skill_draft.md`
-- `.agent_work/ideation/deep_determinism/orchestrator_as_skill.md`
-- `PLAN.md` lines 728-754
+1. Run 7a → 7b → 7c in sequence (7c is last since it validates the final state)
 
-**Steps:**
+## Per Sub-phase Cycle
 
-1. Create `skills/contextsmith-orchestrator/` directory
-2. Create `skills/contextsmith-orchestrator/SKILL.md` from draft
-3. Create `skills/contextsmith-orchestrator/reference_manifest.yml`
-4. Add shared references to `skills/contextsmith-orchestrator/references/`
-5. Run `python scripts/validate_skills.py` to verify
+Each sub-phase follows: Implement → Audit → Ralph (3 iterations) → Validate → Record.
 
-**Expected outputs:**
+### Validation Commands
 
-- `skills/contextsmith-orchestrator/SKILL.md` — under 300 lines
-- `skills/contextsmith-orchestrator/reference_manifest.yml`
-
-## Ralph Loop (Required — 3 Iterations)
-
-Each iteration is one full critique+revise cycle. Do not skip iterations.
-
-**Ralph #1:** Critique implementation. Check for defects, gaps, edge cases. Fix any material issue found. Record what was critiqued and what was fixed.
-
-**Ralph #2:** Re-check after fixes. If no new material defects remain, record as no-op and move to #3.
-
-**Ralph #3:** Final check. If no defects remain, record as no-op.
-
-Each iteration must have a compact log entry in the final output. Do not invent changes to satisfy the loop — only fix material defects.
+For each sub-phase, run:
+- `uv run ruff check orchestrator/ --select E,F,W,I`
+- `uv run python scripts/validate_skills.py`
+- `uv run pytest tests/ -q`
+- `uv run ruff format orchestrator/ --check`
 
 ## Report Files — APPEND ONLY
 
-- EDUCATIONAL_REPORT.md: use `cat >> file << 'REPORT'` — never `write`
-- AUDIT_REPORT.md: use `cat >> file << 'AUDIT'` — never `write`
-- Never overwrite, never use `>` single redirect. If using edit tool fails, fall back to bash `>>`.
+- EDUCATIONAL_REPORT.md: use `>>` heredoc — never `write`
+- AUDIT_REPORT.md: use `>>` heredoc — never `write`
+- DECISIONS.md: append new decisions, never overwrite
 
-## STOP
+## Stop Condition
 
-Phase 5a ready. Execute only when explicitly instructed.
+Phase 7 is complete when all 3 sub-phases pass, test coverage is extended (including dedicated tests for 10 determinism features), validation script is current, and all existing tests still pass. Phase 8 (Documentation and Polish) and Phase 9 (Final Validation and Lock) are defined in PLAN.md.
+
+When done, update STATUS.md to phase_7_complete and write NEXT_PROMPT.md for Phase 8.
+
+## Context
+
+Continue from previous phase. All Phase 6 artifacts are in place: exit codes 0-5, configurable validation modes, pre-dispatch checkpoints, per-state timeout_s/model_pin/ralph_max_cycles, RESULT.json fallback, append-only auto-repair, documented agent-evidence rules.

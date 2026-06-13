@@ -22,25 +22,45 @@ import pytest
 
 # Test fixtures for cross-validator workflow tests
 VALID_FIXTURES = {
-    "requirements_chain": Path(__file__).parent / "fixtures" / "requirements_chain_valid.json",
-    "evidence_ledger": Path(__file__).parent / "fixtures" / "evidence_ledger_valid.json",
+    "requirements_chain": Path(__file__).parent
+    / "fixtures"
+    / "requirements_chain_valid.json",
+    "evidence_ledger": Path(__file__).parent
+    / "fixtures"
+    / "evidence_ledger_valid.json",
     "phase_closeout": Path(__file__).parent / "fixtures" / "phase_closeout_valid.json",
 }
 
 # Structural failure fixtures (these fail individual validator checks)
 FAIL_FIXTURES = {
-    "requirements_chain": Path(__file__).parent / "fixtures" / "requirements_chain_missing_id.json",
-    "phase_contract": Path(__file__).parent / "fixtures" / "phase_contract_missing_domain.json",
-    "evidence_ledger": Path(__file__).parent / "fixtures" / "evidence_ledger_missing_requirement_id.json",
-    "approval_record": Path(__file__).parent / "fixtures" / "approval_record_missing_requirement_ids.json",
-    "phase_closeout": Path(__file__).parent / "fixtures" / "phase_closeout_missing_phase_id.json",
+    "requirements_chain": Path(__file__).parent
+    / "fixtures"
+    / "requirements_chain_missing_id.json",
+    "phase_contract": Path(__file__).parent
+    / "fixtures"
+    / "phase_contract_missing_domain.json",
+    "evidence_ledger": Path(__file__).parent
+    / "fixtures"
+    / "evidence_ledger_missing_requirement_id.json",
+    "approval_record": Path(__file__).parent
+    / "fixtures"
+    / "approval_record_missing_requirement_ids.json",
+    "phase_closeout": Path(__file__).parent
+    / "fixtures"
+    / "phase_closeout_missing_phase_id.json",
 }
 
 # Cross-artifact failure fixtures (structurally valid but fail cross-validation)
 CROSS_FAIL_FIXTURES = {
-    "requirements_chain": Path(__file__).parent / "fixtures" / "requirements_chain_orphan.json",
-    "evidence_ledger": Path(__file__).parent / "fixtures" / "evidence_ledger_orphan_requirement.json",
-    "phase_closeout": Path(__file__).parent / "fixtures" / "phase_closeout_orphan_evidence.json",
+    "requirements_chain": Path(__file__).parent
+    / "fixtures"
+    / "requirements_chain_orphan.json",
+    "evidence_ledger": Path(__file__).parent
+    / "fixtures"
+    / "evidence_ledger_orphan_requirement.json",
+    "phase_closeout": Path(__file__).parent
+    / "fixtures"
+    / "phase_closeout_orphan_evidence.json",
 }
 
 DOMAIN_PACKS = [
@@ -53,7 +73,9 @@ DOMAIN_PACKS = [
 ]
 
 
-def _run_cli(subcommand: str, artifact_path: Path | str, extra_args: list[str] | None = None) -> subprocess.CompletedProcess:
+def _run_cli(
+    subcommand: str, artifact_path: Path | str, extra_args: list[str] | None = None
+) -> subprocess.CompletedProcess:
     """Run CLI subcommand and return result."""
     cmd = [sys.executable, "-m", "runtime.cli", subcommand, str(artifact_path)]
     if extra_args:
@@ -71,6 +93,7 @@ def _create_temp_json(data: dict, suffix: str = ".json") -> Path:
 
 # ==================== Domain Pack CLI Validation ====================
 
+
 class TestDomainPackCLIValidation:
     """Test all 6 domain packs through CLI."""
 
@@ -81,7 +104,9 @@ class TestDomainPackCLIValidation:
             path = domain_packs_dir / f"{domain}.json"
             assert path.exists(), f"Domain pack {domain} not found"
             result = _run_cli("domain-pack", path)
-            assert result.returncode == 0, f"Domain pack {domain} failed validation:\n{result.stdout}\n{result.stderr}"
+            assert result.returncode == 0, (
+                f"Domain pack {domain} failed validation:\n{result.stdout}\n{result.stderr}"
+            )
             assert "PASS" in result.stdout
 
     def test_general_fallback_with_wildcard(self):
@@ -141,7 +166,10 @@ class TestDomainPackCLIValidation:
         path = _create_temp_json(invalid)
         result = _run_cli("domain-pack", path)
         assert result.returncode == 1
-        assert "Invalid required_artifact" in result.stdout or "invalid_artifact_type" in result.stdout
+        assert (
+            "Invalid required_artifact" in result.stdout
+            or "invalid_artifact_type" in result.stdout
+        )
 
     def test_domain_pack_requires_approval_missing_from_gates(self):
         """Actions requiring approval must be in approval_gates."""
@@ -165,6 +193,7 @@ class TestDomainPackCLIValidation:
 
 # ==================== Exit Code Verification ====================
 
+
 class TestExitCodeVerification:
     """Test exit codes for all subcommands and all paths."""
 
@@ -177,12 +206,27 @@ class TestExitCodeVerification:
             ("phase-contract", fixtures_dir / "phase_contract_valid.json", 0),
             ("phase-contract", fixtures_dir / "phase_contract_missing_domain.json", 1),
             ("evidence", fixtures_dir / "evidence_ledger_valid.json", 0),
-            ("evidence", fixtures_dir / "evidence_ledger_missing_requirement_id.json", 1),
+            (
+                "evidence",
+                fixtures_dir / "evidence_ledger_missing_requirement_id.json",
+                1,
+            ),
             ("approval", fixtures_dir / "approval_record_valid.json", 0),
-            ("approval", fixtures_dir / "approval_record_missing_requirement_ids.json", 1),
+            (
+                "approval",
+                fixtures_dir / "approval_record_missing_requirement_ids.json",
+                1,
+            ),
             ("closeout", fixtures_dir / "phase_closeout_valid.json", 0),
             ("closeout", fixtures_dir / "phase_closeout_missing_phase_id.json", 1),
-            ("domain-pack", Path(__file__).parent.parent / "runtime" / "domain_packs" / "general_fallback.json", 0),
+            (
+                "domain-pack",
+                Path(__file__).parent.parent
+                / "runtime"
+                / "domain_packs"
+                / "general_fallback.json",
+                0,
+            ),
         ]
         for subcommand, path, expected_code in test_cases:
             result = _run_cli(subcommand, path)
@@ -229,13 +273,16 @@ class TestExitCodeVerification:
 
 # ==================== Output Format Compliance ====================
 
+
 class TestOutputFormatCompliance:
     """Test structured output format."""
 
     def test_pass_output_format(self):
         """PASS output should have correct format."""
         fixtures_dir = Path(__file__).parent / "fixtures"
-        result = _run_cli("requirements", fixtures_dir / "requirements_chain_valid.json")
+        result = _run_cli(
+            "requirements", fixtures_dir / "requirements_chain_valid.json"
+        )
         assert result.returncode == 0
         assert result.stdout.startswith("PASS")
         assert "requirements_chain_valid.json" in result.stdout
@@ -243,7 +290,9 @@ class TestOutputFormatCompliance:
     def test_fail_output_format(self):
         """FAIL output should list violations."""
         fixtures_dir = Path(__file__).parent / "fixtures"
-        result = _run_cli("requirements", fixtures_dir / "requirements_chain_missing_id.json")
+        result = _run_cli(
+            "requirements", fixtures_dir / "requirements_chain_missing_id.json"
+        )
         assert result.returncode == 1
         assert result.stdout.startswith("FAIL")
         assert "violation:" in result.stdout or "violations" in result.stdout.lower()
@@ -251,7 +300,9 @@ class TestOutputFormatCompliance:
     def test_no_stderr_on_pass(self):
         """Successful validation should not write to stderr."""
         fixtures_dir = Path(__file__).parent / "fixtures"
-        result = _run_cli("requirements", fixtures_dir / "requirements_chain_valid.json")
+        result = _run_cli(
+            "requirements", fixtures_dir / "requirements_chain_valid.json"
+        )
         assert result.returncode == 0
         assert result.stderr == ""
 
@@ -281,6 +332,7 @@ class TestOutputFormatCompliance:
 
 # ==================== Cross-Validator Workflow Tests ====================
 
+
 class TestCrossValidatorWorkflow:
     """Test cross-artifact validation scenarios."""
 
@@ -289,21 +341,25 @@ class TestCrossValidatorWorkflow:
         # Note: There's no CLI subcommand for validate_workflow, so test programmatically
         from runtime.validator import validate_workflow
 
-        result = validate_workflow({
-            "requirements_chain": VALID_FIXTURES["requirements_chain"],
-            "evidence_ledger": VALID_FIXTURES["evidence_ledger"],
-            "phase_closeout": VALID_FIXTURES["phase_closeout"],
-        })
+        result = validate_workflow(
+            {
+                "requirements_chain": VALID_FIXTURES["requirements_chain"],
+                "evidence_ledger": VALID_FIXTURES["evidence_ledger"],
+                "phase_closeout": VALID_FIXTURES["phase_closeout"],
+            }
+        )
         assert result["passed"], f"Workflow validation failed: {result['violations']}"
 
     def test_validate_workflow_orphan_evidence(self):
         """Workflow should fail when phase_closeout references non-existent evidence."""
         from runtime.validator import validate_workflow
 
-        result = validate_workflow({
-            "evidence_ledger": VALID_FIXTURES["evidence_ledger"],
-            "phase_closeout": CROSS_FAIL_FIXTURES["phase_closeout"],
-        })
+        result = validate_workflow(
+            {
+                "evidence_ledger": VALID_FIXTURES["evidence_ledger"],
+                "phase_closeout": CROSS_FAIL_FIXTURES["phase_closeout"],
+            }
+        )
         assert not result["passed"]
         assert any("ev-nonexistent" in v for v in result["violations"])
 
@@ -311,10 +367,12 @@ class TestCrossValidatorWorkflow:
         """Workflow should fail when evidence_ledger references non-existent requirement."""
         from runtime.validator import validate_workflow
 
-        result = validate_workflow({
-            "requirements_chain": VALID_FIXTURES["requirements_chain"],
-            "evidence_ledger": CROSS_FAIL_FIXTURES["evidence_ledger"],
-        })
+        result = validate_workflow(
+            {
+                "requirements_chain": VALID_FIXTURES["requirements_chain"],
+                "evidence_ledger": CROSS_FAIL_FIXTURES["evidence_ledger"],
+            }
+        )
         assert not result["passed"]
         assert any("req-missing" in v for v in result["violations"])
 
@@ -323,11 +381,15 @@ class TestCrossValidatorWorkflow:
         from runtime.validator import validate_workflow
 
         # Mix valid and cross-fail fixtures
-        result = validate_workflow({
-            "requirements_chain": VALID_FIXTURES["requirements_chain"],
-            "evidence_ledger": CROSS_FAIL_FIXTURES["evidence_ledger"],  # orphan requirement
-            "phase_closeout": VALID_FIXTURES["phase_closeout"],
-        })
+        result = validate_workflow(
+            {
+                "requirements_chain": VALID_FIXTURES["requirements_chain"],
+                "evidence_ledger": CROSS_FAIL_FIXTURES[
+                    "evidence_ledger"
+                ],  # orphan requirement
+                "phase_closeout": VALID_FIXTURES["phase_closeout"],
+            }
+        )
         assert not result["passed"]
         assert any("req-missing" in v for v in result["violations"])
 
@@ -336,14 +398,17 @@ class TestCrossValidatorWorkflow:
         from runtime.validator import validate_workflow
 
         # Only requirements_chain
-        result = validate_workflow({
-            "requirements_chain": VALID_FIXTURES["requirements_chain"],
-        })
+        result = validate_workflow(
+            {
+                "requirements_chain": VALID_FIXTURES["requirements_chain"],
+            }
+        )
         # Should pass (no cross-validation needed with only one artifact)
         assert result["passed"]
 
 
 # ==================== Edge Cases ====================
+
 
 class TestEdgeCases:
     """Test edge cases and boundary conditions."""
@@ -444,6 +509,7 @@ class TestEdgeCases:
 
 # ==================== Multiple Artifact Scenarios ====================
 
+
 class TestMultipleArtifactScenarios:
     """Test scenarios with multiple artifacts in sequence."""
 
@@ -463,10 +529,14 @@ class TestMultipleArtifactScenarios:
         """Sequence with both passing and failing artifacts."""
         fixtures_dir = Path(__file__).parent / "fixtures"
         # First pass, then fail
-        result1 = _run_cli("requirements", fixtures_dir / "requirements_chain_valid.json")
+        result1 = _run_cli(
+            "requirements", fixtures_dir / "requirements_chain_valid.json"
+        )
         assert result1.returncode == 0
 
-        result2 = _run_cli("requirements", fixtures_dir / "requirements_chain_missing_id.json")
+        result2 = _run_cli(
+            "requirements", fixtures_dir / "requirements_chain_missing_id.json"
+        )
         assert result2.returncode == 1
 
     def test_all_domain_packs_in_sequence(self):
@@ -480,12 +550,14 @@ class TestMultipleArtifactScenarios:
 
 # ==================== Programmatic API Tests ====================
 
+
 class TestProgrammaticAPI:
     """Test CLI programmatic API."""
 
     def test_main_with_invalid_args(self):
         """Main with invalid args should raise SystemExit with code 2."""
         from runtime.cli import main
+
         with pytest.raises(SystemExit) as exc_info:
             main(["invalid_subcommand", "dummy.json"])
         assert exc_info.value.code == 2
@@ -493,6 +565,7 @@ class TestProgrammaticAPI:
     def test_main_with_help(self):
         """Main with --help should raise SystemExit with code 0."""
         from runtime.cli import main
+
         with pytest.raises(SystemExit) as exc_info:
             main(["--help"])
         assert exc_info.value.code == 0
@@ -500,9 +573,17 @@ class TestProgrammaticAPI:
     def test_build_parser(self):
         """Parser should have all expected subcommands."""
         from runtime.cli import build_parser, SUBCOMMANDS
+
         parser = build_parser()
         # All subcommands should be registered in SUBCOMMANDS
-        expected = {"requirements", "phase-contract", "evidence", "approval", "closeout", "domain-pack"}
+        expected = {
+            "requirements",
+            "phase-contract",
+            "evidence",
+            "approval",
+            "closeout",
+            "domain-pack",
+        }
         assert set(SUBCOMMANDS.keys()) == expected
         # Verify we can parse each subcommand
         for name in expected:
@@ -512,12 +593,21 @@ class TestProgrammaticAPI:
     def test_subcommands_registered(self):
         """All 6 subcommands should be registered."""
         from runtime.cli import SUBCOMMANDS
-        expected = {"requirements", "phase-contract", "evidence", "approval", "closeout", "domain-pack"}
+
+        expected = {
+            "requirements",
+            "phase-contract",
+            "evidence",
+            "approval",
+            "closeout",
+            "domain-pack",
+        }
         assert set(SUBCOMMANDS.keys()) == expected
 
     def test_next_prompt_subcommand(self):
         """next-prompt subcommand should exist and work."""
         from runtime.cli import main
+
         # This may fail if task_dir doesn't exist, but should not crash
         result = main(["next-prompt", "--dry-run", "."])
         # Should return 0 or error code, but not crash with exception
@@ -536,6 +626,7 @@ class TestProgrammaticAPI:
 
 # ==================== Help and Usage Tests ====================
 
+
 class TestHelpAndUsage:
     """Test help output and usage messages."""
 
@@ -549,12 +640,22 @@ class TestHelpAndUsage:
 
     def test_subcommand_help(self):
         """Each subcommand should have help text."""
-        subcommands = ["requirements", "phase-contract", "evidence", "approval", "closeout", "domain-pack"]
+        subcommands = [
+            "requirements",
+            "phase-contract",
+            "evidence",
+            "approval",
+            "closeout",
+            "domain-pack",
+        ]
         for subcommand in subcommands:
             cmd = [sys.executable, "-m", "runtime.cli", subcommand, "--help"]
             result = subprocess.run(cmd, capture_output=True, text=True)
             assert result.returncode == 0
-            assert "usage:" in result.stdout.lower() or "positional arguments" in result.stdout.lower()
+            assert (
+                "usage:" in result.stdout.lower()
+                or "positional arguments" in result.stdout.lower()
+            )
 
     def test_next_prompt_help(self):
         """next-prompt subcommand should have help text."""
@@ -565,6 +666,7 @@ class TestHelpAndUsage:
 
 
 # ==================== Cross-Artifact Validation via CLI ====================
+
 
 class TestCrossArtifactValidationCLI:
     """Test cross-artifact validation scenarios via CLI."""

@@ -414,14 +414,23 @@ def compile_next_prompt(
     # 7. Validation Commands
     lines.append("## Validation Commands")
     lines.append("")
+    has_markdownlint = False
     if validation_commands:
         for cmd in validation_commands:
             lines.append(f"- {cmd}")
+            if "markdownlint" in cmd:
+                has_markdownlint = True
     elif validation_items:
         for item in validation_items:
             lines.append(f"- {item}")
     else:
         lines.append("- Run available project validation commands")
+
+    # Add standard validators if not already included
+    if not has_markdownlint:
+        lines.append(
+            "- `markdownlint . --ignore node_modules` (Markdown formatting)"
+        )
     lines.append("")
 
     # 8. Task-State Closeout Requirements

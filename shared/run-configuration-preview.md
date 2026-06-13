@@ -155,9 +155,8 @@ Every ContextSmith skill that performs work should:
 | `contextsmith-skill-engineer` | Always (creates/edits files) |
 | `contextsmith-skill-migrator` | Always (moves/copies files) |
 | `contextsmith-instruction-engineer` | Always (creates/edits files) |
-| `contextsmith-run` | When `--interaction` is not `silent` |
 | `contextsmith-workflow-developer` | Always (creates workflow config + task-state files) |
-| `contextsmith-orchestrator` | Before first phase execution |
+| `contextsmith-orchestrator` | Before first phase execution, unless `--interaction silent` |
 | `contextsmith` (router) | After wizard completes, before dispatching |
 
 ### Skills That May Skip

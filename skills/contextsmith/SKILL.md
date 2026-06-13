@@ -2,7 +2,7 @@
 name: contextsmith
 description: Meta-skill for ContextSmith, an instruction-engineering toolkit for local/open-weight models that is also useful for frontier-model agent workflows. Routes to sub-skills for prompt engineering, skill creation, skill migration, repo instruction engineering, agent evaluation, and prompt execution. Use when the user needs to create, improve, audit, migrate, or execute model-aware agent artifacts.
 metadata:
-  version: "1.7.1"
+  version: "2.0.0"
   package: ContextSmith
   target: local-open-weight-first
   type: meta-skill
@@ -35,7 +35,8 @@ Dispatch to exactly one sub-skill based on the user's primary intent:
 | Migrate a directory of skills to a new profile or location | `contextsmith-skill-migrator` |
 | Create or edit AGENTS.md, CLAUDE.md, copilot-instructions, or repo-level agent files | `contextsmith-instruction-engineer` |
 | Audit, grade, or evaluate an existing artifact without modifying it | `contextsmith-agent-evaluator` |
-| Execute a prompt, prompt file, or NEXT_PROMPT.md handoff with controls | `contextsmith-run` |
+| Execute a prompt, prompt file, NEXT_PROMPT.md handoff, or workflow config | `contextsmith-orchestrator` |
+| Generate a workflow config from natural language intent | `contextsmith-workflow-developer` |
 
 Use `contextsmith-agent-evaluator` for audit-only requests, even when the artifact is a prompt. Use `contextsmith-prompt-engineer` when the user wants the prompt improved or packaged.
 
@@ -51,8 +52,9 @@ Some workflows chain skills:
 
 1. **Build then audit**: `contextsmith-skill-engineer` -> `contextsmith-agent-evaluator`
 2. **Migrate then validate**: `contextsmith-skill-migrator` -> `contextsmith-agent-evaluator`
-3. **Engineer then execute**: `contextsmith-prompt-engineer` -> `contextsmith-run`
+3. **Engineer then execute**: `contextsmith-prompt-engineer` -> `contextsmith-orchestrator`
 4. **Audit then fix**: `contextsmith-agent-evaluator` -> appropriate engineer skill
+5. **Generate then run**: `contextsmith-workflow-developer` -> `contextsmith-orchestrator`
 
 When the user's request implies a chain, complete the first step, then offer the next with a concise summary of what to carry forward.
 
@@ -84,7 +86,8 @@ Ask exactly these three questions in order. Use the structured question tool for
 | A skill (SKILL.md) | `contextsmith-skill-engineer` |
 | Repo instructions (AGENTS.md, etc.) | `contextsmith-instruction-engineer` |
 | Something to review or audit | `contextsmith-agent-evaluator` |
-| I want to run or execute something | `contextsmith-run` |
+| A prompt, handoff, or workflow config to execute | `contextsmith-orchestrator` |
+| A workflow plan to generate from intent | `contextsmith-workflow-developer` |
 | A directory of skills to migrate | `contextsmith-skill-migrator` |
 | Not sure yet | Ask Q2 with a freeform description |
 

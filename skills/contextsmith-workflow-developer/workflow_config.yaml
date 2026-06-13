@@ -1,0 +1,84 @@
+workflow_id: workflow-developer-meta
+version: 1
+domain: general
+mode: phased-run
+phase_order:
+  - gather_requirements
+  - select_domain_template
+  - customize_config
+  - validate_config
+  - confirm_config
+  - output_config
+states:
+  gather_requirements:
+    state: execute
+    permissions: read-only
+    max_retries: 2
+    transitions:
+      - condition: pass
+        target: select_domain_template
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - requirements.md
+  select_domain_template:
+    state: execute
+    permissions: read-only
+    max_retries: 1
+    transitions:
+      - condition: pass
+        target: customize_config
+    expected_outputs:
+      - selected_template.yaml
+  customize_config:
+    state: execute
+    permissions: edit
+    max_retries: 3
+    transitions:
+      - condition: output_valid
+        target: validate_config
+      - condition: pass
+        target: validate_config
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - workflow_config.yaml
+  validate_config:
+    state: execute
+    permissions: read-only
+    max_retries: 2
+    transitions:
+      - condition: pass
+        target: confirm_config
+      - condition: fail
+        target: customize_config
+      - condition: max_retries
+        target: blocked
+    expected_outputs:
+      - validation_report.md
+  confirm_config:
+    state: execute
+    permissions: read-only
+    max_retries: 1
+    transitions:
+      - condition: pass
+        target: output_config
+    expected_outputs:
+      - confirmed_config.yaml
+  output_config:
+    state: execute
+    permissions: edit
+    max_retries: 1
+    transitions:
+      - condition: pass
+        target: done
+    expected_outputs:
+      - workflow_config.yaml
+  done:
+    state: done
+    permissions: read-only
+    transitions: []
+  blocked:
+    state: blocked
+    permissions: read-only
+    transitions: []

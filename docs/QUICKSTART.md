@@ -20,7 +20,7 @@ Each sub-skill also works with zero flags, using safe defaults (generic-local mo
 /contextsmith-agent-evaluator       # audit any artifact
 /contextsmith-skill-engineer        # optimize a SKILL.md
 /contextsmith-skill-migrator        # migrate a directory of skills
-/contextsmith-run                   # execute with enforcement
+/contextsmith-orchestrator                   # execute with enforcement
 ```
 
 **Prerequisites:** ContextSmith skills installed in `~/.agents/skills/`. If you haven't installed yet, copy the `skills/` directory from the ContextSmith repo into `~/.agents/skills/`.
@@ -90,7 +90,7 @@ For multi-step projects, the standard execution path goes through runtime enforc
 **Step 3 — Execute a task with enforcement.** Run a phase with validation gates:
 
 ```
-/contextsmith-run \
+/contextsmith-orchestrator \
   --run-mode phase \
   --target .agent_work/sprints/<sprint>/tasks/<task> \
   --validation strict \
@@ -169,7 +169,7 @@ Use this when a plan was created by a strong model and you want to verify a smal
 Use this when you want ContextSmith controls enforced during execution, not only included in the prompt.
 
 ```
-/contextsmith-run \
+/contextsmith-orchestrator \
   --run-mode phase \
   --target .agent_work/sprints/<sprint>/tasks/<task> \
   --target-profile qwen36 \

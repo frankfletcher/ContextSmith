@@ -113,5 +113,5 @@ If the user's response to a later question reveals a constraint that invalidates
 This pattern applies to:
 - `contextsmith-workflow-developer` — gathering workflow intent
 - `contextsmith` (router) — wizard mode
-- `contextsmith-run` — refinement questions
+- `contextsmith-orchestrator` — refinement questions (absorbed from contextsmith-run)
 - Any skill that needs structured user input

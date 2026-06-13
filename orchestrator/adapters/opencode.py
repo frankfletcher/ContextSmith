@@ -53,25 +53,22 @@ class OpenCodeAdapter(HarnessAdapter):
                 cmd,
                 cwd=str(state_dir),
                 text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
                 env=self._build_env(contract),
             )
             self._processes[contract.step_id] = proc
 
             try:
-                stdout, stderr = proc.communicate(timeout=contract.timeout_s)
+                proc.wait(timeout=contract.timeout_s)
             except subprocess.TimeoutExpired:
                 proc.kill()
-                stdout, stderr = proc.communicate()
+                proc.wait()
                 raise HarnessTimeoutError(contract.step_id, contract.timeout_s)
 
-            # Create a CompletedProcess-like object for _read_result
             completed = subprocess.CompletedProcess(
                 args=cmd,
                 returncode=proc.returncode,
-                stdout=stdout,
-                stderr=stderr,
+                stdout="",
+                stderr="",
             )
 
         except OSError as e:

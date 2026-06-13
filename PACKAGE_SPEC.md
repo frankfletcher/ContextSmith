@@ -19,7 +19,7 @@ ContextSmith is local/open-weight first: smaller models do best when instruction
 - `contextsmith-skill-migrator`
 - `contextsmith-instruction-engineer`
 - `contextsmith-agent-evaluator`
-- `contextsmith-run`
+- `contextsmith-orchestrator`
 - `contextsmith`
 
 ## Shared Principles
@@ -82,4 +82,12 @@ The README should remain a project landing page and quick orientation path, not 
 - Rename public skill entry points from `local-model-*` to `contextsmith-*` to align the package surface with the project name.
 - Add `contextsmith` as the top-level router skill for discovery and intent-based dispatch.
 - Keep the methodology local/open-weight first while documenting that the practices transfer to frontier-model agents.
-- Treat `contextsmith-run` as a core skill alongside engineering, migration, instruction, and evaluation workflows.
+- Treat `contextsmith-orchestrator` as the unified execution skill (absorbed contextsmith-run).
+
+## v2.0.0 Design Decisions
+
+- Move to project-level versioning. After the determinism sprint, all ContextSmith skills move to 2.0.0.
+- Per-skill version metadata is deprecated in favor of the single project version in PACKAGE_SPEC.md.
+- Individual skills may still carry `metadata.version` in SKILL.md frontmatter, but it should match the project version and is no longer independently meaningful.
+- Version 2.0.0 applied in Phase 6e — contextsmith-run removed, orchestrator absorbed its patterns.
+- See `docs/reference/VERSIONING.md` for the full versioning policy.

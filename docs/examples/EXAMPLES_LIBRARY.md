@@ -21,7 +21,7 @@ Practical examples you can copy, adapt, and compare. Each example shows the inpu
 
 ## Example 1: Run a Task-State Phase
 
-**Status:** Implemented — uses contextsmith-run skill with NEXT_PROMPT.md handoff.
+**Status:** Implemented — uses contextsmith-orchestrator skill with NEXT_PROMPT.md handoff.
 
 **Scenario:** You have a multi-phase task in `.agent_work/` and want the agent to execute the current phase with validation gates and a Ralph loop.
 
@@ -380,7 +380,7 @@ B+ (Good overall structure, some minor weaknesses in phase budgeting clarity).
 
 ## Example 7: Meeting Scheduling
 
-**Status:** Implemented — uses contextsmith-run with scheduling domain pack.
+**Status:** Implemented — uses contextsmith-orchestrator with scheduling domain pack.
 
 **Scenario:** You want to schedule a cross-timezone meeting with approval gates for calendar writes.
 
@@ -429,7 +429,7 @@ Calendar invite sent for Tomorrow 2:00 PM - 3:00 PM EST.
 
 ## Example 8: Travel Comparison
 
-**Status:** Implemented — uses contextsmith-run with travel_purchase domain pack.
+**Status:** Implemented — uses contextsmith-orchestrator with travel_purchase domain pack.
 
 **Scenario:** You want to compare flight options for a business trip without purchasing.
 

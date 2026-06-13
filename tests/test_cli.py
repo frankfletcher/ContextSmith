@@ -29,13 +29,19 @@ def _temp_fixture(data: dict) -> str:
     with os.fdopen(fd, "w") as f:
         json.dump(data, f)
     return path
+
+
 # --- Help ---
+
 
 class TestCliHelp:
     def test_top_level_help(self):
         result = _run_cli("--help")
         assert result.returncode == 0
-        assert "contextsmith-validator" in result.stdout.lower() or "ContextSmith" in result.stdout
+        assert (
+            "contextsmith-validator" in result.stdout.lower()
+            or "ContextSmith" in result.stdout
+        )
 
     def test_subcommand_help_requirements(self):
         result = _run_cli("requirements", "--help")
@@ -64,9 +70,12 @@ class TestCliHelp:
 
 # --- Passing fixtures exit 0 ---
 
+
 class TestCliPass:
     def test_requirements_pass(self):
-        result = _run_cli("requirements", str(FIXTURES / "requirements_chain_valid.json"))
+        result = _run_cli(
+            "requirements", str(FIXTURES / "requirements_chain_valid.json")
+        )
         assert result.returncode == 0
         assert "PASS" in result.stdout
 
@@ -98,40 +107,53 @@ class TestCliPass:
 
 # --- Failing fixtures exit 1 and list violations ---
 
+
 class TestCliFail:
     def test_requirements_fail(self):
-        result = _run_cli("requirements", str(FIXTURES / "requirements_chain_missing_id.json"))
+        result = _run_cli(
+            "requirements", str(FIXTURES / "requirements_chain_missing_id.json")
+        )
         assert result.returncode == 1
         assert "FAIL" in result.stdout
         assert "violation" in result.stdout.lower()
         assert "Missing required field: id" in result.stdout
 
     def test_phase_contract_fail(self):
-        result = _run_cli("phase-contract", str(FIXTURES / "phase_contract_missing_domain.json"))
+        result = _run_cli(
+            "phase-contract", str(FIXTURES / "phase_contract_missing_domain.json")
+        )
         assert result.returncode == 1
         assert "FAIL" in result.stdout
         assert "Missing required field: domain" in result.stdout
 
     def test_evidence_fail(self):
-        result = _run_cli("evidence", str(FIXTURES / "evidence_ledger_missing_requirement_id.json"))
+        result = _run_cli(
+            "evidence", str(FIXTURES / "evidence_ledger_missing_requirement_id.json")
+        )
         assert result.returncode == 1
         assert "FAIL" in result.stdout
         assert "Missing required field: requirement_id" in result.stdout
 
     def test_approval_fail(self):
-        result = _run_cli("approval", str(FIXTURES / "approval_record_missing_requirement_ids.json"))
+        result = _run_cli(
+            "approval", str(FIXTURES / "approval_record_missing_requirement_ids.json")
+        )
         assert result.returncode == 1
         assert "FAIL" in result.stdout
         assert "Missing required field: requirement_ids" in result.stdout
 
     def test_closeout_fail(self):
-        result = _run_cli("closeout", str(FIXTURES / "phase_closeout_missing_phase_id.json"))
+        result = _run_cli(
+            "closeout", str(FIXTURES / "phase_closeout_missing_phase_id.json")
+        )
         assert result.returncode == 1
         assert "FAIL" in result.stdout
         assert "Missing required field: phase_id" in result.stdout
 
     def test_domain_pack_fail(self):
-        result = _run_cli("domain-pack", str(FIXTURES / "domain_pack_missing_approval_gates.json"))
+        result = _run_cli(
+            "domain-pack", str(FIXTURES / "domain_pack_missing_approval_gates.json")
+        )
         assert result.returncode == 1
         assert "FAIL" in result.stdout
         assert "Missing required field: approval_gates" in result.stdout
@@ -139,20 +161,47 @@ class TestCliFail:
     def test_all_subcommands_fail_with_violation_text(self):
         """Every subcommand outputs specific violation text on failure."""
         fail_cases = [
-            ("requirements", "requirements_chain_missing_id.json", "Missing required field: id"),
-            ("phase-contract", "phase_contract_missing_domain.json", "Missing required field: domain"),
-            ("evidence", "evidence_ledger_missing_requirement_id.json", "Missing required field: requirement_id"),
-            ("approval", "approval_record_missing_requirement_ids.json", "Missing required field: requirement_ids"),
-            ("closeout", "phase_closeout_missing_phase_id.json", "Missing required field: phase_id"),
-            ("domain-pack", "domain_pack_missing_approval_gates.json", "Missing required field: approval_gates"),
+            (
+                "requirements",
+                "requirements_chain_missing_id.json",
+                "Missing required field: id",
+            ),
+            (
+                "phase-contract",
+                "phase_contract_missing_domain.json",
+                "Missing required field: domain",
+            ),
+            (
+                "evidence",
+                "evidence_ledger_missing_requirement_id.json",
+                "Missing required field: requirement_id",
+            ),
+            (
+                "approval",
+                "approval_record_missing_requirement_ids.json",
+                "Missing required field: requirement_ids",
+            ),
+            (
+                "closeout",
+                "phase_closeout_missing_phase_id.json",
+                "Missing required field: phase_id",
+            ),
+            (
+                "domain-pack",
+                "domain_pack_missing_approval_gates.json",
+                "Missing required field: approval_gates",
+            ),
         ]
         for cmd, fixture, expected in fail_cases:
             result = _run_cli(cmd, str(FIXTURES / fixture))
-            assert result.returncode == 1, f"{cmd}: expected exit 1, got {result.returncode}"
+            assert result.returncode == 1, (
+                f"{cmd}: expected exit 1, got {result.returncode}"
+            )
             assert expected in result.stdout, f"{cmd}: expected '{expected}' in output"
 
 
 # --- File errors exit 2 ---
+
 
 class TestCliErrors:
     @staticmethod
@@ -184,6 +233,7 @@ class TestCliErrors:
 
 # --- Programmatic API ---
 
+
 class TestCliMain:
     @staticmethod
     def _run_main(*args):
@@ -213,10 +263,13 @@ class TestCliMain:
 
 # --- Warnings display ---
 
+
 class TestCliWarnings:
     def test_warnings_displayed_on_pass(self):
         """Warnings are displayed even when validation passes."""
-        import json, tempfile
+        import json
+        import tempfile
+
         data = {
             "artifact_type": "requirements_chain",
             "id": "req-warn",
