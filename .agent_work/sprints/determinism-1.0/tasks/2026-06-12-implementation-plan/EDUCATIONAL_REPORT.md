@@ -1125,3 +1125,59 @@ def _apply_result_fallback(harness_result, step_contract, state_dir):
 - `uv run pytest tests/ -q` — runs all 374 tests
 - Missing imports: check the import paths match the actual module locations
 - Temp directory cleanup: tests use `tempfile.TemporaryDirectory()` so they clean up automatically
+
+---
+
+# Educational Report: Phase 8 — Documentation and Polish
+
+## What Was Done
+
+Phase 8 completed 4 sub-phases covering documentation cleanup and polish:
+
+### Phase 8a: Trim orchestrator SKILL.md
+**What:** Extracted inline artifact templates (STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md, RESULT.json, checkpoint.json — ~81 lines) from the SKILL.md into a dedicated `references/artifact-templates.md` file. Replaced with a compact reference table.
+
+**Why:** The SKILL.md was 572 lines, exceeding the 500-line target. Long skills increase token usage and cognitive load for local models. The extracted templates are still loadable on demand via the manifest.
+
+**How:** Created `references/artifact-templates.md` with all 6 template formats. Updated SKILL.md: replaced RESULT.json section (15→3 lines), Checkpoint.json section (24→3 lines), Artifact Templates section (81→6 lines). Added entry to reference_manifest.yml. Result: 468 lines (−104).
+
+### Phase 8b: Fix schema deprecation
+**What:** Updated both `schemas/workflow_config.schema.json` and `schemas/agent_config.schema.json` from JSON Schema draft-07 to 2020-12.
+
+**Why:** The draft-07 metaschema URI produces deprecation warnings in modern JSON Schema validators. 2020-12 is the current stable version.
+
+**How:** Changed `$schema` URI from `https://json-schema.org/draft-07/schema#` to `https://json-schema.org/draft/2020-12/schema`. Renamed `definitions` keyword to `$defs` (2020-12 replaces `definitions` with `$defs`). Updated all `$ref` paths from `#/definitions/` to `#/$defs/`. Validated all fixtures: valid configs pass, invalid configs fail with correct errors.
+
+### Phase 8c: Update user-facing docs
+**What:** Ran markdownlint across docs/, fixed all 15 files with MD060 table-column-style errors.
+
+**Why:** Table header separator rows used compact format (`|---|---|`) which violates markdownlint MD060 rule. The rule requires spaced pipes (`| --- | --- | --- |`).
+
+**How:** Fixed 15 files: CONTROL_PARAMETERS.md, EXAMPLES_LIBRARY.md, IMPLEMENTATION_PLAN_AUDIT.md, QUICKSTART.md, reference/CONTROL_PARAMETERS.md, RELEASE_PROCESS.md, TEST_QUALITY_AUDIT.md, and 8 workflow files. All table separator rows now use `| --- | --- | --- |` convention. Result: 0 remaining MD060 issues.
+
+### Phase 8d: CHANGELOG entry
+**What:** Wrote comprehensive v2.0.0 CHANGELOG entry covering Phases 5.5-8.
+
+**Why:** The changelog tracks all user-facing changes. v2.0.0 is a major version bump reflecting the Deep Determinism project (contextsmith-run removal, orchestrator addition, determinism hardening, append-only protection).
+
+**How:** Added 4 sections (Added, Changed, Fixed, Notes) with 29 bullet points covering all major changes from Phases 5.5 through 8. Version bump 1.7.1 → 2.0.0.
+
+## Why It Matters
+
+- **SKILL.md under 500 lines** — Reduces token cost, improves readability for local models, and satisfies the project convention.
+- **Schema 2020-12** — Eliminates deprecation warnings, uses current standard, enables future 2020-12 features like `$recursiveRef`.
+- **MD060 fixes** — Makes 15 documentation files conform to the project's markdownlint standards. Prevents false-positive lint failures.
+- **CHANGELOG** — Provides a complete record of all v2.0.0 changes for users and maintainers.
+
+## How It Works
+
+1. **Artifact templates extraction pattern:** Identify inline content that is scanned (not read) by the model. Extract to a reference file. Update the manifest. Verify the skill still compiles (validate_skills.py).
+2. **Schema migration:** `definitions` → `$defs` is the primary 2020-12 breaking change. The actual validation behavior is identical.
+3. **MD060 table column style:** markdownlint's MD060 checks that table separator rows use consistent spacing. The "compact" style requires a space before and after each dash group: `| --- | --- |`.
+
+## For Small Models
+
+- Templates and schemas are data, not instructions. Models don't need to read all templates inline — they just need to know WHERE to find them.
+- When asked to generate a status update (STATUS.md, PHASE_LOG.md), read the template from `references/artifact-templates.md` first.
+- The 2020-12 schema change only affects the `$schema` declaration — all validation behavior is identical. You don't need to reason about 2020-12 semantics differently.
+- For markdown tables: always use `| header |` style with spaces around the content, and `| --- |` for the separator row.

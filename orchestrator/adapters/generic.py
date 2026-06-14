@@ -117,40 +117,49 @@ class GenericAdapter(HarnessAdapter):
                 artifacts[artifact_name] = artifact_path.read_text(encoding="utf-8")
         return artifacts
 
+    def _load_test_fixture(self, contract: StepContract) -> dict | None:
+        """Load fixture JSON from the path specified in contract extras."""
+        fixture_path = contract.extra.get("fixture")
+        if not fixture_path:
+            return None
+        fixture_file = Path(fixture_path)
+        if not fixture_file.exists():
+            return None
+        try:
+            return json.loads(fixture_file.read_text(encoding="utf-8"))
+        except json.JSONDecodeError, OSError:
+            return None
+
+    def _write_fixture_artifacts(self, fixture: dict, state_dir: Path) -> list[str]:
+        """Write fixture-specified artifacts to disk, return written names."""
+        artifacts_written = []
+        artifacts_to_write = fixture.get("artifacts_content", {})
+        for artifact_name in fixture.get("artifacts", []):
+            if artifact_name in artifacts_to_write:
+                artifact_path = state_dir / artifact_name
+                artifact_path.write_text(
+                    artifacts_to_write[artifact_name], encoding="utf-8"
+                )
+                artifacts_written.append(artifact_name)
+            elif (state_dir / artifact_name).exists():
+                artifacts_written.append(artifact_name)
+        return artifacts_written
+
     def _run_test_mode(self, contract: StepContract, state_dir: Path) -> HarnessResult:
         """Run in test mode using fixture data."""
-        fixture_path = contract.extra.get("fixture")
-        if fixture_path:
-            fixture_file = Path(fixture_path)
-            if fixture_file.exists():
-                try:
-                    fixture = json.loads(fixture_file.read_text(encoding="utf-8"))
-
-                    # Write fixture artifacts to disk if provided
-                    artifacts_to_write = fixture.get("artifacts_content", {})
-                    artifacts_written = []
-                    for artifact_name in fixture.get("artifacts", []):
-                        if artifact_name in artifacts_to_write:
-                            artifact_path = state_dir / artifact_name
-                            artifact_path.write_text(
-                                artifacts_to_write[artifact_name], encoding="utf-8"
-                            )
-                            artifacts_written.append(artifact_name)
-                        elif (state_dir / artifact_name).exists():
-                            artifacts_written.append(artifact_name)
-
-                    return HarnessResult(
-                        status=fixture.get("status", "pass"),
-                        step_id=contract.step_id,
-                        reason=fixture.get("reason", "test mode fixture"),
-                        artifacts={},
-                        artifacts_written=artifacts_written,
-                        validation=fixture.get("validation", {"passed": True}),
-                        issues=fixture.get("issues", []),
-                        next_action=fixture.get("next_action", "done"),
-                    )
-                except json.JSONDecodeError, OSError:
-                    pass
+        fixture = self._load_test_fixture(contract)
+        if fixture is not None:
+            artifacts_written = self._write_fixture_artifacts(fixture, state_dir)
+            return HarnessResult(
+                status=fixture.get("status", "pass"),
+                step_id=contract.step_id,
+                reason=fixture.get("reason", "test mode fixture"),
+                artifacts={},
+                artifacts_written=artifacts_written,
+                validation=fixture.get("validation", {"passed": True}),
+                issues=fixture.get("issues", []),
+                next_action=fixture.get("next_action", "done"),
+            )
 
         return HarnessResult(
             status="pass",

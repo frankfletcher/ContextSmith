@@ -4,30 +4,29 @@ This prompt is queued for the next run. Do NOT execute until
 `.agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/.phase_gate` exists.
 If the file is missing, stop and report "Phase gate not set. Awaiting human instruction to proceed."
 
-# Next Prompt: Phase 8 — Documentation and Polish
+# Next Prompt: Phase 9 — Final Validation and Lock
 
 ## Current Status
 
-- Phase: 8 of 9 (4 sub-phases: 8a, 8b, 8c, 8d)
+- Phase: 9 of 9 (3 sub-phases: 9a, 9b, 9c)
 - State: init
-- Completed: Phases 1-7 — all schemas, core module, adapters, validators, 2 skills, quality fixes, collapse + determinism hardening, integration/testing (374 tests)
+- Completed: Phases 1-8 — schemas, core module, adapters, validators, 2 skills, quality fixes, collapse + determinism hardening, integration/testing (374 tests), documentation/polish
 
 ## Your Task
 
-Execute **all** of Phase 8 (sub-phases 8a, 8b, 8c, 8d). This is a full-phase execution. The phase is complete when all 4 sub-phases are done and validated.
+Execute **all** of Phase 9 (sub-phases 9a, 9b, 9c). This is the final phase of the Deep Determinism project. The project is complete when all 3 sub-phases are done and validated.
 
-See `PLAN.md` Phase 8 for full detail on each sub-phase.
+See `PLAN.md` Phase 9 for full detail on each sub-phase.
 
 | Sub-phase | Task | Key files |
 |-----------|------|-----------|
-| **8a** | Trim orchestrator SKILL.md — extract artifact templates to references/artifact-templates.md | skills/contextsmith-orchestrator/SKILL.md |
-| **8b** | Fix schema deprecation — update $schema from draft-07 to 2020-12 | schemas/workflow_config.schema.json |
-| **8c** | Update user-facing docs — run markdownlint, fix MD060 issues in docs/ | docs/ |
-| **8d** | CHANGELOG entry — comprehensive entry covering Phase 5.5-6 changes | CHANGELOG.md |
+| **9a** | Full validation pass | Run full suite: ruff, format, validate_skills, pytest, markdownlint. Fix remaining issues. |
+| **9b** | Final self-audit | Audit all phases 1-9 against A-F rubric. Verify every expected_output from every sub-phase exists and is non-empty. |
+| **9c** | Project closeout | Verify git status is clean. Check staged_skills/ in .agent_work/ for stale artifacts. Write final DECISIONS.md entry. Tag release if applicable. |
 
 ## Execution Order
 
-1. Run 8a → 8b → 8c → 8d in sequence
+1. Run 9a → 9b → 9c in sequence
 
 ## Per Sub-phase Cycle
 
@@ -35,13 +34,15 @@ Each sub-phase follows: Implement → Audit → Ralph (3 iterations) → Validat
 
 ### Validation Commands
 
-For each sub-phase, run:
-- `uv run ruff check orchestrator/ --select E,F,W,I`
-- `uv run python scripts/validate_skills.py`
-- `uv run pytest tests/ -q`
-- `uv run ruff format orchestrator/ --check`
-- `uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "`
-- `uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "`
+```bash
+uv run ruff check orchestrator/ --select E,F,W,I
+uv run ruff format orchestrator/ --check
+uv run python scripts/validate_skills.py
+uv run pytest tests/ -q
+uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "
+uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "
+markdownlint .agent_work/ orchestrator/ docs/ --ignore node_modules
+```
 
 ## Report Files — APPEND ONLY
 
@@ -51,10 +52,10 @@ For each sub-phase, run:
 
 ## Stop Condition
 
-Phase 8 is complete when all 4 sub-phases pass, SKILL.md is under 500 lines, schema deprecation warning is resolved, markdownlint issues in docs/ are fixed, and CHANGELOG.md is updated.
+The Deep Determinism project is **complete** when Phase 9 passes all validations, the final audit covers all 9 phases, git status is clean, and the closeout decision is recorded.
 
-When done, update STATUS.md to phase_8_complete and write NEXT_PROMPT.md for Phase 9.
+When done, update STATUS.md to project_complete and write RESULT.json with status "pass". No NEXT_PROMPT.md is needed after Phase 9.
 
 ## Context
 
-Continue from Phase 7. All 374 tests pass. The orchestrator SKILL.md is at 572 lines (needs trimming in 8a). Schema validation produces deprecation warnings for draft-07 (to be fixed in 8b).
+Continue from Phase 8. All 374 tests pass. SKILL.md is at 468 lines (under 500). Both schemas updated to 2020-12. MD060 issues in docs/ resolved. CHANGELOG v2.0.0 entry written. 

@@ -118,7 +118,7 @@ FAIL  tests/fixtures/phase_contract_bad_missing_fields.json
 
 **Available domain packs:**
 | Domain | Use When |
-|--------|----------|
+| --- | --- |
 | `software_engineering` | Coding, testing, refactoring |
 | `writing_editing` | Drafting, editing, rewriting |
 | `research_summary` | Literature review, fact-checking |

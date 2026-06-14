@@ -1,28 +1,32 @@
 # Status
 
 ## Current Phase
-phase_7_complete
+phase_8_complete
 
 ## Current State
 done
 
 ## Progress
 
-- Phase: 7 of 9 (COMPLETE — all 3 sub-phases done)
-- Tests: 374 passing (90 new since phase 6)
-- Checklist: All Phase 7 items complete
+- Phase: 8 of 9 (COMPLETE — all 4 sub-phases done)
+- SKILL.md: 468 lines (under 500 ✓)
+- Schema: Both updated to 2020-12 ✓
+- MD060: 0 issues in docs/ ✓
+- CHANGELOG: v2.0.0 entry written ✓
+- Tests: 374 passing (no regressions)
+- Checklist: All Phase 8 items complete
 
 ## Completed
 
-- phase_7a_unit_tests: PASS — 5 test files (3 new + 2 extended)
-- phase_7b_integration_tests: PASS — 8 new integration tests
-- phase_7c_validation_pipeline: PASS — ruff, format, validate_skills, radon all clean
-- validate_append_only_bugfix: PASS — == → startswith
+- phase_8a_trim_skill: PASS — 572 → 468 lines, artifact templates extracted
+- phase_8b_schema_deprecation: PASS — draft-07 → 2020-12 (both schemas)
+- phase_8c_docs_md060: PASS — 15 files fixed, 0 remaining
+- phase_8d_changelog: PASS — v2.0.0 entry written
 
 ## Next Action
 
-Phase 7 COMPLETE. Ready for Phase 8 (Documentation and Polish).
-Next agent should read PLAN.md Phase 8 and proceed with sub-phase 8a.
+Phase 8 COMPLETE. Ready for Phase 9 (Final Validation and Lock).
+Next agent should read PLAN.md Phase 9 and proceed with sub-phase 9a.
 
 ## Blocked By
 

@@ -156,6 +156,38 @@ class TestGenericAdapter:
         assert result.status == "pass"
         assert len(result.artifacts_written) == len(sample_contract.expected_outputs)
 
+    def test_execute_malformed_result_json(self, sample_contract, temp_state_dir):
+        """Test malformed RESULT.json does not crash."""
+        sample_contract.task_state_dir = str(temp_state_dir)
+
+        # Write malformed RESULT.json
+        (temp_state_dir / "RESULT.json").write_text("{invalid json")
+
+        adapter = GenericAdapter()
+        result = adapter.execute(sample_contract, temp_state_dir)
+
+        # Should not crash — falls back to artifact presence check
+        assert isinstance(result, HarnessResult)
+        assert result.status in ("pass", "fail")
+        assert result.step_id == sample_contract.step_id
+
+    def test_execute_malformed_fixture_no_crash(self, sample_contract, temp_state_dir):
+        """Test malformed fixture file in test mode does not crash."""
+        sample_contract.task_state_dir = str(temp_state_dir)
+        sample_contract.extra["test_mode"] = True
+
+        # Create malformed fixture file
+        fixture_path = temp_state_dir / "fixture.json"
+        fixture_path.write_text("{not valid json}")
+        sample_contract.extra["fixture"] = str(fixture_path)
+
+        adapter = GenericAdapter()
+        result = adapter.execute(sample_contract, temp_state_dir)
+
+        # Should not crash — falls back to "no fixture" result
+        assert isinstance(result, HarnessResult)
+        assert result.reason == "test mode: no fixture provided"
+
     def test_execute_test_mode_with_fixture(self, sample_contract, temp_state_dir):
         """Test test mode loads fixture and writes artifacts."""
         sample_contract.task_state_dir = str(temp_state_dir)

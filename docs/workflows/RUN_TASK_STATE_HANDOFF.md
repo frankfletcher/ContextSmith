@@ -83,7 +83,7 @@ If everything looks correct, you can resume with the next `NEXT_PROMPT.md`.
 ## Expected Artifacts
 
 | Artifact | Purpose |
-|----------|---------|
+| --- | --- |
 | `STATUS.md` | Current phase, next action, blockers |
 | `PHASE_LOG.md` | Compact phase history |
 | `ARTIFACTS.md` | Produced artifact tracking |
@@ -92,7 +92,7 @@ If everything looks correct, you can resume with the next `NEXT_PROMPT.md`.
 ## Common Failure Modes
 
 | Problem | Fix |
-|---------|-----|
+| --- | --- |
 | Stale task state | Re-read `STATUS.md` and `CONTEXT.md` to confirm the current phase |
 | Missing `NEXT_PROMPT.md` | The previous phase may not have completed closeout. Check `PHASE_LOG.md` for the blocker |
 | Context overflow during long runs | Use `--compact` flag with the Next Prompt Compiler to generate smaller handoffs |

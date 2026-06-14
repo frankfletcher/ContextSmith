@@ -24,7 +24,7 @@ Audit a plan before giving it to a coding agent when:
 Grade each dimension A-F:
 
 | Dimension | What to check |
-|---|---|
+| --- | --- |
 | Phase granularity | Are phases small enough for the target model and context length? |
 | Atomicity | Can each phase be executed without major inference leaps? |
 | Dependency order | Are prerequisites handled before dependent work? |

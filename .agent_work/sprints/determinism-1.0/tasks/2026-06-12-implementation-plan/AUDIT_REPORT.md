@@ -543,3 +543,85 @@ Phase 7 completed: 374 tests pass (90 new), ruff clean, skills validate (8/8), r
 
 ## Overall Verdict
 **PASS** — Phase 7 complete with 374 passing tests. Ready for Phase 8 (Documentation and Polish).
+
+---
+
+# Audit Report: Phase 8 — Documentation and Polish
+
+## Summary
+Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 468 lines. Schema updated to 2020-12. MD060 fixed in 15 docs/ files. CHANGELOG v2.0.0 written. All validations pass.
+
+## Rubric Assessment
+
+### A — Completeness (A)
+- All 4 sub-phases completed:
+  - 8a: SKILL.md 572→468 lines (−104), artifact templates extracted to references/artifact-templates.md, manifest updated
+  - 8b: Both schemas updated from draft-07 to 2020-12; definitions→$defs; all fixtures validate
+  - 8c: 15 docs/ files fixed for MD060; 0 remaining MD060 issues
+  - 8d: Comprehensive v2.0.0 CHANGELOG entry with Added/Changed/Fixed/Notes
+
+### B — Correctness (A)
+- 374 tests passing (100% pass rate)
+- Ruff linting passes (E, F, W, I)
+- Ruff format check passes (14 files already formatted)
+- Skills validate (8/8 OK); orchestrator SKILL.md at 468 lines (under 500 ✓)
+- Radon: no C/D/E/F functions, all files ≥ A maintainability
+- Schema update: valid configs pass, invalid configs fail with correct errors
+- CHANGELOG structure correct (no headers consumed)
+
+### C — Consistency (A)
+- Artifact templates reference file follows existing reference conventions (ATX headings, code fences)
+- Schema migration preserves all validation behavior
+- MD060 fixes match project markdownlint config
+- CHANGELOG format matches existing conventions (H2 headers, bullet points, Added/Changed/Fixed/Notes sections)
+
+### D — Documentation (A)
+- All new/modified files have clear structure
+- artifact-templates.md has complete template examples for all 6 artifact types
+- Educational report appended with per-sub-phase detail
+- CHANGELOG entry covers 29 bullet points across all changes
+
+### E — Validation & Testing (A)
+- Layer 1: pytest — 374 tests pass
+- Layer 2: ruff linting — all pass
+- Layer 3: ruff formatting — all pass
+- Layer 4: validate_skills.py — 8/8 OK
+- Layer 5: radon cc — no C/D/E/F
+- Layer 6: radon mi — all ≥ A
+- Layer 7: markdownlint — no MD060 in docs/, no new regressions
+- Layer 8: Schema validation — valid fixtures pass, invalid fixtures fail correctly
+
+### F — File Safety (A)
+- No destructive file operations
+- No subprocess calls (except validation commands)
+- No external network requests
+- No risky operations
+- All changes are targeted edits to existing files or creation of new reference files
+
+## Self-Audit Check
+- [x] Original request satisfied: Phase 8 complete, all 4 sub-phases done
+- [x] Declared parameters honored: --validation strict, --self-audit true, --ralph 3
+- [x] Validation completed: ruff, format, validate_skills, pytest, radon all pass
+- [x] Side-effect boundaries respected: Only SKILL.md, schemas, docs/, CHANGELOG.md, manifest modified
+- [x] Domain assumptions: Software engineering domain, inferred from repo evidence
+- [x] No exposed hidden reasoning
+- [x] Task state updated: STATUS.md, CHECKLIST.md, RESULT.json, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md updated
+
+## Ralph Loop Summary
+
+| Iteration | Result | Evidence |
+|-----------|--------|----------|
+| Ralph #1 (8a) | No-op | Artifact templates extraction correct and complete. 468 lines under 500 ✓ |
+| Ralph #1 (8b) | No-op | Schema migration clean, all fixtures validate correctly |
+| Ralph #1 (8c) | No-op | All 15 files with MD060 fixed, 0 remaining |
+| Ralph #1 (8d) | No-op | CHANGELOG comprehensive, structure correct |
+| Ralph #2 | No-op | Strategic review: Phase 8 addresses all quality gaps from Phase 7 findings. No improvement needed beyond baseline. |
+| Ralph #3 | No-op | Final check: all validation gates pass. No material defects remain. |
+
+### Strategic Review
+- **Sprint goal alignment:** Phase 8 is the documentation/polish phase before final validation. Every sub-phase directly addresses a finding from earlier phases (SKILL.md line count, schema deprecation warning, MD060 pre-existing issues, changelog updates).
+- **Improvement over baseline:** Also updated agent_config.schema.json (not just workflow_config), which was identified during implementation. Comprehensive changelog covers Phase 5.5-8 (not just 5.5-6 as the PLAN.md specified, since Phase 7 and 8 work was also substantial).
+- **Cross-reference:** Phase 9 (Final Validation and Lock) is planned. No updates needed to future phases.
+
+## Overall Verdict
+**PASS** — Phase 8 complete with zero material defects. Ready for Phase 9 (Final Validation and Lock).

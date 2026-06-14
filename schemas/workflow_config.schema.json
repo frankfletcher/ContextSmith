@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "WorkflowConfig",
   "description": "Schema for ContextSmith workflow configuration files. Defines the state machine, phase ordering, validation gates, and execution parameters for orchestrated agent workflows.",
   "type": "object",
@@ -33,19 +33,19 @@
       "description": "Which harness adapter to use. 'auto' = detect from environment, or a registered adapter name."
     },
     "baseline": {
-      "$ref": "#/definitions/BaselineBlock",
+      "$ref": "#/$defs/BaselineBlock",
       "default": {},
       "description": "Baseline requirements that the orchestrator enforces."
     },
     "overlay": {
-      "$ref": "#/definitions/OverlayBlock",
+      "$ref": "#/$defs/OverlayBlock",
       "default": {},
       "description": "Optional overlay that modifies the baseline workflow."
     },
     "states": {
       "type": "object",
       "additionalProperties": {
-        "$ref": "#/definitions/StateDefinition"
+        "$ref": "#/$defs/StateDefinition"
       },
       "default": {},
       "description": "State machine definitions for each phase step. Keys are phase step names."
@@ -57,17 +57,17 @@
       "description": "Ordered list of phase step names that form the workflow."
     },
     "validation": {
-      "$ref": "#/definitions/ValidationBlock",
+      "$ref": "#/$defs/ValidationBlock",
       "default": {},
       "description": "Global validation rules applied after phase execution."
     },
     "metadata": {
-      "$ref": "#/definitions/MetadataBlock",
+      "$ref": "#/$defs/MetadataBlock",
       "default": {},
       "description": "Metadata for documentation and display."
     }
   },
-  "definitions": {
+  "$defs": {
     "BaselineBlock": {
       "type": "object",
       "additionalProperties": false,
@@ -99,7 +99,7 @@
         "add_steps": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/OverlayStep"
+            "$ref": "#/$defs/OverlayStep"
           },
           "default": [],
           "description": "Steps to insert into the phase order after specified anchor points."
@@ -177,7 +177,7 @@
         "transitions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Transition"
+            "$ref": "#/$defs/Transition"
           },
           "default": [],
           "description": "Valid exit transitions from this state."

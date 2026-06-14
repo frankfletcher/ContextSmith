@@ -97,7 +97,7 @@ Use `--dry-run` to preview, or `--compact` for smaller output.
 ## Expected Artifacts
 
 | Artifact | Purpose |
-|----------|---------|
+| --- | --- |
 | `TASK.md` | Objective, scope, constraints |
 | `PLAN.md` | Phases, validation gates, context contracts |
 | `STATUS.md` | Current phase, next action, blockers |
@@ -110,7 +110,7 @@ Use `--dry-run` to preview, or `--compact` for smaller output.
 ## Common Failure Modes
 
 | Problem | Fix |
-|---------|-----|
+| --- | --- |
 | Plan phases are too broad | Ask the agent to split into smaller phases with explicit stop conditions |
 | Missing validation commands | Add concrete validation commands to each phase definition |
 | No context contracts for tool-heavy phases | Add `context_contract` YAML blocks with budget and compaction rules |

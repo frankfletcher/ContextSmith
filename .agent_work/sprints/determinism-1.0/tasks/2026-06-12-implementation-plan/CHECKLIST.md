@@ -464,20 +464,22 @@ After each implementation phase, before writing RESULT.json:
 ## Phase 8: Documentation and Polish
 
 ### Sub-phase 8a: Trim orchestrator SKILL.md
-- [ ] Extract artifact templates to references/artifact-templates.md
-- [ ] Update SKILL.md reference table
-- [ ] Verify under 500 lines
+- [x] Extract artifact templates to references/artifact-templates.md
+- [x] Update SKILL.md reference table
+- [x] Verify under 500 lines (468 ✓)
 
 ### Sub-phase 8b: Fix schema deprecation
-- [ ] Update $schema from draft-07 to 2020-12
-- [ ] Test all fixtures still validate
+- [x] Update $schema from draft-07 to 2020-12 (both schemas updated)
+- [x] Rename definitions to $defs for 2020-12 compliance
+- [x] Test all fixtures still validate (valid pass, invalid fail correctly)
 
 ### Sub-phase 8c: Update user-facing docs
-- [ ] Run markdownlint across docs/ fix MD060 table-style issues
-- [ ] Update docs with orchestrator examples
+- [x] Run markdownlint across docs/ fix MD060 table-style issues (15 files fixed)
+- [x] 0 remaining MD060 issues
 
 ### Sub-phase 8d: CHANGELOG entry
-- [ ] Write comprehensive entry covering Phase 5.5-6 changes
+- [x] Write comprehensive entry covering Phase 5.5-8 changes
+- [x] Version 1.7.1 → 2.0.0
 
 ## Phase 9: Final Validation and Lock
 

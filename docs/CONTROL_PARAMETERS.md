@@ -29,7 +29,7 @@ Add more controls only when they matter.
 ## Modes
 
 | Flag | Meaning | Use when |
-|---|---|---|
+| --- | --- | --- |
 | `--mode fast` | One-pass, concise output | Small, low-risk tasks |
 | `--mode deep` | More analysis, stronger validation, optional Ralph loop | Reusable or important artifacts |
 | `--mode guided` | Ask 1-3 high-impact questions when needed | Broad instructions, AGENTS.md, ambiguous tasks |

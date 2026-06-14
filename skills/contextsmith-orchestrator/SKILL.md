@@ -289,44 +289,9 @@ If RESULT.json is absent (backward compatibility with pre-orchestrator task-stat
 
 This fallback is backward-compatible for the run-to-orchestrator migration. Log a warning when triggered.
 
-## RESULT.json
+## RESULT.json and Checkpoint.json
 
-After validating artifacts, write RESULT.json to the task-state directory:
-
-```json
-{
-  "status": "pass",
-  "reason": "All artifacts produced and validated",
-  "artifacts": ["ARTIFACTS.md", "PHASE_LOG.md", "CHECKLIST.md"],
-  "issues": [],
-  "next_action": "done"
-}
-```
-
-Status values: `pass`, `fail`, `blocked`. Next action: `done`, `retry`, `fix`, `stop`.
-
-## Checkpoint.json
-
-After each phase, write checkpoint.json:
-
-```json
-{
-  "workflow_id": "my-workflow",
-  "version": 1,
-  "current_phase": "implement_change",
-  "current_state": "execute",
-  "last_updated": "2026-06-13T00:00:00Z",
-  "completed_phases": ["load_context"],
-  "counters": {
-    "implement_change": {"retries": 0, "ralph_cycles": 0}
-  },
-  "last_result": {
-    "state": "execute",
-    "status": "pass",
-    "artifacts_written": ["ARTIFACTS.md", "PHASE_LOG.md"]
-  }
-}
-```
+See `references/artifact-templates.md` for RESULT.json and checkpoint.json schemas. Status values: `pass`, `fail`, `blocked`. Next action: `done`, `retry`, `fix`, `stop`.
 
 If `checkpoint_before_run` is true for the state, the orchestrator also writes a pre-dispatch checkpoint marker before agent execution. On startup, it warns about stale pre-dispatch markers (possible crash evidence).
 
@@ -450,85 +415,16 @@ The loop ends when:
 
 ## Artifact Templates
 
-### STATUS.md
+Full templates for STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md, RESULT.json, and checkpoint.json live in `references/artifact-templates.md`.
 
-```markdown
-# Status
-
-## Current Phase
-<phase-name>
-
-## Current State
-<state-name>
-
-## Progress
-- Phase: <N> of <M>
-- Checklist: <X>/<Y> complete
-- Retries remaining: <N>
-
-## Next Action
-<what should happen next>
-
-## Blocked By
-<none or description>
-```
-
-### PHASE_LOG.md
-
-```markdown
-# Phase Log
-
-## Phase <name>
-Date: <ISO 8601>
-State: <state-name>
-Action: <what was done>
-Result: <pass/fail/blocked>
-Artifacts: <list>
-```
-
-### CHECKLIST.md
-
-```markdown
-# Checklist
-
-- [x] <completed item>
-- [ ] <pending item>
-```
-
-### NEXT_PROMPT.md
-
-When generating NEXT_PROMPT.md for handoff, include a `.phase_gate` guard at the top:
-
-```
-## Gate: .phase_gate
-
-This prompt is queued for the next run. Do NOT execute until
-`<task-dir>/.phase_gate` exists. If the file is missing, stop and
-report "Phase gate not set. Awaiting human instruction to proceed."
-```
-
-The downstream agent creates `<task-dir>/.phase_gate` when ready to proceed. This gives the human operator a chance to review before side effects occur.
-
-```markdown
-# Next Prompt
-
-## Current Status
-- Phase: <phase-name>
-- State: <state-name>
-- Completed: <list>
-
-## Your Task
-<specific bounded instruction>
-
-## Input Files
-- <file>: <what to read>
-
-## Output Requirements
-- <file>: <what to write>
-
-## Constraints
-- <limits>
-```
+| Template | File | Purpose |
+|----------|------|---------|
+| STATUS.md | `references/artifact-templates.md` | Phase tracking, next action, blockers |
+| PHASE_LOG.md | `references/artifact-templates.md` | Per-phase action log |
+| CHECKLIST.md | `references/artifact-templates.md` | Task completion tracking |
+| NEXT_PROMPT.md | `references/artifact-templates.md` | Agent handoff with .phase_gate guard |
+| RESULT.json | `references/artifact-templates.md` | Phase result evidence |
+| Checkpoint.json | `references/artifact-templates.md` | State machine persistence |
 
 ## Harness Companions
 

@@ -259,7 +259,7 @@ The router selects a sub-skill based on intent and applies its own defaults for 
 Common control combinations:
 
 | Use case | Controls |
-|----------|----------|
+| --- | --- |
 | Local Qwen coding work | `--mode guided --target-profile qwen36 --context-length 32k --domain coding` |
 | Quick cleanup | `--mode fast --target-profile generic-local --no-ralph` |
 | Important reusable artifacts | `--mode deep --ralph 2 --output project-local` |

@@ -1,18 +1,15 @@
 {
   "status": "pass",
-  "reason": "Phase 7 complete: 374 tests pass (90 new), ruff clean, skills validate (8/8), radon clean. All 3 sub-phases (7a, 7b, 7c) completed. validate_append_only bug fixed (== -> startswith).",
+  "reason": "Phase 8 complete: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 468 lines. Schema updated from draft-07 to 2020-12. MD060 fixed in 15 docs/ files. CHANGELOG v2.0.0 entry written. All validations pass: ruff, format, validate_skills (8/8 OK), pytest 374, radon clean, markdownlint clean (no regressions).",
   "artifacts": [
-    "tests/test_orchestrator_state.py",
-    "tests/test_checkpoint.py",
-    "tests/test_step_compiler.py",
-    "tests/test_orchestrator_determinism.py",
-    "tests/test_orchestrator_integration.py",
-    "tests/test_validators.py",
-    "orchestrator/validators.py",
-    "orchestrator/cli.py"
+    "skills/contextsmith-orchestrator/references/artifact-templates.md",
+    "skills/contextsmith-orchestrator/artifact-templates.md",
+    "skills/contextsmith-orchestrator/SKILL.md",
+    "skills/contextsmith-orchestrator/reference_manifest.yml",
+    "schemas/workflow_config.schema.json",
+    "schemas/agent_config.schema.json",
+    "CHANGELOG.md"
   ],
-  "issues": [
-    "orchestrator SKILL.md at 572 lines exceeds 500 target (Phase 8a will trim)"
-  ],
+  "issues": [],
   "next_action": "done"
 }

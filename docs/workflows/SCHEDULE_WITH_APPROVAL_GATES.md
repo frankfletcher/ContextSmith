@@ -78,7 +78,7 @@ After all approval gates are processed:
 ## Expected Artifacts
 
 | Artifact | Path | Purpose |
-|----------|------|---------|
+| --- | --- | --- |
 | `approval_ledger.json` | `.agent_work/.../approval_ledger.json` | Record of all approval decisions (approved/denied/pending) |
 | `phase_evidence.md` | `.agent_work/.../phase_evidence.md` | Evidence that validation gates passed |
 | `updated_task_state/` | `.agent_work/sprints/<sprint>/tasks/<date-slug>/` | Task state with approval decisions recorded |
@@ -87,7 +87,7 @@ After all approval gates are processed:
 ## Common Failure Modes
 
 | Failure Mode | Detection | Recovery |
-|--------------|-----------|----------|
+| --- | --- | --- |
 | Missing approval boundaries | Validator flags undefined external actions | Define boundaries and re-run |
 | Skipped approval gates | Evidence ledger missing approval records | Re-run with `--interaction review-gate` |
 | Stale approvals | Approval timestamp older than action timestamp | Re-validate and re-approve if needed |

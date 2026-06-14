@@ -210,3 +210,10 @@ references:
   notes: Skill-specific help documentation.
   load: conditional
   when: help mode invoked
+- source: skills/contextsmith-orchestrator/artifact-templates.md
+  version: TBD
+  required: true
+  local: true
+  notes: Full artifact templates for STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md, RESULT.json, and checkpoint.json.
+  load: conditional
+  when: generating task-state artifacts

@@ -23,7 +23,7 @@ Use a test-quality audit when:
 Grade A-F:
 
 | Dimension | What it checks |
-|---|---|
+| --- | --- |
 | Baseline behavior | Does the test cover the normal expected use case? |
 | Edge-case realism | Are edge cases plausible and meaningful? |
 | Failure modes | Are invalid input, missing data, bad state, timeouts, or errors tested when relevant? |

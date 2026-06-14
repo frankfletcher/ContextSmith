@@ -62,7 +62,7 @@ validation gates.
 Domain packs define what validation gates apply to your workflow. ContextSmith ships with six domain packs:
 
 | Domain | Use When |
-|--------|----------|
+| --- | --- |
 | `software_engineering` | Coding, testing, refactoring, dependency management |
 | `writing_editing` | Drafting, editing, rewriting, tone adjustment |
 | `research_summary` | Literature review, fact-checking, source synthesis |
@@ -112,7 +112,7 @@ After a phase completes, validate its artifacts using the runtime validator CLI.
 **Subcommands:**
 
 | Command | Validates |
-|---------|-----------|
+| --- | --- |
 | `requirements` | Requirements chain (task requirements traced to phases) |
 | `phase-contract` | Phase contract (bounded scope, allowed actions, validation) |
 | `evidence` | Evidence ledger (claims backed by concrete evidence) |
@@ -242,7 +242,7 @@ The agent creates an `approval_record` artifact before taking an external action
 Use these labels everywhere. Do not blur them. Orchestrated workflow enforcement is the default — workflows go through it unless explicitly opted out. Deterministic validation is the foundation. Harness hard blocking elevates gates where the harness supports it. Human approval remains explicit for irreversible actions.
 
 | Level | Meaning | Example |
-|---|---|---|
+| --- | --- | --- |
 | Deterministic validation | A tool checks artifacts and returns pass/fail evidence. Foundation for all enforcement. | CLI validates an evidence ledger. |
 | Orchestrated workflow enforcement | Default mode. A runner only advances if validators pass. Opt-out available, not the norm. | Plan runner sends correction prompts until closeout passes. |
 | Harness hard blocking | Elevates orchestrated gates to hard blocks where the harness supports it. | opencode permission hook blocks an external action. |

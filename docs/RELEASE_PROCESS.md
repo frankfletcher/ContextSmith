@@ -54,7 +54,7 @@ python scripts/build_release.py --package
 The pipeline executes in this order:
 
 | Step | Script | Purpose |
-|------|--------|---------|
+| --- | --- | --- |
 | A | `sync_shared_refs.py --all --in-place` | Copy shared references to staging |
 | B | `sync_shared_refs.py --all --update-manifests` | Recompute stale SHA-1 hashes |
 | C | `validate_skills.py` | Abort if any skill fails validation |

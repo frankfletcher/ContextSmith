@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "AgentConfig",
   "description": "Schema for OpenCode agent definition files (YAML frontmatter in .opencode/agents/*.md). Defines agent role, permissions, and execution limits.",
   "type": "object",
@@ -22,11 +22,11 @@
       "description": "Maximum number of tool calls per invocation. If omitted, no cap."
     },
     "permission": {
-      "$ref": "#/definitions/PermissionBlock",
+      "$ref": "#/$defs/PermissionBlock",
       "description": "Permission boundaries for this agent."
     }
   },
-  "definitions": {
+  "$defs": {
     "PermissionBlock": {
       "type": "object",
       "required": ["edit"],

@@ -104,6 +104,13 @@ def main():
     resume_parser.add_argument("path", help="Task-state directory")
     resume_parser.add_argument("--decision", help="Human decision file")
 
+    # run subcommand
+    run_parser = subparsers.add_parser("run", help="Run workflow or single step")
+    run_parser.add_argument(
+        "config", nargs="?", help="Path to workflow config file (YAML or JSON)"
+    )
+    run_parser.add_argument("state_dir", nargs="?", help="Task-state directory")
+
     args = parser.parse_args()
 
     # Dispatch to appropriate function
@@ -117,6 +124,8 @@ def main():
         return cmd_diff(args)
     elif args.command == "resume":
         return cmd_resume(args)
+    elif args.command == "run":
+        return cmd_run(args)
     elif args.config and args.state_dir:
         # Default command: run workflow
         return cmd_run(args)

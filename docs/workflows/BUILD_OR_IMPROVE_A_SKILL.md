@@ -108,7 +108,7 @@ The evaluator will check for context risk, loop safety, Git/file safety, model-p
 ## Expected Artifacts
 
 | Artifact | Purpose |
-|----------|---------|
+| --- | --- |
 | `SKILL.md` | Skill instructions and frontmatter |
 | `references/` | Skill-specific reference files |
 | `reference_manifest.yml` | Declarations for shipped references |
@@ -116,7 +116,7 @@ The evaluator will check for context risk, loop safety, Git/file safety, model-p
 ## Common Failure Modes
 
 | Problem | Fix |
-|---------|-----|
+| --- | --- |
 | SKILL.md exceeds 500 lines | Move detailed content to `references/` files |
 | Token budget exceeded | Reduce instruction verbosity; use compact tables instead of prose |
 | Missing frontmatter | Add YAML frontmatter with `name`, `description`, and `metadata.version` |

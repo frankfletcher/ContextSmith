@@ -90,7 +90,7 @@ Record the comparison results with supporting evidence:
 ## Expected Artifacts
 
 | Artifact | Purpose |
-|----------|---------|
+| --- | --- |
 | Comparison summary | Ranked options with prices, times, and constraint status |
 | Price evidence | Source URLs or retrieval timestamps for each price |
 | Constraint validation | Record of which constraints each option satisfies or violates |
@@ -98,7 +98,7 @@ Record the comparison results with supporting evidence:
 ## Common Failure Modes
 
 | Problem | Fix |
-|---------|-----|
+| --- | --- |
 | Missing constraints in comparison | Re-run with explicit constraint list in Step 1 |
 | Stale or unverified prices | Check retrieval timestamps; re-run if data is older than 24 hours |
 | Unapproved purchase attempt | Stop immediately. Review side-effect tier. Re-invoke with `--side-effects read-only` |

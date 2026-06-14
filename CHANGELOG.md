@@ -1,5 +1,60 @@
 # Changelog
 
+## v2.0.0
+
+**Released:** 2026-06-13
+
+### Added
+
+- Added `contextsmith-orchestrator` skill — a deterministic state-machine executor that runs workflow configs, raw prompts, and task-state handoffs through a 14-step execution loop with validation gates, self-audit, Ralph loops, and evidence-ledger tracking.
+- Added `contextsmith-workflow-developer` skill — generates `workflow_config.yaml` from requirements and domain templates, routing through the orchestrator for execution.
+- Added `orchestrator/` Python package (state reader, checkpoint manager, step compiler, harness adapters, validators, CLI) enabling `python -m orchestrator` as a code-level entry point alongside the skill.
+- Added deterministic exit codes: `EXIT_DONE=0`, `EXIT_BLOCKED=1`, `EXIT_CONTINUE=2`, `EXIT_CONFIG_ERROR=3`, `EXIT_STATE_INCONSISTENCY=4`, `EXIT_INTERNAL_ERROR=5`.
+- Added `validation_mode` field to workflow config state definitions (`strict`/`relaxed`/`none`) with per-state validation strictness enforcement.
+- Added `checkpoint_before_run` with pre-dispatch checkpoint markers, stale-marker detection, and crash-recovery warnings on startup.
+- Added pre-dispatch retry counter check — phases at `max_retries` block immediately without dispatching the agent.
+- Added `model_pin`, `timeout_s`, and `ralph_max_cycles` as per-state configurable parameters, wired from schema through step compiler to harness adapter.
+- Added RESULT.json fallback protocol — when RESULT.json is absent (backward compatibility), orchestrator infers status from artifact presence.
+- Added append-only file protection — orchestrator snapshots report files before dispatch and auto-repairs on overwrite by prepending original content.
+- Added `validate_append_only()` to `orchestrator/validators.py` — validates file content starts with original prefix.
+- Added `shared/file-safety.md` — extracted file operation safety rules (read-before-write, append for records, verify after write) into a dedicated reference.
+- Added `shared/harness-generic.md` — companion reference for the generic (fallback) harness adapter.
+- Added `shared/complexity-gate.md` — reference for enforcing cyclomatic complexity (radon cc) and maintainability index (radon mi) gates in the validation pipeline.
+- Added `references/artifact-templates.md` to orchestrator skill — extracted artifact templates for STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md, RESULT.json, and checkpoint.json.
+- Added 90 new tests (374 total): `test_orchestrator_state.py`, `test_checkpoint.py`, `test_step_compiler.py`, `test_orchestrator_determinism.py`, plus test extensions for append validation, exit-code propagation, dry-run, end-to-end workflow, and pre-dispatch marker detection.
+- Added `orchestrator/__main__.py` — makes the orchestrator runnable as `python -m orchestrator`.
+- Added `.phase_gate` flag file convention for human-review gates between phase handoffs.
+- Added `.agent_work/ideation/deep_determinism/schemas/` with workflow config and agent config JSON schemas.
+- Added domain-templates to `contextsmith-workflow-developer/references/domain-templates/` (6 templates).
+- Added project-level versioning policy: all skills share a single version from `PACKAGE_SPEC.md`; per-skill `metadata.version` mirrors it.
+
+### Changed
+
+- **Removed `contextsmith-run` skill.** All execution — single prompts, task-state handoffs, phased plans — now routes through `contextsmith-orchestrator`. The orchestrator absorbs the run skill's contract, validation, evidence, Ralph, and domain-routing patterns.
+- **Version bump 1.7.1 → 2.0.0** across all surviving skills.
+- Upgraded `schemas/workflow_config.schema.json` and `schemas/agent_config.schema.json` from JSON Schema draft-07 to 2020-12 (`definitions` → `$defs`, updated `$schema` URI).
+- Reduced `skills/contextsmith-orchestrator/SKILL.md` from 572 to 468 lines by extracting artifact templates to `references/artifact-templates.md`.
+- Documented "agent output is evidence, not authority" rule in orchestrator SKILL.md and `resolve_next_state()` docstring — the orchestrator owns state transitions, not the agent.
+- Updated router skill (`contextsmith/SKILL.md`) — removed `contextsmith-run` from routing table, merged wizard execute options into one "Execute a task" → orchestrator entry.
+- Converted `contextsmith-workflow-developer` from a standalone config generator to a thin delegator that invokes the orchestrator with its own `workflow_config.yaml` meta-config.
+- Refactored 9 C-ranked orchestrator functions to ≤ B complexity using radon-driven extraction (complexity cleanup pass 6.75).
+- Updated all 6 skill `reference_manifest.yml` files to include `shared/file-safety.md` as a conditional-load reference.
+- Updated `shared/loop-safety.md` — extracted duplicate file operation safety content into `shared/file-safety.md`.
+- Updated `AGENTS.md` — shared reference count 42 → 52, added complexity/maintainability section, replaced `contextsmith-run/` with `contextsmith-orchestrator/` in repository map.
+- Updated `PACKAGE_SPEC.md` with project-level versioning decision.
+- Upgraded `orchestrator/__init__.py` to export all exit codes, `run()`, and `run_workflow()`.
+- Fixed all MD060 table-style issues in `docs/` (15 files) — table header separators now use spaced pipes.
+
+### Fixed
+
+- Fixed `validate_append_only()` byte comparison (`==` → `startswith`) — the original prefix could exceed the check window, causing false positives.
+- Fixed harness-generic.md not being included in orchestrator `reference_manifest.yml` (completed in 5.5d, missing entry resolved in 6c).
+- Fixed cross-references from 5 existing `reference_manifest.yml` files to correctly point to `shared/file-safety.md`.
+
+### Notes
+
+- This release marks the Deep Determinism project completion (Phases 1-8). The orchestrator is now a deterministic Python state machine with harness-agnostic adapters, production validation, and append-only file safety. Phase 9 (Final Validation and Lock) remains to run full validation and tag the release.
+
 ## v1.7.1
 
 **Released:** 2026-06-01
