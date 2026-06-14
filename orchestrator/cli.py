@@ -371,9 +371,7 @@ def _find_workflow_config(state_dir: Path) -> Path | None:
     c1 = state_dir.parent / "workflow.json"
     c2 = Path(".contextsmith") / "workflow.json"
     candidates = [c1, c2]
-    return next(
-        (candidate for candidate in candidates if candidate.exists()), None
-    )
+    return next((candidate for candidate in candidates if candidate.exists()), None)
 
 
 def cmd_resume(args):

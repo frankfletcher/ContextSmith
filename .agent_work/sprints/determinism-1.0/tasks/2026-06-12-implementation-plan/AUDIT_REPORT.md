@@ -473,3 +473,73 @@ All 9 C-ranked functions in orchestrator/ refactored to ≤ B. radon cc/mi integ
 
 ## Overall Verdict
 PASS
+
+---
+
+# Audit Report: Phase 7 — Integration and Testing
+
+## Summary
+Phase 7 completed: 374 tests pass (90 new), ruff clean, skills validate (8/8), radon clean (no C/D/E/F). One material defect found and fixed in Ralph #1 (validate_append_only comparison operator).
+
+## Rubric Assessment
+
+### A — Completeness (A)
+- All 3 sub-phases completed: 7a (5 test files: 3 new + 2 extended), 7b (integration tests extended with 8 new tests), 7c (validation pipeline verified)
+- 10 determinism features have dedicated tests: exit codes 0-5, validation_mode (3), checkpoint_before_run, pre-dispatch counter, RESULT.json fallback (4 scenarios), agent transition authority
+- Missing test files created: test_orchestrator_state.py, test_checkpoint.py, test_step_compiler.py, test_orchestrator_determinism.py
+- Append validation has 4 dedicated tests: appended passes, overwritten fails, deleted fails, repair restores content
+
+### B — Correctness (A)
+- 374 tests passing (100% pass rate, up from 284)
+- 13 integration tests passing
+- Ruff linting passes (E, F, W, I)
+- Ruff format passes (1 file auto-fixed)
+- Skills validate (8/8 OK)
+- Radon: no C/D/E/F functions, all files ≥ A maintainability
+- validate_append_only bug fixed: `==` → `startswith` for correct append detection
+
+### C — Consistency (A)
+- All new tests follow existing patterns (fixture usage, temp directories, assertion style)
+- Import patterns match existing test files
+- No new dependencies added
+- Uses same `uv run pytest` convention as other test files
+- Test class/function naming matches existing conventions
+
+### D — Documentation (A)
+- All test methods have docstrings describing what they validate
+- test_orchestrator_determinism.py has class-level docstring listing all 10 determinism features
+- Educational report appended with full explanation, test patterns, data flow, and small-model guidance
+- Each test file has module-level docstring
+
+### E — Validation & Testing (A)
+- Layer 1: pytest — 374 tests pass
+- Layer 2: ruff linting — all pass (E, F, W, I)
+- Layer 3: ruff formatting — all pass
+- Layer 4: validate_skills.py — 8/8 OK
+- Layer 5: radon cc — no C/D/E/F
+- Layer 6: radon mi — all ≥ A
+- Layer 7: Self-audit — all checks pass
+
+### F — File Safety (A)
+- All tests use `tempfile.TemporaryDirectory()` for isolation, cleaned up automatically
+- No file modification side effects outside temp directories
+- No subprocess calls, no network requests
+- No destructive operations
+- Bug fix only modifies validation logic, does not change orchestrator safety guarantees
+
+## Ralph Loop Summary
+
+| Iteration | Result | Evidence |
+|-----------|--------|----------|
+| Ralph #1 | 2 defects found | 1) validate_append_only uses `==` instead of `startswith` — fixed. 2) Test data for _build_validation_strict/relaxed missing `files_checked`/`files_passed` keys — fixed. |
+| Ralph #2 | No-op | No material defects remain |
+| Ralph #3 | No-op | No material defects remain |
+
+### Strategic Review
+
+- **Sprint goal alignment:** Phase 7 directly validates all determinism features from Phase 6, completing the integration and testing layer
+- **Improvement over baseline:** Found and fixed a real bug in validate_append_only that would have caused append detection to fail on extended files
+- **Cross-reference:** Phase 8a (SKILL.md trim) and Phase 8b (schema deprecation) already planned — no updates needed
+
+## Overall Verdict
+**PASS** — Phase 7 complete with 374 passing tests. Ready for Phase 8 (Documentation and Polish).

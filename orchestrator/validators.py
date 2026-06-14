@@ -268,7 +268,7 @@ def validate_append_only(
     if not file_path.exists():
         return False
     current = file_path.read_bytes()[:check_bytes]
-    return current == original_prefix[:check_bytes]
+    return current.startswith(original_prefix[:check_bytes])
 
 
 def _check_phase_consistency(

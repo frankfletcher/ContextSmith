@@ -476,3 +476,76 @@ class TestValidateStateConsistency:
         errors = validate_state_consistency(status, checkpoint, self.CONFIG)
         assert len(errors) >= 1
         assert any("not a valid state in config" in e for e in errors)
+
+
+class TestValidateAppendOnly:
+    """Tests for validate_append_only."""
+
+    def test_appended_file_passes(self):
+        """Test file that was appended to (not overwritten) passes."""
+        import tempfile
+        from orchestrator.validators import validate_append_only
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
+            f.write("Original content line 1\n")
+            f.write("Original content line 2\n")
+            tmp_path = f.name
+        try:
+            path = Path(tmp_path)
+            original_prefix = path.read_bytes()[:512]
+            appended = path.read_bytes() + b"\nAppended content\n"
+            path.write_bytes(appended)
+            assert validate_append_only(path, original_prefix) is True
+        finally:
+            Path(tmp_path).unlink()
+
+    def test_overwritten_file_fails(self):
+        """Test file that was overwritten fails validation."""
+        import tempfile
+        from orchestrator.validators import validate_append_only
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
+            f.write("Original content that will be lost\n")
+            tmp_path = f.name
+        try:
+            path = Path(tmp_path)
+            original_prefix = path.read_bytes()[:512]
+            path.write_text("Completely different content\n")
+            assert validate_append_only(path, original_prefix) is False
+        finally:
+            Path(tmp_path).unlink()
+
+    def test_deleted_file_fails(self):
+        """Test deleted file fails validation."""
+        import tempfile
+        from orchestrator.validators import validate_append_only
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
+            f.write("Content\n")
+            tmp_path = f.name
+        try:
+            path = Path(tmp_path)
+            original_prefix = path.read_bytes()[:512]
+            path.unlink()
+            assert validate_append_only(path, original_prefix) is False
+        finally:
+            if Path(tmp_path).exists():
+                Path(tmp_path).unlink()
+
+    def test_repair_prepend_restores_content(self):
+        """Test prepending original content restores append contract."""
+        import tempfile
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
+            f.write("Original first line\n")
+            f.write("Original second line\n")
+            tmp_path = f.name
+        try:
+            path = Path(tmp_path)
+            original_content = path.read_bytes()
+            original_prefix = original_content[:512]
+            path.write_text("New overwritten content\n")
+            path.write_bytes(original_content + path.read_bytes())
+            assert path.read_bytes().startswith(original_content)
+        finally:
+            Path(tmp_path).unlink()

@@ -1,14 +1,6 @@
-# Agentic Loop and File Safety
+# Agentic Loop Safety
 
 Use this reference when a prompt, skill, or repo instruction file will guide a tool-using agent, especially a smaller/local model.
-
-## File Operation Safety
-
-Before creating or overwriting any file, identify its purpose. If the purpose is to maintain a record — history, decisions, logs, phase notes, reports, or any cumulative artifact — use append (`>>` heredoc) to add new entries and never clobber prior records.
-
-- To check if a file exists, use `test -f <path>` or the `read` tool. Do NOT use `ls` — it can produce false negatives.
-- Before writing a new file, read it first. If the read returns content, use `edit` to modify or `>>` to append — never `write` a file whose content you haven't verified.
-- After any file operation, verify the result by reading the file or checking with `test -f`.
 
 ## Core Loop Rules
 
@@ -83,16 +75,4 @@ For tool-using local/smaller models:
 8. After an edit, verify that the file changed. Do not repeat no-op edits.
 9. Keep working notes phase-local and brief.
 10. Focus on the next atomic action: inspect, edit, validate, report, or ask.
-
-## File Operation Safety
-
-Before creating or overwriting any file, identify its purpose. If the purpose
-is to maintain a record — history, decisions, logs, phase notes, reports, or
-any cumulative artifact — use append (`>>` heredoc) to add new entries and
-never clobber prior records.
-
-- To check if a file exists, use `test -f <path>` or the `read` tool.
-- Before writing, read first. If content exists, edit or append — never write
-  without verifying.
-- After any file operation, verify the result.
 ```

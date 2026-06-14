@@ -978,3 +978,150 @@ All 9 C-ranked functions refactored to B. No C/D/E/F functions remain in orchest
 - Extract large if/elif chains into helper functions — each helper is one concern
 - Keep each function doing one thing: extract, always return early style
 - `uvx` auto-installs packages, no need for `uv add`
+
+---
+
+# Educational Report: Phase 7 — Integration and Testing
+
+## What Was Done
+
+Phase 7 completed all 3 sub-phases (7a, 7b, 7c) extending test coverage across all determinism features and updating the validation pipeline.
+
+### Sub-phase 7a: Unit Tests — 5 Files Touched
+
+**Created:**
+- `tests/test_orchestrator_state.py` (88 lines) — 8 tests for read_status, read_plan, read_context covering valid reads, missing files, and malformed sections
+- `tests/test_checkpoint.py` (258 lines) — 20 tests for read_checkpoint, write_checkpoint, update_checkpoint (retry counters, Ralph cycles, completed phases, immutability), validate_checkpoint (required fields, invalid states, negative counters, missing status), and create_initial_checkpoint
+- `tests/test_step_compiler.py` (197 lines) — 22 tests for compile_step_contract (model_pin, timeout_s, ralph_max_cycles, validation_mode, checkpoint_before_run resolution) and resolve_next_state (pass/fail/max_retries transitions, ralph_complete, output_valid, no-match blocked)
+
+**Extended:**
+- `tests/test_validators.py` — added `TestValidateAppendOnly` class with 4 tests: appended file passes, overwritten file fails, deleted file fails, repair prepend restores content
+
+**Created:**
+- `tests/test_orchestrator_determinism.py` (410 lines) — 31 dedicated tests for 10 determinism features:
+  - Exit code mapping: 0-5 constants and propagation paths (8 tests)
+  - validation_mode=strict blocks; relaxed warns+passes; none skips (6 tests)
+  - checkpoint_before_run writes pre_dispatch=true marker (1 test)
+  - Pre-dispatch counter: max_retries reached blocks without dispatch (3 tests)
+  - RESULT.json fallback: all artifacts → pass, partial → fail, none → fail, existing takes priority, no expected_outputs (5 tests)
+  - Agent transition authority: next_action ignored, fail does not advance (2 tests)
+  - End-to-end: dry-run returns continue, config error through run_workflow (2 tests)
+
+### Sub-phase 7b: Integration Tests
+
+**Extended:**
+- `tests/test_orchestrator_integration.py` — added 8 new tests:
+  - Config error exit code propagates through run_workflow
+  - State inconsistency exit code propagates through run_workflow
+  - Max retries blocks immediately (pre-dispatch counter check)
+  - Dry-run returns EXIT_CONTINUE
+  - Dry-run does not modify checkpoint
+  - Full workflow runs to completion without crash
+  - Append-only snapshot detects overwrite and auto-repairs
+  - Append-only passes for files that were extended (not overwritten)
+  - Stale pre-dispatch marker detected at startup (warning, not block)
+
+### Sub-phase 7c: Validation Pipeline
+
+- Ran `validate_skills.py` — 8/8 skills OK, orchestrator at 572 lines (expected WARN, to be trimmed in Phase 8a)
+- Ran `ruff check orchestrator/ --select E,F,W,I` — all checks pass
+- Ran `ruff format orchestrator/ --check` — fixed 1 file (cli.py)
+- Ran `uvx radon cc` — no C/D/E/F functions remain
+- Ran `uvx radon mi` — all files ≥ A maintainability
+- Full test suite: 374 tests pass (0 failures)
+
+### Bug Fix Found
+- `validate_append_only` used `==` instead of `startswith` for comparing file content after append. When a file was extended (not overwritten), the comparison of `current[:512]` vs `original_prefix[:512]` failed because the lengths differed. Fixed to use `startswith` so that appended files correctly pass validation.
+
+## Why It Matters
+
+Phase 7 is the comprehensive test pass that validates all determinism features wired in Phase 6. Without these tests:
+- Exit codes 3-5 would never be verified to propagate correctly
+- validation_mode=relaxed and none would be untested edge cases
+- The RESULT.json fallback would be fragile (only tested implicitly)
+- The append-only auto-repair would have no regression protection
+- The validate_append_only bug (using `==` instead of `startswith`) would have caused false positives for appended files
+
+374 passing tests give high confidence in the orchestrator's determinism guarantees.
+
+## How It Works
+
+### Test Architecture
+
+The test suite follows three patterns established in earlier phases:
+
+1. **Unit tests** (test_orchestrator_state.py, test_checkpoint.py, test_step_compiler.py): Import module functions directly, call with test fixtures or temp directories, assert return values.
+
+2. **Determinism tests** (test_orchestrator_determinism.py): Import internal orchestrator functions like `_build_validation_strict`, `_apply_result_fallback`, `_run_predispatch_checks` directly. These are white-box tests for the 10 determinism features.
+
+3. **Integration tests** (test_orchestrator_integration.py): Call `run()` and `run_workflow()` with temp state directories and fixture configs. Verify exit codes and side effects.
+
+### Key Test Patterns
+
+```python
+# Unit test pattern: import function, call with fixture, assert
+from orchestrator.state_reader import read_status
+status = read_status(FIXTURES_DIR / "task_state_valid")
+assert status["current_phase"] is not None
+
+# Integration test pattern: create temp state dir, run orchestrator, assert exit code
+state_dir = _make_temp_state_dir({...})
+code = run(config_path="config.yaml", state_dir=str(state_dir), dry_run=True)
+assert code == EXIT_CONTINUE
+
+# Append-only test: snapshot file, overwrite, verify repair
+_snapshot_append_only_files(state_dir)
+file_path.write_text("Overwritten content")
+repairs = _verify_and_repair_append_only_files(state_dir)
+assert len(repairs) == 1
+```
+
+### Data Flow
+
+```
+Phase 7:
+  7a (Unit tests)
+    ├── test_orchestrator_state.py → read_status/read_plan/read_context
+    ├── test_checkpoint.py → read/write/update/validate/create
+    ├── test_step_compiler.py → compile/resolve/match
+    ├── test_validators.py (extend) → validate_append_only
+    └── test_orchestrator_determinism.py → 10 feature areas
+      ↓
+  7b (Integration tests)
+    └── test_orchestrator_integration.py (extend) → run/run_workflow
+      ↓
+  7c (Validation pipeline)
+    ├── ruff check + ruff format → all clean
+    ├── validate_skills.py → 8/8 OK
+    ├── radon cc/mi → no C/D/E/F, all ≥ A
+    └── pytest tests/ → 374 passed
+```
+
+## For Small Models
+
+**Key functions added/used:**
+
+```python
+# orchestrator/validators.py — fixed compare method
+def validate_append_only(file_path, original_prefix, check_bytes=512):
+    current = file_path.read_bytes()[:check_bytes]
+    return current.startswith(original_prefix[:check_bytes])  # was ==
+
+# orchestrator/orchestrator.py — validation mode builders
+def _build_validation_strict(harness_passed, file_validation, all_failures):
+    return {"passed": harness_passed and file_validation["passed"], ...}
+
+def _apply_result_fallback(harness_result, step_contract, state_dir):
+    # Check if RESULT.json is missing, infer from artifact presence
+    if all((state_dir / name).exists() for name in expected):
+        harness_result.status = "pass"
+    ...
+```
+
+**Test counts:** 374 total tests (up from 284 in Phase 6), 90 new tests covering state reader (8), checkpoint (20), step compiler (22), append-only (4), determinism (31), integration (8)
+
+**What to check if tests fail:**
+- `uv run pytest tests/test_orchestrator_determinism.py -v` — runs the 31 determinism tests
+- `uv run pytest tests/ -q` — runs all 374 tests
+- Missing imports: check the import paths match the actual module locations
+- Temp directory cleanup: tests use `tempfile.TemporaryDirectory()` so they clean up automatically

@@ -14,7 +14,7 @@ ContextSmith/
 │   ├── contextsmith-instruction-engineer/
 │   ├── contextsmith-agent-evaluator/
 │   └── contextsmith-orchestrator/
-├── shared/                          # Canonical agent references (42 files)
+├── shared/                          # Canonical agent references (52 files)
 ├── orchestrator/                    # Python orchestrator package (deterministic workflow execution)
 │   ├── __init__.py
 │   ├── orchestrator.py              # Main loop: run(), run_workflow()

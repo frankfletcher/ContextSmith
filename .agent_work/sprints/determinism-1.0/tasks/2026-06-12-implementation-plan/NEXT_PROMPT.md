@@ -4,33 +4,30 @@ This prompt is queued for the next run. Do NOT execute until
 `.agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/.phase_gate` exists.
 If the file is missing, stop and report "Phase gate not set. Awaiting human instruction to proceed."
 
-# Next Prompt: Phase 7 — Integration and Testing
+# Next Prompt: Phase 8 — Documentation and Polish
 
 ## Current Status
 
-- Phase: 7 of 9 (3 sub-phases: 7a, 7b, 7c)
+- Phase: 8 of 9 (4 sub-phases: 8a, 8b, 8c, 8d)
 - State: init
-- Completed: Phases 1-6 — all schemas, core module, adapters, validators, 2 skills, quality fixes, collapse + determinism hardening
-
-## Pre-Flight: PLAN.md / CHECKLIST.md Sync
-
-Before starting, check that all sub-phases listed in PLAN.md Phase 7 also exist in CHECKLIST.md. If PLAN.md has a sub-phase that CHECKLIST.md is missing, add it to CHECKLIST.md before proceeding.
+- Completed: Phases 1-7 — all schemas, core module, adapters, validators, 2 skills, quality fixes, collapse + determinism hardening, integration/testing (374 tests)
 
 ## Your Task
 
-Execute **all** of Phase 7 (sub-phases 7a, 7b, 7c). This is a full-phase execution. The phase is complete when all 3 sub-phases are done and validated.
+Execute **all** of Phase 8 (sub-phases 8a, 8b, 8c, 8d). This is a full-phase execution. The phase is complete when all 4 sub-phases are done and validated.
 
-See `PLAN.md` Phase 7 for full detail on each sub-phase. Key additions from Phase 6 review:
+See `PLAN.md` Phase 8 for full detail on each sub-phase.
 
 | Sub-phase | Task | Key files |
 |-----------|------|-----------|
-| **7a** | Extend unit tests — **must add dedicated tests for 10 determinism features** (exit codes 0-5, validation_mode, checkpoint_before_run, pre-dispatch counter, RESULT.json fallback, append validation, model_pin, agent-evidence rules). Create `tests/test_orchestrator_determinism.py`. | tests/ |
-| **7b** | Extend integration tests — add exit code 3/4/5 propagation, append-only file snapshot+repair, pre-dispatch marker detection | tests/test_orchestrator_integration.py |
-| **7c** | Update validation script, document SKILL.md file trim opportunity for Phase 8 | scripts/validate_skills.py |
+| **8a** | Trim orchestrator SKILL.md — extract artifact templates to references/artifact-templates.md | skills/contextsmith-orchestrator/SKILL.md |
+| **8b** | Fix schema deprecation — update $schema from draft-07 to 2020-12 | schemas/workflow_config.schema.json |
+| **8c** | Update user-facing docs — run markdownlint, fix MD060 issues in docs/ | docs/ |
+| **8d** | CHANGELOG entry — comprehensive entry covering Phase 5.5-6 changes | CHANGELOG.md |
 
 ## Execution Order
 
-1. Run 7a → 7b → 7c in sequence (7c is last since it validates the final state)
+1. Run 8a → 8b → 8c → 8d in sequence
 
 ## Per Sub-phase Cycle
 
@@ -43,6 +40,8 @@ For each sub-phase, run:
 - `uv run python scripts/validate_skills.py`
 - `uv run pytest tests/ -q`
 - `uv run ruff format orchestrator/ --check`
+- `uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "`
+- `uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "`
 
 ## Report Files — APPEND ONLY
 
@@ -52,10 +51,10 @@ For each sub-phase, run:
 
 ## Stop Condition
 
-Phase 7 is complete when all 3 sub-phases pass, test coverage is extended (including dedicated tests for 10 determinism features), validation script is current, and all existing tests still pass. Phase 8 (Documentation and Polish) and Phase 9 (Final Validation and Lock) are defined in PLAN.md.
+Phase 8 is complete when all 4 sub-phases pass, SKILL.md is under 500 lines, schema deprecation warning is resolved, markdownlint issues in docs/ are fixed, and CHANGELOG.md is updated.
 
-When done, update STATUS.md to phase_7_complete and write NEXT_PROMPT.md for Phase 8.
+When done, update STATUS.md to phase_8_complete and write NEXT_PROMPT.md for Phase 9.
 
 ## Context
 
-Continue from previous phase. All Phase 6 artifacts are in place: exit codes 0-5, configurable validation modes, pre-dispatch checkpoints, per-state timeout_s/model_pin/ralph_max_cycles, RESULT.json fallback, append-only auto-repair, documented agent-evidence rules.
+Continue from Phase 7. All 374 tests pass. The orchestrator SKILL.md is at 572 lines (needs trimming in 8a). Schema validation produces deprecation warnings for draft-07 (to be fixed in 8b).

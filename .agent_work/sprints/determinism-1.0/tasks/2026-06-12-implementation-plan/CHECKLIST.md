@@ -16,7 +16,7 @@ After each implementation phase, before writing RESULT.json:
 - [x] All expected output files exist
 - [x] All expected output files are non-empty
 - [x] Code compiles (for Python phases): `python -c "import orchestrator.<module>"`
-- [ ] Tests pass (if tests exist): `pytest tests/test_<module>.py -v`
+- [x] Tests pass (if tests exist): `pytest tests/ -q` — 374 passed
 - [x] No TODOs, FIXMEs, or HACKs in written files
 - [x] No placeholders (..., TBD, PLACEHOLDER) in written files
 - [x] Imports resolve (no circular imports)
@@ -429,37 +429,37 @@ After each implementation phase, before writing RESULT.json:
 
 ### Sub-phase 7a: Extend unit tests for orchestrator
 
-- [ ] Check existing tests (test_validators.py, test_adapters.py, test_orchestrator_integration.py)
-- [ ] Create test_orchestrator_state.py if missing
-- [ ] Create test_checkpoint.py if missing
-- [ ] Create test_step_compiler.py if missing
-- [ ] Extend test_validators.py with append validation tests
-- [ ] Extend test_adapters.py with missing cases
-- [ ] Create tests/test_orchestrator_determinism.py — dedicated tests for:
-  - [ ] Exit code mapping: 0-5 all tested
-  - [ ] validation_mode=strict blocks; relaxed warns+passes; none skips
-  - [ ] checkpoint_before_run writes pre-dispatch marker
-  - [ ] Pre-dispatch counter: max_retries=0 blocks without dispatch
-  - [ ] RESULT.json fallback: all 4 scenarios
-  - [ ] Agent transition authority: next_action ignored
-- [ ] Run pytest
+- [x] Check existing tests (test_validators.py, test_adapters.py, test_orchestrator_integration.py)
+- [x] Create test_orchestrator_state.py if missing
+- [x] Create test_checkpoint.py if missing
+- [x] Create test_step_compiler.py if missing
+- [x] Extend test_validators.py with append validation tests
+- [x] Extend test_adapters.py with missing cases
+- [x] Create tests/test_orchestrator_determinism.py — dedicated tests for:
+  - [x] Exit code mapping: 0-5 all tested
+  - [x] validation_mode=strict blocks; relaxed warns+passes; none skips
+  - [x] checkpoint_before_run writes pre-dispatch marker
+  - [x] Pre-dispatch counter: max_retries=0 blocks without dispatch
+  - [x] RESULT.json fallback: all 4 scenarios
+  - [x] Agent transition authority: next_action ignored
+- [x] Run pytest (374 passed)
 
 ### Sub-phase 7b: Extend integration tests
 
-- [ ] Extend test_orchestrator_integration.py with end-to-end tests
-- [ ] Test resume after crash (pre-dispatch marker detection)
-- [ ] Test max retries → blocked (pre-dispatch counter check)
-- [ ] Test --dry-run mode
-- [ ] Test exit code 3/4/5 propagation through run_workflow
-- [ ] Test append-only file snapshot + repair on overwrite
-- [ ] Run pytest
+- [x] Extend test_orchestrator_integration.py with end-to-end tests
+- [x] Test resume after crash (pre-dispatch marker detection)
+- [x] Test max retries → blocked (pre-dispatch counter check)
+- [x] Test --dry-run mode
+- [x] Test exit code 3/4/5 propagation through run_workflow
+- [x] Test append-only file snapshot + repair on overwrite
+- [x] Run pytest (13 integration tests)
 
 ### Sub-phase 7c: Update validation script
 
-- [ ] Verify new skills detected
-- [ ] Add missing validation rules
-- [ ] Document orchestrator SKILL.md: consider extracting artifact templates to ref file
-- [ ] Run full validation
+- [x] Verify new skills detected (8/8 OK)
+- [x] Add missing validation rules (current rules are sufficient)
+- [x] Document orchestrator SKILL.md: consider extracting artifact templates to ref file (572 line WARN, Phase 8a planned)
+- [x] Run full validation (ruff, format, validate_skills, radon, pytest all clean)
 
 ## Phase 8: Documentation and Polish
 

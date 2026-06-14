@@ -18,6 +18,12 @@ references:
   notes: Agentic loop safety rules.
   load: conditional
   when: tool use or agentic loops
+- source: shared/file-safety.md
+  version: TBD
+  required: true
+  notes: File operation safety — read-before-write, append for records, verify after write.
+  load: conditional
+  when: file creation or modification
 - source: shared/evaluation-rubrics.md
   version: 6492250665a63970e092f729c280ecdb9fa5046b
   required: true

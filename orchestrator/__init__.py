@@ -8,8 +8,11 @@ checkpoint recovery, and harness-agnostic agent dispatch.
 from orchestrator.constants import (
     CANONICAL_STATES,
     EXIT_BLOCKED,
+    EXIT_CONFIG_ERROR,
     EXIT_CONTINUE,
     EXIT_DONE,
+    EXIT_INTERNAL_ERROR,
+    EXIT_STATE_INCONSISTENCY,
     TERMINAL_STATES,
 )
 from orchestrator.exceptions import (
@@ -22,11 +25,17 @@ from orchestrator.exceptions import (
     StateInconsistency,
     ValidationError,
 )
+from orchestrator.orchestrator import run, run_workflow
 
 __all__ = [
+    "run",
+    "run_workflow",
     "EXIT_BLOCKED",
+    "EXIT_CONFIG_ERROR",
     "EXIT_CONTINUE",
     "EXIT_DONE",
+    "EXIT_INTERNAL_ERROR",
+    "EXIT_STATE_INCONSISTENCY",
     "CANONICAL_STATES",
     "TERMINAL_STATES",
     "ConfigError",
