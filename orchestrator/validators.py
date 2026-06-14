@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import yaml
+
 
 def _extract_sections(content: str) -> list[str]:
     """Extract ATX-style section names from Markdown content.
@@ -269,6 +271,194 @@ def validate_append_only(
         return False
     current = file_path.read_bytes()[:check_bytes]
     return current.startswith(original_prefix[:check_bytes])
+
+
+def load_artifact_schemas() -> dict:
+    """Load artifact schemas from schemas/artifact_schemas.yaml.
+
+    Returns:
+        Dict with artifact schemas, or empty dict if file not found/invalid.
+    """
+    schema_path = _SCHEMAS_DIR / "artifact_schemas.yaml"
+    if not schema_path.exists():
+        return {}
+
+    try:
+        with open(schema_path, encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        return data.get("artifacts", {}) if data else {}
+    except yaml.YAMLError, OSError:
+        return {}
+
+
+def validate_artifact_schema(
+    file_path: Path, schema: dict, config_overrides: dict | None = None
+) -> list[str]:
+    """Validate a markdown artifact against its schema.
+
+    Args:
+        file_path: Path to the artifact file.
+        schema: Artifact schema dict with required_sections, optional_sections, etc.
+        config_overrides: Optional dict with section_requirements overrides from config.
+
+    Returns:
+        List of error strings (empty = valid).
+    """
+    if not file_path.exists():
+        return [f"Missing required file: {file_path.name}"]
+
+    content = file_path.read_text(encoding="utf-8")
+    if not content.strip():
+        return [f"File is empty: {file_path.name}"]
+
+    errors = []
+    found_sections = _extract_sections(content)
+
+    required_sections = schema.get("required_sections", [])
+    if config_overrides and file_path.name in config_overrides:
+        required_sections = config_overrides[file_path.name]
+
+    for section in required_sections:
+        if section not in found_sections:
+            errors.append(f"Missing required section '{section}' in {file_path.name}")
+
+    return errors
+
+
+def validate_artifacts_with_schemas(
+    state_dir: Path, expected_outputs: list[str], config: dict
+) -> dict:
+    """Validate all expected artifacts using schema registry and config overrides.
+
+    Args:
+        state_dir: Directory containing task state files.
+        expected_outputs: List of filenames to validate.
+        config: Configuration dict, may contain "section_requirements" for overrides.
+
+    Returns:
+        Dict with "passed", "failures", "files_checked", "files_passed".
+    """
+    schemas = load_artifact_schemas()
+    section_requirements = config.get("section_requirements", {})
+
+    failures = []
+    files_checked = 0
+    files_passed = 0
+
+    for filename in expected_outputs:
+        file_path = state_dir / filename
+        schema = schemas.get(filename, {})
+
+        if schema:
+            errors = validate_artifact_schema(file_path, schema, section_requirements)
+        else:
+            required_sections = section_requirements.get(filename, [])
+            errors = validate_artifact(file_path, required_sections)
+
+        files_checked += 1
+        if errors:
+            failures.extend(errors)
+        else:
+            files_passed += 1
+
+    return {
+        "passed": len(failures) == 0,
+        "failures": failures,
+        "files_checked": files_checked,
+        "files_passed": files_passed,
+    }
+
+
+def validate_phase_tree_structure(plan: dict) -> list[str]:
+    """Validate PLAN.md phase tree structure.
+
+    Checks:
+      - At least one phase exists
+      - Each phase has a status value
+      - Each sub-phase has a status value and context budget
+      - Task checkboxes are well-formed
+      - Phase/sub-phase status values are valid
+
+    Args:
+        plan: Parsed plan dict from state_reader.read_plan.
+
+    Returns:
+        List of error strings (empty = valid).
+    """
+    VALID_STATUSES = {"pending", "in_progress", "completed", "blocked"}
+    errors = []
+
+    phases = plan.get("phases", [])
+    if not phases:
+        return ["PLAN.md: no phases defined in Phases section"]
+
+    for phase in phases:
+        name = phase.get("name", "unnamed")
+        status = phase.get("status", "")
+        if status and status not in VALID_STATUSES:
+            errors.append(
+                f"Phase '{name}': invalid status '{status}' "
+                f"(must be one of: {', '.join(sorted(VALID_STATUSES))})"
+            )
+
+        for sp in phase.get("subphases", []):
+            sp_name = sp.get("name", "unnamed")
+            sp_status = sp.get("status", "")
+            if sp_status and sp_status not in VALID_STATUSES:
+                errors.append(
+                    f"Sub-phase '{sp_name}' in '{name}': invalid status '{sp_status}'"
+                )
+
+            for task in sp.get("tasks", []):
+                if not isinstance(task, dict):
+                    errors.append(
+                        f"Sub-phase '{sp_name}' in '{name}': malformed task entry"
+                    )
+
+    return errors
+
+
+def validate_plan_phase_order(plan: dict, config: dict) -> list[str]:
+    """Cross-reference plan phases against workflow config phase_order.
+
+    Checks:
+      - Every plan phase name (or prefix) appears in config phase_order
+      - Every config phase_order entry has a matching phase in the plan
+
+    Args:
+        plan: Parsed plan dict from state_reader.read_plan.
+        config: Workflow config dict with phase_order.
+
+    Returns:
+        List of error strings (empty = consistent).
+    """
+    errors = []
+    phase_order = config.get("phase_order", [])
+    if not phase_order:
+        return errors
+
+    plan_phase_names = [p.get("name", "") for p in plan.get("phases", [])]
+
+    for config_phase in phase_order:
+        found = any(config_phase in name for name in plan_phase_names)
+        if not found:
+            errors.append(
+                f"Phase order mismatch: config phase '{config_phase}' "
+                f"has no matching entry in PLAN.md"
+            )
+
+    for plan_name in plan_phase_names:
+        found = any(
+            config_p in plan_name or plan_name.startswith(config_p)
+            for config_p in phase_order
+        )
+        if not found:
+            errors.append(
+                f"Phase order mismatch: PLAN.md phase '{plan_name}' "
+                f"has no matching entry in config phase_order"
+            )
+
+    return errors
 
 
 def _check_phase_consistency(

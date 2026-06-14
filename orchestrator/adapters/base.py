@@ -29,6 +29,8 @@ class StepContract:
     prompt_template: Optional[str] = None
     workflow_id: str = ""
     task_state_dir: str = ""
+    subphase_name: str = ""
+    subphase_context_budget: int = 0
     extra: dict = field(default_factory=dict)
 
 

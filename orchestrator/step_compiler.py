@@ -7,7 +7,11 @@ from orchestrator.adapters.base import StepContract
 
 
 def compile_step_contract(
-    state: str, config: dict, plan: dict, context: dict
+    state: str,
+    config: dict,
+    plan: dict,
+    context: dict,
+    current_subphase: str = "",
 ) -> StepContract:
     """Compile a StepContract from config, plan, and context.
 
@@ -42,6 +46,10 @@ def compile_step_contract(
     workflow_id = config.get("workflow_id", "unknown")
     step_id = f"{workflow_id}-{state}"
 
+    # Extract sub-phase metadata from plan if available
+    subphase_name = current_subphase
+    subphase_budget = _extract_subphase_budget(plan, current_subphase)
+
     return StepContract(
         step_id=step_id,
         state=state,
@@ -57,7 +65,42 @@ def compile_step_contract(
         checkpoint_before_run=checkpoint_before_run,
         prompt_template=prompt_template,
         workflow_id=workflow_id,
+        subphase_name=subphase_name,
+        subphase_context_budget=subphase_budget,
     )
+
+
+def _extract_subphase_budget(plan: dict, subphase_name: str) -> int:
+    """Extract context budget from a sub-phase in the plan.
+
+    Searches all phases for a sub-phase whose name contains subphase_name.
+    Returns the parsed Context Budget in tokens, or 0 if not found/not set.
+    """
+    if not subphase_name or not plan:
+        return 0
+
+    for phase in plan.get("phases", []):
+        for sp in phase.get("subphases", []):
+            if _name_matches(sp.get("name", ""), subphase_name):
+                raw = sp.get("metadata", {}).get("Context Budget", "0")
+                raw = str(raw).lower().replace(",", "").replace("_", "")
+                multiplier = 1
+                if "k" in raw:
+                    multiplier = 1000
+                    raw = raw.replace("k", "")
+                try:
+                    return int(float(raw) * multiplier)
+                except ValueError, TypeError:
+                    return 0
+
+    return 0
+
+
+def _name_matches(plan_name: str, search: str) -> bool:
+    """Check if a plan sub-phase name matches the search term."""
+    if not plan_name or not search:
+        return False
+    return search in plan_name or plan_name.startswith(search)
 
 
 def resolve_next_state(

@@ -265,3 +265,82 @@ class TestMatchesCondition:
             "unknown_condition", "execute", "phase_1",
             {"status": "pass"}, {"passed": True}, {}, {},
         )
+
+
+class TestExtractSubphaseBudget:
+    """Tests for _extract_subphase_budget."""
+
+    def test_valid_32k(self):
+        """Test extracting 32k budget from metadata."""
+        from orchestrator.step_compiler import _extract_subphase_budget
+
+        plan = {
+            "phases": [
+                {
+                    "subphases": [
+                        {
+                            "name": "Sub-phase 1.1",
+                            "metadata": {"Context Budget": "32k"},
+                        }
+                    ]
+                }
+            ]
+        }
+        assert _extract_subphase_budget(plan, "Sub-phase 1.1") == 32000
+
+    def test_valid_48k(self):
+        """Test extracting 48k budget."""
+        from orchestrator.step_compiler import _extract_subphase_budget
+
+        plan = {
+            "phases": [
+                {
+                    "subphases": [
+                        {
+                            "name": "Sub-phase 1.1",
+                            "metadata": {"Context Budget": "48k"},
+                        }
+                    ]
+                }
+            ]
+        }
+        assert _extract_subphase_budget(plan, "Sub-phase 1.1") == 48000
+
+    def test_no_budget_returns_zero(self):
+        """Test missing Context Budget returns 0."""
+        from orchestrator.step_compiler import _extract_subphase_budget
+
+        plan = {
+            "phases": [
+                {
+                    "subphases": [
+                        {"name": "Sub-phase 1.1", "metadata": {}}
+                    ]
+                }
+            ]
+        }
+        assert _extract_subphase_budget(plan, "Sub-phase 1.1") == 0
+
+    def test_no_subphase_name_returns_zero(self):
+        """Test empty subphase name returns 0."""
+        from orchestrator.step_compiler import _extract_subphase_budget
+
+        assert _extract_subphase_budget({}, "") == 0
+
+    def test_subphase_not_found(self):
+        """Test non-existent sub-phase returns 0."""
+        from orchestrator.step_compiler import _extract_subphase_budget
+
+        plan = {
+            "phases": [
+                {
+                    "subphases": [
+                        {
+                            "name": "Sub-phase 1.1",
+                            "metadata": {"Context Budget": "32k"},
+                        }
+                    ]
+                }
+            ]
+        }
+        assert _extract_subphase_budget(plan, "Nonexistent") == 0

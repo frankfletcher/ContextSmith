@@ -549,3 +549,249 @@ class TestValidateAppendOnly:
             assert path.read_bytes().startswith(original_content)
         finally:
             Path(tmp_path).unlink()
+
+
+class TestLoadArtifactSchemas:
+    """Tests for load_artifact_schemas."""
+
+    def test_load_schemas_success(self):
+        """Test loading schemas from artifact_schemas.yaml."""
+        from orchestrator.validators import load_artifact_schemas
+
+        schemas = load_artifact_schemas()
+        assert isinstance(schemas, dict)
+        assert len(schemas) > 0
+        assert "STATUS.md" in schemas
+        assert "PLAN.md" in schemas
+        assert "CONTEXT.md" in schemas
+
+    def test_load_schemas_missing_file(self, monkeypatch):
+        """Test returns empty dict when schema file is missing."""
+        from orchestrator.validators import load_artifact_schemas
+
+        monkeypatch.setattr(
+            "orchestrator.validators._SCHEMAS_DIR",
+            Path("/nonexistent/path"),
+        )
+        schemas = load_artifact_schemas()
+        assert schemas == {}
+
+
+class TestValidateArtifactSchema:
+    """Tests for validate_artifact_schema."""
+
+    def test_valid_artifact_passes(self):
+        """Test artifact with all required sections passes."""
+        from orchestrator.validators import validate_artifact_schema
+
+        path = FIXTURES_DIR / "task_state_valid" / "STATUS.md"
+        schema = {
+            "required_sections": ["Current Phase", "Current State", "Next Action"],
+            "optional_sections": ["Progress", "Blocked By"],
+        }
+        errors = validate_artifact_schema(path, schema)
+        assert errors == []
+
+    def test_missing_required_section_fails(self):
+        """Test artifact missing required section fails."""
+        from orchestrator.validators import validate_artifact_schema
+
+        path = FIXTURES_DIR / "task_state_valid" / "STATUS.md"
+        schema = {
+            "required_sections": ["Current Phase", "Nonexistent Section"],
+        }
+        errors = validate_artifact_schema(path, schema)
+        assert len(errors) == 1
+        assert "Nonexistent Section" in errors[0]
+
+    def test_config_overrides_required_sections(self):
+        """Test config overrides replace schema required_sections."""
+        from orchestrator.validators import validate_artifact_schema
+
+        path = FIXTURES_DIR / "task_state_valid" / "STATUS.md"
+        schema = {
+            "required_sections": ["Current Phase", "Current State"],
+        }
+        overrides = {"STATUS.md": ["Current Phase"]}
+        errors = validate_artifact_schema(path, schema, overrides)
+        assert errors == []
+
+    def test_missing_file_fails(self):
+        """Test missing file fails validation."""
+        from orchestrator.validators import validate_artifact_schema
+
+        path = FIXTURES_DIR / "task_state_valid" / "NONEXISTENT.md"
+        schema = {"required_sections": ["Section 1"]}
+        errors = validate_artifact_schema(path, schema)
+        assert len(errors) == 1
+        assert "Missing required file" in errors[0]
+
+    def test_empty_file_fails(self):
+        """Test empty file fails validation."""
+        from orchestrator.validators import validate_artifact_schema
+
+        path = FIXTURES_DIR / "task_state_empty_plan" / "PLAN.md"
+        schema = {"required_sections": ["Phases"]}
+        errors = validate_artifact_schema(path, schema)
+        assert len(errors) == 1
+        assert "File is empty" in errors[0]
+
+
+class TestValidateArtifactsWithSchemas:
+    """Tests for validate_artifacts_with_schemas."""
+
+    def test_all_pass_with_schemas(self):
+        """Test all artifacts pass when schemas are valid."""
+        from orchestrator.validators import validate_artifacts_with_schemas
+
+        state_dir = FIXTURES_DIR / "task_state_valid"
+        expected_outputs = ["STATUS.md", "PLAN.md"]
+        config = {}
+        result = validate_artifacts_with_schemas(state_dir, expected_outputs, config)
+        assert result["passed"] is True
+        assert result["files_checked"] == 2
+        assert result["files_passed"] == 2
+
+    def test_some_fail_with_schemas(self):
+        """Test some artifacts fail when required sections missing."""
+        from orchestrator.validators import validate_artifacts_with_schemas
+
+        state_dir = FIXTURES_DIR / "task_state_valid"
+        expected_outputs = ["STATUS.md", "NONEXISTENT.md"]
+        config = {}
+        result = validate_artifacts_with_schemas(state_dir, expected_outputs, config)
+        assert result["passed"] is False
+        assert result["files_checked"] == 2
+        assert result["files_passed"] == 1
+
+    def test_fallback_to_validate_artifact(self):
+        """Test falls back to validate_artifact when schema not found."""
+        from orchestrator.validators import validate_artifacts_with_schemas
+
+        state_dir = FIXTURES_DIR / "task_state_valid"
+        expected_outputs = ["STATUS.md"]
+        config = {"section_requirements": {"STATUS.md": ["Current Phase"]}}
+        result = validate_artifacts_with_schemas(state_dir, expected_outputs, config)
+        assert result["passed"] is True
+
+
+class TestValidatePhaseTreeStructure:
+    """Tests for validate_phase_tree_structure."""
+
+    def test_valid_hierarchical(self):
+        """Test valid hierarchical plan passes."""
+        from orchestrator.validators import validate_phase_tree_structure
+
+        plan = {
+            "phases": [
+                {
+                    "name": "Phase 1: Init",
+                    "status": "completed",
+                    "subphases": [
+                        {
+                            "name": "Sub-phase 1.1",
+                            "status": "completed",
+                            "tasks": [{"text": "Task 1", "done": True}],
+                        }
+                    ],
+                },
+                {
+                    "name": "Phase 2: Execute",
+                    "status": "in_progress",
+                    "subphases": [],
+                },
+            ]
+        }
+        errors = validate_phase_tree_structure(plan)
+        assert errors == []
+
+    def test_valid_flat_plan(self):
+        """Test flat plan (no sub-phases) passes."""
+        from orchestrator.validators import validate_phase_tree_structure
+
+        plan = {
+            "phases": [
+                {"name": "Phase 1", "status": "completed", "subphases": []},
+                {"name": "Phase 2", "status": "pending", "subphases": []},
+            ]
+        }
+        errors = validate_phase_tree_structure(plan)
+        assert errors == []
+
+    def test_invalid_status(self):
+        """Test invalid phase status fails."""
+        from orchestrator.validators import validate_phase_tree_structure
+
+        plan = {
+            "phases": [
+                {
+                    "name": "Phase 1",
+                    "status": "unknown_status",
+                    "subphases": [
+                        {
+                            "name": "Sub-phase 1.1",
+                            "status": "invalid",
+                            "tasks": [],
+                        }
+                    ],
+                }
+            ]
+        }
+        errors = validate_phase_tree_structure(plan)
+        assert len(errors) >= 2  # phase + sub-phase errors
+
+    def test_empty_phases(self):
+        """Test empty phases list returns error."""
+        from orchestrator.validators import validate_phase_tree_structure
+
+        errors = validate_phase_tree_structure({"phases": []})
+        assert len(errors) == 1
+        assert "no phases" in errors[0]
+
+
+class TestValidatePlanPhaseOrder:
+    """Tests for validate_plan_phase_order."""
+
+    def test_matching_order(self):
+        """Test plan phases match config phase_order."""
+        from orchestrator.validators import validate_plan_phase_order
+
+        plan = {
+            "phases": [
+                {"name": "Phase 1: Init"},
+                {"name": "Phase 2: Execute"},
+                {"name": "Phase 3: Audit"},
+            ]
+        }
+        config = {"phase_order": ["Phase 1", "Phase 2", "Phase 3"]}
+        errors = validate_plan_phase_order(plan, config)
+        assert errors == []
+
+    def test_missing_config_phase(self):
+        """Test config phase with no plan match fails."""
+        from orchestrator.validators import validate_plan_phase_order
+
+        plan = {"phases": [{"name": "Phase 1"}]}
+        config = {"phase_order": ["Phase 1", "Phase 2"]}
+        errors = validate_plan_phase_order(plan, config)
+        assert len(errors) == 1
+        assert "Phase 2" in errors[0]
+
+    def test_missing_plan_phase(self):
+        """Test plan phase with no config match fails."""
+        from orchestrator.validators import validate_plan_phase_order
+
+        plan = {"phases": [{"name": "Phase 1"}, {"name": "Extra Phase"}]}
+        config = {"phase_order": ["Phase 1"]}
+        errors = validate_plan_phase_order(plan, config)
+        assert len(errors) == 1
+        assert "Extra Phase" in errors[0]
+
+    def test_no_phase_order(self):
+        """No config phase_order means no validation."""
+        from orchestrator.validators import validate_plan_phase_order
+
+        plan = {"phases": [{"name": "Phase 1"}]}
+        config = {"phase_order": []}
+        errors = validate_plan_phase_order(plan, config)
+        assert errors == []

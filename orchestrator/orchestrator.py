@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 import signal
 import sys
 from datetime import datetime, timezone
@@ -108,21 +109,40 @@ def _log_dry_run_step(current_state: str, current_phase: str, step_contract) -> 
     logger.info(f"  Expected outputs: {step_contract.expected_outputs}")
 
 
-def _rewrite_status_content(content: str, current_phase: str, next_state: str) -> str:
-    """Rewrite STATUS.md section values while preserving file structure."""
+def _rewrite_status_content(
+    content: str,
+    current_phase: str,
+    next_state: str,
+    current_subphase: str = "",
+) -> str:
+    """Rewrite STATUS.md section values while preserving file structure.
+
+    If current_subphase is empty, removes the ## Current Sub-phase section
+    entirely to avoid stale values after a phase transition.
+    """
     replacement_by_section = {
         "Current Phase": current_phase,
         "Current State": next_state,
         "Next Action": f"Continue to {next_state}",
     }
+    if current_subphase:
+        replacement_by_section["Current Sub-phase"] = current_subphase
 
     in_section = None
     new_lines: list[str] = []
+    skip_section = False
 
     for line in content.splitlines():
         if line.startswith("## "):
             in_section = line[3:].strip()
+            if in_section == "Current Sub-phase" and not current_subphase:
+                skip_section = True
+                continue
+            skip_section = False
             new_lines.append(line)
+            continue
+
+        if skip_section:
             continue
 
         if (
@@ -136,6 +156,50 @@ def _rewrite_status_content(content: str, current_phase: str, next_state: str) -
         new_lines.append(line)
 
     return "\n".join(new_lines)
+
+
+def _normalize_phase_name(name: str) -> str:
+    """Strip phase numbering and labels for flexible matching."""
+    cleaned = re.sub(
+        r"^Phase\s+\d+[A-Z]?[:.]?\s*", "", name, flags=re.IGNORECASE
+    ).strip()
+    return cleaned
+
+
+def _phase_name_matches(search: str, plan_name: str) -> bool:
+    """Check if a search term matches a plan phase name.
+
+    Tries direct substring match first, then normalized match
+    (strips "Phase N:" prefix for comparison).
+    """
+    if search in plan_name or plan_name.startswith(search):
+        return True
+    norm_search = _normalize_phase_name(search)
+    norm_plan = _normalize_phase_name(plan_name)
+    if norm_search and norm_plan:
+        return norm_search in norm_plan or norm_plan.startswith(norm_search)
+    return False
+
+
+def _find_phase_in_plan(plan: dict, phase_name: str) -> dict | None:
+    """Find a phase in the plan by name, using multiple matching strategies."""
+    if not phase_name or not plan:
+        return None
+    for phase in plan.get("phases", []):
+        if _phase_name_matches(phase_name, phase.get("name", "")):
+            return phase
+    return None
+
+
+def _find_first_subphase(plan: dict, phase_name: str) -> str:
+    """Find the first pending sub-phase in a given phase."""
+    phase = _find_phase_in_plan(plan, phase_name)
+    if not phase:
+        return ""
+    for sp in phase.get("subphases", []):
+        if sp.get("status") in ("pending", "in_progress"):
+            return sp.get("name", "")
+    return ""
 
 
 def _load_workflow_config(config_path: Path) -> dict:
@@ -232,13 +296,130 @@ def _prepare_run_context(config_path: Path, state_dir: Path):
     return config, status, plan, context, checkpoint, current_state, current_phase
 
 
-def _prepare_step_contract(current_state: str, config: dict, plan: dict, context: dict):
+def _prepare_step_contract(
+    current_state: str,
+    config: dict,
+    plan: dict,
+    context: dict,
+    current_subphase: str = "",
+):
     """Compile step contract with state-specific validation."""
     try:
-        return compile_step_contract(current_state, config, plan, context)
+        return compile_step_contract(
+            current_state, config, plan, context, current_subphase
+        )
     except Exception as e:
         logger.error(f"[orchestrator] Error compiling step contract: {e}")
         return None
+
+
+def _try_advance_subphase(
+    state_dir: Path,
+    plan: dict,
+    status: dict,
+    step_contract,
+    config: dict,
+    context: dict,
+) -> int | None:
+    """Advance to the next pending sub-phase in the current phase.
+
+    Called after a successful execution. If the current phase has sub-phases
+    and there are still pending ones, updates STATUS.md to point to the next
+    sub-phase and returns EXIT_CONTINUE (skip state transition, same phase).
+
+    If no sub-phases remain (all done) or no sub-phases defined, returns None
+    so the caller proceeds with the normal state machine transition.
+
+    Before advancing, checks each sub-phase's Dependency metadata. If a
+    sub-phase depends on another that is not yet completed, it is skipped.
+
+    Returns:
+        EXIT_CONTINUE if advanced to next sub-phase.
+        None if no more sub-phases (proceed with phase transition).
+    """
+    current_phase_name = status.get("current_phase", "")
+    current_subphase = status.get("current_subphase", "")
+
+    phase = _find_phase_in_plan(plan, current_phase_name)
+    if not phase:
+        logger.debug(f"[orchestrator] Phase '{current_phase_name}' not found in plan")
+        return None
+
+    subphases = phase.get("subphases", [])
+    if not subphases:
+        logger.debug(
+            f"[orchestrator] Phase '{current_phase_name}' has no sub-phases "
+            f"(flat format or legacy plan)"
+        )
+        return None
+
+    idx = -1
+    if current_subphase:
+        for i, sp in enumerate(subphases):
+            sp_name = sp.get("name", "")
+            if current_subphase in sp_name or sp_name.startswith(current_subphase):
+                idx = i
+                break
+
+    start = max(idx + 1, 0)
+    for i in range(start, len(subphases)):
+        sp = subphases[i]
+        if sp.get("status") not in ("pending", "in_progress"):
+            continue
+        if not _check_subphase_dependency(subphases, sp):
+            logger.info(
+                f"[orchestrator] Skipping sub-phase '{sp.get('name')}': "
+                f"unmet dependency '{sp.get('metadata', {}).get('Dependency', '?')}'"
+            )
+            continue
+
+        sp_name = sp.get("name", "")
+        step_contract.subphase_name = sp_name
+        _update_status(
+            state_dir,
+            current_phase_name,
+            status.get("current_state", ""),
+            {"status": "pass"},
+            current_subphase=sp_name,
+        )
+        _generate_next_prompt(
+            state_dir,
+            status.get("current_state", ""),
+            step_contract,
+            context,
+            plan,
+        )
+        _write_phase_log(
+            state_dir,
+            status.get("current_state", ""),
+            status.get("current_state", ""),
+            {"status": "pass", "artifacts": [sp_name]},
+            {"passed": True},
+        )
+        logger.info(f"[orchestrator] Advanced to sub-phase: {sp_name}")
+        return EXIT_CONTINUE
+
+    logger.info(
+        f"[orchestrator] All sub-phases completed for phase '{current_phase_name}'"
+    )
+    return None
+
+
+def _check_subphase_dependency(subphases: list, subphase: dict) -> bool:
+    """Check if a sub-phase's dependency is completed.
+
+    Returns True if no dependency declared (satisfied by default).
+    Returns False if dependency exists but the target is not completed
+    or not found in the plan.
+    """
+    dependency = subphase.get("metadata", {}).get("Dependency", "")
+    if not dependency:
+        return True
+    for sp in subphases:
+        sp_name = sp.get("name", "")
+        if dependency in sp_name or sp_name.startswith(dependency):
+            return sp.get("status") == "completed"
+    return False
 
 
 def _validate_state_for_dispatch(
@@ -496,6 +677,7 @@ def _persist_transition(
     validation: dict,
     step_contract,
     context: dict,
+    plan: dict,
 ) -> None:
     """Persist checkpoint and generated workflow artifacts after a transition."""
     checkpoint = (
@@ -507,8 +689,15 @@ def _persist_transition(
 
     _update_status(state_dir, current_phase, next_state, result)
     _write_phase_log(state_dir, current_state, next_state, result, validation)
+
     if next_state not in TERMINAL_STATES:
-        _generate_next_prompt(state_dir, next_state, step_contract, context)
+        first_sp = _find_first_subphase(plan, current_phase)
+        if first_sp:
+            step_contract.subphase_name = first_sp
+            _update_status(
+                state_dir, current_phase, next_state, result, current_subphase=first_sp
+            )
+        _generate_next_prompt(state_dir, next_state, step_contract, context, plan)
 
 
 def _run_predispatch_checks(
@@ -564,6 +753,7 @@ def _complete_step_flow(
     step_contract,
     context,
     state_dir,
+    plan,
 ) -> int:
     """Resolve next state, persist artifacts, return exit code."""
     harness_result, validation = execution
@@ -594,6 +784,7 @@ def _complete_step_flow(
             validation,
             step_contract,
             context,
+            plan,
         )
     except Exception as e:
         logger.error(f"[{current_state}] Internal error during persistence: {e}")
@@ -644,9 +835,23 @@ def run(
         return prepared
 
     config, status, plan, context, checkpoint, current_state, current_phase = prepared
-    step_contract = _prepare_step_contract(current_state, config, plan, context)
+    current_subphase = status.get("current_subphase", "")
+    step_contract = _prepare_step_contract(
+        current_state, config, plan, context, current_subphase
+    )
     if step_contract is None:
         return EXIT_BLOCKED
+
+    if step_contract.subphase_context_budget > 0:
+        budget_k = step_contract.subphase_context_budget // 1000
+        if step_contract.subphase_context_budget > 64000:
+            logger.warning(
+                f"[{current_state}] Sub-phase '{step_contract.subphase_name}' "
+                f"budget ({budget_k}k) exceeds typical usable window (64k). "
+                f"Consider splitting into smaller sub-phases."
+            )
+        else:
+            logger.info(f"[{current_state}] Sub-phase budget: {budget_k}k")
 
     dispatch_validation = _validate_state_for_dispatch(status, checkpoint, config)
     if dispatch_validation is not None:
@@ -687,6 +892,14 @@ def run(
     if execution is None:
         return EXIT_BLOCKED
 
+    harness_result, validation = execution
+    if validation.get("passed", False):
+        subphase_code = _try_advance_subphase(
+            state_dir, plan, status, step_contract, config, context
+        )
+        if subphase_code is not None:
+            return subphase_code
+
     return _complete_step_flow(
         execution,
         current_state,
@@ -696,6 +909,7 @@ def run(
         step_contract,
         context,
         state_dir,
+        plan,
     )
 
 
@@ -785,7 +999,11 @@ def register_signal_handlers(state_dir: str) -> None:
 
 
 def _update_status(
-    state_dir: Path, current_phase: str, next_state: str, result: dict
+    state_dir: Path,
+    current_phase: str,
+    next_state: str,
+    result: dict,
+    current_subphase: str = "",
 ) -> None:
     """Update STATUS.md with new state, preserving existing structure.
 
@@ -794,21 +1012,27 @@ def _update_status(
         current_phase: Current phase identifier
         next_state: Next state machine state
         result: Step execution result
+        current_subphase: Active sub-phase (or empty to leave unchanged)
     """
     status_path = state_dir / "STATUS.md"
 
     if status_path.exists():
         content = status_path.read_text(encoding="utf-8")
-        content = _rewrite_status_content(content, current_phase, next_state)
+        content = _rewrite_status_content(
+            content, current_phase, next_state, current_subphase
+        )
     else:
         # Create new STATUS.md if it doesn't exist
+        subphase_line = (
+            f"\n## Current Sub-phase\n{current_subphase}" if current_subphase else ""
+        )
         content = f"""# Status
 
 ## Current Phase
 {current_phase}
 
 ## Current State
-{next_state}
+{next_state}{subphase_line}
 
 ## Progress
 - Status: {result.get("status", "unknown")}
@@ -864,6 +1088,7 @@ def _generate_next_prompt(
     next_state: str,
     step_contract,
     context: dict,
+    plan: dict | None = None,
 ) -> None:
     """Generate NEXT_PROMPT.md for the next agent.
 
@@ -872,19 +1097,41 @@ def _generate_next_prompt(
         next_state: Next state machine state
         step_contract: Current step contract
         context: Parsed context dict
+        plan: Parsed plan dict (optional, used for sub-phase task lists)
     """
     prompt_path = state_dir / "NEXT_PROMPT.md"
+
+    subphase_section = ""
+    subphase_name = getattr(step_contract, "subphase_name", "")
+    if subphase_name and plan:
+        tasks = _find_subphase_tasks(plan, subphase_name)
+        task_lines = "\n".join(
+            f"  - [{'x' if t.get('done') else ' '}] {t.get('text', '')}" for t in tasks
+        )
+        subphase_section = f"""
+## Sub-phase
+{subphase_name}
+
+## Sub-phase Tasks
+{task_lines}
+"""
+    elif subphase_name:
+        subphase_section = f"""
+## Sub-phase
+{subphase_name}
+"""
+
     content = f"""# Next Prompt
 
 You are continuing a workflow on {context.get("project", "unknown")}.
 
 ## Current Status
 - Phase: {step_contract.step_id}
-- State: {next_state}
+- State: {next_state}{f"\\n- Sub-phase: {subphase_name}" if subphase_name else ""}
 
 ## Your Task
 Execute the next phase of the workflow.
-
+{subphase_section}
 ## Input Files
 - STATUS.md: Current workflow state
 - PLAN.md: Phase plan
@@ -938,3 +1185,12 @@ Do not edit files outside the current phase scope.
 Continue from previous phase.
 """
     prompt_path.write_text(content, encoding="utf-8")
+
+
+def _find_subphase_tasks(plan: dict, subphase_name: str) -> list[dict]:
+    """Find the task list for a named sub-phase in the plan."""
+    for phase in plan.get("phases", []):
+        for sp in phase.get("subphases", []):
+            if subphase_name in sp.get("name", ""):
+                return sp.get("tasks", [])
+    return []

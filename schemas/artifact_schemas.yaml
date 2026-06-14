@@ -1,0 +1,255 @@
+# Artifact Schema Registry
+# Defines required and optional sections for each markdown artifact type
+# Used by orchestrator/validators.py for structural validation
+#
+# Schema Structure:
+# - description: Human-readable explanation of the artifact's purpose
+# - append_only: Whether the artifact must be append-only (true) or can be overwritten (false)
+# - required_sections: List of ## headings that must be present
+# - optional_sections: List of ## headings that may be present but are not required
+# - content_rules: List of validation rules for section content
+#   - type: Rule type (key_value, list_items, phase_entry, phase_report, audit_entry, decision_entry, checklist_items)
+#   - Additional fields depend on rule type
+#
+# Validation Behavior:
+# - Required sections must be present as ## headings
+# - Optional sections may be present but are not enforced
+# - Additional sections beyond required/optional are allowed (LLM flexibility)
+# - Content rules provide additional validation beyond section presence
+# - Workflow configs can extend/override via section_requirements key
+
+metadata:
+  version: "1.0.0"
+  description: "Canonical artifact schema registry for ContextSmith orchestrator"
+  validation_mode: "strict"  # strict: enforce all rules, relaxed: enforce required sections only
+
+artifacts:
+  STATUS.md:
+    description: "Tracks current workflow position and state"
+    append_only: false
+    required_sections:
+      - "Current Phase"
+      - "Current State"
+      - "Next Action"
+    optional_sections:
+      - "Progress"
+      - "Blocked By"
+      - "Current Sub-phase"
+    content_rules:
+      - type: "key_value"
+        section: "Current Phase"
+        pattern: "^Phase \\d+[A-Z]?:?\\s+.+$"
+        description: "Phase identifier (e.g., Phase 2: Validator Refactor)"
+      - type: "key_value"
+        section: "Current State"
+        pattern: "^(execute|audit|validate|complete|blocked)$"
+        description: "Workflow state (must be one of: execute, audit, validate, complete, blocked)"
+      - type: "key_value"
+        section: "Current Sub-phase"
+        pattern: "^(Sub-phase|SP)\\s+[\\d.]+:?\\s+.+|none$"
+        description: "Active sub-phase within the current phase, or 'none'"
+
+  PLAN.md:
+    description: "Hierarchical phase plan with sub-phases and task checklists"
+    append_only: false
+    required_sections:
+      - "Phases"
+    optional_sections:
+      - "Parameters"
+      - "Objective"
+      - "Scope"
+      - "Constraints"
+      - "Validation Gates"
+      - "Dependencies"
+      - "Assumptions"
+    content_rules:
+      - type: "phase_tree"
+        section: "Phases"
+        description: "Three-level hierarchy: Phase (###), Sub-phase (####), Task checkbox"
+        phase_rules:
+          heading_level: "###"
+          heading_pattern: "^###\\s+Phase\\s+"
+          required_metadata:
+            - "Status"
+          optional_metadata:
+            - "Agent"
+            - "Context Budget"
+          status_values:
+            - "pending"
+            - "in_progress"
+            - "completed"
+            - "blocked"
+        subphase_rules:
+          heading_level: "####"
+          heading_pattern: "^####\\s+(Sub-phase|SP)\\s+"
+          required_metadata:
+            - "Status"
+          optional_metadata:
+            - "Context Budget"
+            - "Dependency"
+            - "Validation"
+          status_values:
+            - "pending"
+            - "in_progress"
+            - "completed"
+            - "blocked"
+        task_rules:
+          checkbox_pattern: "^- \\[ \\] |^- \\[x\\] "
+          min_tasks: 0
+
+  CONTEXT.md:
+    description: "Task-specific context bundle"
+    append_only: false
+    required_sections:
+      - "Project"
+      - "File Map"
+      - "Constraints"
+    optional_sections:
+      - "Assumptions"
+      - "Harness"
+      - "Evidence Notes"
+      - "Skip Rules"
+    content_rules:
+      - type: "file_map"
+        section: "File Map"
+        description: "File map should list relevant files with brief descriptions"
+        min_items: 1
+
+  PHASE_LOG.md:
+    description: "History of phase transitions (append-only)"
+    append_only: true
+    required_sections: []
+    content_rules:
+      - type: "phase_entry"
+        description: "Each phase entry is a ## heading followed by key-value pairs"
+        required_fields:
+          - "Status"
+          - "Date"
+        optional_fields:
+          - "Changes"
+          - "Notes"
+          - "Action"
+          - "Result"
+          - "Validation"
+          - "Artifacts"
+        example: |
+          ## Phase 1: Schema Registry Design
+          - Status: Complete
+          - Date: 2026-06-14
+          - Changes: Created artifact_schemas.yaml
+
+  EDUCATIONAL_REPORT.md:
+    description: "Per-phase educational explanations (append-only)"
+    append_only: true
+    required_sections: []
+    content_rules:
+      - type: "phase_report"
+        description: "Each phase report is a ## heading followed by ### subsections"
+        required_subsections:
+          - "Original Strengths"
+          - "Original Weaknesses"
+          - "Changes Made"
+          - "Why This Improves"
+        optional_subsections:
+          - "Remaining Risks or Assumptions"
+        example: |
+          ## Phase 1: Schema Registry Design
+          ### Original Strengths
+          - Clear separation of concerns
+          ### Original Weaknesses
+          - No structural validation
+          ### Changes Made
+          - Added artifact_schemas.yaml
+          ### Why This Improves
+          - Enables consistent validation across workflows
+
+  AUDIT_REPORT.md:
+    description: "Audit findings (append-only)"
+    append_only: true
+    required_sections: []
+    content_rules:
+      - type: "audit_entry"
+        description: "Each audit entry is a ## heading followed by key-value pairs"
+        required_fields:
+          - "Date"
+          - "Findings"
+        optional_fields:
+          - "Severity"
+          - "Recommendations"
+          - "Status"
+        example: |
+          ## Audit 2026-06-14
+          - Date: 2026-06-14
+          - Findings: Schema registry is well-structured
+          - Severity: Low
+          - Recommendations: Add more content_rules
+
+  DECISIONS.md:
+    description: "Design decisions with rationale (append-only)"
+    append_only: true
+    required_sections: []
+    content_rules:
+      - type: "decision_entry"
+        description: "Each decision is a ## heading followed by key-value pairs"
+        required_fields:
+          - "Decision"
+          - "Reason"
+        optional_fields:
+          - "Impact"
+          - "Date"
+        example: |
+          ## D1: Schema Registry Format
+          - Decision: Use YAML for artifact schema registry
+          - Reason: Human-readable and aligns with workflow config
+          - Impact: Easy to review and edit manually
+
+  ARTIFACTS.md:
+    description: "Tracks produced artifacts"
+    append_only: false
+    required_sections:
+      - "Files to Create"
+      - "Files to Modify"
+      - "Commands to Run"
+    optional_sections:
+      - "Generated Files"
+      - "Modified Files"
+    content_rules: []
+
+  CHECKLIST.md:
+    description: "Testable validation items"
+    append_only: false
+    required_sections: []
+    content_rules:
+      - type: "checklist_items"
+        description: "Checklist items are markdown checkboxes"
+        min_items: 1
+        pattern: "^- \\[ \\] |^- \\[x\\] "
+        example: |
+          - [ ] Schema registry created
+          - [x] Task-state directory created
+
+  TASK.md:
+    description: "Task objective and scope"
+    append_only: false
+    required_sections:
+      - "Objective"
+      - "Scope"
+      - "Constraints"
+    optional_sections:
+      - "Success Criteria"
+      - "Out of Scope"
+    content_rules: []
+
+  NEXT_PROMPT.md:
+    description: "Agent handoff instructions"
+    append_only: false
+    required_sections:
+      - "Current Status"
+      - "Your Task"
+      - "Input Files"
+      - "Output Requirements"
+    optional_sections:
+      - "Constraints"
+      - "Expected Output Format"
+      - "Validation"
+    content_rules: []
