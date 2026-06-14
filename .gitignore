@@ -11,6 +11,7 @@ dist/
 
 # temp files
 tmp
+.agent_work/tmp/
 
 # Graphify intermediate files and folders
 graphify-out/manifest.json

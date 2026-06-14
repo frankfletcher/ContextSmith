@@ -1,22 +1,22 @@
 # STATUS.md
 
 ## Current Phase
-Phase 7: Workflow Config Schema Update
+Phase 8: Integration Tests
 
 ## Current State
 execute
 
 ## Current Sub-phase
-Sub-phase 7.1: artifact_schemas extension
+Sub-phase 8.1: Sub-phase advancement test
 
 ## Progress
-- Phase: 7 of 10
-- Completed: 6
+- Phase: 8 of 11
+- Completed: 7
 - Remaining: 4
 - Retries remaining: 3
 
 ## Next Action
-Add artifact_schemas extension to workflow_config.schema.json
+Add integration tests for sub-phase advancement with pending sub-phases, all-done return None, and backward compat with flat plan.
 
 ## Blocked By
 none

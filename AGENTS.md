@@ -14,7 +14,7 @@ ContextSmith/
 │   ├── contextsmith-instruction-engineer/
 │   ├── contextsmith-agent-evaluator/
 │   └── contextsmith-orchestrator/
-├── shared/                          # Canonical agent references (52 files)
+├── shared/                          # Canonical agent references (54 files)
 ├── orchestrator/                    # Python orchestrator package (deterministic workflow execution)
 │   ├── __init__.py
 │   ├── orchestrator.py              # Main loop: run(), run_workflow()
@@ -55,16 +55,25 @@ uv sync
 
 # Run validation
 uv run python scripts/validate_skills.py
-uv run ruff check orchestrator/ --select E,F,W,I
+uv run ruff check orchestrator/ --select E,F,W,I | uv run python scripts/lint_error_counter.py
 uv run ruff format orchestrator/ --check
 uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "
-markdownlint .agent_work/ orchestrator/ docs/ --ignore node_modules
+markdownlint .agent_work/ orchestrator/ docs/ --ignore node_modules | uv run python scripts/lint_error_counter.py
 uv run pytest tests/ -v
+
+# View accumulated lint error frequencies (top 10 across all runs)
+python -c "import json; d=json.load(open('.agent_work/lint_error_counts.json')); [print(f'{v:4d} {k}') for k,v in sorted(d.items(), key=lambda x:-x[1])[:10]]"
 ```
 
 The validation script checks SKILL.md frontmatter, line counts, and reference directory presence. Ruff handles Python linting, formatting, and import sorting. Radon checks cyclomatic complexity (no C/D/E/F allowed). Markdownlint validates all Markdown files. Pytest runs the test suite.
 
 Note: All Python commands should be run with `uv run` to use the project's virtual environment. Dependencies are managed in `pyproject.toml` and locked in `uv.lock`.
+
+## Extra-Audit Step
+
+The orchestrator supports an optional `extra_audit` state that runs after the baseline audit. It applies `shared/extra-audit.md` — strategic-lens review for trajectory, scope pressure, dependency surface, blind spots, and exit-condition honesty.
+
+To enable, add `extra_audit` to a workflow config's `states` and `phase_order` after the baseline audit state. The step produces `EXTRA_AUDIT.md`, an append-only persistent artifact. See `shared/extra-audit.md` for the full schema and config template.
 
 ## Development Workflow
 
@@ -114,14 +123,24 @@ Safe inspection: `git status`, `git diff`, `git diff --staged`, `git log --oneli
 
 Before editing, check `git status --short`. Do not overwrite user changes. If a rebase or merge conflict is in progress, stop and ask.
 
+## Temporary Files
+
+Never use `/tmp` for temporary files or scratch directories. Always use `<project root>/.agent_work/tmp/`. This directory is gitignored and scoped to the project — no cross-project contamination, no cleanup needed. Create it if it doesn't exist:
+
+```bash
+mkdir -p .agent_work/tmp
+```
+
+Use this for any scratch files, diff patches, intermediate artifacts, or staged content that doesn't belong in task state.
+
 ## File Operation Safety
 
 Always read before writing:
 
 1. To check if a file exists, use `test -f <path>` or the `read` tool. Do NOT use `ls` for existence checks — `ls` can produce false negatives.
 2. Before creating or overwriting any file, read it first. If the read succeeds (returns content), use `edit` to modify it or `>>` to append — never use `write` on a file whose current content you haven't verified.
-3. For append-only report files (EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, REPORT.md, and any `*_REPORT.md`), always use `>>` heredoc. Never use `write`. For persistent state files that accumulate history (DECISIONS.md, PHASE_LOG.md, and any file expected to preserve prior entries), use `>>` heredoc to append new entries — never `write` the whole file. As a general rule: identify each file's purpose. If its purpose is to maintain a record — history, decisions, logs, phase notes, reports, or any cumulative artifact — use append (`>>` heredoc) to add new entries and never clobber prior records.
-4. When a `write` call is necessary (new file that definitely doesn't exist), first confirm with `test -f` that the path is clear.
+3. **PREFERRED: write `.new` segment files instead of appending.** For `*_REPORT.md`, `PHASE_LOG.md`, and `DECISIONS.md`, write a `.new` file with only the new entry content (e.g., `EDUCATIONAL_REPORT.md.new`). The orchestrator merges `.new` segments into the parent report automatically after execution — this removes the agent from the append operation entirely. If `.new` files are not feasible (e.g., the orchestrator is not involved), use `cat >>` heredoc to append. **Never use `write` on parent report/log/decision files** — it destroys accumulated history. Do not `test -f` first; the agent cannot reliably determine which files exist in git vs. on disk.
+4. When a `write` call is necessary (new file that is definitely NOT a report/log/decision file), first confirm with `test -f` that the path is clear.
 5. After any file operation, verify the result: read the file or check with `test -f`/`stat` to confirm the expected content is there.
 
 ## Agentic Loop Safety

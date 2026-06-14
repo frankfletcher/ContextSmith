@@ -3,47 +3,60 @@
 You are continuing work on the ContextSmith artifact schema standards task.
 
 ## Current Status
-- Phase: 7 of 10
-- Sub-phase: 7.1
+- Phase: 8 of 10
+- Sub-phase: 8.1
 - State: execute
 
 ## Sub-phase
-Sub-phase 7.1: artifact_schemas extension
+Sub-phase 8.1: Sub-phase advancement test
 
 ## Sub-phase Tasks
-  - [ ] Add artifact_schemas section to workflow_config.schema.json
-  - [ ] Define extension mechanism for workflow-specific overrides
-  - [ ] Validate JSON schema syntax
+- [ ] Add test for _try_advance_subphase with pending sub-phases
+- [ ] Add test for _try_advance_subphase returns None on all done
+- [ ] Add test for backward compat with flat plan
 
 ## Your Task
-Update `schemas/workflow_config.schema.json` to support an `artifact_schemas` section
-that allows workflows to declare custom section overrides on top of the base schemas.
+Add integration tests to verify the orchestrator's sub-phase advancement logic (`_try_advance_subphase`). Cover the three scenarios: advancing through pending sub-phases, returning None when all sub-phases are done, and backward compatibility with the flat plan format.
 
 ## Input Files
 - STATUS.md: Current workflow state
 - PLAN.md: Phase plan with all 10 phases
 - CONTEXT.md: Project context
-- schemas/artifact_schemas.yaml: Artifact schema registry
-- schemas/workflow_config.schema.json: Workflow config schema
+- CHECKLIST.md: Task tracking
+- orchestrator/orchestrator.py: Main orchestrator with _try_advance_subphase
+- tests/test_orchestrator_determinism.py: Existing orchestrator tests
+- tests/fixtures/: Test fixture directory
+- schemas/workflow_config.schema.json: Workflow config schema (now has artifact_schemas)
 
 ## Output Requirements
-- Update schemas/workflow_config.schema.json with artifact_schemas support
-- Update STATUS.md with results
+- Add tests to tests/test_orchestrator_determinism.py or a new test file
+- All sub-phase advancement paths must be covered
+- Tests must use existing test fixture patterns
 - Update CHECKLIST.md
-- Update PHASE_LOG.md
+- Create or append to EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md
 
 ## Constraints
-- Must preserve backward compatibility with existing workflow configs
-- Must pass JSON schema validation
-- Must run `markdownlint . --ignore node_modules` on any changed Markdown files
+- Context Budget: 32k
+- Must not modify orchestrator/orchestrator.py logic (test only)
+- Must follow existing test patterns (pytest, fixtures)
+- Must pass full validation suite on completion
+
+### REPORT FILES: USE `.new` SEGMENTS — ORCHESTRATOR HANDLES MERGING
+
+Do NOT write directly to these files. Write a `.new` segment file instead with only the new entry content:
+
+- `EDUCATIONAL_REPORT.md.new` — new sub-phase explanation entry
+- `AUDIT_REPORT.md.new` — new audit rubric entry
+- `PHASE_LOG.md.new` — new phase log entry
+- `DECISIONS.md.new` — new decision entry
+
+The orchestrator automatically merges `.new` files into the parent reports after execution. This removes the append operation from the agent entirely — no risk of overwrite history, no file-existence guessing.
 
 ## Ralph Loop Enforcement
 3 iterations required. Each is critique+fix. Do not skip or collapse.
-1. **Critique** — Review against contract, find material defects, fix them
+1. **Critique** — Review tests against contract, find material defects
 2. **Re-check** — After fixes, if no new defects → no-op; else fix
 3. **Final check** — If no defects → no-op; do not invent changes
-Each iteration needs a compact log entry in Ralph Summary.
-Ralph loops are critique/revision, not repeated tool calls.
 
 ## Self-Audit
 Before closeout, verify:
@@ -53,7 +66,7 @@ Before closeout, verify:
 - Task state updated with compact facts
 
 ## Hard Stop
-Current phase is Phase 7: Workflow Config Schema Update.
+Current phase is Phase 8: Integration Tests.
 Do not proceed beyond it. Do not edit files outside this phase scope.
 
 ## Expected Output Format

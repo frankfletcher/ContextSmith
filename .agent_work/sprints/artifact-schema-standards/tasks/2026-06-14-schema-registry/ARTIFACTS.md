@@ -14,8 +14,10 @@
 - `tests/test_step_compiler.py` - added TestExtractSubphaseBudget
 
 ## Files Pending
-- `schemas/workflow_config.schema.json` - add artifact_schemas extension
 - `docs/reference/ARTIFACT_SCHEMAS.md` - documentation
+
+## Files Completed
+- `schemas/workflow_config.schema.json` - added artifact_schemas extension with ArtifactSchemaOverride
 
 ## Commands to Run
 - `uv run python scripts/validate_skills.py`

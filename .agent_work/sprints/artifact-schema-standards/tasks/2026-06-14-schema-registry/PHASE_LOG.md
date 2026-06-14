@@ -34,3 +34,18 @@
 - Status: In Progress
 - Date: 2026-06-14
 - Changes: Starting workflow config schema update
+
+## Phase 7: Workflow Config Schema Update - Sub-phase 7.1
+- **Status**: Complete
+- **Date**: 2026-06-14
+- **Changes**: Added artifact_schemas property + ArtifactSchemaOverride definition to schemas/workflow_config.schema.json. Wired artifact_schemas config to validators.py via _build_artifact_overrides().
+- **Action**: Schema-level extension mechanism for workflow-specific section overrides on top of base schemas
+- **Validation**: JSON Schema valid (Draft 2020-12), backward compat with existing configs, override configs validated, 403 pytest pass
+- **Artifacts**: schemas/workflow_config.schema.json
+
+## Phase 7: Workflow Config Schema Update - Complete
+- **Status**: Complete
+- **Date**: 2026-06-14
+- **Changes**: Phase 7 completed. Artifact schema override extension now has both schema definition and validator wiring.
+- **Action**: Full validation suite passed. EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md appended correctly using `>>` heredoc (no `write`). STATUS.md advanced to Phase 8. NEXT_PROMPT.md written for Phase 8.1.
+- **Artifacts**: schemas/workflow_config.schema.json, orchestrator/validators.py

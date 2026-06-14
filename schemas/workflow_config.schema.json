@@ -61,6 +61,14 @@
       "default": {},
       "description": "Global validation rules applied after phase execution."
     },
+    "artifact_schemas": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/ArtifactSchemaOverride"
+      },
+      "default": {},
+      "description": "Per-artifact schema overrides for markdown state artifacts. Keys are artifact filenames (e.g., STATUS.md, PLAN.md). Each value declares section overrides that extend or replace the base schemas from schemas/artifact_schemas.yaml."
+    },
     "metadata": {
       "$ref": "#/$defs/MetadataBlock",
       "default": {},
@@ -144,7 +152,7 @@
       "properties": {
         "state": {
           "type": "string",
-          "enum": ["init", "plan", "execute", "audit", "fix", "validate", "ralph_critique", "ralph_revise", "closeout", "done", "blocked"],
+          "enum": ["init", "plan", "execute", "audit", "extra_audit", "fix", "validate", "ralph_critique", "ralph_revise", "closeout", "done", "blocked"],
           "description": "The canonical state machine state this phase corresponds to."
         },
         "agent": {
@@ -275,6 +283,36 @@
           "type": "object",
           "additionalProperties": { "type": "string" },
           "description": "Arbitrary key-value pairs for display."
+        }
+      }
+    },
+    "ArtifactSchemaOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "extends": {
+          "type": "string",
+          "description": "Base schema key from artifact_schemas.yaml to extend. Defaults to the artifact filename key (e.g., STATUS.md)."
+        },
+        "required_sections": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Override required sections for this artifact. When extend_base is true (default), merged as union with base schema required_sections. When false, replaces base entirely."
+        },
+        "optional_sections": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Override optional sections for this artifact. When extend_base is true (default), merged as union with base schema optional_sections. When false, replaces base entirely."
+        },
+        "additional_sections": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sections to add on top of base schema sections regardless of extend_base. Always merged as union — never removes base sections."
+        },
+        "extend_base": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true, overridden sections are merged with base schema sections (union). If false, overrides completely replace the base."
         }
       }
     }

@@ -186,6 +186,32 @@ artifacts:
           - Severity: Low
           - Recommendations: Add more content_rules
 
+  EXTRA_AUDIT.md:
+    description: "Strategic-lens review findings (append-only, runs after baseline audit)"
+    append_only: true
+    required_sections: []
+    content_rules:
+      - type: "audit_entry"
+        description: "Each extra audit entry is a ## heading followed by ### subsections"
+        required_fields:
+          - "Date"
+          - "Findings"
+        optional_fields:
+          - "Lens"
+          - "Severity"
+          - "Trajectory"
+          - "Tradeoffs"
+        example: |
+          ## Extra Audit — 2026-06-14
+          ### Baseline Status
+          - Validation: pass
+          - Plan accuracy: plan-is-current
+          ### Findings
+          | Finding | Lens | Severity | Action | Already in PLAN? |
+          | No regression tests | Blind Spot Scan | should-fix | Add to Phase 4 | Yes |
+          ### Risks Not Yet Addressed
+          - Unclear rollback strategy for schema changes
+
   DECISIONS.md:
     description: "Design decisions with rationale (append-only)"
     append_only: true

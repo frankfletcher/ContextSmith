@@ -31,8 +31,8 @@
 - [x] 403 tests pass, ruff lint and format clean
 
 ## Workflow Config Schema
-- [ ] Add artifact_schemas extension to workflow_config.schema.json
-- [ ] Define extension mechanism for workflow-specific overrides
+- [x] Add artifact_schemas extension to workflow_config.schema.json
+- [x] Define extension mechanism for workflow-specific overrides
 
 ## Integration Tests
 - [ ] Integration test for sub-phase advancement

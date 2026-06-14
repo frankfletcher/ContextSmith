@@ -15,6 +15,11 @@ ContextSmith orchestrator - artifact schema standards
 - schemas/artifact_schemas.yaml: Artifact schema registry
 - tests/test_validators.py: Validator tests
 - tests/test_orchestrator_state.py: State reader tests
+- scripts/lint_error_counter.py: Persistent lint error frequency counter
+- shared/extra-audit.md: Strategic-lens review template
+- shared/project-audit.md: Full project audit prompt
+- shared/coding-standards.md: Markdown and Python coding standards
+- .contextsmith/audit-with-extra.json: Workflow config chaining audit + extra_audit
 
 ## Known Constraints
 - Must preserve append-only semantics for PHASE_LOG.md, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, DECISIONS.md

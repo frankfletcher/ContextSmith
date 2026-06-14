@@ -121,15 +121,15 @@
   - [x] Test sub-phase not found
 
 ### Phase 7: Workflow Config Schema Update
-- Status: pending
+- Status: completed
 
 #### Sub-phase 7.1: artifact_schemas extension
-- Status: pending
+- Status: completed
 - Context Budget: 16k
 - Tasks:
-  - [ ] Add artifact_schemas section to workflow_config.schema.json
-  - [ ] Define extension mechanism for workflow-specific overrides
-  - [ ] Validate JSON schema syntax
+  - [x] Add artifact_schemas section to workflow_config.schema.json
+  - [x] Define extension mechanism for workflow-specific overrides
+  - [x] Validate JSON schema syntax
 
 ### Phase 8: Integration Tests
 - Status: pending
@@ -175,7 +175,41 @@
 - Context Budget: 16k
 - Tasks:
   - [ ] uv run python scripts/validate_skills.py
-  - [ ] uv run ruff check orchestrator/ --select E,F,W,I
+  - [ ] uv run ruff check orchestrator/ --select E,F,W,I | uv run python scripts/lint_error_counter.py
   - [ ] uv run ruff format orchestrator/ --check
   - [ ] uv run pytest tests/ -v
-  - [ ] markdownlint . --ignore node_modules
+  - [ ] markdownlint . --ignore node_modules | uv run python scripts/lint_error_counter.py
+
+### Phase 11: Tooling and Audit Infrastructure
+- Status: pending
+
+#### Sub-phase 11.1: Extra-audit workflow config
+- Status: pending
+- Context Budget: 8k
+- Tasks:
+  - [ ] Create .contextsmith/audit-with-extra.json workflow config
+  - [ ] Validate config against schema
+  - [ ] Test with dry run
+
+#### Sub-phase 11.2: Lint counter integration
+- Status: pending
+- Context Budget: 8k
+- Tasks:
+  - [ ] Document lint_error_counter.py usage
+  - [ ] Verify AGENTS.md validation commands include counter piping
+  - [ ] Add reset/view instructions
+
+#### Sub-phase 11.3: Decision records backfill
+- Status: pending
+- Context Budget: 8k
+- Tasks:
+  - [ ] Add DECISIONS.md entries for .new merging, lint counter, PROTECTED_FILES cleanup
+  - [ ] Update CONTEXT.md Key Files with new scripts/ and shared/ refs
+
+#### Sub-phase 11.4: Documentation and cleanup
+- Status: pending
+- Context Budget: 16k
+- Tasks:
+  - [ ] Verify .agent_work/tmp/ exists and is gitignored
+  - [ ] Run full validation suite
+  - [ ] Update CHANGELOG.md

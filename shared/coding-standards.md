@@ -58,6 +58,34 @@ Do not add abstractions unless they simplify the current task or protect an exis
 - Avoid broad dependency additions.
 - Preserve public component/API behavior unless requested.
 
+## Markdown Standards
+
+All Markdown files must pass `markdownlint` with these rules enforced:
+
+| Rule | Code | Requirement |
+|------|------|-------------|
+| MD022 | `blanks-around-headings` | Headings must be surrounded by blank lines. A `##` or `###` heading needs a blank line before and after it (except at file start). |
+| MD032 | `blanks-around-lists` | Lists must be surrounded by blank lines. A list item (`-`, `*`, `1.`) needs a blank line before and after the list block. |
+| MD013 | `line-length` | Lines must not exceed the configured maximum (default 80, project-configured 350 for task artifacts). |
+
+### Quick Fixes
+
+```markdown
+# Bad — heading flush with content
+## Section Title
+Content here
+- list item
+
+# Good — blank lines around heading and list
+## Section Title
+
+Content here
+
+- list item
+```
+
+Do not skip `markdownlint` errors. Fix the formatting; do not change substance just to shorten lines.
+
 ## Validation Evidence
 
 Do not claim tests pass unless a test command was run and observed. If validation was not run, state the command and reason.

@@ -15,6 +15,7 @@ STATE_FIX = "fix"
 STATE_VALIDATE = "validate"
 STATE_RALPH_CRITIQUE = "ralph_critique"
 STATE_RALPH_REVISE = "ralph_revise"
+STATE_EXTRA_AUDIT = "extra_audit"
 STATE_CLOSEOUT = "closeout"
 STATE_DONE = "done"
 STATE_BLOCKED = "blocked"
@@ -24,6 +25,7 @@ CANONICAL_STATES = [
     STATE_PLAN,
     STATE_EXECUTE,
     STATE_AUDIT,
+    STATE_EXTRA_AUDIT,
     STATE_FIX,
     STATE_VALIDATE,
     STATE_RALPH_CRITIQUE,

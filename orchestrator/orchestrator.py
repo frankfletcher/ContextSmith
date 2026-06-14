@@ -51,11 +51,13 @@ from orchestrator.validators import (
 
 logger = logging.getLogger(__name__)
 
-# Protected files that should never be overwritten, only appended to
+# Protected files that should never be overwritten, only appended to.
+# RESULT.json is intentionally excluded — it is written fresh each phase by
+# the agent and should be overwritten, not accumulated.
 PROTECTED_FILES = {
     "AUDIT_REPORT.md",
     "EDUCATIONAL_REPORT.md",
-    "RESULT.json",
+    "EXTRA_AUDIT.md",
     "PHASE_LOG.md",
     "DECISIONS.md",
 }
@@ -65,6 +67,7 @@ PROTECTED_FILES = {
 APPEND_ONLY_FILES = {
     "EDUCATIONAL_REPORT.md",
     "AUDIT_REPORT.md",
+    "EXTRA_AUDIT.md",
     "PHASE_LOG.md",
     "DECISIONS.md",
 }
@@ -509,6 +512,47 @@ def _verify_and_repair_append_only_files(state_dir: Path) -> list[str]:
     return repairs
 
 
+def _merge_new_artifact_segments(state_dir: Path) -> list[str]:
+    """Merge .new artifact segments into their parent append-only files.
+
+    Scans the state directory for .new files matching known append-only
+    files. Validates the new content (non-empty, has section headings),
+    appends it to the parent file, and removes the .new segment.
+
+    This removes the agent from the append operation entirely —
+    the agent only produces new content, the orchestrator handles
+    concatenation. Returns list of merge actions (empty = nothing to merge).
+    """
+    merges = []
+    for filename in APPEND_ONLY_FILES:
+        new_path = state_dir / f"{filename}.new"
+        if not new_path.exists():
+            continue
+
+        parent_path = state_dir / filename
+        new_content = new_path.read_text(encoding="utf-8")
+        new_stripped = new_content.strip()
+        if not new_stripped:
+            new_path.unlink()
+            merges.append(f"Removed empty .new segment: {filename}.new")
+            continue
+
+        has_heading = any(line.startswith("##") for line in new_stripped.splitlines())
+
+        if parent_path.exists():
+            old_content = parent_path.read_text(encoding="utf-8")
+            combined = old_content.rstrip("\n") + "\n\n" + new_stripped + "\n"
+            parent_path.write_text(combined, encoding="utf-8")
+        else:
+            parent_path.write_text(new_stripped + "\n", encoding="utf-8")
+
+        new_path.unlink()
+        note = " [WARN: no section heading]" if not has_heading else ""
+        msg = f"Merged {filename}.new ({len(new_stripped)} chars) into {filename}{note}"
+        merges.append(msg)
+    return merges
+
+
 def _apply_result_fallback(harness_result, step_contract, state_dir: Path) -> None:
     """Infer step status from artifact presence when RESULT.json is missing."""
     if harness_result.status not in ("", "unknown", "pending") and (
@@ -888,6 +932,9 @@ def run(
 
     for repair in _verify_and_repair_append_only_files(state_dir):
         logger.warning(f"[orchestrator] {repair}")
+
+    for merge in _merge_new_artifact_segments(state_dir):
+        logger.info(f"[orchestrator] {merge}")
 
     if execution is None:
         return EXIT_BLOCKED

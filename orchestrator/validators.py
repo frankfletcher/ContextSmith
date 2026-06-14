@@ -299,7 +299,8 @@ def validate_artifact_schema(
     Args:
         file_path: Path to the artifact file.
         schema: Artifact schema dict with required_sections, optional_sections, etc.
-        config_overrides: Optional dict with section_requirements overrides from config.
+        config_overrides: Optional dict with per-file required section overrides.
+            Populated from both section_requirements and artifact_schemas config keys.
 
     Returns:
         List of error strings (empty = valid).
@@ -325,6 +326,41 @@ def validate_artifact_schema(
     return errors
 
 
+def _build_artifact_overrides(config: dict, schemas: dict) -> dict[str, list[str]]:
+    """Build section_requirements from artifact_schemas config overrides.
+
+    Reads the artifact_schemas config property and merges each override
+    with its base schema, respecting extend_base and additional_sections.
+
+    Args:
+        config: Full workflow config dict.
+        schemas: Loaded artifact schemas dict.
+
+    Returns:
+        Dict mapping filenames to lists of required sections.
+    """
+    artifact_overrides = config.get("artifact_schemas", {})
+    if not artifact_overrides:
+        return {}
+
+    result = {}
+    for filename, override in artifact_overrides.items():
+        base = schemas.get(filename, {})
+        extend_base = override.get("extend_base", True)
+
+        required = list(base.get("required_sections", [])) if extend_base else []
+        if "required_sections" in override:
+            required = list(set(required) | set(override["required_sections"]))
+
+        additional = override.get("additional_sections", [])
+        required = list(set(required) | set(additional))
+
+        if required:
+            result[filename] = required
+
+    return result
+
+
 def validate_artifacts_with_schemas(
     state_dir: Path, expected_outputs: list[str], config: dict
 ) -> dict:
@@ -333,13 +369,18 @@ def validate_artifacts_with_schemas(
     Args:
         state_dir: Directory containing task state files.
         expected_outputs: List of filenames to validate.
-        config: Configuration dict, may contain "section_requirements" for overrides.
+        config: Configuration dict, may contain "section_requirements" and/or
+                "artifact_schemas" for overrides.
 
     Returns:
         Dict with "passed", "failures", "files_checked", "files_passed".
     """
     schemas = load_artifact_schemas()
-    section_requirements = config.get("section_requirements", {})
+    section_requirements = dict(config.get("section_requirements", {}))
+    artifact_overrides = _build_artifact_overrides(config, schemas)
+
+    for filename, sections in artifact_overrides.items():
+        section_requirements[filename] = sections
 
     failures = []
     files_checked = 0

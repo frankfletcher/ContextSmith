@@ -353,7 +353,7 @@ class TestWorkflowEndToEnd:
 
 
 class TestAppendOnlyIntegration:
-    """Tests for append-only file protection."""
+    """Tests for append-only file protection and .new segment merging."""
 
     def test_snapshot_append_only_files(self):
         """Test snapshot captures append-only file content."""
@@ -394,6 +394,72 @@ class TestAppendOnlyIntegration:
                 f.write("Appended content\n")
             repairs = _verify_and_repair_append_only_files(state_dir)
             assert len(repairs) == 0
+
+    def test_merge_new_artifact_segments_basic(self):
+        """Test .new segment merges into existing file."""
+        import tempfile
+        from orchestrator.orchestrator import _merge_new_artifact_segments
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state_dir = Path(tmpdir)
+            (state_dir / "PHASE_LOG.md").write_text("# PHASE_LOG.md\n\n## Phase 1\n")
+            (state_dir / "PHASE_LOG.md.new").write_text("## Phase 2\n- done\n")
+            merges = _merge_new_artifact_segments(state_dir)
+            assert len(merges) == 1
+            assert "Merged" in merges[0]
+            assert not (state_dir / "PHASE_LOG.md.new").exists()
+            content = (state_dir / "PHASE_LOG.md").read_text()
+            assert "Phase 1" in content
+            assert "Phase 2" in content
+
+    def test_merge_new_artifact_segments_no_new_files(self):
+        """Test no .new files returns empty list."""
+        import tempfile
+        from orchestrator.orchestrator import _merge_new_artifact_segments
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state_dir = Path(tmpdir)
+            merges = _merge_new_artifact_segments(state_dir)
+            assert len(merges) == 0
+
+    def test_merge_new_artifact_segments_separate_file(self):
+        """Test .new segment for a file that doesn't exist yet."""
+        import tempfile
+        from orchestrator.orchestrator import _merge_new_artifact_segments
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state_dir = Path(tmpdir)
+            (state_dir / "DECISIONS.md.new").write_text("## D1\n- Decision: test\n")
+            merges = _merge_new_artifact_segments(state_dir)
+            assert len(merges) == 1
+            assert (state_dir / "DECISIONS.md").exists()
+            content = (state_dir / "DECISIONS.md").read_text()
+            assert "D1" in content
+
+    def test_merge_new_artifact_segments_empty_segment(self):
+        """Test empty .new file is removed without merge."""
+        import tempfile
+        from orchestrator.orchestrator import _merge_new_artifact_segments
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state_dir = Path(tmpdir)
+            (state_dir / "AUDIT_REPORT.md.new").write_text("   \n\n  ")
+            merges = _merge_new_artifact_segments(state_dir)
+            assert len(merges) == 1
+            assert "Removed empty" in merges[0]
+            assert not (state_dir / "AUDIT_REPORT.md.new").exists()
+
+    def test_merge_new_artifact_segments_heading_warning(self):
+        """Test heading warning appears in merge message."""
+        import tempfile
+        from orchestrator.orchestrator import _merge_new_artifact_segments
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state_dir = Path(tmpdir)
+            (state_dir / "EDUCATIONAL_REPORT.md.new").write_text("plain text without heading")
+            merges = _merge_new_artifact_segments(state_dir)
+            assert len(merges) == 1
+            assert "[WARN: no section heading]" in merges[0]
 
 
 class TestPredispatchIntegration:
