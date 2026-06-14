@@ -54,3 +54,9 @@
 - Decision: The extend_base field in ArtifactSchemaOverride defaults to true
 - Reason: Merge-by-default is least-surprise behavior. A workflow author adding required_sections to an override expects them to augment (not replace) the base schema sections. Explicit opt-in to replace mode prevents accidental section loss.
 - Impact: Validators.py._build_artifact_overrides() unions override required_sections with base when extend_base is true; replaces entirely when false. additional_sections always merges regardless.
+
+## D12: Orchestrator Gap — .new Merging Not Available at Runtime
+- Decision: Document that the orchestrator (with `.new` file auto-merging) is part of the planned build, not the current runtime. Agents must manually merge `.new` segments into parent files for now.
+- Reason: The orchestrator's `_merge_new_artifact_segments()` is implemented in `orchestrator/orchestrator.py` but the current production ContextSmith does not use the orchestrator. Agents using `.new` conventions will have orphaned segments unless they merge manually.
+- Impact: Contradiction — agents are directed to write `.new` files (to prepare for orchestrator adoption) but must also manually merge them (because the orchestrator isn't running). When the orchestrator ships, agents must stop manually merging. CONTEXT.md now documents this as a known constraint.
+- When to revisit: Remove this note and stop manual merging when the orchestrator is deployed as the production runtime (see PLAN.md Phase 5+).

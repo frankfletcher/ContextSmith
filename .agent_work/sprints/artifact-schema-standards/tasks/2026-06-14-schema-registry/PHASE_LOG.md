@@ -49,3 +49,11 @@
 - **Changes**: Phase 7 completed. Artifact schema override extension now has both schema definition and validator wiring.
 - **Action**: Full validation suite passed. EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md appended correctly using `>>` heredoc (no `write`). STATUS.md advanced to Phase 8. NEXT_PROMPT.md written for Phase 8.1.
 - **Artifacts**: schemas/workflow_config.schema.json, orchestrator/validators.py
+
+## Phase 8 -> execute
+Date: 2026-06-14
+State: 8.1 -> complete
+Action: Added sub-phase advancement tests
+Result: pass
+Validation: PASS
+Artifacts: tests/test_subphase_advancement.py

@@ -1,13 +1,13 @@
 /contextsmith-run --run-mode phase --validation strict --self-audit true --ralph 3 --mode guided --target-profile generic-local --context-length 120k
 
-You are implementing the Artifact Schema Standards project. Your job is to execute exactly one phase of the 10-phase plan — every sub-phase in it — then stop.
+You are implementing the Artifact Schema Standards project. Your job is to execute exactly one phase of the 11-phase plan — every sub-phase in it — then stop.
 
 Read these files in order:
 
 1. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/STATUS.md` — tells you which phase and sub-phase you're in
 2. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/NEXT_PROMPT.md` — tells you exactly what to do for the current sub-phase
 3. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/CONTEXT.md` — project constraints and file locations
-4. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/PLAN.md` — the full 10-phase plan with sub-phases, context budgets, and tasks
+4. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/PLAN.md` — the full 11-phase plan with sub-phases, context budgets, and tasks
 5. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/CHECKLIST.md` — track what's done per task
 6. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/ARTIFACTS.md` — artifact inventory
 

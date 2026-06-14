@@ -132,15 +132,15 @@
   - [x] Validate JSON schema syntax
 
 ### Phase 8: Integration Tests
-- Status: pending
+- Status: completed
 
 #### Sub-phase 8.1: Sub-phase advancement test
-- Status: pending
+- Status: completed
 - Context Budget: 32k
 - Tasks:
-  - [ ] Add test for _try_advance_subphase with pending sub-phases
-  - [ ] Add test for _try_advance_subphase returns None on all done
-  - [ ] Add test for backward compat with flat plan
+  - [x] Add test for _try_advance_subphase with pending sub-phases
+  - [x] Add test for _try_advance_subphase returns None on all done
+  - [x] Add test for backward compat with flat plan
 
 ### Phase 9: Documentation
 - Status: pending

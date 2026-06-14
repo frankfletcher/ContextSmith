@@ -57,3 +57,19 @@ The change respects all context constraints:
 1. Connect the `artifact_schemas` property to `validators.py` in a follow-up phase
 2. Add integration tests once validator wiring is complete
 3. Add an example workflow config with `artifact_schemas` overrides to documentation
+
+## Sub-phase 8.1: Sub-phase advancement test
+
+### A-F Rubric
+
+| Criterion | Grade | Rationale |
+|-----------|-------|-----------|
+| **Clarity** | A | Test names are self-documenting. Each test has a single clear assertion. Helper methods reduce noise. |
+| **Atomicity** | A | Each tests one behavior: advancement, all-done, flat-plan, status update, empty subphase start. No overlapping concerns. |
+| **Safety** | A | Uses `tempfile.TemporaryDirectory` for all file I/O. No global state mutation. No modification of existing files. `is None` not `== None`. |
+| **Testability** | A | Functions are pure-ish (file I/O isolated to tempdirs). Status/plan/contract are constructed programmatically. Fast (0.03s total). |
+| **Domain Fit** | A | Tests match the exact 3 scenarios from NEXT_PROMPT.md plus reasonable edge cases. Follows existing project test patterns. |
+| **Context Fit** | A | Uses `StepContract` dataclass, `EXIT_CONTINUE` constant, and same helper style as `test_orchestrator_determinism.py`. Fits the orchestration domain naturally. |
+
+### Known Gaps
+- `_check_subphase_dependency()` skip path is now tested — `test_skips_subphase_with_unmet_dependency` covers a sub-phase with an unmet `Dependency` metadata field (references nonexistent "Sub-phase 8.3"). Test verifies the function returns `None` and does not advance the contract subphase_name. **Status**: FIXED in this session. (6/6 tests pass.)

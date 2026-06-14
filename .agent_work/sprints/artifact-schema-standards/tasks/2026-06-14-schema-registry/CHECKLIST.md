@@ -35,8 +35,8 @@
 - [x] Define extension mechanism for workflow-specific overrides
 
 ## Integration Tests
-- [ ] Integration test for sub-phase advancement
-- [ ] Integration test for sub-phase budget extraction in dispatch
+- [x] Integration test for sub-phase advancement
+- [x] Integration test for sub-phase budget extraction in dispatch (covered by unit tests in test_step_compiler.py::TestExtractSubphaseBudget)
 
 ## Documentation
 - [ ] `docs/reference/ARTIFACT_SCHEMAS.md` created

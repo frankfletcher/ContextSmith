@@ -3,60 +3,72 @@
 You are continuing work on the ContextSmith artifact schema standards task.
 
 ## Current Status
-- Phase: 8 of 10
-- Sub-phase: 8.1
+- Phase: 9 of 10
+- Sub-phase: 9.1
 - State: execute
 
 ## Sub-phase
-Sub-phase 8.1: Sub-phase advancement test
+Sub-phase 9.1: Schema registry docs
 
 ## Sub-phase Tasks
-- [ ] Add test for _try_advance_subphase with pending sub-phases
-- [ ] Add test for _try_advance_subphase returns None on all done
-- [ ] Add test for backward compat with flat plan
+- [ ] Write docs/reference/ARTIFACT_SCHEMAS.md
+- [ ] Document PLAN.md hierarchical format
+- [ ] Add examples of sub-phase structure
 
 ## Your Task
-Add integration tests to verify the orchestrator's sub-phase advancement logic (`_try_advance_subphase`). Cover the three scenarios: advancing through pending sub-phases, returning None when all sub-phases are done, and backward compatibility with the flat plan format.
+Write user-facing documentation for the artifact schema registry. Create `docs/reference/ARTIFACT_SCHEMAS.md` documenting:
+- The purpose of the schema registry (`schemas/artifact_schemas.yaml`)
+- How schemas are structured (phase_tree content rule, required/optional sections)
+- PLAN.md hierarchical format (### Phase, #### Sub-phase, - [x] Task)
+- Examples of sub-phase structure with tasks, metadata, and completion tracking
+- STATUS.md Current Sub-phase optional section
+- How validation uses schemas (via `validators.validate_artifact_schema()`)
 
 ## Input Files
 - STATUS.md: Current workflow state
 - PLAN.md: Phase plan with all 10 phases
 - CONTEXT.md: Project context
 - CHECKLIST.md: Task tracking
-- orchestrator/orchestrator.py: Main orchestrator with _try_advance_subphase
-- tests/test_orchestrator_determinism.py: Existing orchestrator tests
-- tests/fixtures/: Test fixture directory
-- schemas/workflow_config.schema.json: Workflow config schema (now has artifact_schemas)
+- schemas/artifact_schemas.yaml: Artifact schema registry
+- orchestrator/validators.py: Schema loading and validation
+- orchestrator/state_reader.py: Plan/status parsing logic
+- shared/documentation-quality.md: Documentation quality reference
+- docs/contributing/documentation-review-checklist.md: Review criteria
+- docs/reference/VERSIONING.md: Existing doc for style reference
 
 ## Output Requirements
-- Add tests to tests/test_orchestrator_determinism.py or a new test file
-- All sub-phase advancement paths must be covered
-- Tests must use existing test fixture patterns
+- Create `docs/reference/ARTIFACT_SCHEMAS.md`
+- Document PLAN.md hierarchical format with examples
+- Use the project voice from docs/contributing/
+- Must pass markdownlint
 - Update CHECKLIST.md
-- Create or append to EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md
+- Create .new segment files for EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md
 
 ## Constraints
-- Context Budget: 32k
-- Must not modify orchestrator/orchestrator.py logic (test only)
-- Must follow existing test patterns (pytest, fixtures)
+- Context Budget: 24k
+- Do not modify orchestrator code or schemas
+- Follow existing doc style from docs/reference/VERSIONING.md
 - Must pass full validation suite on completion
 
-### REPORT FILES: USE `.new` SEGMENTS — ORCHESTRATOR HANDLES MERGING
+### REPORT FILES: USE `.new` SEGMENTS — BUT MERGE MANUALLY
 
-Do NOT write directly to these files. Write a `.new` segment file instead with only the new entry content:
+The orchestrator (with `.new` auto-merging) is part of the planned build, NOT the current runtime. Until it ships:
+
+1. Write `.new` segment files as specified below (this prepares for orchestrator adoption).
+2. **After writing**, manually merge the `.new` content into the parent file by appending.
+3. **Then remove** the `.new` file.
+
+This is a transitional requirement. See DECISIONS.md D12 for the full rationale.
+
+Write these `.new` segment files (and merge manually):
 
 - `EDUCATIONAL_REPORT.md.new` — new sub-phase explanation entry
 - `AUDIT_REPORT.md.new` — new audit rubric entry
 - `PHASE_LOG.md.new` — new phase log entry
 - `DECISIONS.md.new` — new decision entry
 
-The orchestrator automatically merges `.new` files into the parent reports after execution. This removes the append operation from the agent entirely — no risk of overwrite history, no file-existence guessing.
-
 ## Ralph Loop Enforcement
 3 iterations required. Each is critique+fix. Do not skip or collapse.
-1. **Critique** — Review tests against contract, find material defects
-2. **Re-check** — After fixes, if no new defects → no-op; else fix
-3. **Final check** — If no defects → no-op; do not invent changes
 
 ## Self-Audit
 Before closeout, verify:
@@ -66,7 +78,7 @@ Before closeout, verify:
 - Task state updated with compact facts
 
 ## Hard Stop
-Current phase is Phase 8: Integration Tests.
+Current phase is Phase 9: Documentation.
 Do not proceed beyond it. Do not edit files outside this phase scope.
 
 ## Expected Output Format

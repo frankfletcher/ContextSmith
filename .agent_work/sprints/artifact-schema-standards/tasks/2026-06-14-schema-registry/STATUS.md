@@ -1,22 +1,22 @@
 # STATUS.md
 
 ## Current Phase
-Phase 8: Integration Tests
+Phase 9: Documentation
 
 ## Current State
 execute
 
 ## Current Sub-phase
-Sub-phase 8.1: Sub-phase advancement test
+Sub-phase 9.1: Schema registry docs
 
 ## Progress
-- Phase: 8 of 11
-- Completed: 7
-- Remaining: 4
+- Phase: 9 of 11
+- Completed: 8
+- Remaining: 3
 - Retries remaining: 3
 
 ## Next Action
-Add integration tests for sub-phase advancement with pending sub-phases, all-done return None, and backward compat with flat plan.
+Write docs/reference/ARTIFACT_SCHEMAS.md, document PLAN.md hierarchical format, add examples of sub-phase structure.
 
 ## Blocked By
 none
