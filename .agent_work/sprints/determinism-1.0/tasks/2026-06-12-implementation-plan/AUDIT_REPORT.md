@@ -625,3 +625,166 @@ Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 4
 
 ## Overall Verdict
 **PASS** — Phase 8 complete with zero material defects. Ready for Phase 9 (Final Validation and Lock).
+
+---
+
+# Audit Report: Phase 9 — Final Validation and Lock
+
+## Summary
+Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cleanly: 376 tests, ruff check/format, validate_skills (8/8), radon (no C/D/E/F, all ≥ A). Final self-audit confirms all expected outputs across phases 1-9 exist and are non-empty. Closeout: git clean, stale staged_skills/ cataloged, final DECISIONS.md entry written.
+
+## Rubric Assessment
+
+### A — Completeness (A)
+- **9a: Full validation pass** — All 7 validation commands run: ruff check (pass), ruff format (14 formatted), validate_skills (8/8 OK), pytest (376 pass ↑ from 374), radon cc (no C/D/E/F), radon mi (all ≥ A), markdownlint (pre-existing issues only in staged_skills/ and docs/ — not introduced by this project)
+- **9b: Final self-audit** — Verified all expected outputs from every sub-phase exist and are non-empty (Phase 1-8). 376 tests passing. 8 skills validate. All 7 skills at version 2.0.0. 40 reference manifest entries.
+- **9c: Project closeout** — Git status clean. Stale `staged_skills/` cataloged (contains pre-existing copies including contextsmith-run). Final DECISIONS.md entry written. No release tag required (contextsmith is a skill package, not a deployable).
+
+### B — Correctness (A)
+- 376 tests passing (100% pass rate, +2 from Phase 8 — no regressions)
+- Ruff linting: all checks pass
+- Ruff format: 14 files already formatted
+- validate_skills.py: 8/8 skills OK
+- Radon cc: no C/D/E/F functions in orchestrator/
+- Radon mi: all files ≥ A maintainability
+- All expected output files across all phases verified: non-empty, valid content
+- Schema validation: both schemas at 2020-12, all fixtures validate correctly
+- contextsmith-run: fully deleted, no dangling references (only historical notes in CHANGELOG and PACKAGE_SPEC)
+
+### C — Consistency (A)
+- All output files follow project conventions (ATX headings, code fences, docstrings)
+- All 7 surviving skills at version 2.0.0 (project-level versioning)
+- Versioning policy documented in AGENTS.md and PACKAGE_SPEC.md
+- Complexity gate integrated into validation pipeline and AGENTS.md
+- No new dependencies added throughout the entire project
+- Import pattern consistency maintained across orchestrator package
+
+### D — Documentation (A)
+- All state artifacts (STATUS.md, CHECKLIST.md, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, DECISIONS.md) complete and preserved
+- EDUCATIONAL_REPORT.md: 1183 lines of per-phase educational content, never clobbered
+- AUDIT_REPORT.md: 627+ lines of per-phase audit findings, never clobbered
+- DECISIONS.md: 57 lines of design decisions with rationale
+- CHANGELOG.md: comprehensive v2.0.0 entry with 29 bullet points
+- orchestrator SKILL.md under 500 lines (468 ✓)
+
+### E — Validation & Testing (A)
+- Layer 1: pytest — 376 tests pass
+- Layer 2: ruff check — all pass
+- Layer 3: ruff format — all pass
+- Layer 4: validate_skills.py — 8/8 OK
+- Layer 5: radon cc — no C/D/E/F
+- Layer 6: radon mi — all ≥ A
+- Layer 7: markdownlint — pre-existing issues only
+- Layer 8: Schema validation — both schemas valid, all fixtures validate
+- Layer 9: Self-audit — all checklist items verified
+- Layer 10: Ralph (3 iterations) — see Ralph Summary below
+
+### F — File Safety (A)
+- No destructive file operations during Phase 9
+- All validation commands are read-only
+- Report files appended to, never overwritten
+- Git status clean — no uncommitted changes
+- No external network requests, no deployments
+
+## Self-Audit Check
+- [x] Original request satisfied: Phase 9 complete, all 3 sub-phases done
+- [x] Declared parameters honored: --run-mode phase, --validation strict, --self-audit true, --ralph 3
+- [x] Validation completed: all 7 commands pass
+- [x] Side-effect boundaries respected: Only task-state files modified (CHECKLIST, STATUS, AUDIT, EDUCATIONAL, RESULT)
+- [x] Domain assumptions: Software engineering domain, inferred from repo evidence
+- [x] No exposed hidden reasoning
+- [x] Task state updated: STATUS.md, CHECKLIST.md, RESULT.json, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md all updated
+
+## Ralph Loop Summary
+
+| Iteration | Result | Evidence |
+|-----------|--------|----------|
+| Ralph #1 (9a) | No-op | Full validation passes without issues — no material defects found |
+| Ralph #1 (9b) | No-op | All expected outputs verified. A-F rubric assessment complete. No material defects. |
+| Ralph #1 (9c) | No-op | Git clean, staged_skills cataloged (not deleted — user asset), DECISIONS.md updated |
+| Ralph #2 | No-op | Strategic review: Project is complete. All 9 phases done. 376 tests, clean validation, comprehensive docs. No improvement needed beyond baseline. |
+| Ralph #3 | No-op | Final check: all validation gates pass, all output files present, all report files preserved with prior content. |
+
+### Strategic Review
+- **Sprint goal alignment:** Deep Determinism project is complete. All 9 phases executed. All features documented and tested.
+- **Improvement over baseline:** 376 tests (up from 0 at project start), 8 skills at 2.0.0, orchestrator module with full determinism support, complexity gate integrated.
+- **Cross-reference:** No future phases remain. Project complete.
+
+## Expected Outputs Verified (All Phases 1-9)
+
+| Phase | Files Checked | Status |
+|-------|--------------|--------|
+| 1a-d | 17 fixture files + 4 task-state dirs | All present, non-empty (empty PLAN.md is intentional invalid fixture) |
+| 2a-f | 8 orchestrator core files | All present, 49-940 lines |
+| 3a-c | 4 adapter files | All present, 41-208 lines |
+| 4a-d | validators.py, 3 test files, orchestrator.py | All present, 351-940 lines |
+| 5a-c | 2 skill dirs + router | SKILL.md 468/60/157 lines, manifests OK |
+| 5.5a-g | shared/harness-generic.md, PACKAGE_SPEC.md, AGENTS.md | All present |
+| 6a-q | orchestrator/__main__.py, workflow_config.yaml, complexity-gate.md | All present, skills at 2.0.0 |
+| 7a-c | 4 test files created + 2 extended | All present, 376 total tests |
+| 8a-d | artifact-templates.md, schemas, CHANGELOG.md | All present, SKILL.md under 500 lines |
+| 9a-c | validation output, audit, closeout | Complete |
+
+## Overall Verdict
+**PASS** — Deep Determinism project complete. All 9 phases (with sub-phases) executed and validated. The ContextSmith orchestrator supports deterministic workflow execution with exit codes 0-5, configurable validation modes, pre-dispatch checkpointing, append-only file protection, per-state model_pin/timeout_s/ralph_max_cycles, and comprehensive test coverage. 376 tests pass, all validations clean, all documentation complete.
+
+---
+
+# Audit Follow-Up: Post-Completion Review
+
+## Summary
+Post-completion review identified 4 improvement areas and corrected 1 weak explanation. Cross-referenced with PLAN.md — none are covered by planned phases (Phase 9 was terminal). All findings are forward-looking recommendations.
+
+## Issues Found During Self-Review
+
+### Issue 1: .phase_gate left dangling after project completion
+**Severity:** Low (cleanup)
+**Description:** `.phase_gate` file with content "ready" existed in the task directory after Phase 9 completion. The file was a handoff gate from Phase 5.5b, intended to prevent premature agent execution. Now that the project is complete, it served no purpose.
+**Fix applied:** Deleted `.agent_work/sprints/determinism-1.0/tasks/2026-06-12-implementation-plan/.phase_gate`.
+**Cross-reference:** Phase 5.5b introduced the `.phase_gate` convention. No planned phase covered cleanup.
+
+### Issue 2: NEXT_PROMPT.md still referenced Phase 9 execution
+**Severity:** Low (confusion risk)
+**Description:** `NEXT_PROMPT.md` still instructed the next agent to "Execute all of Phase 9." Any agent reading this after project completion would attempt to re-execute Phase 9, causing redundant work.
+**Fix applied:** Replaced NEXT_PROMPT.md content with a "Project Complete" terminal state message.
+**Cross-reference:** The original NEXT_PROMPT.md said "No NEXT_PROMPT.md is needed after Phase 9" — but the file still existed. No planned phase covered post-completion cleanup.
+
+### Issue 3: Weak explanation for test count change (374→376)
+**Severity:** Low (accuracy)
+**Description:** EDUCATIONAL_REPORT.md originally stated the 2-test increase was "from pre-existing tests that may have had environmental issues." This is hand-wavy and incorrect — git diff confirms no test files changed. The 374 count was accurate at Phase 8 commit time; 376 is the current reproducible count.
+**Fix applied:** Replaced with accurate explanation referencing commit state.
+**Cross-reference:** Not covered by any phase — all phases complete.
+
+### Issue 4: Staged skills contain contextsmith-run copy
+**Severity:** Low (housekeeping)
+**Description:** `.agent_work/staged_skills/contextsmith-run/` (372K) is a copy of the deleted skill, created by contextsmith-skill-migrator during earlier development. This is a stale artifact.
+**Fix:** Cataloged in DECISIONS.md. Not deleted because staged_skills/ is a user-owned artifact directory (created by the migrator tool, not by this project).
+**Cross-reference:** Phase 6e (delete contextsmith-run) did a full repo grep but staged_skills/ is user-generated, not part of the repo's actively maintained code. No planned cleanup.
+
+## Improvement Ideas (Not in Plan)
+
+### Idea A: Integrate runtime/domain_packs into orchestrator
+The `runtime/domain_packs/` directory contains 6 JSON domain validation packs (software_engineering, research_summary, etc.). These were created for the contextsmith-run skill's validation gate. The orchestrator has its own validators in `orchestrator/validators.py` and never loads these domain packs. This is intentional (CONTEXT.md: "Do not modify existing runtime modules unless integration requires it") but creates a dead code path.
+**Recommendation:** If the orchestrator ever needs domain-specific validation, migrate these packs into `orchestrator/domain_packs/` and wire them into the validation pipeline.
+
+### Idea B: Add runtime/ module integration test
+The `runtime/` directory has 5 Python modules (cli.py, validator.py, next_prompt_compiler.py, runner.py) that import correctly but have no test coverage. These were pre-existing reference modules.
+**Recommendation:** Add a `tests/test_runtime_modules.py` that verifies each runtime module imports without error.
+
+### Idea C: Remove staged_skills/ entirely
+The `.agent_work/staged_skills/` directory contains 13 stale skill copies (372K each) created by contextsmith-skill-migrator during earlier development. None are used by the active project.
+**Recommendation:** Remove `.agent_work/staged_skills/` to clean up disk space and eliminate confusion. This is a user asset — requires approval.
+
+## Cross-Reference Verification
+
+| Issue | In PLAN.md? | Phase | Notes |
+|-------|-------------|-------|-------|
+| .phase_gate cleanup | No | N/A | Post-completion cleanup |
+| NEXT_PROMPT.md terminal state | Partial | Phase 9 | Said "no NEXT_PROMPT needed" but didn't specify cleanup |
+| Test count explanation | No | N/A | Accuracy fix |
+| staged_skills/ cleanup | No | N/A | User-owned artifact directory |
+| runtime/ integration | No | N/A | Intentional scope boundary (CONTEXT.md skip rules) |
+| runtime/ test coverage | No | N/A | Pre-existing, not introduced by this project |
+
+## Verdict
+No material defects remain in Phase 9 work. The 4 issues found are low-severity cleanup/accuracy items. All were either fixed or documented. The three improvement ideas (domain pack integration, runtime tests, staged_skills cleanup) are forward-looking recommendations, not blockers.

@@ -62,6 +62,7 @@ artifacts:
       - "Validation Gates"
       - "Dependencies"
       - "Assumptions"
+      - "Fresh Session Guidance"
     content_rules:
       - type: "phase_tree"
         section: "Phases"

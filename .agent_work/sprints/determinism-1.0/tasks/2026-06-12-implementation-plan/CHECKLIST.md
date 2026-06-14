@@ -484,14 +484,14 @@ After each implementation phase, before writing RESULT.json:
 ## Phase 9: Final Validation and Lock
 
 ### Sub-phase 9a: Full validation pass
-- [ ] Run ruff check, ruff format --check, validate_skills.py, pytest, markdownlint
-- [ ] Fix remaining issues
+- [x] Run ruff check, ruff format --check, validate_skills.py, pytest, markdownlint
+- [x] Fix remaining issues (none found)
 
 ### Sub-phase 9b: Final self-audit
-- [ ] Audit all phases 1-9 against A-F rubric
-- [ ] Verify every expected_output exists and is non-empty
+- [x] Audit all phases 1-9 against A-F rubric
+- [x] Verify every expected_output exists and is non-empty
 
 ### Sub-phase 9c: Project closeout
-- [ ] Verify git status is clean
-- [ ] Check staged_skills/ for stale artifacts
-- [ ] Write final DECISIONS.md entry
+- [x] Verify git status is clean
+- [x] Check staged_skills/ for stale artifacts
+- [x] Write final DECISIONS.md entry

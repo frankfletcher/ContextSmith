@@ -55,3 +55,23 @@ Fallback is backward-compatible only. Phase 6e ensured no pre-orchestrator RESUL
 
 ### model_pin field
 model_pin is in schema now but the step_compiler already reads it. The full pipeline (schema → step_compiler → StepContract → harness adapter) is now complete. Before this phase, model_pin was settable only through StepContract directly.
+
+## 2026-06-14: Phase 9 — Final Validation and Lock
+
+### Deep Determinism Project Complete
+
+All 9 phases (with approximately 45 sub-phases) of the Deep Determinism project are complete. The project transformed ContextSmith from a collection of standalone skills into a deterministic workflow execution system centered on the orchestrator module.
+
+### Key outcomes:
+- **Orchestrator** (`orchestrator/`) — 12 Python files, state machine with configurable transitions, checkpoint management, harness adapters (OpenCode + generic), comprehensive validation
+- **8 skills** at version 2.0.0 — project-level versioning, contextsmith-run removed, orchestrator and workflow-developer added
+- **376 tests** — covering state reader, checkpoint, step compiler, validators, adapters, determinism features, and integration
+- **Determinism hardening** — exit codes 0-5, validation modes (strict/relaxed/none), pre-dispatch checkpointing, append-only auto-repair, per-state model_pin/timeout_s/ralph_max_cycles
+- **Complexity gate** — radon cc/mi integrated into the validation pipeline, all functions ≤ B complexity, all files ≥ A maintainability
+- **Documentation** — comprehensive CHANGELOG, per-phase educational reports, A-F rubric audits, artifact templates extracted
+
+### staged_skills/
+`.agent_work/staged_skills/` contains 13 pre-existing skill copies including contextsmith-run. These are user assets created by the contextsmith-skill-migrator tool during earlier development. They are not part of the Deep Determinism project artifacts and were left untouched. If cleanup is desired, the entire `.agent_work/staged_skills/` directory can be removed as the canonical skills live in `skills/`.
+
+### No release tag
+ContextSmith is a skill package, not a deployable artifact. Version 2.0.0 is stamped on all 7 surviving SKILL.md files. No git tag was created.
