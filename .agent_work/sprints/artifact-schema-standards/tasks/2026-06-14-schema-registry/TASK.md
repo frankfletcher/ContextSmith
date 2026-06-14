@@ -35,3 +35,10 @@ Create artifact schema standards for the ContextSmith orchestrator's markdown ar
 - New tests cover schema validation edge cases
 - Documentation explains the schema registry and how to extend it
 - Implementation plan audit passes all categories with grade A or B
+
+## Out of Scope
+
+- Modifying existing workflow config files
+- Adding new Python dependencies without approval
+- Implementing a predictive token model for sub-phase budget estimation
+- Adding markdownlint validation directly to the orchestrator (handled by harness)

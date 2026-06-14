@@ -37,6 +37,25 @@ that allows workflows to declare custom section overrides on top of the base sch
 - Must pass JSON schema validation
 - Must run `markdownlint . --ignore node_modules` on any changed Markdown files
 
+## Ralph Loop Enforcement
+3 iterations required. Each is critique+fix. Do not skip or collapse.
+1. **Critique** — Review against contract, find material defects, fix them
+2. **Re-check** — After fixes, if no new defects → no-op; else fix
+3. **Final check** — If no defects → no-op; do not invent changes
+Each iteration needs a compact log entry in Ralph Summary.
+Ralph loops are critique/revision, not repeated tool calls.
+
+## Self-Audit
+Before closeout, verify:
+- Original phase goal satisfied or blocker recorded
+- All validation commands executed or blocker documented
+- Side-effect boundaries respected
+- Task state updated with compact facts
+
+## Hard Stop
+Current phase is Phase 7: Workflow Config Schema Update.
+Do not proceed beyond it. Do not edit files outside this phase scope.
+
 ## Expected Output Format
 
 ```
@@ -51,19 +70,4 @@ that allows workflows to declare custom section overrides on top of the base sch
 
 ## Risks / Next Action
 [any risks or blockers, next sub-phase]
-```
-## Result
-[summary of what was done]
-
-## Evidence
-[list of files created/modified]
-
-## Validation
-[validation checks performed and results]
-
-## Ralph Summary
-[refinement iterations and improvements]
-
-## Risks / Next Action
-[any risks or blockers, next phase]
 ```

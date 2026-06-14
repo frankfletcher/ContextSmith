@@ -102,17 +102,18 @@ artifacts:
     append_only: false
     required_sections:
       - "Project"
-      - "File Map"
-      - "Constraints"
+      - "Known Constraints"
     optional_sections:
+      - "Task Directory"
+      - "Key Files"
       - "Assumptions"
       - "Harness"
       - "Evidence Notes"
       - "Skip Rules"
     content_rules:
-      - type: "file_map"
-        section: "File Map"
-        description: "File map should list relevant files with brief descriptions"
+      - type: "key_value"
+        section: "Key Files"
+        description: "File map lists relevant files with brief descriptions"
         min_items: 1
 
   PHASE_LOG.md:
