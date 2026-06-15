@@ -310,3 +310,126 @@ PLAN.md is current. Phase 11 (4 sub-phases) addresses most remaining gaps. Items
 ### 6. Fresh-Agent Fragility Check
 
 Low risk. STATUS.md, NEXT_PROMPT.md, DECISIONS.md, CONTEXT.md all provide clear context for a fresh agent resuming on Phase 11.1. NEXT_PROMPT.md notes the audit-with-extra.json already exists. The orchestrator gap (manual vs auto-merge) is documented in CONTEXT.md and DECISIONS.md D14.
+## Sub-phase 11.1: Extra-audit workflow config
+
+- **Date**: 2026-06-15
+- **Phase**: Phase 11: Tooling and Audit Infrastructure
+- **Sub-phase**: Sub-phase 11.1: Extra-audit workflow config
+- **Auditor**: opencode agent (contextsmith-run)
+
+### A-F Rubric
+
+| Criterion | Grade | Rationale |
+| --------- | ----- | -------- |
+| **Clarity** | A | The config has a clear structure with well-named states, descriptive field values, and a linear phase_order that is easy to follow. Each state declares inputs, outputs, transitions, permissions, and retry limits explicitly — no hidden behavior. |
+| **Atomicity** | A | The config does exactly one thing: chain audit → extra_audit. It does not modify schemas, code, or other configs. The scope is precisely what Sub-phase 11.1 specified: validate and test the existing config. |
+| **Safety** | A | All states use `read-only` permissions. No external actions, no file editing. The config is idempotent — running it multiple times produces the same result. Validation was performed without modifying the config (no schema violations to fix). |
+| **Testability** | A | Schema validation is deterministic and repeatable via `validate_workflow_config()`. Dry-run verification is reproducible via step contract compilation. Both checks produce binary pass/fail results with clear error messages on failure. |
+| **Domain Fit** | A | The config matches the audit domain conventions: read-only permissions, two audit stages (baseline + strategic), transitions to done/blocked terminal states. Config structure matches `workflow.json` conventions (same state definitions for done/blocked, same transition patterns). |
+| **Context Fit** | A | 8k context budget was more than sufficient — the config is 50 lines, the schema is 320 lines, and the state files are compact. Loaded only the references needed: config, schema, reference workflow, state files, and shared/extra-audit.md. |
+
+### Strengths
+
+- Config is schema-conformant with no violations — indicates careful design during Phase 10.1
+- The dry-run step contract compilation validates the runtime path without executing side effects
+- The config's `extra_audit` state correctly declares `expected_outputs: ["EXTRA_AUDIT.md"]` matching the shared/extra-audit.md persistent artifact specification
+
+### Weaknesses
+
+- None identified. The config is valid, the validation is thorough, and no must-fix issues exist.
+
+### Recommendations
+
+- If STATUS.md access is needed during extra_audit (e.g., to verify current phase/state), add it to the `extra_audit` state's `inputs` list. This is a nice-to-have enhancement for a future phase, not a must-fix.
+## Sub-phase 11.2: Lint counter integration
+
+- **Date**: 2026-06-15
+- **Phase**: Phase 11: Tooling and Audit Infrastructure
+- **Sub-phase**: Sub-phase 11.2: Lint counter integration
+- **Auditor**: opencode agent (contextsmith-run)
+
+### A-F Rubric
+
+| Criterion | Grade | Rationale |
+| --------- | ----- | -------- |
+| **Clarity** | A | All changes to AGENTS.md are explicit: Repository Map entry, validation description, reset command. The script's own docstring provides usage examples. No ambiguity in what each change does. |
+| **Atomicity** | A | Single bounded concern: lint counter documentation and verification. Did not touch the script code, add features, or expand scope beyond the three PLAN.md tasks. |
+| **Safety** | A | Read-only verification confirmed counter piping already works. Script edits verified with a test run. Reset command uses shell redirect — no destructive changes, no files deleted by the documentation itself. |
+| **Testability** | A | Counter can be tested with any error-producing command (`echo` pipe test confirmed working). Reset can be verified by checking the counter file after reset. AGENTS.md commands are copy-paste ready. |
+| **Domain Fit** | A | The project already uses `scripts/` for tooling (`validate_skills.py`). Adding lint counter to that list is consistent. The reset command matches the existing display/view pattern in the same section. |
+| **Context Fit** | A | 8k context budget was appropriate. Only needed to read `scripts/lint_error_counter.py` and `AGENTS.md`. No schemas, orchestrator code, or external references needed. |
+
+### Strengths
+
+- The counter piping was already correct — ruff and markdownlint both pipe through the counter. This indicates good initial design.
+- Adding a reset command fills the one gap in documentation (view was documented, reset was not).
+- The Repository Map now accurately lists both scripts.
+
+### Weaknesses
+
+- None identified. The counter is well-documented, properly piped, and now has complete reset/view instructions.
+
+### Recommendations
+
+- If the lint counter becomes widely used, consider adding a `--reset` flag to the script itself instead of documenting a shell redirection.
+## Sub-phase 11.3: Decision records backfill
+
+- **Date**: 2026-06-15
+- **Phase**: Phase 11: Tooling and Audit Infrastructure
+- **Sub-phase**: Sub-phase 11.3: Decision records backfill
+- **Auditor**: opencode agent (contextsmith-run)
+
+### A-F Rubric
+
+| Criterion | Grade | Rationale |
+| --------- | ----- | -------- |
+| **Clarity** | A | Verification results are clearly documented with a table mapping each required topic to its DECISIONS.md entry. No ambiguity about what was checked and what was found. |
+| **Atomicity** | A | Single bounded sub-phase: verify existing records, no changes needed. Did not add redundant entries, did not modify existing decisions, did not expand scope. |
+| **Safety** | A | Read-only verification. No files modified. No DECISIONS.md or CONTEXT.md changes made. |
+| **Testability** | A | Each verified item can be independently confirmed by reading DECISIONS.md and CONTEXT.md. All entries have explicit discoverable content. |
+| **Domain Fit** | A | The backfill approach (verify before adding) is correct practice — adding duplicate entries would have been worse than leaving well-documented content alone. |
+| **Context Fit** | A | 8k context budget more than sufficient. Only needed to read DECISIONS.md and CONTEXT.md. |
+
+### Strengths
+
+- Decision hygiene was maintained throughout the project — all three required topics had entries added at decision time, not deferred to backfill
+- CONTEXT.md Key Files were kept current as files were added
+
+### Weaknesses
+
+- None. The backfill verified complete coverage without needing additions.
+
+### Recommendations
+
+- Continue the practice of recording decisions at commitment time rather than deferring to backfill phases.
+## Sub-phase 11.4: Documentation and cleanup
+
+- **Date**: 2026-06-15
+- **Phase**: Phase 11: Tooling and Audit Infrastructure
+- **Sub-phase**: Sub-phase 11.4: Documentation and cleanup
+- **Auditor**: opencode agent (contextsmith-run)
+
+### A-F Rubric
+
+| Criterion | Grade | Rationale |
+| --------- | ----- | -------- |
+| **Clarity** | A | All three tasks produce clear verification results: tmp/ exists, validation suite passes with details, CHANGELOG.md updated with structured v2.2.0 entry. |
+| **Atomicity** | A | Single bounded sub-phase covering exactly the three PLAN.md tasks. Did not expand scope into fixing pre-existing markdownlint issues or other cleanup. |
+| **Safety** | A | Read-only verification for tmp/ and gitignore. Validation suite is non-destructive. CHANGELOG.md update is a standard append-only operation. |
+| **Testability** | A | Each task has a clear verification criterion: `test -d`, command exit codes, file modified check. All verifiable independently. |
+| **Domain Fit** | A | The cleanup tasks match standard project closeout conventions. Validation suite is the project's established quality gate. CHANGELOG.md update follows the existing format. |
+| **Context Fit** | A | 16k context budget appropriate for running 5 validation commands and updating one file. |
+
+### Strengths
+
+- All validation commands pass — confirms the project is shipping quality
+- CHANGELOG.md update follows the established v2.1.0 format convention
+- 423 passing tests, ruff clean, validate_skills.py clean — strong quality signal
+
+### Weaknesses
+
+- Minor markdownlint MD022/MD032 issues in new EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md entries — consistent with existing file style (no blank lines between sections in earlier entries)
+
+### Recommendations
+
+- The project is complete. No further recommendations for the artifact schema standards scope.

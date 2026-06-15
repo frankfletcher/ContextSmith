@@ -210,39 +210,109 @@
 
 ### Phase 11: Tooling and Audit Infrastructure
 
-- Status: pending
+- Status: completed
 
 #### Sub-phase 11.1: Extra-audit workflow config
 
-- Status: pending
+- Status: completed
 - Context Budget: 8k
 - Tasks:
-  - [ ] Create .contextsmith/audit-with-extra.json workflow config
-  - [ ] Validate config against schema
-  - [ ] Test with dry run
+  - [x] Create .contextsmith/audit-with-extra.json workflow config [PRE-EXISTING]
+  - [x] Validate config against schema — PASS
+  - [x] Test with dry run — PASS
 
 #### Sub-phase 11.2: Lint counter integration
 
-- Status: pending
+- Status: completed
 - Context Budget: 8k
 - Tasks:
-  - [ ] Document lint_error_counter.py usage
-  - [ ] Verify AGENTS.md validation commands include counter piping
-  - [ ] Add reset/view instructions
+  - [x] Document lint_error_counter.py usage — AGENTS.md Repository Map + description
+  - [x] Verify AGENTS.md validation commands include counter piping — confirmed
+  - [x] Add reset/view instructions — reset command added
 
 #### Sub-phase 11.3: Decision records backfill
 
-- Status: pending
+- Status: completed
 - Context Budget: 8k
 - Tasks:
-  - [ ] Add DECISIONS.md entries for .new merging, lint counter, PROTECTED_FILES cleanup
-  - [ ] Update CONTEXT.md Key Files with new scripts/ and shared/ refs
+  - [x] Add DECISIONS.md entries — D9/D10/D12/D14 all present
+  - [x] Update CONTEXT.md Key Files — all present
 
 #### Sub-phase 11.4: Documentation and cleanup
 
-- Status: pending
+- Status: completed
 - Context Budget: 16k
 - Tasks:
-  - [ ] Verify .agent_work/tmp/ exists and is gitignored
-  - [ ] Run full validation suite
-  - [ ] Update CHANGELOG.md
+  - [x] Verify .agent_work/tmp/ exists and is gitignored
+  - [x] Run full validation suite — all 5 pass
+  - [x] Update CHANGELOG.md — v2.2.0
+
+### Phase 12: Packaging and Distribution
+
+- Status: pending
+
+#### Sub-phase 12.1: Orchestrator packaging
+
+- Status: pending
+- Context Budget: 16k
+- Validation: |pip install -e . && python -m orchestrator.cli --help|
+- Tasks:
+  - [ ] Add pyproject.toml `[project.scripts]` entry point: `contextsmith-orchestrator = "orchestrator.cli:main"`
+  - [ ] Ensure `pip install -e .` makes `python -m orchestrator` and `contextsmith-orchestrator` available
+  - [ ] Verify CLI help output and subcommands work
+
+#### Sub-phase 12.2: Release pipeline fix
+
+- Status: pending
+- Context Budget: 16k
+- Validation: |bash scripts/test_release.sh|
+- Tasks:
+  - [ ] Fix test_release.sh: replace `contextsmith-run` with `contextsmith-workflow-developer`
+  - [ ] Update build_release.py to include `orchestrator/` in release bundle
+  - [ ] Run test_release.sh end-to-end and fix any failures
+  - [ ] Run build_release.py --package --individual and verify dist/ output
+
+#### Sub-phase 12.3: Version consolidation
+
+- Status: pending
+- Context Budget: 8k
+- Validation: |grep -r '"version"' pyproject.toml|, check all skills match
+- Tasks:
+  - [ ] Set pyproject.toml `version` as canonical source
+  - [ ] Update PACKAGE_SPEC.md version to match pyproject.toml
+  - [ ] Update all skill metadata.version to match project version
+  - [ ] Update CHANGELOG.md header if needed
+
+#### Sub-phase 12.4: Orchestrator-as-runtime commitment
+
+- Status: pending
+- Context Budget: 16k
+- Validation: |pytest tests/test_orchestrator_integration.py::TestMergeNewArtifactSegments|
+- Tasks:
+  - [ ] Evaluate D14 gate: condition 1 MET (5 end-to-end tests exist for _merge_new_artifact_segments)
+  - [ ] Evaluate D14 gate: condition 2 MET (user commitment — orchestrator is production runtime)
+  - [ ] Add D14_GATE_PASSED sentinel to .agent_work/ (checked by agents on session start)
+  - [ ] Update AGENTS.md: stop manual .new merging, orchestrator handles it
+  - [ ] Update CONTEXT.md: orchestrator gap note → orchestrator IS the runtime
+  - [ ] Update DECISIONS.md: mark D12/D14 as resolved, add D15 commitment
+  - [ ] Update _merge_new_artifact_segments invocation in orchestrator.run() — already present, verify it fires in production path
+
+#### Sub-phase 12.5: CI/CD setup
+
+- Status: pending
+- Context Budget: 8k
+- Tasks:
+  - [ ] Add `.github/workflows/validate.yml` running full suite on push/PR
+  - [ ] Commands: validate_skills, ruff check, ruff format --check, pytest, markdownlint (scoped)
+  - [ ] Verify workflow syntax with `act` or manual review
+
+#### Sub-phase 12.6: Orchestrator complexity refactor
+
+- Status: pending
+- Context Budget: 16k
+- Validation: |uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "| (must find none)
+- Tasks:
+  - [ ] Extract sub-phase dispatch from `orchestrator.run()` (lines ~940-960)
+  - [ ] Extract checkpoint persistence from `orchestrator.run()` (lines ~713-745)
+  - [ ] Verify cyclomatic complexity drops to ≤ B
+  - [ ] Run full test suite — all pass

@@ -55,6 +55,68 @@
 - [x] Sub-phase 10.1: Run implementation plan audit — no must-fix items found
 - [x] Sub-phase 10.2: Run full validation suite — all 5 commands pass
 
+## Phase 11: Tooling and Audit Infrastructure
+
+### Sub-phase 11.1: Extra-audit workflow config
+
+- [x] Create .contextsmith/audit-with-extra.json workflow config [PRE-EXISTING — verified Phase 10.1]
+- [x] Validate config against schema — PASS (validate_workflow_config: no violations)
+- [x] Test with dry run — PASS (step contract compiles, state readable)
+
+### Sub-phase 11.2: Lint counter integration
+
+- [x] Document lint_error_counter.py usage — added to AGENTS.md Repository Map + description in validation section
+- [x] Verify AGENTS.md validation commands include counter piping — confirmed: both ruff (line 58) and markdownlint (line 61) pipe through counter
+- [x] Add reset/view instructions — added `echo '{}' > .agent_work/lint_error_counts.json` reset command to AGENTS.md
+
+### Sub-phase 11.3: Decision records backfill
+
+- [x] Add DECISIONS.md entries for .new merging, lint counter, PROTECTED_FILES cleanup — VERIFIED: D9 (lint counter), D10 (PROTECTED_FILES), D12/D14 (.new merging) all exist, no additions needed
+- [x] Update CONTEXT.md Key Files with new scripts/ and shared/ refs — VERIFIED: lint_error_counter.py, extra-audit.md, project-audit.md, coding-standards.md all present
+
+### Sub-phase 11.4: Documentation and cleanup
+
+- [x] Verify .agent_work/tmp/ exists and is gitignored — EXISTS, listed in .gitignore line 14
+- [x] Run full validation suite — all 5 commands pass (validate_skills, ruff check, ruff format, pytest 423, markdownlint pre-existing only)
+- [x] Update CHANGELOG.md — added v2.2.0 entry for Phase 11 completion
+
+## Phase 12: Packaging and Distribution
+
+### Sub-phase 12.1: Orchestrator packaging
+
+- [ ] Add pyproject.toml `[project.scripts]` entry point: `contextsmith-orchestrator = "orchestrator.cli:main"`
+- [ ] Ensure `pip install -e .` makes orchestrator available
+- [ ] Verify CLI help and subcommands work
+
+### Sub-phase 12.2: Release pipeline fix
+
+- [ ] Fix test_release.sh: replace contextsmith-run with contextsmith-workflow-developer
+- [ ] Update build_release.py to include orchestrator/ in bundle
+- [ ] Run test_release.sh end-to-end, fix failures
+- [ ] Run build_release.py --package --individual, verify dist/
+
+### Sub-phase 12.3: Version consolidation
+
+- [ ] Set pyproject.toml version as canonical
+- [ ] Update PACKAGE_SPEC.md, skill versions, CHANGELOG.md to match
+
+### Sub-phase 12.4: Orchestrator-as-runtime commitment
+
+- [ ] Evaluate D14 gate conditions (condition 1 MET, condition 2 MET)
+- [ ] Add D14_GATE_PASSED sentinel to .agent_work/
+- [ ] Update AGENTS.md, CONTEXT.md, DECISIONS.md for orchestrator-as-runtime
+- [ ] Verify _merge_new_artifact_segments fires in production path
+
+### Sub-phase 12.5: CI/CD setup
+
+- [ ] Add .github/workflows/validate.yml
+- [ ] Verify workflow syntax
+
+### Sub-phase 12.6: Orchestrator complexity refactor
+
+- [ ] Extract sub-phase dispatch from run() — C(15) → ≤ B
+- [ ] Run full test suite — all pass
+
 ## Validation
 
 - [x] `uv run python scripts/validate_skills.py` passes

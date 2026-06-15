@@ -4,69 +4,46 @@ You are continuing work on the ContextSmith artifact schema standards task.
 
 ## Current Status
 
-- Phase: 11 of 11
-- Sub-phase: 11.1
+- Phase: 12 of 12 — Packaging and Distribution
+- Sub-phase: 12.1 — Orchestrator packaging
 - State: execute
-
-## Sub-phase
-
-Sub-phase 11.1: Extra-audit workflow config
 
 ## Sub-phase Tasks
 
-- [x] Create .contextsmith/audit-with-extra.json workflow config [ALREADY EXISTS — verified in Phase 10.1]
-- [ ] Validate config against schema
-- [ ] Test with dry run
+- [ ] Add pyproject.toml `[project.scripts]` entry point: `contextsmith-orchestrator = "orchestrator.cli:main"`
+- [ ] Ensure `pip install -e .` makes `python -m orchestrator` and `contextsmith-orchestrator` available
+- [ ] Verify CLI help output and subcommands work
 
 ## Your Task
 
-The `.contextsmith/audit-with-extra.json` workflow config already exists. It chains `audit_current_phase` → `extra_audit` with read-only permissions. Your job is to:
+The orchestrator is now the production runtime (D15 commitment). `.new` file auto-merging is active — agents must NOT merge manually. This sub-phase makes the orchestrator CLI installable:
 
-1. **Validate** the config against `schemas/workflow_config.schema.json` — at minimum check that it satisfies the schema (all required fields, valid transitions, valid phase_order, valid domain enum).
-2. **Test with a dry run** — use a safe command to verify the orchestrator can parse and validate the config. If no dry-run command exists, verify by running structural validation and recording the result.
-3. **Document findings** — if the config passes validation, record that. If there are schema violations, fix them.
+1. **Update pyproject.toml**: Add `[project.scripts]` with `contextsmith-orchestrator = "orchestrator.cli:main"`. Ensure the build backend supports CLI entry points (hatchling/flit_core already configured).
+2. **Test installation**: Run `pip install -e .` (or `uv pip install -e .`) and verify `python -m orchestrator.cli --help` and `contextsmith-orchestrator --help` (or equivalent) work.
+3. **Verify no regressions**: Run `uv run pytest tests/ -v` to confirm all tests pass after the change.
 
 ## Input Files
 
-- `.contextsmith/audit-with-extra.json`: Existing workflow config (audit + extra_audit chaining)
-- `.contextsmith/workflow.json`: Reference workflow config (for comparison)
-- `schemas/workflow_config.schema.json`: Schema definition
+- `pyproject.toml`: Build configuration (add entry point)
+- `orchestrator/cli.py`: CLI entry point (already exists, verify arg parsing works)
+- `orchestrator/__main__.py`: Module entry point (already exists for `python -m orchestrator`)
 - `STATUS.md`: Current workflow state
-- `PLAN.md`: Phase plan with all phases and tasks
+- `PLAN.md`: Phase plan
 - `CONTEXT.md`: Project context and constraints
-- `CHECKLIST.md`: Task tracking
-- `ARTIFACTS.md`: Artifact inventory
-- `PHASE_LOG.md`: Phase history
-- `shared/extra-audit.md`: Extra-audit reference (strategic lenses)
-- `shared/project-audit.md`: Full project audit prompt
+- `DECISIONS.md`: D15 orchestrator commitment
 
 ## Output Requirements
 
-- Validate config against schema — record result in CHECKLIST.md
-- Test with dry run or structural validation — record result
-- Create .new segment files for EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md
+- Updated `pyproject.toml` with `[project.scripts]` entry point
+- Working CLI: `python -m orchestrator.cli --help` produces expected output
+- All 423+ tests pass
 
 ## Constraints
 
-- Context Budget: 8k
-- Do not introduce new features or scope
-- Do not modify schemas or orchestrator code unless fixing a must-fix bug
-- Follow existing doc and JSON style conventions
-
-### REPORT FILES: USE `.new` SEGMENTS — BUT MERGE MANUALLY
-
-The orchestrator (with `.new` auto-merging) is part of the planned build, NOT the current runtime. Until it ships:
-
-1. Write `.new` segment files as specified below (this prepares for orchestrator adoption).
-2. **After writing**, manually merge the `.new` content into the parent file by appending.
-3. **Then remove** the `.new` file.
-
-Write these `.new` segment files (and merge manually):
-
-- `EDUCATIONAL_REPORT.md.new` — new sub-phase explanation entry
-- `AUDIT_REPORT.md.new` — new audit rubric entry
-- `PHASE_LOG.md.new` — new phase log entry
-- `DECISIONS.md.new` — new decision entry (if any)
+- Context Budget: 16k
+- Do not modify orchestrator behavior, only packaging
+- Do not change existing tests
+- Follow pep621 conventions for pyproject.toml
 
 ## Ralph Loop Enforcement
 
@@ -75,35 +52,23 @@ Write these `.new` segment files (and merge manually):
 ## Self-Audit
 
 Before closeout, verify:
-
-- Original phase goal satisfied or blocker recorded
-- All validation commands executed or blocker documented
+- `contextsmith-orchestrator` CLI command is available after pip install
+- `python -m orchestrator.cli --help` shows subcommands
+- No test regressions
 - Side-effect boundaries respected
-- Task state updated with compact facts
 
 ## Hard Stop
 
-Current phase is Phase 11: Tooling and Audit Infrastructure.
-Do not proceed beyond it. Do not edit files outside this phase scope.
-Do not fix nice-to-have items — only must-fix.
+Current phase is Phase 12: Packaging and Distribution. Do not proceed beyond sub-phase 12.1. Do not implement Phase 12.2-12.6 tasks.
 
 ## Expected Output Format
 
 ```
-
 ## Result
-
-[summary of changes]
-
 ## Evidence
-
-[list of files modified]
-
+## Self-Audit
+## Ralph Summary
 ## Validation
-
-[validation checks performed and results]
-
+## Declared vs Enforced
 ## Risks / Next Action
-
-[any risks or blockers, next sub-phase]
 ```

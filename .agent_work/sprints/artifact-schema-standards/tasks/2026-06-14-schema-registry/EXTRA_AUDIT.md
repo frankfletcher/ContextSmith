@@ -199,3 +199,99 @@ The weak link is PHASE_LOG.md format inconsistency — an agent parsing it progr
 - Config-override end-to-end test deferred — unit tests cover the pieces, and the full-pipeline test requires a test workflow config that doesn't exist yet (Phase 11.1 creates one).
 - markdownlint across the full repo deferred — pre-existing issues in skills/, AGENTS.md, CLAUDE.md, CHANGELOG.md, test fixtures, and tmp/. Cleaning these is out of scope for this project.
 - Lint counter inflates across all subtrees — no subtree filtering. Acceptable because the orchestrator/ and schemas/ trees are clean, which is the project's scope.
+## Extra Audit — 2026-06-15 (Project Final)
+
+### Baseline Status
+
+- Validation: pass
+- Plan accuracy: plan-is-current — all 11 phases complete, all 21 sub-phases delivered
+
+### Trajectory Assessment
+
+- Current trajectory: converging — all planned work delivered
+- Key observation: The project reached its stated goal (artifact schema standards across the full 11-phase plan) but stopped at the boundary of a larger systemic gap: the packaging and distribution infrastructure has not been updated for the orchestrator age. The project built infrastructure that the release pipeline does not ship.
+
+### Lens: Trajectory
+
+The last 20 commits show a clean dependency chain: schema registry → validator refactor → state reader → step compiler → orchestrator dispatch → tests → docs → audit → tooling. Each phase built on the prior without backtracking. That trajectory is complete.
+
+What comes *after* is undefined. The plan ends here. There is no Phase 12, but there are clear next steps (packaging, CI/CD, orchestrator-as-runtime commitment) that the plan never addressed.
+
+### Lens: Dependency Surface
+
+| Dependency | Status | Risk |
+|---|---|---|
+| Orchestrator as production runtime | Not deployed | **Critical.** The sub-phase advancement, `.new` auto-merge, checkpoint management, and workflow config dispatch are dead code if the orchestrator is never adopted as the production entry point. The D12/D14 gate conditions have never been evaluated. |
+| `contextsmith-run` skill removed | Done | Pre-orchestrator run executor was collapsed into the orchestrator. The release scripts still reference `contextsmith-run`. **Will break** the next attempted release. |
+| `orchestrator/` Python package | Not packaged | The validation pipeline, CLI, and state machine are in `orchestrator/` but excluded from every release artifact. Users must clone the repo. |
+| `.new` file convention | Manual merge only | Works correctly but requires agents to do `cat >> ... && rm ...` after every sub-phase. The orchestrator's `_merge_new_artifact_segments()` exists but is never invoked in production. |
+
+### Lens: Scope Pressure
+
+The original 10-phase plan expanded to 11 phases during execution. Phase 11 (Tooling and Audit Infrastructure) was the scope-creep catch-all — and it was the right call. The extra-audit workflow config, lint counter, and backfill work were genuinely needed.
+
+However, the project also accumulated scope *outside* the plan:
+- `shared/extra-audit.md`, `shared/project-audit.md` — strategic audit references, never planned
+- `scripts/lint_error_counter.py` — user-requested, never planned
+- `orchestrator/constants.py` `STATE_EXTRA_AUDIT` — exists but no workflow config chains it
+- AGENTS.md was rewritten with RTK instructions injected from `@RTK.md` — external dependency not tracked in the plan
+
+The scope pressure was productive. Every addition was justified. But the project now has "adjacent work" that Phase 11 validates without vending.
+
+### Lens: Reusability Leverage
+
+What's reusable outside this project:
+- The orchestrator state machine (`orchestrator/orchestrator.py`) — generic enough for any multi-step agent workflow
+- The schema registry pattern (`schemas/artifact_schemas.yaml`) — transferable to any project with markdown artifact conventions
+- The `.new` file protocol — could become a general append-only safe-write pattern
+- `scripts/lint_error_counter.py` — zero-dependency, pipe-compatible, reusable across projects
+
+What's project-specific:
+- The SKILL.md references are ContextSmith-specific
+- The workflow config schema references specific states (audit, extra_audit) and agents (contextsmith-auditor)
+- The sub-phase advancement logic assumes PLAN.md with `###`/`####`/- hierarchy
+
+### Lens: Blind Spot Scan
+
+What the rubrics do not check:
+
+1. **The orchestrator is not tested end-to-end as a real runtime.** All 423 tests exercise `orchestrator.run()` with mock harnesses and synthetic state directories. No test runs the orchestrator against a real `.contextsmith/audit-with-extra.json` with a real agent harness. The integration test suite verifies the building blocks; it does not verify the assembled machine.
+
+2. **The release pipeline has never been run end-to-end for the current codebase.** `test_release.sh` references `contextsmith-run` which no longer exists. The last `dist/` was built on 2026-06-04 and contains only skills — no orchestrator package. The `publish_release.sh` script has never been exercised.
+
+3. **Version is inconsistent across the project.** `pyproject.toml` says 0.1.0. Skills say 2.0.0. `PACKAGE_SPEC.md` says v1.7.1 in its main metadata but describes v2.0.0 design decisions. `CHANGELOG.md` says v2.2.0 (added this session).
+
+4. **No mechanism prevents a stale NEXT_PROMPT.md.** This session started with a correct one, but there is no automated check that NEXT_PROMPT.md matches STATUS.md phase/sub-phase. The orchestrator's `_generate_next_prompt()` prevents this in managed workflows; manual sessions have no guard.
+
+5. **The `orchestrator/` Python package has no `py.typed` marker and no type stubs.** `cli.py` has untyped `Optional` imports that ruff would flag on stricter settings. Not a blocker for a script-level tool, but prevents adoption as a library.
+
+### Lens: Exit Condition Honesty
+
+**Is the project close enough to done that remaining work is lower-value than stopping?**
+
+No — but not because the plan is incomplete. The 11-phase plan is fully delivered. The reason is that the *distribution* of everything built is incomplete:
+
+- The orchestrator Python package (1243 lines of core logic) is not ship-able
+- The release scripts have bit-rotted (`contextsmith-run` reference)
+- The version is an inconsistent multi-valued mess
+
+If the goal was "complete the artifact schema standards plan," the project is done. Ship.
+
+If the goal was "put ContextSmith into a state where someone can install and run it," the project needs one more phase: packaging and distribution.
+
+### Findings
+
+| Finding | Lens | Severity | Action | Already in PLAN? |
+|---|---|---|---|---|
+| Orchestrator not deployed as production runtime — entire sub-phase mechanism is dead code if never adopted | Trajectory | must-fix (decision) | Commit to orchestrator-as-runtime with go/no-go date, or remove auto-merge and formalize manual merge | No |
+| Release pipeline references deleted `contextsmith-run` — will break on next `publish_release.sh` | Dependency Surface | must-fix | Update `test_release.sh` line 90 to reference `contextsmith-workflow-developer` | No |
+| `orchestrator/` Python package excluded from all release artifacts | Dependency Surface | should-fix | Add orchestrator to the release bundle, or make pip-installable via pyproject.toml | No |
+| Version inconsistency across pyproject.toml (0.1.0), PACKAGE_SPEC.md (v1.7.1), skills (2.0.0), CHANGELOG.md (v2.2.0) | Blind Spot | should-fix | Consolidate all version references to a single source of truth | No |
+| No CI/CD — 423 tests pass today but no automated guard against regression | Blind Spot | should-fix | Add GitHub Actions workflow running full validation suite | No |
+| `orchestrator.run()` cyclomatic complexity C (15) — pre-existing documented debt, still C | Trajectory | acceptable tradeoff | Extraction was deferred to closeout. Closeout happened. It is still C. | No — deferred past closeout |
+| NEXT_PROMPT.md has no staleness guard — manual prompts can drift from STATUS.md | Blind Spot | should-fix | Add mismatch check at session start: compare NEXT_PROMPT.md phase/sub-phase against STATUS.md | No |
+| No end-to-end test for `validate_artifacts_with_schemas()` with config overrides — unit-tested separately, full pipeline untested | Blind Spot | should-fix | Add integration test exercising full config→override→validation pipeline | No (identified in audit finding, not in PLAN) |
+| PHASE_LOG.md has 3 different formats across entries | Blind Spot | acceptable tradeoff | Append-only semantics make retroactive format fixes risky. Schema compliance starts from Phase 7 forward. | No |
+| `.contextsmith/audit-with-extra.json` validated but never executed via real orchestrator run | Blind Spot | acceptable tradeoff | Schema-validated, dry-run passes. Real execution requires orchestrator adoption. | Yes (Phase 11.1) |
+| No mechanism for agents to detect D14 gate status — each agent re-evaluates from scratch | Blind Spot | should-fix | Add `D14_GATE_PASSED` sentinel file that agents check before deciding merge strategy | No |
+

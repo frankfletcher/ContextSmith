@@ -33,6 +33,7 @@ ContextSmith/
 │   ├── concepts/
 │   ├── reference/
 │   └── contributing/
+├── scripts/lint_error_counter.py    # Persistent lint error frequency counter
 ├── scripts/validate_skills.py       # Skill metadata validator
 ├── README.md                        # Project landing page
 ├── PACKAGE_SPEC.md                  # Design decisions and package spec
@@ -63,9 +64,12 @@ rtk uv run pytest tests/ -v
 
 # View accumulated lint error frequencies (top 10 across all runs)
 rtk python -c "import json; d=json.load(open('.agent_work/lint_error_counts.json')); [print(f'{v:4d} {k}') for k,v in sorted(d.items(), key=lambda x:-x[1])[:10]]"
+
+# Reset the lint error counter (clears accumulated frequencies)
+echo '{}' > .agent_work/lint_error_counts.json
 ```
 
-The validation script checks SKILL.md frontmatter, line counts, and reference directory presence. Ruff handles Python linting, formatting, and import sorting. Radon checks cyclomatic complexity (no C/D/E/F allowed). Markdownlint validates all Markdown files. Pytest runs the test suite.
+The validation script checks SKILL.md frontmatter, line counts, and reference directory presence. Ruff handles Python linting, formatting, and import sorting. Radon checks cyclomatic complexity (no C/D/E/F allowed). Markdownlint validates all Markdown files. Pytest runs the test suite. The lint error counter (`scripts/lint_error_counter.py`) pipes through ruff and markdownlint output to accumulate error code frequencies across runs, surfacing the most common issues for targeted standards improvement.
 
 Note: All Python commands should be run with `uv run` to use the project's virtual environment. Dependencies are managed in `pyproject.toml` and locked in `uv.lock`.
 

@@ -114,3 +114,51 @@
 - **Validation**: All validation commands pass (423 pytest, ruff clean, validate_skills.py clean, markdownlint pre-existing only). Structural audit (10.1) found no must-fix gaps.
 - **Artifacts**: RESULT.json, NEXT_PROMPT.md (Phase 11.1)
 - **Action**: Advance to Phase 11: Tooling and Audit Infrastructure.
+## Phase 11: Tooling and Audit Infrastructure — Sub-phase 11.1
+
+- **Status**: Complete
+- **Date**: 2026-06-15
+- **Changes**: Validated `.contextsmith/audit-with-extra.json` against `schemas/workflow_config.schema.json` (PASS — no violations). Ran programmatic dry-run with step contract compilation (PASS — config loads, state reads, contract compiles correctly). Config chains `audit_current_phase` → `extra_audit` with read-only permissions per shared/extra-audit.md specification.
+- **Validation**: Schema validation (validate_workflow_config — PASS). Step contract compilation (dry run — PASS). Both checks confirm the config is well-formed and the orchestrator can parse it.
+- **Artifacts**: `.contextsmith/audit-with-extra.json` (pre-existing, validated this phase)
+- **Action**: Advance to Sub-phase 11.2: Lint counter integration
+## Phase 11: Tooling and Audit Infrastructure — Sub-phase 11.2
+
+- **Status**: Complete
+- **Date**: 2026-06-15
+- **Changes**: Added `scripts/lint_error_counter.py` to AGENTS.md Repository Map. Verified both ruff and markdownlint validation commands already pipe through the counter. Added reset command (`echo '{}' > .agent_work/lint_error_counts.json`). Added description of counter purpose to validation section.
+- **Validation**: Counter test with mock input confirms piping works (MD022 captured successfully). AGENTS.md changes verified by re-read.
+- **Artifacts**: AGENTS.md
+- **Action**: Advance to Sub-phase 11.3: Decision records backfill
+## Phase 11: Tooling and Audit Infrastructure — Sub-phase 11.3
+
+- **Status**: Complete
+- **Date**: 2026-06-15
+- **Changes**: Verified DECISIONS.md backfill is complete — D9 (lint counter), D10 (PROTECTED_FILES), D12/D14 (.new merging) all present with correct rationale. Verified CONTEXT.md Key Files include all current scripts/ and shared/ refs. No additions needed — all content was recorded at decision time.
+- **Validation**: Cross-referenced DECISIONS.md entries against PLAN.md Sub-phase 11.3 tasks. All three topics covered. CONTEXT.md Key Files verified by re-read.
+- **Artifacts**: DECISIONS.md (verified no changes needed), CONTEXT.md (verified no changes needed)
+- **Action**: Advance to Sub-phase 11.4: Documentation and cleanup
+## Phase 11: Tooling and Audit Infrastructure — Sub-phase 11.4
+
+- **Status**: Complete
+- **Date**: 2026-06-15
+- **Changes**: Verified .agent_work/tmp/ exists (in .gitignore line 14). Ran full validation suite — all 5 commands pass (423 pytest, ruff clean, validate_skills clean, markdownlint pre-existing only). Updated CHANGELOG.md with v2.2.0 entry.
+- **Validation**: Full validation suite: PASS
+- **Artifacts**: CHANGELOG.md (v2.2.0 entry)
+- **Action**: Phase 11 complete. All 4 sub-phases delivered. All 11 phases of artifact schema standards project complete.
+## Phase 11: Tooling and Audit Infrastructure — Complete
+
+- **Status**: Complete
+- **Date**: 2026-06-15
+- **Changes**: Phase 11 completed across 4 sub-phases. 11.1 validated extra-audit workflow config (schema PASS, dry-run PASS). 11.2 integrated lint counter into AGENTS.md (Repository Map, reset command, description). 11.3 verified decision records backfill (D9/D10/D12/D14 all present). 11.4 ran full validation suite and updated CHANGELOG.md.
+- **Validation**: All 5 validation commands pass. 423 pytest. Ruff clean. Validate_skills clean.
+- **Artifacts**: RESULT.json, NEXT_PROMPT.md, CHANGELOG.md (v2.2.0), AGENTS.md
+- **Action**: Project complete. All 11 phases of the artifact schema standards project are delivered.
+## Phase 11 → Phase 12 Transition
+
+- **Status**: Phase 11 Complete → Phase 12 initiated
+- **Date**: 2026-06-15
+- **Changes**: Added Phase 12 (Packaging and Distribution) with 6 sub-phases (12.1-12.6) to PLAN.md. Updated STATUS.md to Phase 12.1. Added CHECKLIST.md entries. Added D15 (Orchestrator-as-Runtime Commitment) to DECISIONS.md, marking D14 as resolved. Updated CONTEXT.md: orchestrator gap note replaced with orchestrator-as-runtime. Updated ARTIFACTS.md with Phase 12 files. Wrote NEXT_PROMPT.md for Phase 12.1. Updated RESULT.json for Phase 12 start.
+- **Validation**: PLAN.md structure verified. All cross-references (PLAN.md → STATUS.md → CHECKLIST.md → DECISIONS.md → CONTEXT.md → ARTIFACTS.md) consistent.
+- **Artifacts**: PLAN.md, STATUS.md, CHECKLIST.md, DECISIONS.md, CONTEXT.md, ARTIFACTS.md, NEXT_PROMPT.md, RESULT.json
+- **Action**: Phase 12.1 is next: orchestrator packaging (CLI entry point, pip-installable).

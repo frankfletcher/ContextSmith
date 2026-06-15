@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 11: Tooling and Audit Infrastructure
+Phase 12: Packaging and Distribution
 
 ## Current State
 
@@ -10,18 +10,17 @@ execute
 
 ## Current Sub-phase
 
-Sub-phase 11.1: Extra-audit workflow config
+Sub-phase 12.1: Orchestrator packaging
 
 ## Progress
 
-- Phase: 11 of 11
-- Completed: 10
-- Remaining: 1
-- Retries remaining: 3
+- Phase: 12 of 12
+- Completed: 11 phases (1-11), 21 sub-phases
+- Remaining: Phase 12 (6 sub-phases: 12.1-12.6)
 
 ## Next Action
 
-Create .contextsmith/audit-with-extra.json workflow config that chains audit + extra_audit states. Validate against schema and test with dry run.
+Add pyproject.toml CLI entry point for orchestrator. Ensure `pip install -e .` makes the orchestrator available.
 
 ## Blocked By
 

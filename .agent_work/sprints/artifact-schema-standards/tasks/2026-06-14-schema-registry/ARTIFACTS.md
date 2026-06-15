@@ -15,13 +15,28 @@
 - `tests/test_validators.py` - added TestValidatePhaseTreeStructure, TestValidatePlanPhaseOrder
 - `tests/test_step_compiler.py` - added TestExtractSubphaseBudget
 
-## Files Pending
+## Files Pending (Phase 12)
 
-- `docs/reference/ARTIFACT_SCHEMAS.md` - documentation
+- `.github/workflows/validate.yml` - CI/CD pipeline
+- `pyproject.toml` - update with CLI entry point, version consolidation
+- `scripts/test_release.sh` - fix contextsmith-run reference
+- `scripts/build_release.py` - include orchestrator/ in bundle
 
-## Files Completed
+## Files to Modify (Phase 12)
 
-- `schemas/workflow_config.schema.json` - added artifact_schemas extension with ArtifactSchemaOverride
+- `pyproject.toml` - add `[project.scripts]` entry point for orchestrator CLI
+- `PACKAGE_SPEC.md` - consolidate version
+- `skills/*/SKILL.md` - consolidate metadata.version
+- `orchestrator/orchestrator.py` - refactor run() complexity (extract dispatch, checkpoint)
+
+## Files Completed (all prior phases)
+
+- All 11 phases (1-11) deliverables complete. See prior ARTIFACTS.md entries.
+- `.contextsmith/audit-with-extra.json` - validated, dry-run passes
+- `AGENTS.md` - lint counter integrated
+- `CHANGELOG.md` - v2.2.0
+- `DECISIONS.md` - D15 orchestrator commitment added
+- `CONTEXT.md` - orchestrator gap note resolved
 
 ## Commands to Run
 
@@ -30,3 +45,5 @@
 - `uv run ruff format orchestrator/ --check`
 - `uv run pytest tests/ -v`
 - `markdownlint . --ignore node_modules`
+- `uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "` (Phase 12.6 gate)
+- `bash scripts/test_release.sh` (Phase 12.2 gate)

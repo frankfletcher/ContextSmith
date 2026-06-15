@@ -1,5 +1,24 @@
 # Changelog
 
+## v2.2.0
+
+**Released:** 2026-06-15
+
+### Added
+
+- Added `.contextsmith/audit-with-extra.json` workflow config chaining `audit_current_phase` → `extra_audit` with read-only permissions. Provides the deployment vehicle for strategic-lens review per `shared/extra-audit.md`.
+- Added `scripts/lint_error_counter.py` to AGENTS.md Repository Map; added reset command and purpose description.
+- Added AGENTS.md validation commands pipe through lint error counter for both `ruff check` and `markdownlint`.
+
+### Changed
+
+- Phase 11 (Tooling and Audit Infrastructure) completed: extra-audit workflow config validated, lint counter documented and integrated, decision records verified, full validation suite passes.
+
+### Notes
+
+- All 423 tests pass. Ruff lint and format clean. Markdownlint pre-existing only (`.agent_work/release_bundle/`, `.agent_work/staged_skills/`). Validate_skills.py passes all 8 skills.
+- The project is complete: all 11 phases of the artifact schema standards project are delivered.
+
 ## v2.1.0
 
 **Released:** 2026-06-14

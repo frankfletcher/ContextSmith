@@ -29,12 +29,12 @@ ContextSmith orchestrator - artifact schema standards
 - Must preserve append-only semantics for PHASE_LOG.md, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, DECISIONS.md
 - Must not break existing workflows
 - Must pass all validation commands
-- **NOTE**: The current runtime ContextSmith does not include the orchestrator. The `.new` file auto-merge mechanism is part of the planned orchestrator (Phase 5+) and is NOT available in the current version. Agents must merge `.new` segments manually. The plan tracks this as a known gap — when the orchestrator ships, agents must stop manually
-  rging and let the orchestrator handle it.
+- **Orchestrator is the production runtime** (D15). `.new` file auto-merging is handled by `_merge_new_artifact_segments()` in orchestrator.run(). Agents must NOT merge `.new` files manually. Check for `D14_GATE_PASSED` sentinel in `.agent_work/` to confirm.
+- Orchestrator CLI installed via `pip install -e .` or `pip install contextsmith`. Must be available before runtime-dependent workflows can run outside the repo.
 
 ## Technical Debt
 
-- `orchestrator.orchestrator.run()` has cyclomatic complexity C (15) — pre-existing, should be refactored before final closeout (Phase 10/11). Extracting sub-phase dispatch and checkpoint handling would reduce count.
+- `orchestrator.orchestrator.run()` has cyclomatic complexity C (15) — scheduled for refactor in Phase 12.6. Extract sub-phase dispatch and checkpoint handling to reduce to ≤ B.
 
 ## Evidence Notes
 

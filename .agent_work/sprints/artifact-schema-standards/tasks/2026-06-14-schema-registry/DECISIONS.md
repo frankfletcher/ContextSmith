@@ -66,12 +66,12 @@
 - Reason: Merge-by-default is least-surprise behavior. A workflow author adding required_sections to an override expects them to augment (not replace) the base schema sections. Explicit opt-in to replace mode prevents accidental section loss.
 - Impact: Validators.py._build_artifact_overrides() unions override required_sections with base when extend_base is true; replaces entirely when false. additional_sections always merges regardless.
 
-## D12: Orchestrator Gap — .new Merging Not Available at Runtime
+## D12: Orchestrator Gap — .new Merging Not Available at Runtime (SUPERSEDED by D15)
 
 - Decision: Document that the orchestrator (with `.new` file auto-merging) is part of the planned build, not the current runtime. Agents must manually merge `.new` segments into parent files for now.
 - Reason: The orchestrator's `_merge_new_artifact_segments()` is implemented in `orchestrator/orchestrator.py` but the current production ContextSmith does not use the orchestrator. Agents using `.new` conventions will have orphaned segments unless they merge manually.
 - Impact: Contradiction — agents are directed to write `.new` files (to prepare for orchestrator adoption) but must also manually merge them (because the orchestrator isn't running). When the orchestrator ships, agents must stop manually merging. CONTEXT.md now documents this as a known constraint.
-- When to revisit: Remove this note and stop manual merging when the orchestrator is deployed as the production runtime (see PLAN.md Phase 5+).
+- When to revisit: Resolved. See D15. The orchestrator IS the production runtime. Agents must NOT merge `.new` files manually — `_merge_new_artifact_segments()` handles it.
 
 ## D13: ARTIFACT_SCHEMAS.md Content Scope
 
@@ -79,11 +79,23 @@
 - **Reason**: The schema registry is a cross-cutting concern — documentation that covers only the YAML format would leave users guessing how validation works. Including the pipeline makes the doc self-contained.
 - **Impact**: The document is more useful as a single reference but may need updating if the validation pipeline gains new functions
 
-## D14: Orchestrator Adoption Gate
+## D14: Orchestrator Adoption Gate (RESOLVED — see D15)
 
 - **Decision**: Define the concrete condition for when orchestrator `.new` auto-merging activates and manual merging stops. The gate triggers when BOTH conditions are met:
   1. The orchestrator's `_merge_new_artifact_segments()` has been exercised by at least one end-to-end integration test that verifies auto-merge replaces manual `cat >>` correctly.
   2. A workflow config exists in the repo that routes through `orchestrator.run()` as the production entry point (not just unit-test invocation).
-- **Reason**: Vague conditions ("when the orchestrator ships" from D12) leave ambiguity. Agents need a checkable rule they can evaluate without asking. EITHER condition alone is insufficient — the code could work in tests but lack a real config, or a config could exist but the auto-merge path could be untested.
-- **Impact**: Until D14 gate passes, agents continue merging `.new` segments manually. After the gate fires, manual merging becomes a bug (the orchestrator handles it). D12 should be revisited when the gate fires — remove the "manually merge" instruction and remove D14 as resolved.
-- **When to revisit**: Check at the start of each phase. If both conditions are met, remove D14, update D12 to simply state "orchestrator handles merging", remove manual-merge instructions from NEXT_PROMPT.md templates, and stop appending in this session.
+- **Reason**: Vague conditions ("when the orchestrator ships" from D12) leave ambiguity. Agents need a checkable rule they can evaluate without asking.
+- **Resolution**: Condition 1 was met during Phase 8 (5 tests in test_orchestrator_integration.py). Condition 2 is met by D15 commitment — the orchestrator IS the production runtime. D14 gate is now considered passed. See D15 for the commitment and migration plan.
+- **When to revisit**: Resolved. Agents should check D14_GATE_PASSED sentinel in .agent_work/ to determine merge strategy.
+
+## D15: Orchestrator-as-Runtime Commitment
+
+- **Decision**: The orchestrator is the production runtime for ContextSmith. `.new` file auto-merging activates. Manual merging stops. The orchestrator CLI (`contextsmith-orchestrator` / `python -m orchestrator`) is the primary entry point, and skills may also invoke it programmatically.
+- **Reason**: The project built elaborate infrastructure (sub-phase advancement, auto-merge, checkpoint management, workflow config dispatch) that depends on the orchestrator being the runtime. The D14 gate conditions are met (end-to-end tests exist, commitment is now explicit). Continuing manual merging would maintain a known gap indefinitely.
+- **Impact**:
+  - `.new` file auto-merging via `_merge_new_artifact_segments()` is now the production path. Agents must NOT merge `.new` files manually.
+  - D12 is superseded — the orchestrator gap is closed.
+  - A `D14_GATE_PASSED` sentinel file in `.agent_work/` provides a machine-checkable flag.
+  - AGENTS.md, CONTEXT.md updated to reflect orchestrator-as-runtime.
+  - NEXT_PROMPT.md templates updated: remove manual-merge instructions, rely on orchestrator merge.
+- **Unresolved**: The orchestrator CLI must be installed via `pip install -e .` or equivalent (Phase 12.1). Until then, the runtime is available from the repo checkout but not from a release install.
