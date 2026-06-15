@@ -1,6 +1,7 @@
 # Phase 7 Audit Report
 
 ## Summary Grade
+
 A
 
 ## Strengths

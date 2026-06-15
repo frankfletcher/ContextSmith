@@ -34,7 +34,11 @@ behavioral_contracts:
 ## Context Summary
 
 **The idea (from `top5_ideas_to_implement.md`, Idea #1):**
-There are 42 files in `shared/` that get copied into each skill's `references/` for standalone installation. Keeping them in sync is manual — every edit to a shared reference requires deciding whether each of 5 skills needs an updated copy (42 × 5 = 210 potential operations). The sync script automates propagation; the release builder packages everything for distribution. These are force multipliers that make every future edit safer and faster.
+There are 42 files in `shared/` that get copied into each skill's `references/` for standalone
+installation. Keeping them in sync is manual — every edit to a shared reference requires deciding
+whether each of 5 skills needs an updated copy (42 × 5 = 210 potential operations). The sync script
+automates propagation; the release builder packages everything for distribution. These are force
+multipliers that make every future edit safer and faster.
 
 **Backlog items from the idea:**
 
@@ -44,6 +48,7 @@ There are 42 files in `shared/` that get copied into each skill's `references/` 
 ## Existing Code Audit
 
 ### `scripts/sync_shared_refs.py` — COMPLETE (160 lines)
+
 A production-ready sync tool with full CLI surface:
 
 - `--skill <name>` / `--all` for targeted or bulk sync
@@ -62,6 +67,7 @@ A production-ready sync tool with full CLI surface:
 - No summary report (e.g., JSON output of what changed for CI integration).
 
 ### `scripts/package_skill.sh` — PARTIALLY COMPLETE (75 lines)
+
 A functional packaging script with these capabilities:
 
 - Validates skill directory and SKILL.md existence
@@ -80,6 +86,7 @@ A functional packaging script with these capabilities:
 - No SHA-256 checksum file alongside the zip
 
 ### `scripts/validate_skills.py` — FUNCTIONAL (200 lines)
+
 Covers:
 
 - SKILL.md frontmatter validation (name, description, metadata.version)
