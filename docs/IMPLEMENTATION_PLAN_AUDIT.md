@@ -61,27 +61,33 @@ Phase 2: Port the UI to Linux.
 Better:
 
 ```markdown
+
 ## Phase 2: Establish Linux UI startup path
 
 Goal: Make the app launch the main UI window on Linux.
 
 Likely files:
+
 - `src/platform/*`
 - `src/main/*`
 - `package.json` or build config
 
 Tasks:
+
 1. Identify Windows/macOS-only startup assumptions.
 2. Replace only the minimum platform-specific path needed for Linux launch.
 3. Add or update one smoke test if the repo supports it.
 
 Validation:
+
 - Run the narrowest launch/build command available.
 
 Stop condition:
+
 - UI launches on Linux, or blocker is documented with exact file/error evidence.
 
 Debrief:
+
 - Completed
 - Evidence
 - Blockers

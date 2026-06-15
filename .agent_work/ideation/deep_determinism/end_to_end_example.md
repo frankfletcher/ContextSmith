@@ -15,30 +15,44 @@ User: /contextsmith-workflow-developer build me a skill for code review
 ## Step 2: Skill Gathers Input (Page-Flow)
 
 **Question 1:**
+
 ```
 Question: "What kind of workflow should I create?"
 Header: "Workflow Type"
 Options:
+
   - Label: "Coding"
+
     Description: "Software engineering: implement, test, review, deploy"
+
   - Label: "Writing"
+
     Description: "Content creation: draft, edit, review, publish"
+
   - Label: "Research"
+
     Description: "Analysis: gather sources, synthesize, audit, report"
 ```
 
 **User selects:** "Coding"
 
 **Question 2:**
+
 ```
 Question: "How much review should the output get?"
 Header: "Quality Level"
 Options:
+
   - Label: "Quick"
+
     Description: "One pass, minimal review, fast delivery"
+
   - Label: "Standard"
+
     Description: "Audit gate + validation, balanced quality"
+
   - Label: "Thorough"
+
     Description: "Audit + Ralph loops + validation, highest quality"
 ```
 
@@ -47,10 +61,11 @@ Options:
 ## Step 3: Confirmation
 
 ```
+
 ## Parameters
 
 | Flag | Value | Why |
-|------|-------|-----|
+| ------ | ------- | ----- |
 | `--mode` | `guided` | Default for interactive work |
 | `--target-profile` | `generic-local` | No model specified |
 | `--context-length` | `64k` | Default |
@@ -94,10 +109,11 @@ User: /contextsmith-orchestrator run the workflow in .agent_work/sprints/code-re
 ## Step 6: Orchestrator Confirmation
 
 ```
+
 ## Parameters
 
 | Flag | Value | Why |
-|------|-------|-----|
+| ------ | ------- | ----- |
 | `--mode` | `guided` | Default for interactive work |
 | `--workflow` | `workflow_config.yaml` | User provided |
 | `--state` | `.agent_work/.../2026-06-12-code-review-skill/` | User provided |
@@ -136,8 +152,10 @@ Agent reads task state, understands the project structure, writes STATUS.md upda
 ```
 
 Agent reads NEXT_PROMPT.md, which says:
+
 ```
 Create a SKILL.md for a code review skill. Include:
+
 - Frontmatter with name, description, metadata
 - Workflow for reviewing code changes
 - Validation gates
@@ -163,6 +181,7 @@ Agent creates the SKILL.md, writes ARTIFACTS.md and PHASE_LOG.md.
 ```
 
 Agent reads SKILL.md, checks for:
+
 - Valid frontmatter
 - Specific description
 - Reference manifest
@@ -170,13 +189,16 @@ Agent reads SKILL.md, checks for:
 - Loop safety
 
 Agent writes AUDIT_REPORT.md:
+
 ```markdown
+
 # Audit Report
 
 ## Summary
 Skill passes structural and semantic checks.
 
 ## Findings
+
 - Low: description could be more specific about review types
 - Info: reference manifest includes 3 shared references
 
@@ -234,12 +256,14 @@ pass
 ## What the User Sees
 
 The user sees:
+
 1. Two confirmation dialogs (workflow-developer, orchestrator)
 2. Real-time progress as each phase executes
 3. Validation results after each phase
 4. Final summary when complete
 
 The user can:
+
 - Modify parameters at any confirmation
 - Interrupt with Ctrl-C (checkpoint saved)
 - Resume later (orchestrator reads checkpoint)

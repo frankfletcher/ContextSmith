@@ -1,6 +1,7 @@
 # Decisions: Runtime Enforcement for ContextSmith Skills
 
 ## Artifact Manifest
+
 - artifact_type: decisions
 - parent_task: TASK.md
 - status: initial decisions recorded
@@ -44,6 +45,7 @@ Decision: Keep the validator core universal and express domain-specific rules as
 Reason: The system should work for skills, agents, and prompts across coding, writing, research, scheduling, purchase/travel, education, and unknown fallback tasks.
 
 ## Phase 0 Durable Facts (2026-06-02)
+
 - **Packaging is manifest-driven**: `sync_shared_refs.py` only copies files declared in `reference_manifest.yml`. No wildcard or directory-sweep behavior.
 - **No file-type filtering**: the sync script can copy `.py`, `.yml`, `.json`, or any other extension if declared in the manifest.
 - **`reference_manifest.yml` excluded from zips**: `package_skill.sh:119` explicitly excludes it. Installed skills rely on `MANIFEST.json` (auto-generated with sha256 checksums).
@@ -148,6 +150,7 @@ The validation rules for requirements_chain (8 rules), approval_record (12 rules
 Authorization: Phase 2A (Minimal Validator Core) is authorized to proceed after the Phase 1C correction is applied.
 
 Reason: The architecture review confirms the schemas are universally applicable, have explicit approval boundaries, are small-model emit-friendly, and have deterministic validation rules. The one correction (software_engineering approval_gates consistency) is a data fix, not a schema redesign.
+
 - Whether package design changes require a `PACKAGE_SPEC.md` update.
 - Whether opencode can enforce validator success as a closeout or permission gate.
 - Which additional domain packs should be added after the starter set.
@@ -164,6 +167,7 @@ Status: Open — blocks Phase 8B rollout
 **Impact:** The Phase 2E smoke test worked by manually copying files with preserved paths, not through manifest-driven sync. An installed `contextsmith-run` skill will have runtime files in the wrong location, making the CLI invocations in SKILL.md step 9 and the Runtime Validators subsection non-functional.
 
 **Options:**
+
 1. **Separate runtime package** — ship `contextsmith-runtime` as its own installable package, not per-skill. Requires install ordering and path resolution.
 2. **Post-install path rewrite** — add a post-install hook that reconstructs the `runtime/` directory from flattened `references/` files. Fragile and adds complexity.
 3. **Extend sync script** — modify `sync_shared_refs.py` to preserve directory structure for `local: true` entries. Changes packaging behavior for all skills.

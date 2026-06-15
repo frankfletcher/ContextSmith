@@ -9,7 +9,7 @@ When working in opencode, select or recommend an agent that matches the ContextS
 The value of custom agents is not temperature control but **permission boundaries**, **step limits**, and **model pinning**. These are the mechanisms that enforce determinism — the model cannot edit files it doesn't have permission for, cannot run arbitrary bash, and cannot exceed step limits.
 
 | ContextSmith Role | Recommended Agent | Max Steps | Key Permissions |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Agent Evaluator (audit) | `@contextsmith-auditor` or built-in `Plan` | 10 | edit deny, bash deny, webfetch deny |
 | Skill Engineer (create/edit) | `@contextsmith-builder` or built-in `Build` | — | edit allow, bash allow, external_directory deny |
 | Skill Migrator (batch migrate) | `@contextsmith-migrator` or built-in `Build` | — | edit allow, bash ask, git allow |
@@ -76,7 +76,7 @@ permission:
 If the user has ContextSmith commands configured (see **Command Configs** below), use them as entry points:
 
 | Command | Purpose | Equivalent |
-|---|---|---|
+| --- | --- | --- |
 | `/contextsmith-audit` | Audit an artifact | Load agent-evaluator skill |
 | `/contextsmith-build` | Create or improve a skill | Load skill-engineer skill |
 | `/contextsmith-migrate` | Migrate skills | Load skill-migrator skill |
@@ -142,6 +142,7 @@ If the user has ContextSmith custom tools installed (see **Tool Configs** below)
 3. **After editing a SKILL.md**, call `contextsmith_validate` to run the validation script.
 
 If tools are not available, fall back to inline bash commands:
+
 - Phase validation: `python scripts/validate_skills.py`
 - Artifact check: `ls <expected-path>` or `test -f <path>`
 
@@ -243,6 +244,7 @@ If the user has the ContextSmith workflow guard plugin installed, the following 
 - **Workflow state survives compaction**: When the session context is compacted, the current phase, completed phases, and pending validations are injected into the compaction summary.
 
 If the plugin is not installed, remind the model to:
+
 1. Write workflow state to `.agent_work/` files regularly (they survive compaction)
 2. Run `python scripts/validate_skills.py` after editing SKILL.md files
 

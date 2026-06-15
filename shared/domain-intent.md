@@ -29,7 +29,9 @@ Use `references/side-effect-matrix.md` to choose interaction mode.
 Include a compact domain report when useful:
 
 ```markdown
+
 ## Detected Domain and Intent
+
 - Domain:
 - Confidence:
 - Side-effect risk:

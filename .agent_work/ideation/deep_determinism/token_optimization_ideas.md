@@ -5,6 +5,7 @@ Date: 2026-06-05
 ## Problem
 
 Two separate concerns:
+
 1. **Startup cost** — when the user first asks a question, opencode loads system prompt, tool schemas, AGENTS.md, custom rules, and skill descriptions. For small models, this leaves little context buffer.
 2. **Invocation cost** — when a ContextSmith skill is invoked, the full SKILL.md loads. For small models, `contextsmith-run` alone is ~4,000 tokens.
 
@@ -17,7 +18,7 @@ Opencode's system prompt and tool schemas are the dominant cost (~15-16k tokens)
 ### Startup Cost (configurable files)
 
 | Component | Bytes | Est. Tokens |
-|-----------|------:|------------:|
+| ----------- | ------: | ------------: |
 | AGENTS.md | 7,063 | ~690 |
 | Skill descriptions (7 skills) | ~ | ~380 |
 | CLAUDE.md | 226 | ~20 |
@@ -27,7 +28,7 @@ Opencode's system prompt and tool schemas are the dominant cost (~15-16k tokens)
 ### Invocation Cost (installed SKILL.md files)
 
 | Skill | Bytes | Est. Tokens |
-|-------|------:|------------:|
+| ------- | ------: | ------------: |
 | contextsmith-run | 15,238 | ~4,000 |
 | contextsmith-prompt-engineer | 14,313 | ~3,800 |
 | contextsmith-instruction-engineer | 13,315 | ~3,500 |
@@ -42,7 +43,7 @@ Opencode's system prompt and tool schemas are the dominant cost (~15-16k tokens)
 These sections are copy-pasted nearly verbatim across multiple skills. When any skill is invoked, the agent pays for all the inline boilerplate:
 
 | Section | Skills | Approx. lines |
-|---------|--------:|------:|
+| --------- | --------: | ------: |
 | `## Help Mode` | 7 | ~21 |
 | `## Control Parameter Parsing` | 5 | ~20 |
 | `## Model Capability and Planner/Executor Profiles` | 5 | ~25 |
@@ -54,7 +55,7 @@ These sections are copy-pasted nearly verbatim across multiple skills. When any 
 | `## Priority Order` | 3 | ~21 |
 | `## Artifact Manifest Propagation` | 3 | ~30 |
 | Default parameter tables | 5 | ~40 |
-| **Total** | | **~296** |
+| **Total** |  | **~296** |
 
 ### Mechanism: Defer from SKILL.md to references
 
@@ -124,7 +125,7 @@ The largest skill. Much of the detail already exists in its own references:
 Descriptions are loaded on startup for every skill. They currently try to enumerate every possible trigger phrase.
 
 | Skill | Words |
-|-------|------:|
+| ------- | ------: |
 | contextsmith-prompt-engineer | 71 |
 | contextsmith-skill-engineer | 71 |
 | contextsmith-agent-evaluator | 72 |
@@ -164,7 +165,7 @@ Risk: the agent might follow the link and load README.md, adding tokens. Mitigat
 ### Invocation Cost Reduction
 
 | Change | Lines saved per invocation |
-|--------|------------------------:|
+| -------- | ------------------------: |
 | Extract boilerplate to references | ~296 |
 | Move wizard mode to reference | ~85 |
 | Slim contextsmith-run | ~150 |
@@ -180,7 +181,7 @@ Risk: the agent might follow the link and load README.md, adding tokens. Mitigat
 ### Startup Cost Reduction
 
 | Change | Tokens saved |
-|--------|------------:|
+| -------- | ------------: |
 | Trim frontmatter descriptions | ~180 |
 | Slim AGENTS.md | ~200 |
 | **Total** | **~380** |

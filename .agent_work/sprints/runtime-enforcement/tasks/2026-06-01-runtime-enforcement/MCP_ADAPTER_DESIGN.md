@@ -1,6 +1,7 @@
 # MCP Adapter Design
 
 ## Artifact Manifest
+
 - artifact_type: design-spec
 - phase: Phase 6A
 - target_profile: qwen36
@@ -19,7 +20,7 @@ Design MCP tools that wrap the existing validator core, next-prompt compiler, an
 Seven MCP tools, each mapping to an existing runtime function:
 
 | MCP Tool | Source Module | Source Function | Input | Output |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `validate_requirements` | `runtime.validator` | `validate_requirements_chain(path)` | `path` (string) | `{"passed": bool, "violations": [], "warnings": []}` |
 | `validate_phase_contract` | `runtime.validator` | `validate_phase_contract(path)` | `path` (string) | same result shape |
 | `validate_evidence` | `runtime.validator` | `validate_evidence_ledger(path)` | `path` (string) | same result shape |
@@ -128,6 +129,7 @@ def dispatch(tool_name: str, arguments: dict) -> dict:
 ```
 
 The dispatch function:
+
 - Looks up `tool_name` in a registry mapping tool names to callable wrappers.
 - Calls the wrapper with `arguments`.
 - Catches exceptions and returns them as MCP error responses.
@@ -138,7 +140,7 @@ The dispatch function:
 Explicit registry — each tool name maps to a wrapper function and source module:
 
 | Tool Name | Wrapper Function | Source Module | Source Function |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `validate_requirements` | `_wrap_validate_requirements` | `runtime.validator` | `validate_requirements_chain` |
 | `validate_phase_contract` | `_wrap_validate_phase_contract` | `runtime.validator` | `validate_phase_contract` |
 | `validate_evidence` | `_wrap_validate_evidence` | `runtime.validator` | `validate_evidence_ledger` |
@@ -181,6 +183,7 @@ def _wrap_compile_next_prompt(args: dict) -> dict:
     )
     if args.get("dry_run", True):
         return {"prompt": prompt}
+
     # If dry_run=False, write prompt to NEXT_PROMPT.md in task_dir
     from pathlib import Path
     output = Path(args.get("task_dir", ".")) / "NEXT_PROMPT.md"
@@ -288,6 +291,7 @@ def _resolve_path(path_str: str, workspace_root: Path | None = None) -> Path:
 ## Error Handling
 
 The `dispatch()` function catches:
+
 - `FileNotFoundError`: Returns MCP error with `isError: true` and message.
 - `json.JSONDecodeError`: Returns MCP error with invalid JSON details.
 - `ValueError`: Returns MCP error with validation details.

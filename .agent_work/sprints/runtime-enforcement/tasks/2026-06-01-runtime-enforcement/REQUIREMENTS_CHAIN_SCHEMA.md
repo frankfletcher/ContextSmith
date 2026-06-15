@@ -1,6 +1,7 @@
 # Requirements Chain Schema
 
 ## Artifact Manifest
+
 - artifact_type: artifact-schema
 - parent_task: TASK.md
 - phase: 1B
@@ -18,7 +19,7 @@ Each entry in the requirements chain is a single requirement with trace fields.
 ### Required Fields
 
 | Field | Type | Description |
-|---|---|---|
+| --- | --- | --- |
 | `id` | string | Unique requirement identifier (e.g., `req-001`) |
 | `source` | string | Original user text or path to source artifact |
 | `domain` | string | Domain label (e.g., `software`, `writing`, `scheduling`, `general`) |
@@ -31,7 +32,7 @@ Each entry in the requirements chain is a single requirement with trace fields.
 ### Optional Fields
 
 | Field | Type | Description |
-|---|---|---|
+| --- | --- | --- |
 | `parent_id` | string | ID of a parent requirement this refines |
 | `approval_id` | string | Linked approval record for high-risk requirements |
 | `notes` | string | Additional context for the validator or next-phase executor |
@@ -140,8 +141,12 @@ domain: research
 side_effect_tier: read_only
 validation_method: artifact_check
 phase_ids:
+
   - phase-3f
+
 evidence_ids:
+
   - ev-045
+
 status: passed
 ```

@@ -128,6 +128,7 @@ Reasoning:
 Preferred README section sequence:
 
 ```markdown
+
 ## Why ContextSmith Exists
 ## What It Helps You Build
 ## Quick Start
@@ -140,6 +141,7 @@ Preferred README section sequence:
 Possible Quick Start intro:
 
 ```markdown
+
 ## Quick Start
 
 The fastest way to understand ContextSmith is to run it on one real artifact.
@@ -164,6 +166,7 @@ Add more controls only when they matter.
 For larger projects:
 
 ```markdown
+
 ## For Larger Projects
 
 For large coding tasks, migrations, ports, or multi-file refactors, ContextSmith helps turn a broad objective into executable phases with durable task memory.
@@ -333,14 +336,14 @@ Checks:
 
 Artifact-specific style:
 
-| Artifact                | Style                               |
+| Artifact | Style |
 | ----------------------- | ----------------------------------- |
-| README / user docs      | warm, practical, explanatory        |
-| AGENTS.md               | concise, operational, repo-specific |
-| SKILL.md                | imperative, precise, low ambiguity  |
-| shared agent references | compact, checklist-driven           |
-| educational reports     | explanatory and user-teaching       |
-| changelog               | factual, scannable, restrained      |
+| README / user docs | warm, practical, explanatory |
+| AGENTS.md | concise, operational, repo-specific |
+| SKILL.md | imperative, precise, low ambiguity |
+| shared agent references | compact, checklist-driven |
+| educational reports | explanatory and user-teaching |
+| changelog | factual, scannable, restrained |
 
 Add / maintain:
 
@@ -503,20 +506,25 @@ Use SemVer going forward:
 Changelog style:
 
 ```markdown
+
 ## vX.Y.Z
 
 **Released:** YYYY-MM-DD
 
 ### Added
+
 - ...
 
 ### Changed
+
 - ...
 
 ### Fixed
+
 - ...
 
 ### Notes
+
 - ...
 ```
 
@@ -571,9 +579,13 @@ Add major workflow and evaluation capabilities across the package:
 - Add education-level and artifact-verbosity controls.
 - Add SemVer-based versioning policy.
 - Expand control parameters for phase review, code review iterations,
+
   target capabilities, planner/executor profiles, and evaluator focus.
+
 - Update skills to reference the new audit, review, runtime, and
+
   model-capability guidance.
+
 - Refresh README, changelog, and living notes for the new capabilities.
 ```
 
@@ -603,13 +615,19 @@ and use:
 - Rewrite README as a clearer project front door.
 - Add a Quick Start path with practical examples.
 - Add user-oriented docs for choosing skills, control parameters, examples,
+
   AGENTS.md guidance, small-context workflows, implementation plan audits,
   test-quality audits, phase code reviews, runtime stability, model profiles,
   and skill migration.
+
 - Split deeper documentation into dedicated docs files instead of overloading
+
   the README.
+
 - Clarify the difference between project documentation and agent-facing
+
   shared references.
+
 - Update package spec, changelog, and living notes.
 - Preserve existing skill behavior while improving documentation structure.
 ```
@@ -645,16 +663,24 @@ docs: add documentation quality review and config previews
 Add a documentation-quality and style-system pass across ContextSmith:
 
 - Add documentation quality guidance for readability, tone, repeated phrasing,
+
   factuality, examples, and usefulness.
+
 - Add run configuration preview guidance so skills can explain inferred
+
   parameters before important work.
+
 - Add documentation style and review checklist docs.
 - Reorganize docs into workflow, concept, reference, and contributing areas.
 - Update README tone and structure to sound more practical and less generic.
 - Replace awkward documentation labels with clearer project-documentation
+
   language.
+
 - Update skills to reference configuration previews and documentation-quality
+
   checks.
+
 - Add evaluator support for documentation-quality review focus.
 - Update control parameters for review/preview configuration behavior.
 - Update changelog and living notes.

@@ -5,6 +5,7 @@ Reference for the standard task-state artifact templates used by the orchestrato
 ## STATUS.md
 
 ```markdown
+
 # Status
 
 ## Current Phase
@@ -14,6 +15,7 @@ Reference for the standard task-state artifact templates used by the orchestrato
 <state-name>
 
 ## Progress
+
 - Phase: <N> of <M>
 - Checklist: <X>/<Y> complete
 - Retries remaining: <N>
@@ -28,6 +30,7 @@ Reference for the standard task-state artifact templates used by the orchestrato
 ## PHASE_LOG.md
 
 ```markdown
+
 # Phase Log
 
 ## Phase <name>
@@ -41,6 +44,7 @@ Artifacts: <list>
 ## CHECKLIST.md
 
 ```markdown
+
 # Checklist
 
 - [x] <completed item>
@@ -52,6 +56,7 @@ Artifacts: <list>
 When generating NEXT_PROMPT.md for handoff, include a `.phase_gate` guard at the top:
 
 ```
+
 ## Gate: .phase_gate
 
 This prompt is queued for the next run. Do NOT execute until
@@ -62,9 +67,11 @@ report "Phase gate not set. Awaiting human instruction to proceed."
 The downstream agent creates `<task-dir>/.phase_gate` when ready to proceed. This gives the human operator a chance to review before side effects occur.
 
 ```markdown
+
 # Next Prompt
 
 ## Current Status
+
 - Phase: <phase-name>
 - State: <state-name>
 - Completed: <list>
@@ -73,12 +80,15 @@ The downstream agent creates `<task-dir>/.phase_gate` when ready to proceed. Thi
 <specific bounded instruction>
 
 ## Input Files
+
 - <file>: <what to read>
 
 ## Output Requirements
+
 - <file>: <what to write>
 
 ## Constraints
+
 - <limits>
 ```
 

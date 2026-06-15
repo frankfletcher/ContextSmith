@@ -30,22 +30,28 @@ Do not give every subagent the entire repo, every file, or the full conversation
 Require compact reports:
 
 ```markdown
+
 ## Scope
 Files/directories inspected:
 
 ## Findings
+
 - ...
 
 ## Must Preserve
+
 - ...
 
 ## Risks
+
 - ...
 
 ## Evidence
+
 - path/section/line/excerpt
 
 ## Recommended Next Action
+
 - ...
 ```
 

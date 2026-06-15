@@ -11,7 +11,6 @@ Read these files in order:
 5. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/CHECKLIST.md` — track what's done per task
 6. `.agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry/ARTIFACTS.md` — artifact inventory
 
-
 Do exactly what NEXT_PROMPT.md says for the current sub-phase. Then advance to the next sub-phase and repeat until all sub-phases in the current phase are done.
 
 For every sub-phase:
@@ -25,7 +24,6 @@ For every sub-phase:
 7. Write an entry to `AUDIT_REPORT.md.new` with a `## Sub-phase N.M` section containing the full A-F rubric grade (Clarity, Atomicity, Safety, Testability, Domain Fit, Context Fit) and rationale — the orchestrator will merge this into the report automatically
 8. Write an entry to `PHASE_LOG.md.new` with changes summary — the orchestrator will merge this into the report automatically
 9. Update `STATUS.md` Current Sub-phase to the next sub-phase within the phase
-
 
 When all sub-phases in the current phase are complete:
 
@@ -47,7 +45,7 @@ When all sub-phases in the current phase are complete:
 Do NOT write directly to these files. Write a `.new` segment instead — the orchestrator automatically merges `.new` files into the parent reports:
 
 | Parent File | Write This Instead |
-|---|---|
+| --- | --- |
 | `EDUCATIONAL_REPORT.md` | `EDUCATIONAL_REPORT.md.new` |
 | `AUDIT_REPORT.md` | `AUDIT_REPORT.md.new` |
 | `PHASE_LOG.md` | `PHASE_LOG.md.new` |

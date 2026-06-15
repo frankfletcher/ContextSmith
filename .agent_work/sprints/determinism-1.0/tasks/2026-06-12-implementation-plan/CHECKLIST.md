@@ -464,34 +464,41 @@ After each implementation phase, before writing RESULT.json:
 ## Phase 8: Documentation and Polish
 
 ### Sub-phase 8a: Trim orchestrator SKILL.md
+
 - [x] Extract artifact templates to references/artifact-templates.md
 - [x] Update SKILL.md reference table
 - [x] Verify under 500 lines (468 ✓)
 
 ### Sub-phase 8b: Fix schema deprecation
+
 - [x] Update $schema from draft-07 to 2020-12 (both schemas updated)
 - [x] Rename definitions to $defs for 2020-12 compliance
 - [x] Test all fixtures still validate (valid pass, invalid fail correctly)
 
 ### Sub-phase 8c: Update user-facing docs
+
 - [x] Run markdownlint across docs/ fix MD060 table-style issues (15 files fixed)
 - [x] 0 remaining MD060 issues
 
 ### Sub-phase 8d: CHANGELOG entry
+
 - [x] Write comprehensive entry covering Phase 5.5-8 changes
 - [x] Version 1.7.1 → 2.0.0
 
 ## Phase 9: Final Validation and Lock
 
 ### Sub-phase 9a: Full validation pass
+
 - [x] Run ruff check, ruff format --check, validate_skills.py, pytest, markdownlint
 - [x] Fix remaining issues (none found)
 
 ### Sub-phase 9b: Final self-audit
+
 - [x] Audit all phases 1-9 against A-F rubric
 - [x] Verify every expected_output exists and is non-empty
 
 ### Sub-phase 9c: Project closeout
+
 - [x] Verify git status is clean
 - [x] Check staged_skills/ for stale artifacts
 - [x] Write final DECISIONS.md entry

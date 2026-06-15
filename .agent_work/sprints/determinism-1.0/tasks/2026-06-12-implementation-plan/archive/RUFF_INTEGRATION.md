@@ -33,6 +33,7 @@ pytest tests/ -v
 **Validation Commands:**
 
 ```bash
+
 # Validate skills
 python scripts/validate_skills.py
 

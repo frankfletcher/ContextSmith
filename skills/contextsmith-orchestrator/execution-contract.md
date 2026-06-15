@@ -26,6 +26,7 @@ execution_contract:
   ralph_iterations_required: 1
   self_audit_required: true
   evidence_required:
+
     - parameters_applied
     - validation_result
     - self_audit_result
@@ -35,7 +36,7 @@ execution_contract:
 ## Parameter Obligations
 
 | Parameter | Runtime obligation |
-|-----------|--------------------|
+| ----------- | -------------------- |
 | `--target-profile` | Shape instruction length, literalness, ambiguity tolerance, and output compactness for the selected model. |
 | `--context-length` | Load selectively; summarize state before broad reads; avoid bulk reference loading. |
 | `--mode guided` | Proceed with safe assumptions; ask only blocking or material questions. |

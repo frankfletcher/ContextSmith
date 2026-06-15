@@ -4,7 +4,8 @@ Use phased planning for complex, long-running, multi-file, migration, porting, r
 
 ## Granularity Rule
 
-Phase count must scale with complexity. A three-phase plan is often too coarse for a large application port, repo migration, or multi-system refactor. Prefer 6–20 phases when the task has many unknowns, platforms, dependencies, or subsystems. Implementation of each phase must fit within the context window, therefore more phases with narrower scope are usually better than fewer broad phases.
+Phase count must scale with complexity. A three-phase plan is often too coarse for a large application port, repo migration, or multi-system refactor. Prefer 6–20 phases when the task has many unknowns, platforms, dependencies, or subsystems. Implementation of each phase must fit within the context window, therefore more phases with narrower scope
+  are usually better than fewer broad phases.
 
 Each phase must include:
 
@@ -22,6 +23,7 @@ Each phase must include:
 Implementation phases must also include a compact context contract:
 
 <!-- CONTEXT_BUDGET: Override per-project. Default: 64k tokens -->
+
 ```yaml
 context_contract:
   targeted_context_length: "{{CONTEXT_BUDGET}}"
@@ -76,7 +78,8 @@ At the end of each phase:
 11. Include a test quality audit for coding-related work. If it fails, update `STATUS.md` to "Blocked", add details to `DECISIONS.md`, and exit. Use `test-quality-audit.md`
 12. If the stop condition is met, update `STATUS.md` to "Completed" and exit.
 
-During execution, compact or close the phase early when actual tool calls exceed the forecast by 50%, raw tool output dominates useful context, validation output becomes long, new discovery is required after edits begin, or the stop condition cannot fit the remaining reserve. Record the reason and create a narrower next phase instead of silently expanding scope.
+During execution, compact or close the phase early when actual tool calls exceed the forecast by 50%, raw tool output dominates useful context, validation output becomes long, new discovery is required after edits begin, or the stop condition cannot fit the remaining reserve. Record the reason and create a narrower next phase instead of silently
+  expanding scope.
 
 ## Ralph Evaluation for Plans
 
@@ -102,4 +105,5 @@ Phase count must scale with `targeted_context_length`. For `targeted_context_len
 
 Every phase should end with phase compression/debrief and `Do Not Carry Forward` notes.
 
-For tool-heavy work under tight or moderate targets (`targeted_context_length <= 64k`), prefer one fresh session per phase unless the previous phase used few tool calls and produced no large search or validation output. For larger targets, continuing in the same session is acceptable only while the tool ledger stays compact and raw tool output is not carried forward.
+For tool-heavy work under tight or moderate targets (`targeted_context_length <= 64k`), prefer one fresh session per phase unless the previous phase used few tool calls and produced no large search or validation output. For larger targets, continuing in the same session is acceptable only while the tool ledger stays compact and raw tool output is
+  not carried forward.

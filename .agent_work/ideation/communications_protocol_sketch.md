@@ -39,6 +39,7 @@ controls:
   ralph_required: true
   checkpoint_before_run: true
 expected_outputs:
+
   - audit.md
   - STATUS.md
   - PHASE_LOG.md
@@ -56,10 +57,12 @@ Suggested payload:
 ```yaml
 role: contextsmith-auditor
 instructions:
+
   - read STATUS.md first
   - follow NEXT_PROMPT.md
   - write output to audit.md
   - do not skip validation
+
 limits:
   permissions: read-only
   step_cap: 10
@@ -78,13 +81,17 @@ Suggested response:
 ```yaml
 status: pass|fail|blocked
 artifacts:
+
   - audit.md
   - evidence.json
+
 validation:
   schema_passed: true
   tests_passed: false
 issues:
+
   - missing closeout field
+
 next_action: fix|retry|done
 ```
 
@@ -101,12 +108,16 @@ step_id: audit-03
 status: fail
 reason: validation_failed
 artifacts:
+
   - audit.md
   - PHASE_LOG.md
+
 validation:
   passed: false
   failures:
+
     - missing required field: validation_status
+
 checkpoint:
   written: true
   path: .agent_work/.../checkpoint.json

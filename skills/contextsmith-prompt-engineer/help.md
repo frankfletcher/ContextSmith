@@ -45,7 +45,6 @@ Normally returns an optimized prompt package, assumptions, model/context strateg
 - `--executor-profile <profile>`
 - `--focus implementation-plan|test-quality|runtime-stability|agents-md|prompt|skill`
 
-
 ## Additional Controls
 
 - `--review-config` / `--preview-config`: show inferred parameters before important work.

@@ -7,7 +7,7 @@
 During Phase 5.5 completion review, the following improvements were identified and mapped to future phases:
 
 | Finding | Classification | Action |
-|---------|---------------|--------|
+| --------- | --------------- | -------- |
 | `shared/harness-opencode.md` + all skill copies reference `@contextsmith-runner` agent | Already partially covered by Phase 6e step 5 | Enriched Phase 6e step 5 with explicit file list |
 | `shared/run-configuration-preview.md:158` references contextsmith-run | Already covered by Phase 6e grep step 7b | No enrichment needed — grep catches it |
 | `shared/structured-questioning.md:116` references contextsmith-run | Already covered by Phase 6e grep step 7b | No enrichment needed — grep catches it |
@@ -42,6 +42,7 @@ Orchestrator now snapshots EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md,
 
 ### Exit code expansion
 Exit codes 0-5 provide distinct signals for callers:
+
 - 0: done, 1: blocked, 2: continue, 3: config error, 4: state inconsistency, 5: internal error
 
 ### Pre-dispatch counter check
@@ -63,6 +64,7 @@ model_pin is in schema now but the step_compiler already reads it. The full pipe
 All 9 phases (with approximately 45 sub-phases) of the Deep Determinism project are complete. The project transformed ContextSmith from a collection of standalone skills into a deterministic workflow execution system centered on the orchestrator module.
 
 ### Key outcomes:
+
 - **Orchestrator** (`orchestrator/`) — 12 Python files, state machine with configurable transitions, checkpoint management, harness adapters (OpenCode + generic), comprehensive validation
 - **8 skills** at version 2.0.0 — project-level versioning, contextsmith-run removed, orchestrator and workflow-developer added
 - **376 tests** — covering state reader, checkpoint, step compiler, validators, adapters, determinism features, and integration

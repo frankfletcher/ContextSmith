@@ -100,6 +100,7 @@ Do not reload the entire old chat unless required.
 At the end of each phase, write a compact debrief:
 
 ```markdown
+
 ## Phase Debrief
 
 - Completed:

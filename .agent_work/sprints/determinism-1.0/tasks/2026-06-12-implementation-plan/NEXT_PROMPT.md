@@ -5,7 +5,7 @@
 ### Final Project State
 
 | Metric | Value |
-|--------|-------|
+| -------- | ------- |
 | Tests | 376 passing (0 failures) |
 | Skills | 8 at version 2.0.0 |
 | Ruff check/format | All pass |

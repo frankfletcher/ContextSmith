@@ -50,7 +50,9 @@ If any required item is `missing_evidence`, the run is not complete.
 For normal user-facing output, summarize the ledger:
 
 ```markdown
+
 ## Evidence
+
 - Parameters: qwen36, 64k, refine, ralph=2, validation=strict
 - Validation: passed (`npm test`)
 - Self-audit: passed, no material findings

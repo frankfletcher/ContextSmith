@@ -13,7 +13,7 @@ Child artifacts may narrow (constrain) inherited parameters but MUST NOT widen (
 A narrowing is permitted when the child artifact operates under a more constrained scope than its parent. The following are common, acceptable narrowings:
 
 | Parameter | Parent Value | Child Value | Justification Pattern |
-|-----------|-------------|-------------|----------------------|
+| ----------- | ------------- | ------------- | ---------------------- |
 | `targeted_context_length` | 32k | 12k-16k executable phase budget | Tool-heavy micro-phase reserve; use fresh session and compact state |
 | `targeted_context_length` | 64k | 32k | Per-phase tight context budget; each phase must fit in window |
 | `targeted_context_length` | 64k | 24k-32k executable phase budget | Tool-heavy phase reserve after system instructions, task state, validation output, and recovery buffer |
@@ -30,7 +30,7 @@ A narrowing is permitted when the child artifact operates under a more constrain
 
 ```markdown
 | Parameter | Value | Source |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | `targeted_context_length` | 32k | narrowed from 64k (per-phase tight context budget) |
 | `ralph_iterations` | 2 | narrowed from 3 (intermediate artifact; reserve for final output) |
 ```
@@ -44,7 +44,7 @@ The justification in parentheses MUST state WHY the narrowing is necessary, not 
 The following widenings are NOT permitted without explicit user request or documented exception:
 
 | Parameter | Parent Value | Forbidden Child Value | Reason |
-|-----------|-------------|----------------------|--------|
+| ----------- | ------------- | ---------------------- | -------- |
 | `targeted_context_length` | 32k | 64k | Would exceed parent's context budget allocation |
 | `loop_safety_enabled` | true | false | Cannot relax safety constraints without user approval |
 | `phase_review` | deep | standard | Cannot reduce review rigor without documented reason |
@@ -56,11 +56,12 @@ If a widening is absolutely necessary, document it with this format:
 
 ```markdown
 | Parameter | Value | Source |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | `targeted_context_length` | 64k | widened from 32k (EXCEPTION: phase requires loading full file tree; user approved at <timestamp>) |
 ```
 
 Required elements for exceptions:
+
 1. Label as `EXCEPTION:` in the justification
 2. State the specific reason widening is required
 3. Reference user approval or documented decision (with timestamp or DECISIONS.md anchor)
@@ -85,6 +86,7 @@ Each artifact's `chain-of` field points to its parent. Tracing the chain reveals
 ### Verification Rule
 
 When generating a child artifact:
+
 1. Read the parent's manifest parameters
 2. Copy all parameters as `inherited` by default
 3. For each parameter you narrow, change source to `narrowed from <old> (<reason>)`
@@ -98,7 +100,7 @@ When generating a child artifact:
 Different artifact types have different default narrowing behaviors:
 
 | Artifact Type | Typical Narrowing | Typical Inheritance |
-|---------------|-------------------|---------------------|
+| --------------- | ------------------- | --------------------- |
 | Implementation Plan from Prompt | context-length (split across phases), ralph-iterations | mode, target-profile, harness, education-level |
 | NEXT_PROMPT.md from Plan | context-length (single-phase budget) | All plan parameters; adds phase-specific focus params |
 | Phase Context Contract from Plan | usable-phase-budget, tool-output-reserve, max-tool-calls | Targeted context length, phase objective, validation requirements |

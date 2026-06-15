@@ -99,7 +99,7 @@ From the baseline workflow config, the orchestrator should read:
 ## Failure Cases
 
 | Problem | Orchestrator response |
-|---|---|
+| --- | --- |
 | Audit says pass but required fields are missing | Reject and send back to fix |
 | Ralph loop exceeds max cycles | Stop and mark blocked |
 | Review output is unstructured | Treat as failure |

@@ -16,6 +16,7 @@ Works for both standalone agents and ContextSmith-equipped agents.
 ## Format
 
 ```markdown
+
 # <Artifact Title>
 
 ## Artifact Manifest
@@ -27,14 +28,14 @@ Works for both standalone agents and ContextSmith-equipped agents.
 ### Parameters
 
 | Parameter | Value | Source |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | `target_model_family` | qwen3 | user-set |
 | `context_window_optimized` | true | default |
 
 ### References Applied
 
 | Reference | Version | Contract Summary |
-|-----------|---------|-----------------|
+| ----------- | --------- | ----------------- |
 | `loop-safety` | 1.0 | No identical consecutive tool calls; retry budget of 3 total attempts per action before escalation |
 
 ### Behavioral Contracts (Standalone)
@@ -53,7 +54,7 @@ Works for both standalone agents and ContextSmith-equipped agents.
 Track each active parameter with its source value:
 
 | Column | Description |
-|--------|-------------|
+| -------- | ------------- |
 | Parameter | Name from `shared/control-parameters.md` or custom (prefixed with `custom:`) |
 | Value | Active value for this artifact |
 | Source | How the value was determined (see Source Values table below) |
@@ -61,7 +62,7 @@ Track each active parameter with its source value:
 ### Source Values
 
 | Source | Meaning |
-|--------|---------|
+| -------- | --------- |
 | `user-set` | Explicitly provided by the user in this session |
 | `inherited` | Copied from parent artifact's manifest without modification |
 | `default` | Set to the system default (from SKILL.md default table or control-parameters.md) |
@@ -72,7 +73,7 @@ Track each active parameter with its source value:
 List each reference whose behavioral contracts are embedded in this artifact:
 
 | Column | Description |
-|--------|-------------|
+| -------- | ------------- |
 | Reference | Short name matching the shared/ filename stem (e.g., `loop-safety`, `phased-planning`) |
 | Version | Semantic version of the reference file |
 | Contract Summary | One-line summary of what contracts are embedded from this reference |
@@ -101,7 +102,7 @@ Skills may append domain-specific contracts here based on the artifact's purpose
 
 ```
 Root Prompt (params: mode=guided, context-length=64k, ralph=2)
-  |
+  |  |
   +- Implementation Plan
   |   params: inherits all from root
   |   narrowed: context-length -> 32k (per-phase budget)
@@ -117,7 +118,7 @@ Root Prompt (params: mode=guided, context-length=64k, ralph=2)
   |       params: inherits from plan
   |       carry-forward: facts from Phase 1 debrief
   |       chain-of: "Implementation Plan"
-  |
+  |  |
   +- Generated Skill (SKILL.md)
       params: inherits target-profile, harness from root
       added: skill-specific params (--reference-policy, --metadata)
@@ -127,7 +128,7 @@ Root Prompt (params: mode=guided, context-length=64k, ralph=2)
 ## Artifact Type -> Default References Matrix
 
 | Artifact Type | Always Includes | Conditionally Adds |
-|---------------|-----------------|-------------------|
+| --------------- | ----------------- | ------------------- |
 | Prompt (general) | control-parameters, loop-safety | domain-profile (if domain known), targeted-context-length (if context length provided) |
 | Implementation Plan | phased-planning, implementation-plan-audit, persistent-task-state, phase-compression | test-quality-audit (if coding work), phase-code-review (if --phase-review enabled) |
 | NEXT_PROMPT.md | persistent-task-state, loop-safety, phase-compression | All parent plan references (inherited) |

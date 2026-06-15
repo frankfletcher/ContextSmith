@@ -1,6 +1,7 @@
 # Phase 0 Small-Model Executor Prompt
 
 ## Artifact Manifest
+
 - artifact_type: phase-execution-prompt
 - parent_task: `.agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/`
 - phase: Phase 0 Packaging Discovery
@@ -161,13 +162,15 @@ If blocked:
 Return this format:
 
 ````markdown
+
 ## Phase 0 Result
+
 - status: complete|blocked
 - one-sentence summary
 
 ## Packaging Facts
 | Area | Finding | Evidence |
-|---|---|---|
+| --- | --- | --- |
 | Individual skill zip | ... | `path:line` or command |
 | Release bundle | ... | `path:line` or command |
 | Staging sync | ... | `path:line` or command |
@@ -175,10 +178,12 @@ Return this format:
 | Schemas/domain packs/fixtures | ... | `path:line` or command |
 
 ## Validation
+
 - `python scripts/validate_skills.py`: passed|failed|not run with reason
 - `python scripts/token_budget.py --strict`: passed|failed|not run with reason
 
 ## Task-State Updates
+
 - `CONTEXT.md`: updated|not updated
 - `DECISIONS.md`: updated|not updated
 - `STATUS.md`: updated|not updated
@@ -188,6 +193,7 @@ Return this format:
 - `NEXT_PROMPT.md`: updated|not updated
 
 ## Self-Audit
+
 - Phase boundary honored: yes|no
 - Source files unchanged: yes|no
 - Evidence cited: yes|no
@@ -196,6 +202,7 @@ Return this format:
 
 ## Deep Education Notes
 Explain briefly:
+
 - why Phase 0 is discovery-only;
 - why packaging facts must come before runtime design;
 - why Phase 0.5 must be human/frontier review;

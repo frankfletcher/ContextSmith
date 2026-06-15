@@ -9,7 +9,7 @@
 ### Parameters
 
 | Parameter | Value | Source |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | `target_model_family` | qwen3 | user-set |
 | `target_profile` | qwen36 | user-set |
 | `targeted_context_length` | 60k | user-set |
@@ -26,7 +26,7 @@
 ### References Applied
 
 | Reference | Version | Contract Summary |
-|-----------|---------|-----------------|
+| ----------- | --------- | ----------------- |
 | `qwen36-model-profile` | 1.0 | Literal instructions, no CoT, Markdown/XML sections, staged inspection for long-context |
 | `targeted-context-length` | 1.0 | 60k = moderate tier; normal prompting, avoid full-repo reads, reserve 20-30% for tool output |
 | `planner-executor-workflows` | 1.0 | qwen36 for both planning and execution; atomic phases, one phase per session if tight |
@@ -89,6 +89,7 @@
 ## Target Model and Harness Profile
 
 **Model:** Qwen3.6-27B (qwen36 profile)
+
 - Prefer literal, non-conversational instructions with clear task boundaries
 - Use Markdown or XML-style labeled sections
 - Do not request exposed chain-of-thought
@@ -96,6 +97,7 @@
 - For long-context work, use staged inspection and persistent state
 
 **Harness:** opencode
+
 - File tools: read, write, edit, glob, grep
 - Bash tool for running validation commands
 - Subagent system available but not required for this plan
@@ -143,10 +145,12 @@ You are NOT implementing the changes. You are creating the plan document that a 
 ### The Audit Findings to Address
 
 **Medium severity:**
+
 1. `local-model-prompt-engineer/SKILL.md` is 291 lines — the largest skill. Move the persistent-task-state contract (lines 113-135) to a reference file to reduce via progressive disclosure.
 2. No data-science/ML-specific context-budget guidance in new references. Add an `ml-heavy` phase type to `shared/targeted-context-length.md` with 60-75% tool-output reserve for ML training phases.
 
 **Low severity:**
+
 3. `shared/behavioral-contracts.md` is 105 lines. Create a "minimal contracts" subset for tight-context artifacts where the full file is too expensive to embed.
 4. The `context_contract` YAML example in `shared/phased-planning.md` hardcodes `targeted_context_length: 64k`. Parameterize or add adjustment comment.
 5. `shared/implementation-plan-audit.md` output format table doesn't include the "Tool forecast realism" row that exists in the rubric. Add the row to the template.
@@ -154,6 +158,7 @@ You are NOT implementing the changes. You are creating the plan document that a 
 ### Plan Requirements
 
 The plan must:
+
 - Have 5-7 phases, each addressing one finding
 - Include a setup phase (verify current state, run validation)
 - Include a final validation phase (run validation, verify all findings addressed)
@@ -178,6 +183,7 @@ Generate an implementation plan document. Do NOT implement the changes.
 **Plan structure:**
 
 ```
+
 # ContextSmith v1.5.1 Audit Remediation Plan
 
 ## Artifact Manifest
@@ -187,6 +193,7 @@ Generate an implementation plan document. Do NOT implement the changes.
 (Behavioral contracts section)
 
 ## Overview
+
 - Sprint: contextsmith-1.0
 - Task slug: 2026-05-30-audit-remediation
 - Branch: fix_context_budget (or new branch if recommended)
@@ -199,6 +206,7 @@ Generate an implementation plan document. Do NOT implement the changes.
 
 ## Phase 0: Setup and Verification
 Goal: Verify current state and establish baseline
+
 - Run `python scripts/validate_skills.py` and confirm pass
 - Run `git status --short` and record state
 - Read `.agent_work/audit-report.md` to confirm findings
@@ -208,6 +216,7 @@ Goal: Verify current state and establish baseline
 
 ## Phase 1: [Finding 1 — prompt-engineer SKILL.md size reduction]
 Goal: Move persistent-task-state contract to reference file
+
 - Files: skills/local-model-prompt-engineer/SKILL.md, new references/persistent-task-state-contract.md
 - Tasks: [explicit steps]
 - Validation: `python scripts/validate_skills.py`, verify SKILL.md line count reduced
@@ -217,6 +226,7 @@ Goal: Move persistent-task-state contract to reference file
 
 ## Phase 2: [Finding 2 — ML context-budget guidance]
 Goal: Add ml-heavy phase type to targeted-context-length.md
+
 - Files: shared/targeted-context-length.md
 - Tasks: [explicit steps]
 - Validation: [checks]
@@ -226,6 +236,7 @@ Goal: Add ml-heavy phase type to targeted-context-length.md
 
 ## Phase 3: [Finding 3 — minimal contracts subset]
 Goal: Create minimal contracts subset in behavioral-contracts.md
+
 - Files: shared/behavioral-contracts.md
 - Tasks: [explicit steps]
 - Validation: [checks]
@@ -235,6 +246,7 @@ Goal: Create minimal contracts subset in behavioral-contracts.md
 
 ## Phase 4: [Finding 4 — parameterize context_contract example]
 Goal: Parameterize hardcoded 64k in phased-planning.md
+
 - Files: shared/phased-planning.md
 - Tasks: [explicit steps]
 - Validation: [checks]
@@ -244,6 +256,7 @@ Goal: Parameterize hardcoded 64k in phased-planning.md
 
 ## Phase 5: [Finding 5 — add Tool forecast realism row]
 Goal: Add missing row to implementation-plan-audit output table
+
 - Files: shared/implementation-plan-audit.md
 - Tasks: [explicit steps]
 - Validation: [checks]
@@ -253,6 +266,7 @@ Goal: Add missing row to implementation-plan-audit output table
 
 ## Phase 6: Final Validation
 Goal: Verify all findings addressed and package is clean
+
 - Run `python scripts/validate_skills.py`
 - Verify all reference manifests are in sync
 - Verify all SKILL.md files under 500 lines
@@ -265,6 +279,7 @@ Goal: Verify all findings addressed and package is clean
 [Fill using the audit rubric format]
 
 ## Git Safety
+
 - Commit after each phase with descriptive message
 - Do not use destructive git commands without approval
 - Safe inspection: git status, git diff, git log --oneline
@@ -282,6 +297,7 @@ Goal: Verify all findings addressed and package is clean
 8. Output the complete plan document
 
 **Do NOT:**
+
 - Implement any changes
 - Modify any files
 - Run git commands
@@ -296,19 +312,23 @@ The complete implementation plan as a Markdown document. Nothing else.
 ### Good Phase Description
 
 ```
+
 ## Phase 1: Reduce prompt-engineer SKILL.md via progressive disclosure
 
 Goal: Move persistent-task-state contract (lines 113-135) to a standalone reference file, reducing SKILL.md by ~23 lines.
 
 Inputs:
+
 - skills/local-model-prompt-engineer/SKILL.md (current: 291 lines)
 - .agent_work/audit-report.md (finding #1)
 
 Files to modify:
+
 - skills/local-model-prompt-engineer/SKILL.md (extract lines 113-135, replace with reference pointer)
 - NEW: skills/local-model-prompt-engineer/references/persistent-task-state-contract.md (extracted content)
 
 Tasks:
+
 1. Read SKILL.md lines 110-140 to identify the persistent-task-state contract block
 2. Create references/persistent-task-state-contract.md with the extracted content as a standalone reference
 3. Edit SKILL.md: replace the extracted block with "For persistent task state layout and hygiene, see references/persistent-task-state-contract.md."
@@ -316,6 +336,7 @@ Tasks:
 5. Run `python scripts/validate_skills.py` and confirm pass
 
 Validation:
+
 - SKILL.md line count < 270
 - Validation script passes
 - Reference file exists and is readable
@@ -331,7 +352,9 @@ Handoff notes for Phase 2: SKILL.md reduced to [N] lines. Reference file created
 ### Bad Phase Description (too vague)
 
 ```
+
 ## Phase 1: Fix the SKILL.md size issue
+
 - Make the file smaller
 - Move some content to a reference
 - Check it works
@@ -340,6 +363,7 @@ Handoff notes for Phase 2: SKILL.md reduced to [N] lines. Reference file created
 ## Validation and Test Plan
 
 The plan itself should be validated against:
+
 1. All 5 audit findings are addressed (2 medium, 3 low)
 2. Each phase has: goal, inputs, files, tasks, validation, stop condition, rollback, handoff
 3. Phase 0 (setup) and final validation phase are present
@@ -352,16 +376,19 @@ The plan itself should be validated against:
 ## Loop/Git/File Safety
 
 **Loop safety:**
+
 - Do not execute identical consecutive tool calls
 - If reading a file fails twice, stop and inspect the path
 - Maximum 3 total recovery attempts before requesting human input
 
 **Git safety:**
+
 - Safe: `git status --short`, `git diff`, `git log --oneline -10`
 - Requires approval: `git reset --hard`, `git clean -fd`, `git rebase`, `git push --force`
 - Commit after each phase with descriptive message
 
 **File safety:**
+
 - Only edit files within the ContextSmith workspace
 - Do not edit files outside the workspace without explicit approval
 - Read before write: always read a file before modifying it
@@ -371,6 +398,7 @@ The plan itself should be validated against:
 Task state directory: `.agent_work/sprints/contextsmith-1.0/tasks/2026-05-30-audit-remediation/`
 
 Required files:
+
 - TASK.md: objective (address 5 audit findings), scope (5 skills + shared refs), constraints (60k context, qwen36 target)
 - PLAN.md: phase checklist (phases 0-6)
 - STATUS.md: current phase, completed work, next action
@@ -423,7 +451,7 @@ Required files:
 ## A-F Quality Grades
 
 | Dimension | Grade | Reason |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | Small-model atomicity | A | Single objective per phase. Explicit inputs, outputs, tasks, validation, stop conditions. |
 | Instruction clarity | A | Literal, imperative, no ambiguous language. Good/bad examples narrow interpretation. |
 | Output contract quality | A | Plan structure is templated with required sections. Self-audit required. |

@@ -17,6 +17,7 @@ Use this workflow when you need to create a new SKILL.md-based agent skill, adap
 ## When to Use This Workflow
 
 Use this workflow for:
+
 - Creating a new skill from scratch
 - Adapting an existing skill for smaller or local models
 - Improving skill instructions, references, or model profiles
@@ -36,6 +37,7 @@ If you need to migrate a directory of skills to a new location or profile, see [
 Decide what the skill does, what it does not do, and which model profiles it targets.
 
 **Example scope:**
+
 ```
 Skill: code-review-assistant
 Purpose: Review pull requests for security issues and style violations
@@ -49,6 +51,7 @@ Side effects: read-only (reviews code, does not edit)
 Use the `contextsmith-skill-engineer` skill to build or improve the skill.
 
 **Example prompt for new skill:**
+
 ```
 Create a new skill called code-review-assistant.
 Target profile: qwen36.
@@ -58,6 +61,7 @@ Include loop safety rules and a compact reference set.
 ```
 
 **Example prompt for improving an existing skill:**
+
 ```
 Improve the code-review-assistant skill for smaller models.
 Target profile: llama-8b.
@@ -66,6 +70,7 @@ and optimize the reference set for 32k context windows.
 ```
 
 The agent will create or update:
+
 - `SKILL.md` — skill instructions with frontmatter
 - `references/` — skill-specific reference files
 - `reference_manifest.yml` — shipped reference declarations

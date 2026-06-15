@@ -1,7 +1,7 @@
 # PHASE_LOG.md — Release Tooling Sprint
 
 | Date | Phase | Status | Notes |
-|------|-------|--------|-------|
+| ------ | ------- | -------- | ------- |
 | 2026-05-29 | Planning | Completed | Sprint artifacts created. Plan audited against phased-planning.md. Ready for Phase 1. |
 | 2026-05-29 | Planning follow-up | Completed | Hardened all ContextSmith skill contracts so long-running planning workflows require or audit concrete task-state files, including NEXT_PROMPT.md. Validator passed. |
 | 2026-05-29 | Phase 1 | Completed | Added `--update-manifests` flag to sync_shared_refs.py. Recomputes SHA-1 blob hashes for synced source files, writes back to reference_manifest.yml only when changed. Summary line prints updated counts. All 4 tests pass. |

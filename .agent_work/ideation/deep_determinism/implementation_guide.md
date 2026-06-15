@@ -7,16 +7,20 @@ This document provides a linear implementation path through the deep determinism
 Two execution paths share the same contracts:
 
 **Path 1: Skill-only (universal, zero infrastructure)**
+
 ```
 User → Orchestrator skill → Agent follows instructions → loops itself
 ```
+
 Requirements: an agent that can read files and follow instructions. The agent IS the executor. Less deterministic, but works in any harness.
 
 **Path 2: Harness-aware (deterministic, optimized)**
+
 ```
 User → Router skill → Orchestrator (Python, built-in loop)
   → Harness adapter → Agent subprocess → RESULT.json
 ```
+
 Requirements: Python, a harness with bash access. Code drives the loop. More deterministic, with crash recovery and external validation.
 
 Both paths use identical workflow configs, artifact contracts, checkpoint formats, and validation rules. See `orchestrator_as_skill.md` for the full design.
@@ -30,10 +34,12 @@ Follow this sequence. Each phase has a gate — do not proceed until the gate pa
 **Why first:** Every other component validates against these schemas.
 
 **Files to read:**
+
 - `workflow_config_sketch.md` — complete schema specification (lines 83-268)
 - `implementation_prerequisites.md` — section 2 (validation schemas)
 
 **Deliverables:**
+
 1. `schemas/workflow_config.schema.json` — validates workflow config YAML/JSON **(done)**
 2. `schemas/phase_contract.schema.json` — validates step inputs/outputs
 3. `schemas/agent_config.schema.json` — validates OpenCode agent frontmatter **(done)**
@@ -46,11 +52,13 @@ Follow this sequence. Each phase has a gate — do not proceed until the gate pa
 **Why second:** The orchestrator is the control plane. Nothing runs without it.
 
 **Files to read:**
+
 - `orchestrator_idea.md` — state machine (lines 100-224), main loop (lines 227-278), CLI (lines 294-333), checkpoint format (lines 337-401), startup/resume (lines 404-469), error matrix (lines 484-503)
 - `orchestrator_and_harness.md` — `StepContract` dataclass (line 133), `HarnessResult` dataclass (line 153)
 - `audit_and_ralph_state_machine.md` — transition table (lines 119-156), counter management (lines 219-300), validation integration (lines 304-350)
 
 **Deliverables:**
+
 1. `orchestrator/orchestrator.py` — state machine, step selection, checkpoint read/write, outer loop runner
 2. `orchestrator/state_reader.py` — parse STATUS.md, PLAN.md, CONTEXT.md
 3. `orchestrator/step_compiler.py` — compile StepContract from config + state
@@ -63,10 +71,12 @@ Follow this sequence. Each phase has a gate — do not proceed until the gate pa
 ### Phase 3: Harness Adapters (days 11-15)
 
 **Files to read:**
+
 - `orchestrator_and_harness.md` — `HarnessAdapter` ABC (line 165), `HarnessRegistry` (line 253), OpenCode adapter (lines 339-413), error propagation (lines 417-459)
 - `agent_start_and_communication.md` — `LaunchPacket` (lines 260-296), artifact collection (lines 400-436), step cap enforcement (lines 503-558)
 
 **Deliverables:**
+
 1. `orchestrator/adapters/base.py` — `HarnessAdapter` ABC, `HarnessResult`, `StepContract`, error types
 2. `orchestrator/adapters/opencode.py` — OpenCode adapter (streaming subprocess, RESULT.json reading)
 3. `orchestrator/adapters/generic.py` — generic fallback adapter (RESULT.json + artifact checking)
@@ -76,10 +86,12 @@ Follow this sequence. Each phase has a gate — do not proceed until the gate pa
 ### Phase 4: Validation (days 16-18)
 
 **Files to read:**
+
 - `state_artifact_strategy.md` — required sections per artifact (lines 221-445), field-level requirements (lines 449-508)
 - `audit_and_ralph_state_machine.md` — validation integration (lines 304-350)
 
 **Deliverables:**
+
 1. `orchestrator/validators.py` — file existence, section presence, schema validation
 2. `scripts/validate_artifacts.py` — standalone artifact validation
 
@@ -88,10 +100,12 @@ Follow this sequence. Each phase has a gate — do not proceed until the gate pa
 ### Phase 5: Integration (days 19-25)
 
 **Files to read:**
+
 - `communications_protocol_sketch.md` — protocol flow (lines 373-407), message schemas (lines 200-369)
 - `harness_agnostic_distribution.md` — adapter lifecycle (lines 400-427), reference loading (lines 430-480)
 
 **Deliverables:**
+
 1. Wire orchestrator into `contextsmith-run` skill
 2. `--harness` flag integration
 3. Conditional reference loading
@@ -104,7 +118,7 @@ Follow this sequence. Each phase has a gate — do not proceed until the gate pa
 These types are defined once. Reference them from other files.
 
 | Type | Defined In | Line |
-|------|-----------|------|
+| ------ | ----------- | ------ |
 | `StepContract` | `orchestrator_and_harness.md` | 133 |
 | `HarnessResult` | `orchestrator_and_harness.md` | 153 |
 | `HarnessAdapter` (ABC) | `orchestrator_and_harness.md` | 165 |
@@ -129,7 +143,7 @@ Before implementation, verify these:
 For MVP, use 7 artifacts per phase (reduced from 13). Add others only when the workflow requires them.
 
 | Artifact | Always Required | Purpose |
-|----------|----------------|---------|
+| ---------- | ---------------- | --------- |
 | `STATUS.md` | Yes | Current phase and next action |
 | `PLAN.md` | Yes | Phase checklist |
 | `NEXT_PROMPT.md` | Yes | Handoff to next agent |
@@ -139,6 +153,7 @@ For MVP, use 7 artifacts per phase (reduced from 13). Add others only when the w
 | `ARTIFACTS.md` | Yes | Files changed and commands run |
 
 **Optional (add when workflow requires):**
+
 - `AUDIT_REPORT.md` — when audit gate is present
 - `EVIDENCE.md` — when validation needs proof
 - `SUMMARY.md` — for user-facing closeout
@@ -150,7 +165,7 @@ For MVP, use 7 artifacts per phase (reduced from 13). Add others only when the w
 ## Spec File Map
 
 | File | Role | Key Content |
-|------|------|-------------|
+| ------ | ------ | ------------- |
 | `README.md` | Index | File role map, content counts |
 | `orchestrator_idea.md` | Core spec | State machine, CLI, checkpoint, startup/resume, error matrix |
 | `orchestrator_and_harness.md` | Interface contract | StepContract, HarnessResult, HarnessAdapter ABC, error types |

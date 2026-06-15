@@ -26,6 +26,7 @@ execution_contract:
   ralph_iterations_required: 1
   self_audit_required: true
   evidence_required:
+
     - parameters_applied
     - validation_result
     - self_audit_result

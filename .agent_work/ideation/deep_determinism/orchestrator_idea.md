@@ -121,7 +121,7 @@ The orchestrator runs a deterministic state machine. Every phase of every workfl
 ### Canonical States
 
 | State | Purpose | Agent Role | Validates? | Terminal? |
-|-------|---------|-----------|------------|-----------|
+| ------- | --------- | ----------- | ------------ | ----------- |
 | `init` | Load config, validate task state, check prerequisites | none (orchestrator-internal) | Yes (schema) | No |
 | `plan` | Generate or update the phase plan | contextsmith-planner | Yes (checklist schema) | No |
 | `execute` | Run the primary action (edit, create, migrate) | contextsmith-builder | Yes (output schema) | No |
@@ -217,26 +217,40 @@ states:
     max_retries: 3
     timeout_s: 600
     transitions:
+
       - condition: output_valid
+
         target: audit
+
       - condition: output_invalid
+
         target: execute
+
       - condition: max_retries
+
         target: blocked
     expected_outputs:
+
       - ARTIFACTS.md
       - PHASE_LOG.md
+
   audit:
     agent: contextsmith-auditor
     permissions: read-only
     max_retries: 2
     timeout_s: 300
     transitions:
+
       - condition: pass
+
         target: closeout
+
       - condition: fail
+
         target: fix
+
       - condition: unstructured
+
         target: audit
 ```
 
@@ -260,10 +274,12 @@ EXIT_CONTINUE = 2
 
 def run_workflow(config_path: str, state_dir: str) -> int:
     """Run a workflow to completion. Returns the final exit code."""
+
     # Register signal handlers for clean shutdown on Ctrl-C
     register_signal_handlers(state_dir)
 
     while True:
+
         # Check for STOP file (user wants to stop after current phase)
         if should_stop(state_dir):
             print("[orchestrator] STOP file detected, halting after current phase")
@@ -278,6 +294,7 @@ def run_workflow(config_path: str, state_dir: str) -> int:
         elif code == EXIT_BLOCKED:
             return EXIT_BLOCKED
         else:
+
             # Exit codes 3-5 are errors, not retryable
             return code
 
@@ -294,6 +311,7 @@ def register_signal_handlers(state_dir: str):
     import signal
     def handle_interrupt(signum, frame):
         print("\n[orchestrator] Interrupted, writing checkpoint...")
+
         # checkpoint is already written after each step, so just exit
         sys.exit(EXIT_BLOCKED)
     signal.signal(signal.SIGINT, handle_interrupt)
@@ -308,6 +326,7 @@ Each call to `orchestrator_run` does exactly one phase transition. The orchestra
 
 ```
 function orchestrator_main(config_path, state_dir):
+
     # 1. Load state
     config = load_workflow_config(config_path)
     status = read_status(state_dir / "STATUS.md")
@@ -360,7 +379,7 @@ function orchestrator_main(config_path, state_dir):
 ### Exit Codes
 
 | Code | Meaning | Next Action |
-|------|---------|-------------|
+| ------ | --------- | ------------- |
 | 0 | Workflow complete (terminal state reached) | Done |
 | 1 | Workflow blocked (cannot continue) | Human intervention required |
 | 2 | Step completed, next step ready | Re-invoke orchestrator (loop) |
@@ -468,7 +487,7 @@ The checkpoint file (`checkpoint.json`) is the orchestrator's source of truth fo
 ### Checkpoint Fields
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ------- | ------ | ---------- | ------------- |
 | workflow_id | string | yes | Matches workflow config |
 | version | int | yes | Schema version (must match config) |
 | run_id | UUID | yes | Unique run identifier |
@@ -491,30 +510,36 @@ When invoked with `contextsmith run <config> --state <dir>`:
 
 ```
 Step 1: Validate config
+
   - Read workflow config file
   - Validate against workflow_config.schema.json
   - If invalid → print errors, exit code 3
 
 Step 2: Validate state directory exists
+
   - If --state dir does not exist → create it with default task-state files
   - If --state dir exists → proceed
 
 Step 3: Check for checkpoint.json
+
   - If checkpoint.json exists → this is a resume → go to Resume Procedure
   - If no checkpoint.json → this is a fresh start
 
 Step 4: Fresh start initialization
+
   - Read STATUS.md → get current_phase
   - If STATUS.md does not exist or is empty → write initial STATUS.md with state = "init"
   - If PLAN.md does not exist → state = "plan" (generate plan first)
   - If PLAN.md exists → state = first execution phase from plan
 
 Step 5: Validate state consistency
+
   - STATUS.md current_phase must be a valid state in the workflow config
   - If valid → enter main loop
   - If invalid → exit code 4 (state inconsistency)
 
 Step 6: Enter main loop
+
   - run_workflow() calls orchestrator run() in a while loop
   - On exit code 2 → call run() again (loop)
   - On exit codes 0, 1, 3, 4, 5 → return that code
@@ -528,15 +553,18 @@ When checkpoint.json exists at startup:
 
 ```
 Step 1: Load checkpoint.json
+
   - Parse and validate checkpoint fields
   - If checkpoint is corrupted or schema-invalid → exit code 4
 
 Step 2: Detect interruption
+
   - Compare checkpoint.last_updated with STATUS.md last_modified
   - If checkpoint.last_updated is older → phase was interrupted
   - If checkpoint.last_result.status == "in_progress" → phase was interrupted
 
 Step 3: Determine resume action
+
   - If last completed phase == current_phase → phase was fully done, advance to next
   - If last_result.status == "fail" and retries < max → retry current phase
   - If last_result.status == "fail" and retries >= max → blocked
@@ -544,10 +572,12 @@ Step 3: Determine resume action
   - If last_result.status == "in_progress" → retry from start of phase
 
 Step 4: Validate artifact state
+
   - Check that artifacts listed in checkpoint.last_result.artifacts_written exist on disk
   - If artifacts are missing → log warning, treat phase as incomplete regardless of checkpoint
 
 Step 5: Re-enter main loop
+
   - STATUS.md is updated to reflect resume decision
   - Orchestrator proceeds from determined state
 ```
@@ -555,7 +585,7 @@ Step 5: Re-enter main loop
 ### Resume Decision Table
 
 | Checkpoint State | Artifacts Present | Action |
-|-----------------|-------------------|--------|
+| ----------------- | ------------------- | -------- |
 | Phase marked done | All expected exist | Advance to next phase |
 | Phase marked done | Some missing | Re-run phase (partial write) |
 | Phase failed, retries remain | Any | Retry phase |
@@ -568,7 +598,7 @@ Step 5: Re-enter main loop
 ## Error Handling Matrix
 
 | Error | Detection | Orchestrator Response | Exit Code |
-|-------|-----------|----------------------|-----------|
+| ------- | ----------- | ---------------------- | ----------- |
 | Config file not found | FileNotFoundError | Print error, stop | 3 |
 | Config schema invalid | jsonschema.exceptions.ValidationError | Print validation errors, stop | 3 |
 | State directory missing | os.path.isdir() returns False | Create directory, continue | 2 |
@@ -711,6 +741,7 @@ The orchestrator calls `harness.execute(step_contract, state_dir)` and receives 
 ### Validators
 
 Validators run after the harness returns. They check:
+
 1. Expected files exist (`os.path.exists`)
 2. Files are non-empty (`os.path.getsize > 0`)
 3. JSON/YAML files match their schema
@@ -722,6 +753,7 @@ Validators are Python functions registered in `scripts/validators/`. Each valida
 ### Task-Artifact Contract
 
 The orchestrator reads and writes these files in the state directory:
+
 - `STATUS.md` — must contain `## Current Phase` with the phase name and `## Next Action` with the next state
 - `PLAN.md` — must contain `## Phases` with checkboxes
 - `CONTEXT.md` — must contain `## File Map` and `## Constraints`

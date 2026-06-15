@@ -19,12 +19,19 @@ ARTIFACT_NAME.md:
   description: "Human-readable explanation of the artifact's purpose"
   append_only: true|false
   required_sections:
+
     - "Section Name"        # ## headings that must exist
+
   optional_sections:
+
     - "Section Name"        # ## headings that may exist
+
   content_rules:
+
     - type: "rule_type"     # What kind of validation to apply
+
       description: "..."    # Explanation of the rule
+
       # type-specific fields follow
 ```
 
@@ -55,11 +62,14 @@ The registry supports several content rule types for deeper validation:
 PLAN.md uses a three-level hierarchy enforced by the `phase_tree` content rule:
 
 ```
+
 ### Phase N: Name
+
 - Status: pending|in_progress|completed|blocked
 - Context Budget: NNk
 
 #### Sub-phase N.M: Description
+
 - Status: pending
 - Context Budget: NNk
 - Dependency: optional
@@ -73,7 +83,9 @@ PLAN.md uses a three-level hierarchy enforced by the `phase_tree` content rule:
 Each phase is a `###` heading. Required metadata: `Status`. Optional: `Agent`, `Context Budget`.
 
 ```markdown
+
 ### Phase 2: Validator Refactor
+
 - Status: completed
 - Context Budget: 24k
 ```
@@ -83,7 +95,9 @@ Each phase is a `###` heading. Required metadata: `Status`. Optional: `Agent`, `
 Each sub-phase is a `####` heading under its parent phase. Required metadata: `Status`. Optional: `Context Budget`, `Dependency`, `Validation`.
 
 ```markdown
+
 #### Sub-phase 2.1: Schema loading
+
 - Status: completed
 - Context Budget: 24k
 - Validation: |pytest tests/test_validators.py::TestLoadArtifactSchemas|
@@ -104,7 +118,9 @@ Tasks are checkbox list items under a sub-phase. A checked box (`[x]`) marks it 
 Task completion is calculated automatically by `state_reader._calc_completion()` as the ratio of checked to total tasks in a sub-phase. When all tasks are checked, the sub-phase is functionally complete.
 
 ```markdown
+
 #### Sub-phase 6.1: State reader tests
+
 - Status: completed
 - Context Budget: 16k
   - [x] Test hierarchical parsing
@@ -117,10 +133,13 @@ Task completion: 3/3 = 100%.
 ## Example: Full Phase in PLAN.md
 
 ```markdown
+
 ### Phase 9: Documentation
+
 - Status: pending
 
 #### Sub-phase 9.1: Schema registry docs
+
 - Status: pending
 - Context Budget: 24k
   - [ ] Write docs/reference/ARTIFACT_SCHEMAS.md
@@ -128,6 +147,7 @@ Task completion: 3/3 = 100%.
   - [ ] Add examples of sub-phase structure
 
 #### Sub-phase 9.2: Changelog
+
 - Status: pending
 - Context Budget: 8k
   - [ ] Update CHANGELOG.md
@@ -139,6 +159,7 @@ Task completion: 3/3 = 100%.
 STATUS.md has an optional `Current Sub-phase` section that tracks the active sub-phase within the current phase. It follows the pattern `Sub-phase N.M: Description` or `none` when the phase has no sub-phases defined.
 
 ```markdown
+
 ## Current Sub-phase
 Sub-phase 9.1: Schema registry docs
 ```
@@ -157,6 +178,7 @@ Validation follows a layered approach:
 
 ```python
 schemas = load_artifact_schemas()
+
 # Returns: {"STATUS.md": {...}, "PLAN.md": {...}, ...}
 ```
 
@@ -169,6 +191,7 @@ errors = validate_artifact_schema(
     file_path=state_dir / "STATUS.md",
     schema=schemas["STATUS.md"]
 )
+
 # Returns: [] if valid, ["Missing required section '...' in STATUS.md"] if not
 ```
 
@@ -188,6 +211,7 @@ result = validate_artifacts_with_schemas(
     expected_outputs=["STATUS.md", "PLAN.md", "PHASE_LOG.md"],
     config=workflow_config
 )
+
 # Returns: {"passed": True, "failures": [], "files_checked": 3, "files_passed": 3}
 ```
 

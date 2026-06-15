@@ -15,11 +15,13 @@ Always read a file before modifying it. This is the single most important file s
 Identify each file's purpose before writing. Different file types need different write strategies:
 
 **Append-only records** — always use `>>` heredoc, never `write`:
+
 - Report files: `*_REPORT.md` (EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, etc.)
 - Persistent state: DECISIONS.md, PHASE_LOG.md, STATUS.md, and any file expected to preserve prior entries
 - Log files and cumulative artifacts
 
 **Standard files** — use `edit` for modifications, `write` only for new files:
+
 - Source code, configuration, documentation
 - Any file where replacing all content is the intended operation
 
@@ -36,6 +38,7 @@ After any file operation, confirm the result:
 ## Compact AGENTS.md Block
 
 ```markdown
+
 ## File Operation Safety
 
 1. To check if a file exists, use `test -f <path>` or the `read` tool. Do NOT use `ls` for existence checks.

@@ -17,6 +17,7 @@ Use this workflow when you need to compare travel options (flights, hotels, trai
 ## When to Use This Workflow
 
 Use this workflow when:
+
 - Comparing flights, hotels, or trains across dates and destinations
 - Evaluating options against budget, timing, or preference constraints
 - You want comparison results without triggering purchases or bookings
@@ -34,6 +35,7 @@ If you need to proceed to booking after comparison, see [Schedule with Approval 
 Specify what you're comparing and the constraints that apply.
 
 **Example:**
+
 ```
 Compare round-trip flights from NYC to London, July 10-24.
 Budget: under $900.
@@ -46,6 +48,7 @@ Constraints: no more than 1 layover, depart after 8am.
 Use `contextsmith-orchestrator` with the travel/purchase domain. The domain pack enforces that comparison is read-only and purchasing requires explicit approval.
 
 **Example prompt:**
+
 ```
 Compare travel options for my trip.
 --domain travel-purchase
@@ -54,6 +57,7 @@ Compare travel options for my trip.
 ```
 
 The agent will:
+
 1. Search or retrieve available options within constraints
 2. Score options against your criteria
 3. Present a ranked comparison without initiating any purchase

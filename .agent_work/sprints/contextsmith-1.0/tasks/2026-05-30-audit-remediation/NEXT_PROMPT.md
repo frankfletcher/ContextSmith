@@ -4,6 +4,7 @@
 Continue executing the audit remediation plan from the current phase. Read STATUS.md for current phase, PHASE_LOG.md for completed phases, and PLAN.md for the next phase's actions. Execute the next phase, update task state artifacts, and continue until all phases are complete.
 
 ## Quick Resume
+
 1. Read STATUS.md to find current phase
 2. Read PLAN.md section for current phase
 3. Execute phase actions

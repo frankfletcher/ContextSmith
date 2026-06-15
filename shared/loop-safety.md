@@ -19,9 +19,12 @@ Before running a tool, compare the action to the last three tool calls. If the s
 For persistent task state, record recent failures in `STATUS.md` or `PHASE_LOG.md`:
 
 ```markdown
+
 ## Recent Failed Actions
+
 - `npm test`: failed because dependency install is incomplete.
 - `npm install`: failed because network access is unavailable.
+
 Next strategy: inspect package scripts and run static validation.
 ```
 
@@ -61,6 +64,7 @@ Use explicit stop strings when needed:
 ## Compact AGENTS.md Block
 
 ```markdown
+
 ## Agentic Loop Safety
 
 For tool-using local/smaller models:

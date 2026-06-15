@@ -22,15 +22,25 @@ If the user provides a clear intent (e.g., "implement error recovery"), skip to 
 Question: "What kind of workflow should I create?"
 Header: "Workflow Type"
 Options:
+
   - Label: "Coding"
+
     Description: "Software engineering: implement, test, review, deploy"
+
   - Label: "Writing"
+
     Description: "Content creation: draft, edit, review, publish"
+
   - Label: "Research"
+
     Description: "Analysis: gather sources, synthesize, audit, report"
+
   - Label: "Migration"
+
     Description: "Refactoring: plan, execute, validate, rollback"
+
   - Label: "Audit"
+
     Description: "Review existing work: evaluate, report, recommend"
 ```
 
@@ -39,43 +49,66 @@ Options:
 Ask 2-3 questions to fill in missing parameters. Skip any the user already provided.
 
 **Domain (if not clear from intent):**
+
 ```
 Question: "What domain does this work fall into?"
 Header: "Domain"
 Options:
+
   - Label: "Coding"
+
     Description: "Software engineering, repo work, scripts"
+
   - Label: "Writing"
+
     Description: "Documentation, content, copy"
+
   - Label: "Research"
+
     Description: "Analysis, investigation, synthesis"
+
   - Label: "General"
+
     Description: "Doesn't fit a specific domain"
 ```
 
 **Quality level:**
+
 ```
 Question: "How much review should the output get?"
 Header: "Quality Level"
 Options:
+
   - Label: "Quick"
+
     Description: "One pass, minimal review, fast delivery"
+
   - Label: "Standard"
+
     Description: "Audit gate + validation, balanced quality"
+
   - Label: "Thorough"
+
     Description: "Audit + Ralph loops + validation, highest quality"
 ```
 
 **Harness (if not detected):**
+
 ```
 Question: "Which agent harness will run this workflow?"
 Header: "Harness"
 Options:
+
   - Label: "OpenCode"
+
     Description: "Full orchestrator support, agent profiles, RESULT.json"
+
   - Label: "Generic"
+
     Description: "Any harness, skill-only mode, no infrastructure"
+
   - Label: "Cursor"
+
     Description: "Cursor with .cursorrules, inline results"
 ```
 
@@ -112,6 +145,7 @@ Select a domain template, then customize based on the user's answers.
 Each template defines default phases, gates, permissions, and outputs.
 
 **Coding:**
+
 ```yaml
 phases: load_context → implement_change → audit_output → validate → close
 gates: audit, validate
@@ -149,11 +183,13 @@ permissions: read-only (audit), edit (report)
 ### Customization
 
 Based on the user's quality level answer:
+
 - **Quick**: skip audit gate, reduce max_retries to 1
 - **Standard**: keep defaults
 - **Thorough**: add Ralph loops (ralph_critique → ralph_revise), increase max_retries
 
 Based on the user's intent:
+
 - If the intent mentions "review" or "evaluate" → add audit gate
 - If the intent mentions "test" or "validate" → add validate gate
 - If the intent mentions "deploy" or "publish" → add external-action permission to close phase
@@ -175,6 +211,7 @@ These files form the initial task-state directory.
 ## Validation
 
 Before presenting the config, validate:
+
 1. Schema validation against `workflow_config.schema.json`
 2. Required phases present (init, execute, closeout)
 3. At least one path to `done` (reachability)
@@ -186,6 +223,7 @@ If validation fails, revise and retry (up to 3 times). If all retries fail, pres
 ## Overlay Generation
 
 When the user wants to modify an existing workflow:
+
 - Read the existing workflow config
 - Generate an overlay that adds/removes steps
 - Validate the overlay against the base config
@@ -194,6 +232,7 @@ When the user wants to modify an existing workflow:
 ## After Generation
 
 After generating the config, offer:
+
 1. **Run now** — invoke the orchestrator (skill-only or harness-aware)
 2. **Edit first** — present the config for manual editing
 3. **Save only** — write files to task-state directory, user runs later
@@ -201,7 +240,7 @@ After generating the config, offer:
 ## Reference Loading
 
 | Need | Read |
-|------|------|
+| ------ | ------ |
 | Every run | `shared/structured-questioning.md`, `shared/persistent-task-state.md` |
 | Schema detail | `workflow_config_sketch.md` (in deep_determinism) |
 | Domain templates | `references/domain-templates/<domain>.yaml` |
@@ -210,6 +249,7 @@ After generating the config, offer:
 ## Token Budget
 
 Target: under 250 lines for the skill itself. Domain templates loaded conditionally.
+
 - Skill: ~250 lines (~700 tokens)
 - One domain template: ~50 lines (~150 tokens)
 - Structured questioning reference: ~100 lines (~300 tokens, shared)

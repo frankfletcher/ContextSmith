@@ -32,7 +32,7 @@ The audit-remediation plan is well-structured, small-model-executable, and addre
 ## Weaknesses
 
 | Severity | Issue |
-|----------|-------|
+| ---------- | ------- |
 | **Medium** | Context contracts are incomplete. They include `required_files`, `required_knowledge`, and `estimated_tokens`, but are missing the phased-planning YAML fields: `targeted_context_length`, `usable_phase_budget`, `tool_output_reserve`, `phase_type`, `expected_tool_calls`, `max_tool_calls_before_compaction`, `fresh_session_after_phase`, `stop_if_forecast_exceeded`. |
 | **Medium** | Phase 3 has a contradiction: Inputs say `shared/behavioral-contracts.md` is "read-only, do not modify", but Actions step 2 says "Add cross-reference in `shared/behavioral-contracts.md`". This will confuse the executor. |
 | **Low** | No explicit rollback/recovery procedure if a phase fails. Per-phase commits enable rollback, but the plan doesn't say what to do if validation fails. |
@@ -44,7 +44,7 @@ The audit-remediation plan is well-structured, small-model-executable, and addre
 ## A-F Rubric
 
 | Dimension | Grade | Reason | Recommended Fix |
-|-----------|-------|--------|-----------------|
+| ----------- | ------- | -------- | ----------------- |
 | Phase granularity | A | 7 phases for 5 findings + baseline + CHANGELOG. Each phase is a single atomic action. | None. |
 | Atomicity | A | Each step is executable without hidden inference leaps. | None. |
 | Dependency ordering | A | Phase 1 before Phase 2 (correct). Phases 3-6 are independent. | None. |
@@ -94,7 +94,7 @@ No high-risk issues. The two medium-severity issues (incomplete context contract
 Overall recommendation: **ship with minor fixes**
 
 | Category | Grade | Notes |
-|---|---:|---|
+| --- | ---: | --- |
 | Phase granularity | A | Appropriate for scope |
 | Atomicity | A | Single objective per phase |
 | Context fit | A | All phases under 60k |
@@ -105,16 +105,19 @@ Overall recommendation: **ship with minor fixes**
 | Test strategy | N/A | Not a coding task |
 
 ## Must Fix Before Execution
+
 - Phase 3: Resolve "read-only" vs "modify" contradiction in inputs/actions
 - Context contracts: Add `phase_type`, `expected_tool_calls`, `stop_if_forecast_exceeded` fields
 
 ## Suggested Improvements
+
 - Integrate task state updates into each phase's actions (not standalone section)
 - Add "if validation fails, stop and update STATUS.md to Blocked" to each phase
 - Integrate shared reference sync check into Phases 1-5 actions
 - Add phase compression/debrief to each phase closeout
 
 ## Small-Model Execution Notes
+
 - Plan is well-suited for qwen36 execution
 - Each phase is a single file edit with validation
 - Task state files enable fresh-session resumption
@@ -127,6 +130,7 @@ Overall recommendation: **ship with minor fixes**
 **Ship with minor fixes.** The plan is executable as-is for a qwen36 model, but fixing the Phase 3 contradiction and adding the missing context contract fields will improve reliability. These are low-effort fixes that don't require plan restructuring.
 
 If the user wants to iterate (Ralph loop), focus on:
+
 1. Fix Phase 3 contradiction
 2. Add phased-planning YAML fields to context contracts
 3. Integrate task state updates into per-phase actions

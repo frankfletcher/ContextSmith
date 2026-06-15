@@ -93,7 +93,7 @@ Reserve context before planning phase scope:
 If tool calls are expected to dominate the transcript, size the phase against the remaining usable phase budget, not the headline context target. Typical tool-heavy executable phase budgets are:
 
 | Target | Typical Executable Phase Budget | Planning Consequence |
-|---:|---:|---|
+| ---: | ---: | --- |
 | 32k | 12k-16k | Use micro-phases and fresh sessions. |
 | 64k | 24k-32k | Split discovery, editing, and validation. |
 | 128k | 48k-64k | Larger phases are possible, but tool forecasts still gate execution. |
@@ -108,7 +108,7 @@ If the planned artifact would exceed the usable budget, split into more phases, 
 Use phase types to select appropriate context budgets for different work categories:
 
 | Phase Type | Budget | Description |
-|---|---|---|
+| --- | --- | --- |
 | analysis | 32k | Reading, searching, understanding code or documents. |
 | editing | 48k | Targeted file edits, refactoring, test writing. |
 | migration | 64k | Cross-file migrations, framework upgrades, bulk changes. |

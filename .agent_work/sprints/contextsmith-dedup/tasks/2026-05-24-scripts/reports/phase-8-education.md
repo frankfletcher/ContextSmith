@@ -20,12 +20,14 @@ Let's break down the sync system because it's a pattern you'll see often:
 **The Problem**: We have 5 skills, each needing 52 shared reference files. Without automation, you'd have 260 copies to maintain!
 
 **The Solution**: 
+
 1. **Single Source of Truth**: All shared files live in `shared/`.
 2. **Manifest File**: Each skill has a `reference_manifest.yml` listing its dependencies.
 3. **Sync Script**: Copies files from `shared/` to each skill's `references/` directory.
 4. **Git Ignore**: The `references/` directory is ignored, so only the manifest is committed.
 
 **Key Code Pattern** (from `scripts/sync_shared_refs.py`):
+
 ```python
 def compute_blob_hash(filepath):
     """Compute git-compatible blob hash."""
@@ -66,6 +68,7 @@ You'll use these same steps when reviewing pull requests.
 ### Testing and Validation
 
 We ran these validation commands:
+
 - `python scripts/validate_skills.py`: Checks manifest structure and file existence.
 - `python scripts/sync_shared_refs.py --dry-run`: Shows what would be copied.
 - `./scripts/package_skill.sh`: Creates a distributable zip of a skill.
@@ -89,6 +92,7 @@ In your projects, always include validation scripts that can be run with one com
 ### Professional Growth
 
 This sprint demonstrates several professional skills:
+
 - **Systems thinking**: Designing a solution that scales across 5 skills.
 - **Automation**: Writing scripts to eliminate manual work.
 - **Documentation**: Writing clear guides for others.

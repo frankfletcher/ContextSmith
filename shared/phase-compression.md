@@ -7,27 +7,35 @@ Use phase compression for long-running, multi-phase, or context-sensitive work. 
 At the end of each phase, write a compact debrief:
 
 ```markdown
+
 ## Phase Debrief
 
 ### Completed
+
 - ...
 
 ### Evidence
+
 - files changed, commands run, tests observed, reports produced
 
 ### Blockers
+
 - ...
 
 ### Decisions
+
 - ...
 
 ### Carry Forward
+
 - facts, paths, decisions, risks, and next-phase constraints that remain relevant
 
 ### Do Not Carry Forward
+
 - failed approaches, obsolete assumptions, irrelevant files, outdated hypotheses
 
 ### Next Phase
+
 - next atomic phase goal and stop condition
 ```
 

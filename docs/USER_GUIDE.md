@@ -122,7 +122,6 @@ ContextSmith is not:
 
 It is a toolkit for producing better agent instructions, plans, and audits.
 
-
 ## Run Configuration Preview
 
 For guided, deep, review-gate, AGENTS.md, and migration workflows, ContextSmith can show the inferred run configuration before doing important work. The preview uses familiar flags, explains the choices briefly, and lets you change one line instead of rewriting the whole request.

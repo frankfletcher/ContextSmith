@@ -51,18 +51,18 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 npm install -g markdownlint-cli
 
 # Sync dependencies and create .venv
-uv sync
+rtk uv sync
 
 # Run validation
-uv run python scripts/validate_skills.py
-uv run ruff check orchestrator/ --select E,F,W,I | uv run python scripts/lint_error_counter.py
-uv run ruff format orchestrator/ --check
-uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "
-markdownlint .agent_work/ orchestrator/ docs/ --ignore node_modules | uv run python scripts/lint_error_counter.py
-uv run pytest tests/ -v
+rtk uv run python scripts/validate_skills.py
+rtk uv run ruff check orchestrator/ --select E,F,W,I | uv run python scripts/lint_error_counter.py
+rtk uv run ruff format orchestrator/ --check
+rtk uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "
+rtk markdownlint .agent_work/ orchestrator/ docs/ --ignore node_modules | uv run python scripts/lint_error_counter.py
+rtk uv run pytest tests/ -v
 
 # View accumulated lint error frequencies (top 10 across all runs)
-python -c "import json; d=json.load(open('.agent_work/lint_error_counts.json')); [print(f'{v:4d} {k}') for k,v in sorted(d.items(), key=lambda x:-x[1])[:10]]"
+rtk python -c "import json; d=json.load(open('.agent_work/lint_error_counts.json')); [print(f'{v:4d} {k}') for k,v in sorted(d.items(), key=lambda x:-x[1])[:10]]"
 ```
 
 The validation script checks SKILL.md frontmatter, line counts, and reference directory presence. Ruff handles Python linting, formatting, and import sorting. Radon checks cyclomatic complexity (no C/D/E/F allowed). Markdownlint validates all Markdown files. Pytest runs the test suite.
@@ -95,8 +95,8 @@ To enable, add `extra_audit` to a workflow config's `states` and `phase_order` a
 This repo has Python files in `orchestrator/` and `scripts/`, plus many Markdown/YAML files.
 
 ### Python
-- All Python code must pass `ruff check --select E,F,W,I` and `ruff format --check`.
-- Run `ruff check --fix` and `ruff format` before committing.
+- All Python code must pass `rtk ruff check --select E,F,W,I` and `rtk ruff format --check`.
+- Run `rtk ruff check --fix` and `rtk ruff format` before committing.
 - The orchestrator package is in `orchestrator/`. Tests are in `tests/`.
 - Ask for approval before adding new dependencies.
 - Follow PEP 8 (enforced by ruff).
@@ -224,8 +224,8 @@ Before writing any Python function, apply the patterns in `shared/coding-standar
 **Measure, don't assume.** After writing, run:
 
 ```bash
-uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "
-uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "
+rtk uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "
+rtk uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "
 ```
 
 - `radon cc`: cyclomatic complexity per function. A (1-5) = low, B (6-10) = moderate, C+ = complex. **Target: all touched functions ≤ B.**
@@ -234,5 +234,142 @@ uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "
 **The gate is a backup.** Do not write code assuming you'll fix it after radon complains. Write it clean in one pass. If radon flags a function, do not just rename variables — extract, restructure, eliminate branches. Loop until the function is naturally ≤ B.
 
 For the full complexity prevention reference, see `shared/coding-standards.md`. For the gate procedure, see `shared/complexity-gate.md`.
+
+
+
+# RTK (Rust Token Killer) - Token-Optimized Commands
+
+## Golden Rule
+
+**Always prefix commands with `rtk`**. If RTK has a dedicated filter, it uses it. If not, it passes through unchanged. This means RTK is always safe to use.
+
+**Important**: Even in command chains with `&&`, use `rtk`:
+
+```bash
+# ❌ Wrong
+git add . && git commit -m "msg" && git push
+
+# ✅ Correct
+rtk git add . && rtk git commit -m "msg" && rtk git push
+```
+
+## RTK Commands by Workflow
+
+### Build & Compile (80-90% savings)
+
+```bash
+rtk cargo build         # Cargo build output
+rtk cargo check         # Cargo check output
+rtk cargo clippy        # Clippy warnings grouped by file (80%)
+rtk tsc                 # TypeScript errors grouped by file/code (83%)
+rtk lint                # ESLint/Biome violations grouped (84%)
+rtk prettier --check    # Files needing format only (70%)
+rtk next build          # Next.js build with route metrics (87%)
+```
+
+### Test (60-99% savings)
+
+```bash
+rtk cargo test          # Cargo test failures only (90%)
+rtk go test             # Go test failures only (90%)
+rtk jest                # Jest failures only (99.5%)
+rtk vitest              # Vitest failures only (99.5%)
+rtk playwright test     # Playwright failures only (94%)
+rtk pytest              # Python test failures only (90%)
+rtk rake test           # Ruby test failures only (90%)
+rtk rspec               # RSpec test failures only (60%)
+rtk test <cmd>          # Generic test wrapper - failures only
+```
+
+### Git (59-80% savings)
+
+```bash
+rtk git status          # Compact status
+rtk git log             # Compact log (works with all git flags)
+rtk git diff            # Compact diff (80%)
+rtk git show            # Compact show (80%)
+rtk git add             # Ultra-compact confirmations (59%)
+rtk git commit          # Ultra-compact confirmations (59%)
+rtk git push            # Ultra-compact confirmations
+rtk git pull            # Ultra-compact confirmations
+rtk git branch          # Compact branch list
+rtk git fetch           # Compact fetch
+rtk git stash           # Compact stash
+rtk git worktree        # Compact worktree
+```
+
+Note: Git passthrough works for ALL subcommands, even those not explicitly listed.
+
+### GitHub (26-87% savings)
+
+```bash
+rtk gh pr view <num>    # Compact PR view (87%)
+rtk gh pr checks        # Compact PR checks (79%)
+rtk gh run list         # Compact workflow runs (82%)
+rtk gh issue list       # Compact issue list (80%)
+rtk gh api              # Compact API responses (26%)
+```
+
+### JavaScript/TypeScript Tooling (70-90% savings)
+
+```bash
+rtk pnpm list           # Compact dependency tree (70%)
+rtk pnpm outdated       # Compact outdated packages (80%)
+rtk pnpm install        # Compact install output (90%)
+rtk npm run <script>    # Compact npm script output
+rtk npx <cmd>           # Compact npx command output
+rtk prisma              # Prisma without ASCII art (88%)
+```
+
+### Files & Search (60-75% savings)
+
+```bash
+rtk ls <path>           # Tree format, compact (65%)
+rtk read <file>         # Code reading with filtering (60%)
+rtk grep <pattern>      # Search grouped by file (75%). Format flags (-c, -l, -L, -o, -Z) run raw.
+rtk find <pattern>      # Find grouped by directory (70%)
+```
+
+### Analysis & Debug (70-90% savings)
+
+```bash
+rtk err <cmd>           # Filter errors only from any command
+rtk log <file>          # Deduplicated logs with counts
+rtk json <file>         # JSON structure without values
+rtk deps                # Dependency overview
+rtk env                 # Environment variables compact
+rtk summary <cmd>       # Smart summary of command output
+rtk diff                # Ultra-compact diffs
+```
+
+### Infrastructure (85% savings)
+
+```bash
+rtk docker ps           # Compact container list
+rtk docker images       # Compact image list
+rtk docker logs <c>     # Deduplicated logs
+rtk kubectl get         # Compact resource list
+rtk kubectl logs        # Deduplicated pod logs
+```
+
+### Network (65-70% savings)
+
+```bash
+rtk curl <url>          # Compact HTTP responses (70%)
+rtk wget <url>          # Compact download output (65%)
+```
+
+### Meta Commands
+
+```bash
+rtk gain                # View token savings statistics
+rtk gain --history      # View command history with savings
+rtk discover            # Analyze Claude Code sessions for missed RTK usage
+rtk proxy <cmd>         # Run command without filtering (for debugging)
+rtk init                # Add RTK instructions to CLAUDE.md
+rtk init --global       # Add RTK to ~/.claude/CLAUDE.md
+```
+
+## 
 
 @RTK.md

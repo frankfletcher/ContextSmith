@@ -1,6 +1,7 @@
 # Phase 3 Audit Report
 
 ## Artifact Manifest
+
 - artifact_type: audit-report
 - parent_task: TASK.md
 - phase: 3A-3G
@@ -19,7 +20,7 @@ All six domain packs are schema-compliant, compact, approval-boundary-aligned, a
 ## Plan Compliance
 
 | Phase | Plan Gates | Implemented | Lines | Status |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | 3A general_fallback | 6 | 6 | 52 | ✅ |
 | 3B software_engineering | 5 | 5 | 56 | ✅ |
 | 3C scheduling | 6 | 6 | 56 | ✅ |
@@ -43,7 +44,7 @@ All packs are compact (52–58 lines), within the "fits on one screen" criterion
 Every `requires_approval` action in `external_action_boundaries` has a corresponding entry in `approval_gates`:
 
 | Domain | `requires_approval` boundaries | `approval_gates` | Aligned |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | general_fallback | `external_action` | `external_action` | ✅ |
 | software_engineering | `deploy_staging`, `deploy_production`, `destructive_git_operation`, `dependency_addition` | 4 matching | ✅ |
 | scheduling | `send_invite`, `modify_calendar` | `send_invite`, `modify_calendar`, `cancel_event` | ✅ |
@@ -62,6 +63,7 @@ Every `requires_approval` action in `external_action_boundaries` has a correspon
 ## Phase 3G Review Findings
 
 One defect caught and fixed during review:
+
 - `general_fallback` had named triggers instead of `["*"]` — corrected in both runtime pack and fixture
 - Validator rule 10 enforcement added (`runtime/validator.py:351-356`)
 - Regression test added (`tests/test_validator.py`)

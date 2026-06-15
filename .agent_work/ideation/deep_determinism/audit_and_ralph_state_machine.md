@@ -97,7 +97,7 @@ From the baseline workflow config, the orchestrator should read:
 ## Failure Cases
 
 | Problem | Orchestrator response |
-|---|---|
+| --- | --- |
 | Audit says pass but required fields are missing | Reject and send back to fix |
 | Ralph loop exceeds max cycles | Stop and mark blocked |
 | Review output is unstructured | Treat as failure |
@@ -119,41 +119,41 @@ The state machine is defined in the workflow config's `states` section. Each sta
 ### Complete Transition Matrix
 
 | Current State | Condition | Next State | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | init | config valid | plan | Config must pass schema validation |
 | init | config invalid | blocked | Print validation errors |
 | init | state dir missing | plan | Create default state files first |
 | plan | plan valid | execute | Plan passes checklist schema |
 | plan | plan invalid | plan (retry) | Max retries from config |
-| plan | max retries | blocked | |
+| plan | max retries | blocked |  |
 | execute | output valid | audit | If audit gate required |
 | execute | output valid | validate | If no audit gate |
 | execute | output valid | ralph_critique | If ralph_review gate but no audit |
 | execute | output valid | closeout | If no gates remain |
 | execute | output invalid | execute (retry) | Artifacts missing or schema-invalid |
-| execute | max retries | blocked | |
+| execute | max retries | blocked |  |
 | audit | pass | validate | If validate gate required |
 | audit | pass | ralph_critique | If ralph_review gate required |
 | audit | pass | closeout | If no remaining gates |
 | audit | fail | fix | Issues found |
 | audit | unstructured output | audit (retry) | No structured result |
-| audit | max retries | blocked | |
+| audit | max retries | blocked |  |
 | fix | always | audit | Fix routes back to audit to verify the fix. Some workflows may skip fix and route audit fail → execute (retry phase) directly; that is valid when the workflow config defines it. |
 | fix | max retries | blocked | Count toward the audit-fix loop budget |
 | validate | all checks pass | ralph_critique | If ralph_review gate required |
 | validate | all checks pass | closeout | If no remaining gates |
 | validate | any check fails | execute (retry) | Go back to fix the implementation |
 | validate | any check fails | fix | If the phase allows fixing without full retry |
-| validate | max retries | blocked | |
+| validate | max retries | blocked |  |
 | ralph_critique | critique valid + cycles < max | ralph_revise | Normal cycle |
 | ralph_critique | critique valid + cycles >= max | closeout | Max cycles reached, move on |
 | ralph_critique | critique invalid | ralph_revise | Even invalid critique triggers revise |
 | ralph_critique | max cycles exceeded | blocked | Safety catch |
 | ralph_revise | always | ralph_critique | Loop counter increments after revise |
-| ralph_revise | max retries | blocked | |
+| ralph_revise | max retries | blocked |  |
 | closeout | closeout valid | done | All required outputs exist |
 | closeout | closeout invalid | closeout (retry) | Missing SUMMARY.md or NEXT_PROMPT.md |
-| closeout | max retries | blocked | |
+| closeout | max retries | blocked |  |
 
 ### Transition Resolution Pseudocode
 
@@ -178,6 +178,7 @@ def resolve_transition(
         target = transition["target"]
 
         if _matches_condition(condition, result, validation):
+
             # Handle retry limit
             if target == current_state or target == "retry-same-state":
                 retries = counters.get(current_state, {}).get("retries", 0)
@@ -197,7 +198,6 @@ def resolve_transition(
             return target
 
     return "blocked"  # no transition matched
-
 
 def _matches_condition(condition: str, result: HarnessResult, validation: ValidationResult) -> bool:
     """Check if an execution result matches a transition condition."""
@@ -262,15 +262,19 @@ def update_counters(
         counters[current_state] = {"retries": 0, "ralph_cycles": 0}
 
     if current_state == next_state:
+
         # Retry: increment retry counter
         counters[current_state]["retries"] += 1
     elif current_state == "ralph_revise" and next_state == "ralph_critique":
+
         # Ralph cycle complete: increment cycle counter
         counters["ralph_critique"]["ralph_cycles"] += 1
     elif current_state == "ralph_critique" and next_state != "ralph_revise":
+
         # Ralph cycle exited: mark done
         pass
     else:
+
         # Phase completed successfully: reset counters for this state
         counters[current_state] = {"retries": 0, "ralph_cycles": 0}
 
@@ -308,7 +312,7 @@ Validation is NOT a separate state in most workflows. It is a GATE that runs aft
 ### When Validation Runs
 
 | Trigger | What Gets Validated | Schema |
-|---|---|---|
+| --- | --- | --- |
 | After `execute` completes | Expected output files exist, are non-empty, match schemas | phase_contract.schema.json |
 | After `audit` completes | AUDIT_REPORT.md has required sections | audit_result.schema.json |
 | After `fix` completes | Same as `execute` validation | phase_contract.schema.json |
@@ -319,7 +323,7 @@ Validation is NOT a separate state in most workflows. It is a GATE that runs aft
 ### Validation Failure → Transition Mapping
 
 | Validation Failure | Current State | Next State |
-|---|---|---|
+| --- | --- | --- |
 | Config schema invalid | init | blocked |
 | Task state missing | init | plan (auto-create) |
 | Output artifacts missing | execute | execute (retry) |
@@ -340,11 +344,13 @@ def validator_fn(
     Run all configured validators and return combined result.
 
     Standard validators (registered in scripts/validators/):
+
     - file_exists: check every expected_outputs file exists
     - json_schema: validate JSON/YAML files against schema
     - command_exit_zero: run configured commands, check exit code 0
     - regex_match: check file content against regex patterns
     - content_non_empty: check files are not empty
+
     """
     ...
 ```
@@ -402,11 +408,17 @@ states:
     max_retries: 2
     ralph_max_cycles: 2    # Number of critique-revise cycles before forced advance
     transitions:
+
       - condition: pass
+
         target: ralph_revise
+
       - condition: fail
+
         target: ralph_revise   # Even on fail, we revise and try again
+
       - condition: max_cycles_reached
+
         target: closeout
 ```
 

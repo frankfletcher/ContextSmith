@@ -1,6 +1,7 @@
 # Approval Record Schema
 
 ## Artifact Manifest
+
 - artifact_type: artifact-schema
 - parent_task: TASK.md
 - phase: 1B.5
@@ -18,7 +19,7 @@ Each approval record corresponds to a single action requiring authorization.
 ### Required Fields
 
 | Field | Type | Description |
-|---|---|---|
+| --- | --- | --- |
 | `id` | string | Unique approval identifier (e.g., `appr-001`) |
 | `requirement_ids` | string[] | Requirement chain IDs this approval relates to |
 | `action` | string | Description of the action requiring approval |
@@ -33,7 +34,7 @@ Each approval record corresponds to a single action requiring authorization.
 ### Optional Fields
 
 | Field | Type | Description |
-|---|---|---|
+| --- | --- | --- |
 | `domain` | string | Domain label (e.g., `travel_purchase`, `scheduling`, `software`) |
 | `denial_reason` | string | Explanation when status is `denied` |
 | `waiver_notes` | string | Explanation when status is `waived_by_user` |
@@ -42,7 +43,7 @@ Each approval record corresponds to a single action requiring authorization.
 ## Status Semantics
 
 | Status | Meaning | Action may proceed? |
-|---|---|---|
+| --- | --- | --- |
 | `not_required` | The action does not require approval (e.g., read-only, low-risk) | Yes, no approval needed |
 | `requested` | Approval has been requested but not yet granted | No — must wait |
 | `approved` | A user or authorized system has granted approval | Yes — with evidence |
@@ -132,7 +133,9 @@ The Phase 2 validator accepts JSON only. This YAML shape is a documentation aid 
 artifact_type: approval_record
 id: appr-001
 requirement_ids:
+
   - req-010
+
 action: "Purchase round-trip flight: SFO to LAX on 2026-06-15, return 2026-06-20, 1 passenger, $342.50"
 side_effect_tier: irreversible
 requester: travel-agent

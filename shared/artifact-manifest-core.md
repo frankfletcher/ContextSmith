@@ -11,6 +11,7 @@ Use this core reference when generating or executing artifacts. Use `artifact-ma
 ## Required Fields
 
 ```markdown
+
 ## Artifact Manifest
 
 **type:** prompt | implementation-plan | next-prompt | skill | instruction-file | run
@@ -20,12 +21,12 @@ Use this core reference when generating or executing artifacts. Use `artifact-ma
 ### Parameters
 
 | Parameter | Value | Source |
-|---|---|---|
+| --- | --- | --- |
 
 ### References Applied
 
 | Reference | Version | Contract Summary |
-|---|---|---|
+| --- | --- | --- |
 
 ### Behavioral Contracts
 
@@ -35,7 +36,7 @@ Use this core reference when generating or executing artifacts. Use `artifact-ma
 ## Source Values
 
 | Source | Meaning |
-|---|---|
+| --- | --- |
 | `user-set` | Explicitly provided by current user |
 | `inherited` | Copied from parent artifact |
 | `default` | Set by SKILL.md or control parameter defaults |

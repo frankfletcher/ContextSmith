@@ -1,6 +1,7 @@
 # Task: Runtime Enforcement for ContextSmith Skills
 
 ## Artifact Manifest
+
 - artifact_type: task-state
 - parent_request: Create an implementation plan for deterministic runtime behavior enforcement in installed ContextSmith skills.
 - target_profile: qwen36 (default)
@@ -18,6 +19,7 @@ Plan the work needed to make ContextSmith skill behavior more deterministic at r
 Current runtime enforcement is mostly instruction-based. Installed skills ship as `SKILL.md`, `help.md`, `reference_manifest.yml`, and `references/`, so user-facing behavior depends on the model reading and following natural-language obligations. Repository-local validators check package structure but do not enforce behavior during real skill use.
 
 ## Scope
+
 - Design a runtime enforcement architecture that works when users install ContextSmith skills.
 - Keep the implementation plan executable by small/local models through atomic phases and explicit review gates.
 - Generalize the runtime protocol for skills, agents, and prompts across many domains, not only coding.
@@ -29,6 +31,7 @@ Current runtime enforcement is mostly instruction-based. Installed skills ship a
 - Produce an implementation plan before code changes.
 
 ## Out of Scope
+
 - Implementing the runtime validator in this planning task.
 - Editing `PACKAGE_SPEC.md` without explicit approval.
 - Adding new dependencies without explicit approval, except pytest is pre-approved by current user for test phases.
@@ -36,6 +39,7 @@ Current runtime enforcement is mostly instruction-based. Installed skills ship a
 - Claiming hard enforcement where the harness can only provide advisory tool output.
 
 ## Success Criteria
+
 - All sprint artifacts are present in this task directory.
 - `PLAN.md` defines atomic phases with inputs, actions, outputs, validation, and closeout gates.
 - The plan distinguishes deterministic validation from harness-enforced blocking.

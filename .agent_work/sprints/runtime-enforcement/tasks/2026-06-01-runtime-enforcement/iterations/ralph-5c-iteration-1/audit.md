@@ -1,6 +1,7 @@
 # Ralph Loop Iteration 1 — Phase 5C Next Prompt Compiler Tests
 
 ## Artifact Manifest
+
 - artifact_type: ralph-audit
 - phase: Phase 5C
 - iteration: 1 of 2
@@ -9,7 +10,7 @@
 ## A-F Rubric
 
 | Category | Grade | Notes |
-|---|---|---|
+| --- | --- | --- |
 | Small-model atomicity | B | Each test is single-concern, clear assertions. Regex parsing in read-order/closeout/recovery/self-audit tests is fragile but appropriate. |
 | Instruction clarity | B | Test names and docstrings match behavior. Some docstrings could be more specific about what's being verified. |
 | Output contract quality | B- | Assertions are concrete but some are weakened to match current compiler behavior rather than testing desired behavior. |

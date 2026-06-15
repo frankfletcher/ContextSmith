@@ -29,7 +29,7 @@ The v1.5.1 context-budget changes are a strong, coherent addition that meaningfu
 ## Weaknesses / Risks
 
 | Severity | Issue |
-|----------|-------|
+| ---------- | ------- |
 | **Medium** | `local-model-prompt-engineer/SKILL.md` is 291 lines — the largest skill. For a 32k target with system prompt overhead, this consumes ~3-4% of usable context. Consider progressive disclosure: move the persistent-task-state contract (lines 113-135) to a reference file. |
 | **Medium** | No data-science/ML-specific context-budget guidance in new references. `targeted-context-length.md` and `phase-compression.md` are coding-centric. ML phases (training runs, eval sweeps, artifact uploads) have different tool-output profiles that aren't addressed. |
 | **Low** | `behavioral-contracts.md` is 105 lines. When embedded in a generated artifact alongside other contracts, it adds meaningful token cost. Consider a "minimal contracts" subset for tight-context artifacts. |
@@ -41,7 +41,7 @@ The v1.5.1 context-budget changes are a strong, coherent addition that meaningfu
 ## A-F Rubric
 
 | Dimension | Grade | Reason | Recommended Fix |
-|-----------|-------|--------|-----------------|
+| ----------- | ------- | -------- | ----------------- |
 | Small-model atomicity | A | Instructions are literal, single-objective, with explicit stop conditions. context_contract is mechanical. | None. |
 | Instruction clarity | A | No ambiguous language. Imperative, testable, with concrete thresholds (50%, 3-7 files, 12k-16k budgets). | None. |
 | Output contract quality | A | Required output sections are explicit per skill. Artifact manifest propagation is well-defined. | None. |

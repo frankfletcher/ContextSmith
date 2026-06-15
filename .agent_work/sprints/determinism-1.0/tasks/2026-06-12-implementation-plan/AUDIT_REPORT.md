@@ -261,7 +261,7 @@ Auditor: contextsmith-run (self-audit)
 ### Rubric
 
 | Criterion | Grade | Evidence |
-|-----------|-------|----------|
+| ----------- | ------- | ---------- |
 | **Completeness** | A | All Phase 5 sub-phases (5a, 5b, 5c) completed. All CHECKLIST items marked done. 20/20 items. |
 | **Correctness** | A | Both new skills pass `validate_skills.py`. All references resolve. Frontmatter has name, description, metadata.version. Lines under limit. |
 | **Spec Fidelity** | A | Orchestrator skill matches `orchestrator_skill_draft.md` spec (loop, validation, RESULT.json, checkpoint, transitions, retry, Ralph, templates). Workflow developer matches `workflow_developer_skill.md` (questions, domain templates, customization, output, validation). Router update matches `orchestrator_as_skill.md` routing design. |
@@ -388,10 +388,12 @@ Phase 6 completed all 17 sub-phases: contextsmith-run collapsed into orchestrato
 ## Rubric Assessment
 
 ### A — Completeness (A)
+
 - All 17 sub-phases (6a-6q) implemented: 6a catalog, 6b SKILL.md rewrite, 6c refs moved, 6d meta-config, 6e deletion + grep, 6f __main__.py, 6g append validation, 6h validation_mode, 6i checkpoint_before_run, 6j exit codes 3-5, 6k pre-dispatch counter, 6l timeout_s (pre-existing), 6m model_pin schema, 6n ralph_max_cycles (pre-existing), 6p RESULT.json fallback, 6q agent-evidence rule
 - Stop condition met: distinct exit codes 0-5, configurable validation modes, pre-dispatch checkpoint markers, per-state timeout_s/model_pin/ralph_max_cycles, RESULT.json fallback, documented agent-evidence rules
 
 ### B — Correctness (A)
+
 - 284 tests pass (100%)
 - Ruff clean (E, F, W, I)
 - Skills validate (8/8 OK, orchestrator at 2.0.0)
@@ -401,23 +403,27 @@ Phase 6 completed all 17 sub-phases: contextsmith-run collapsed into orchestrato
 - Append validation function implemented
 
 ### C — Consistency (A)
+
 - Follows existing code conventions (docstrings, error handling, logging)
 - Matching import patterns across orchestrator package
 - No new dependencies
 - AGENTS.md, PACKAGE_SPEC.md, README.md updated for contextsmith-run removal
 
 ### D — Documentation (A-)
+
 - SKILL.md updated with all run patterns absorbed (~571 lines, slightly over 500 target)
 - Docstrings added for resolve_next_state, validate_append_only, new dispatch functions
 - help.md updated for orchestrator
 - SKILL.md already had "agent output is evidence" paragraph from 6b rewrite
 
 ### E — Validation & Testing (A)
+
 - Validation commands: ruff check, ruff format, validate_skills, pytest all pass
 - Tests updated for new exit codes (EXIT_CONFIG_ERROR replaces EXIT_BLOCKED for config errors)
 - Full validation pipeline runs clean
 
 ### F — Safety & Determinism (-)
+
 - Append-only file auto-repair prevents data loss from overwritten reports
 - Pre-dispatch checkpoint markers provide crash evidence
 - Pre-dispatch counter check prevents unnecessary agent dispatch at max_retries
@@ -429,6 +435,7 @@ Phase 6 completed all 17 sub-phases: contextsmith-run collapsed into orchestrato
 PASS
 
 ## Findings
+
 - orchestrator SKILL.md at 571 lines exceeds 500-line target. Could trim by moving complete artifact templates to references. Minor — not a material defect.
 - Pre-existing markdownlint issues in docs/workflows/ (table style). Not introduced by this phase.
 - No dedicated unit tests for append validation, validation_mode, checkpoint_before_run, exit codes, pre-dispatch counter, RESULT.json fallback, or transition authority. These exist only implicitly through existing integration tests. Phase 7a is expected to add these.
@@ -443,31 +450,37 @@ All 9 C-ranked functions in orchestrator/ refactored to ≤ B. radon cc/mi integ
 ## Rubric Assessment
 
 ### A — Completeness (A)
+
 - 4 sub-phases completed: pipeline docs, orchestrator.py refactoring, validators.py refactoring, cli.py + checkpoint.py refactoring
 - All files: no C/D/E/F functions, all ≥ A maintainability
 
 ### B — Correctness (A)
+
 - Before: 10 C-ranked functions | After: 0 C-ranked functions
 - 284 tests pass (100%)
 - Ruff clean
 - All extracted functions have docstrings and clear signatures
 
 ### C — Consistency (A)
+
 - `uvx radon cc` and `uvx radon mi` now documented in AGENTS.md as post-change requirements
 - `shared/complexity-gate.md` mirrors the project's documentation quality standards
 - Refactoring pattern follows existing code conventions
 
 ### D — Documentation (A)
+
 - shared/complexity-gate.md — 35 lines, clear, actionable
 - AGENTS.md updated with radon commands
 - orchestrator manifest + SKILL.md reference table updated
 
 ### E — Validation & Testing (A)
+
 - `uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "` → no output (all ≤ B)
 - `uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "` → no output (all ≥ A)
 - Ruff clean, tests pass, skills validate
 
 ### F — Safety & Determinism (-)
+
 - No behavioral changes — all extractions preserve original logic
 - Dead code `_safe_write` now wired — no functional regression
 
@@ -484,12 +497,14 @@ Phase 7 completed: 374 tests pass (90 new), ruff clean, skills validate (8/8), r
 ## Rubric Assessment
 
 ### A — Completeness (A)
+
 - All 3 sub-phases completed: 7a (5 test files: 3 new + 2 extended), 7b (integration tests extended with 8 new tests), 7c (validation pipeline verified)
 - 10 determinism features have dedicated tests: exit codes 0-5, validation_mode (3), checkpoint_before_run, pre-dispatch counter, RESULT.json fallback (4 scenarios), agent transition authority
 - Missing test files created: test_orchestrator_state.py, test_checkpoint.py, test_step_compiler.py, test_orchestrator_determinism.py
 - Append validation has 4 dedicated tests: appended passes, overwritten fails, deleted fails, repair restores content
 
 ### B — Correctness (A)
+
 - 374 tests passing (100% pass rate, up from 284)
 - 13 integration tests passing
 - Ruff linting passes (E, F, W, I)
@@ -499,6 +514,7 @@ Phase 7 completed: 374 tests pass (90 new), ruff clean, skills validate (8/8), r
 - validate_append_only bug fixed: `==` → `startswith` for correct append detection
 
 ### C — Consistency (A)
+
 - All new tests follow existing patterns (fixture usage, temp directories, assertion style)
 - Import patterns match existing test files
 - No new dependencies added
@@ -506,12 +522,14 @@ Phase 7 completed: 374 tests pass (90 new), ruff clean, skills validate (8/8), r
 - Test class/function naming matches existing conventions
 
 ### D — Documentation (A)
+
 - All test methods have docstrings describing what they validate
 - test_orchestrator_determinism.py has class-level docstring listing all 10 determinism features
 - Educational report appended with full explanation, test patterns, data flow, and small-model guidance
 - Each test file has module-level docstring
 
 ### E — Validation & Testing (A)
+
 - Layer 1: pytest — 374 tests pass
 - Layer 2: ruff linting — all pass (E, F, W, I)
 - Layer 3: ruff formatting — all pass
@@ -521,6 +539,7 @@ Phase 7 completed: 374 tests pass (90 new), ruff clean, skills validate (8/8), r
 - Layer 7: Self-audit — all checks pass
 
 ### F — File Safety (A)
+
 - All tests use `tempfile.TemporaryDirectory()` for isolation, cleaned up automatically
 - No file modification side effects outside temp directories
 - No subprocess calls, no network requests
@@ -530,7 +549,7 @@ Phase 7 completed: 374 tests pass (90 new), ruff clean, skills validate (8/8), r
 ## Ralph Loop Summary
 
 | Iteration | Result | Evidence |
-|-----------|--------|----------|
+| ----------- | -------- | ---------- |
 | Ralph #1 | 2 defects found | 1) validate_append_only uses `==` instead of `startswith` — fixed. 2) Test data for _build_validation_strict/relaxed missing `files_checked`/`files_passed` keys — fixed. |
 | Ralph #2 | No-op | No material defects remain |
 | Ralph #3 | No-op | No material defects remain |
@@ -554,6 +573,7 @@ Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 4
 ## Rubric Assessment
 
 ### A — Completeness (A)
+
 - All 4 sub-phases completed:
   - 8a: SKILL.md 572→468 lines (−104), artifact templates extracted to references/artifact-templates.md, manifest updated
   - 8b: Both schemas updated from draft-07 to 2020-12; definitions→$defs; all fixtures validate
@@ -561,6 +581,7 @@ Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 4
   - 8d: Comprehensive v2.0.0 CHANGELOG entry with Added/Changed/Fixed/Notes
 
 ### B — Correctness (A)
+
 - 374 tests passing (100% pass rate)
 - Ruff linting passes (E, F, W, I)
 - Ruff format check passes (14 files already formatted)
@@ -570,18 +591,21 @@ Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 4
 - CHANGELOG structure correct (no headers consumed)
 
 ### C — Consistency (A)
+
 - Artifact templates reference file follows existing reference conventions (ATX headings, code fences)
 - Schema migration preserves all validation behavior
 - MD060 fixes match project markdownlint config
 - CHANGELOG format matches existing conventions (H2 headers, bullet points, Added/Changed/Fixed/Notes sections)
 
 ### D — Documentation (A)
+
 - All new/modified files have clear structure
 - artifact-templates.md has complete template examples for all 6 artifact types
 - Educational report appended with per-sub-phase detail
 - CHANGELOG entry covers 29 bullet points across all changes
 
 ### E — Validation & Testing (A)
+
 - Layer 1: pytest — 374 tests pass
 - Layer 2: ruff linting — all pass
 - Layer 3: ruff formatting — all pass
@@ -592,6 +616,7 @@ Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 4
 - Layer 8: Schema validation — valid fixtures pass, invalid fixtures fail correctly
 
 ### F — File Safety (A)
+
 - No destructive file operations
 - No subprocess calls (except validation commands)
 - No external network requests
@@ -599,6 +624,7 @@ Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 4
 - All changes are targeted edits to existing files or creation of new reference files
 
 ## Self-Audit Check
+
 - [x] Original request satisfied: Phase 8 complete, all 4 sub-phases done
 - [x] Declared parameters honored: --validation strict, --self-audit true, --ralph 3
 - [x] Validation completed: ruff, format, validate_skills, pytest, radon all pass
@@ -610,7 +636,7 @@ Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 4
 ## Ralph Loop Summary
 
 | Iteration | Result | Evidence |
-|-----------|--------|----------|
+| ----------- | -------- | ---------- |
 | Ralph #1 (8a) | No-op | Artifact templates extraction correct and complete. 468 lines under 500 ✓ |
 | Ralph #1 (8b) | No-op | Schema migration clean, all fixtures validate correctly |
 | Ralph #1 (8c) | No-op | All 15 files with MD060 fixed, 0 remaining |
@@ -619,6 +645,7 @@ Phase 8 completed: all 4 sub-phases (8a, 8b, 8c, 8d) done. SKILL.md trimmed to 4
 | Ralph #3 | No-op | Final check: all validation gates pass. No material defects remain. |
 
 ### Strategic Review
+
 - **Sprint goal alignment:** Phase 8 is the documentation/polish phase before final validation. Every sub-phase directly addresses a finding from earlier phases (SKILL.md line count, schema deprecation warning, MD060 pre-existing issues, changelog updates).
 - **Improvement over baseline:** Also updated agent_config.schema.json (not just workflow_config), which was identified during implementation. Comprehensive changelog covers Phase 5.5-8 (not just 5.5-6 as the PLAN.md specified, since Phase 7 and 8 work was also substantial).
 - **Cross-reference:** Phase 9 (Final Validation and Lock) is planned. No updates needed to future phases.
@@ -636,11 +663,13 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 ## Rubric Assessment
 
 ### A — Completeness (A)
+
 - **9a: Full validation pass** — All 7 validation commands run: ruff check (pass), ruff format (14 formatted), validate_skills (8/8 OK), pytest (376 pass ↑ from 374), radon cc (no C/D/E/F), radon mi (all ≥ A), markdownlint (pre-existing issues only in staged_skills/ and docs/ — not introduced by this project)
 - **9b: Final self-audit** — Verified all expected outputs from every sub-phase exist and are non-empty (Phase 1-8). 376 tests passing. 8 skills validate. All 7 skills at version 2.0.0. 40 reference manifest entries.
 - **9c: Project closeout** — Git status clean. Stale `staged_skills/` cataloged (contains pre-existing copies including contextsmith-run). Final DECISIONS.md entry written. No release tag required (contextsmith is a skill package, not a deployable).
 
 ### B — Correctness (A)
+
 - 376 tests passing (100% pass rate, +2 from Phase 8 — no regressions)
 - Ruff linting: all checks pass
 - Ruff format: 14 files already formatted
@@ -652,6 +681,7 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 - contextsmith-run: fully deleted, no dangling references (only historical notes in CHANGELOG and PACKAGE_SPEC)
 
 ### C — Consistency (A)
+
 - All output files follow project conventions (ATX headings, code fences, docstrings)
 - All 7 surviving skills at version 2.0.0 (project-level versioning)
 - Versioning policy documented in AGENTS.md and PACKAGE_SPEC.md
@@ -660,6 +690,7 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 - Import pattern consistency maintained across orchestrator package
 
 ### D — Documentation (A)
+
 - All state artifacts (STATUS.md, CHECKLIST.md, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, DECISIONS.md) complete and preserved
 - EDUCATIONAL_REPORT.md: 1183 lines of per-phase educational content, never clobbered
 - AUDIT_REPORT.md: 627+ lines of per-phase audit findings, never clobbered
@@ -668,6 +699,7 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 - orchestrator SKILL.md under 500 lines (468 ✓)
 
 ### E — Validation & Testing (A)
+
 - Layer 1: pytest — 376 tests pass
 - Layer 2: ruff check — all pass
 - Layer 3: ruff format — all pass
@@ -680,6 +712,7 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 - Layer 10: Ralph (3 iterations) — see Ralph Summary below
 
 ### F — File Safety (A)
+
 - No destructive file operations during Phase 9
 - All validation commands are read-only
 - Report files appended to, never overwritten
@@ -687,6 +720,7 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 - No external network requests, no deployments
 
 ## Self-Audit Check
+
 - [x] Original request satisfied: Phase 9 complete, all 3 sub-phases done
 - [x] Declared parameters honored: --run-mode phase, --validation strict, --self-audit true, --ralph 3
 - [x] Validation completed: all 7 commands pass
@@ -698,7 +732,7 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 ## Ralph Loop Summary
 
 | Iteration | Result | Evidence |
-|-----------|--------|----------|
+| ----------- | -------- | ---------- |
 | Ralph #1 (9a) | No-op | Full validation passes without issues — no material defects found |
 | Ralph #1 (9b) | No-op | All expected outputs verified. A-F rubric assessment complete. No material defects. |
 | Ralph #1 (9c) | No-op | Git clean, staged_skills cataloged (not deleted — user asset), DECISIONS.md updated |
@@ -706,6 +740,7 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 | Ralph #3 | No-op | Final check: all validation gates pass, all output files present, all report files preserved with prior content. |
 
 ### Strategic Review
+
 - **Sprint goal alignment:** Deep Determinism project is complete. All 9 phases executed. All features documented and tested.
 - **Improvement over baseline:** 376 tests (up from 0 at project start), 8 skills at 2.0.0, orchestrator module with full determinism support, complexity gate integrated.
 - **Cross-reference:** No future phases remain. Project complete.
@@ -713,7 +748,7 @@ Phase 9 completed all 3 sub-phases (9a, 9b, 9c). Full validation suite passes cl
 ## Expected Outputs Verified (All Phases 1-9)
 
 | Phase | Files Checked | Status |
-|-------|--------------|--------|
+| ------- | -------------- | -------- |
 | 1a-d | 17 fixture files + 4 task-state dirs | All present, non-empty (empty PLAN.md is intentional invalid fixture) |
 | 2a-f | 8 orchestrator core files | All present, 49-940 lines |
 | 3a-c | 4 adapter files | All present, 41-208 lines |
@@ -778,7 +813,7 @@ The `.agent_work/staged_skills/` directory contains 13 stale skill copies (372K 
 ## Cross-Reference Verification
 
 | Issue | In PLAN.md? | Phase | Notes |
-|-------|-------------|-------|-------|
+| ------- | ------------- | ------- | ------- |
 | .phase_gate cleanup | No | N/A | Post-completion cleanup |
 | NEXT_PROMPT.md terminal state | Partial | Phase 9 | Said "no NEXT_PROMPT needed" but didn't specify cleanup |
 | Test count explanation | No | N/A | Accuracy fix |

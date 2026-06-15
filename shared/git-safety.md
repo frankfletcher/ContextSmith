@@ -83,11 +83,13 @@ Do not repeat the same Git command after failure. If a Git command fails or repo
 ## Compact AGENTS.md Block
 
 ```markdown
+
 ## Git Safety
 
 Do not run destructive or history-rewriting Git commands without explicit user approval.
 
 Requires approval:
+
 - `git reset --hard`
 - `git clean -fd` / `git clean -fdx`
 - `git rebase`, `git rebase --continue`, `git rebase --abort`
@@ -98,6 +100,7 @@ Requires approval:
 - discarding uncommitted changes
 
 Safe inspection commands:
+
 - `git status`
 - `git diff`
 - `git diff --staged`

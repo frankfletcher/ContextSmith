@@ -29,10 +29,10 @@ Change one layer at a time and record results.
 
 ```markdown
 | Run | Context | Targeted ctx | Reasoning | Preserve thinking | KV cache | Spec decoding | Sampling | Loop? | Notes |
-|---|---:|---:|---|---|---|---|---|---|---|
-| baseline | 128k | 64k | on 4096 | true | turbo/turbo | dflash | current | yes | |
-| A | 128k | 64k | on 2048 | true | turbo/turbo | dflash reduced | same | ? | |
-| B | 64k | 32k | off | false | q4/q4 | off | same | ? | |
+| --- | ---: | ---: | --- | --- | --- | --- | --- | --- | --- |
+| baseline | 128k | 64k | on 4096 | true | turbo/turbo | dflash | current | yes |  |
+| A | 128k | 64k | on 2048 | true | turbo/turbo | dflash reduced | same | ? |  |
+| B | 64k | 32k | off | false | q4/q4 | off | same | ? |  |
 ```
 
 ## ContextSmith Guidance

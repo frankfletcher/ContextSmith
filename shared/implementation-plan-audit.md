@@ -57,12 +57,13 @@ Recommend `refine before execution` or `split phases` when:
 ## Output Format
 
 ```markdown
+
 ## Implementation Plan Audit
 
 Overall recommendation: ship | refine before execution | split phases | needs user input
 
 | Category | Grade | Notes |
-|---|---:|---|
+| --- | ---: | --- |
 | Phase granularity |  |  |
 | Atomicity |  |  |
 | Context fit |  |  |
@@ -73,11 +74,14 @@ Overall recommendation: ship | refine before execution | split phases | needs us
 | Test strategy |  |  |
 
 ## Must Fix Before Execution
+
 - ...
 
 ## Suggested Improvements
+
 - ...
 
 ## Small-Model Execution Notes
+
 - ...
 ```

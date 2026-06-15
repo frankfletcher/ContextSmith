@@ -12,6 +12,7 @@ Run the extra-audit step on your project task state. This runs the strategic-len
 Create a workflow config that chains the baseline audit and extra-audit:
 
 ```yaml
+
 # .contextsmith/audit-with-extra.yaml
 workflow_id: audit-with-extra
 version: 1
@@ -26,15 +27,24 @@ states:
     max_retries: 2
     timeout_s: 300
     transitions:
+
       - condition: pass
+
         target: extra_audit
+
       - condition: fail
+
         target: audit_current_phase
+
       - condition: max_retries
+
         target: blocked
     expected_outputs:
+
       - AUDIT_REPORT.md
+
     inputs:
+
       - STATUS.md
       - PLAN.md
 
@@ -45,19 +55,29 @@ states:
     max_retries: 2
     timeout_s: 300
     transitions:
+
       - condition: pass
+
         target: done
+
       - condition: fail
+
         target: extra_audit
+
       - condition: max_retries
+
         target: blocked
     expected_outputs:
+
       - EXTRA_AUDIT.md
+
     inputs:
+
       - AUDIT_REPORT.md
       - PLAN.md
 
 phase_order:
+
   - audit_current_phase
   - extra_audit
 ```

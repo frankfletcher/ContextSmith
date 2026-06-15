@@ -1,6 +1,7 @@
 # Phase 6 Audit Report
 
 ## Artifact Manifest
+
 - artifact_type: audit-report
 - parent_task: TASK.md
 - phase: 6A-6B
@@ -20,7 +21,7 @@ Both designs pass A-F rubric audit after targeted fixes. Ready to proceed to Pha
 ## A-F Rubric Grades
 
 | Phase | Initial Grade | Post-Fix Grade | Rubric Dimensions |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 6A MCP Adapter | B+ | A | Executability, Completeness, Small-Model Readiness, Risk Awareness |
 | 6B Harness Adapter | B | A | Executability, Completeness, Small-Model Readiness, Risk Awareness |
 
@@ -37,7 +38,7 @@ Both designs pass A-F rubric audit after targeted fixes. Ready to proceed to Pha
 ### Fixes Applied
 
 | Finding | Fix | Location |
-|---|---|---|
+| --- | --- | --- |
 | Dispatch registry | Added explicit 8-entry registry table mapping tool names to wrapper functions and source modules | `MCP_ADAPTER_DESIGN.md` §Dispatch Registry Mapping |
 | Batch validation | Added `validate_all` tool with JSON schema, input/output shapes, and sequential aggregation semantics | `MCP_ADAPTER_DESIGN.md` §Batch Validation |
 | Path resolution | Added 4 rules: absolute preferred, relative resolved against CWD, symlink safety via pathlib, `..` escape rejection | `MCP_ADAPTER_DESIGN.md` §Path Resolution |
@@ -66,7 +67,7 @@ Both designs pass A-F rubric audit after targeted fixes. Ready to proceed to Pha
 ### Fixes Applied
 
 | Finding | Fix | Location |
-|---|---|---|
+| --- | --- | --- |
 | Gate 2 circular validation | Added shell whitelist mechanism: validation commands from CONTEXT.md bypass pre-validation check | `HARNESS_ADAPTER_DESIGN.md` §Gate 2 |
 | Gate 7 classification | Corrected mechanism to "Structural validator checks artifact fields; no custom tool interception" | `HARNESS_ADAPTER_DESIGN.md` §Gate 7 |
 | Bypass analysis | Added 4-row analysis table evaluating shell deny trade-offs with conclusion and mitigation strategy | `HARNESS_ADAPTER_DESIGN.md` §Custom Tool Bypass Analysis |
@@ -87,12 +88,14 @@ Both designs pass A-F rubric audit after targeted fixes. Ready to proceed to Pha
 ## Design Quality Assessment
 
 ### Phase 6A (MCP Adapter)
+
 - **One-core-two-frontends principle**: MCP adapter wraps existing runtime functions without duplicating validation logic
 - **Mode 1/Mode 2**: MCP SDK (optional) and stdlib JSON-RPC fallback align with Phase 0.5 dependency policy
 - **Tool catalog**: 8 tools covering all runtime validators, next-prompt compiler, and runner commands
 - **Error handling**: Consistent MCP error format with `error_code`, `message`, and `details` fields
 
 ### Phase 6B (Harness Adapter)
+
 - **Enforcement classification**: Hard-blocked (Gate 4), orchestrated (Gates 1-3, 5-6), deterministic-only (Gate 7) — honest about limitations
 - **Capability matrix**: 7 gates mapped to opencode allow/ask/deny permissions with explicit bypass limitations
 - **No user config modification**: Design identifies integration points without claiming unsupported hard blocking
@@ -107,7 +110,7 @@ Both designs pass A-F rubric audit after targeted fixes. Ready to proceed to Pha
 ## File Sizes
 
 | File | Lines | Status |
-|---|---|---|
+| --- | --- | --- |
 | `MCP_ADAPTER_DESIGN.md` | 325 | A-level |
 | `HARNESS_ADAPTER_DESIGN.md` | 287 | A-level |
 

@@ -16,18 +16,23 @@ Use this when a prompt, skill, AGENTS.md file, implementation plan, spec, or ins
 ## Required Report Block
 
 ```markdown
+
 ## Upstream Artifact Audit
 
 ### Preserved
+
 - ...
 
 ### Modified / Downgraded
+
 - ...
 
 ### Rejected
+
 - ...
 
 ### Conflict Resolution
+
 - ...
 ```
 

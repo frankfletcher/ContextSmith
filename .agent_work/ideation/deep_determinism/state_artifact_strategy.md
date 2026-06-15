@@ -85,6 +85,7 @@ Each phase should have its own checklist so the next agent can see exactly what 
 Preferred shape:
 
 ```md
+
 # Checklist
 
 - [x] Load task state
@@ -111,17 +112,21 @@ Use this when the work is a review or evaluation.
 Example:
 
 ```md
+
 # Audit Report
 
 ## Findings
+
 - High: validation step missing in phase 3
 - Medium: checklist does not mention user-facing summary
 
 ## Evidence
+
 - `PLAN.md` line 14
 - validation log output
 
 ## Recommended Fixes
+
 - add explicit schema validation step
 - write `SUMMARY.md` after closeout
 ```
@@ -133,17 +138,21 @@ Use this when the user should understand what was changed and how it works.
 Example:
 
 ```md
+
 # Educational Report
 
 ## What Was Done
+
 - added a harness adapter layer
 - added conditional OpenCode references
 
 ## Why It Matters
+
 - keeps the core portable
 - lets OpenCode runs use native agent definitions
 
 ## How To Use It
+
 - set the harness flag when running on OpenCode
 - keep harness-specific files out of universal skills unless needed
 ```
@@ -155,6 +164,7 @@ Use this for concise closeout communication.
 Example:
 
 ```md
+
 # Summary
 
 Completed the workflow-state and artifact model updates.
@@ -226,22 +236,26 @@ Each artifact file must contain specific sections. The orchestrator uses these t
 ### TASK.md
 
 ```markdown
+
 # Task: <objective>
 
 ## Objective
 One-line summary of what this task achieves.
 
 ## Scope
+
 - In scope: <list of things this task covers>
 - Out of scope: <list of things this task explicitly does NOT cover>
 
 ## Constraints
+
 - <list of constraints: time, resources, dependencies>
 ```
 
 ### PLAN.md
 
 ```markdown
+
 # Plan
 
 ## Phases
@@ -254,15 +268,18 @@ List of phases with checkbox status. Each phase item is a link to its state defi
 - [ ] Phase 5: Close (closeout)
 
 ## Dependencies
+
 - <phase name>: <depends on phase or artifact>
 
 ## Validation Gates
+
 - <gate name>: <condition that must pass>
 ```
 
 ### STATUS.md
 
 ```markdown
+
 # Status
 
 ## Current Phase
@@ -272,6 +289,7 @@ List of phases with checkbox status. Each phase item is a link to its state defi
 <state-machine-state-name>
 
 ## Progress
+
 - Phase: <N> of <M>
 - Checklist: <X>/<Y> complete
 - Retries remaining: <N>
@@ -286,18 +304,23 @@ List of phases with checkbox status. Each phase item is a link to its state defi
 ### CONTEXT.md
 
 ```markdown
+
 # Context
 
 ## File Map
+
 - <path>: <description>
 
 ## Assumptions
+
 - <assumption>
 
 ## Known Constraints
+
 - <constraint>
 
 ## Reference Links
+
 - <link>
 
 ## Harness
@@ -307,9 +330,11 @@ List of phases with checkbox status. Each phase item is a link to its state defi
 ### DECISIONS.md
 
 ```markdown
+
 # Decisions
 
 ## <Decision Title>
+
 - Decision: <what was decided>
 - Reason: <why>
 - Date: <YYYY-MM-DD>
@@ -319,12 +344,14 @@ List of phases with checkbox status. Each phase item is a link to its state defi
 ### CHECKLIST.md
 
 ```markdown
+
 # Checklist
 
 - [ ] <concrete action item>
 - [x] <completed action item>
 
 Rules:
+
 - Each item must be a single concrete action
 - No vague items like "finish work"
 - Checkboxes reflect current reality
@@ -334,18 +361,22 @@ Rules:
 ### ARTIFACTS.md
 
 ```markdown
+
 # Artifacts
 
 ## Files Changed
+
 - <path>: <description of change>
 
 ## Commands Run
+
 - `$ <command>` → <exit code>: <output summary>
 ```
 
 ### PHASE_LOG.md
 
 ```markdown
+
 # Phase Log
 
 ## Phase <name>
@@ -363,9 +394,11 @@ Artifacts: <list>
 ### EVIDENCE.md
 
 ```markdown
+
 # Evidence
 
 ## <Evidence Category>
+
 - Source: <file path or command>
 - Excerpt: <relevant content>
 - Conclusion: <what this proves>
@@ -374,11 +407,13 @@ Artifacts: <list>
 ### NEXT_PROMPT.md
 
 ```markdown
+
 # Next Prompt
 
 You are continuing a workflow on <project>.
 
 ## Current Status
+
 - Phase: <phase-name>
 - State: <state-name>
 - Completed: <list of completed items>
@@ -387,27 +422,33 @@ You are continuing a workflow on <project>.
 <specific bounded instruction for the next agent>
 
 ## Input Files
+
 - <file path>: <what to read from it>
 
 ## Output Requirements
+
 - <file path>: <what to write to it>
 
 ## Constraints
+
 - <limit: permissions, step cap, etc.>
 
 ## Context (from previous phases)
+
 - <key facts the agent needs>
 ```
 
 ### AUDIT_REPORT.md
 
 ```markdown
+
 # Audit Report
 
 ## Summary
 <one-line conclusion>
 
 ## Findings
+
 - <Severity>: <description>
   - Evidence: <where>
   - Fix: <how>
@@ -419,29 +460,36 @@ pass / fail / conditional-pass
 ### EDUCATIONAL_REPORT.md
 
 ```markdown
+
 # Educational Report
 
 ## What Changed
+
 - <change description>
 
 ## Why It Matters
+
 - <impact on user or system>
 
 ## How to Use
+
 - <instructions>
 ```
 
 ### SUMMARY.md
 
 ```markdown
+
 # Summary
 
 Completed <task-name>.
 
 ## Key Outcomes
+
 - <outcome>
 
 ## Next Steps
+
 - <what comes next>
 ```
 

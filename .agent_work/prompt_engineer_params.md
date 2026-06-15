@@ -1,7 +1,7 @@
 # Local Model Prompt Engineer — Parameter Reference Table
 
 | Parameter | Sub-Params / Options | Default | Description |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **`coding_standards`** | `off`, `generic`, `python` (PEP 8, type hints, uv), `javascript_typescript` (linter/formatter, TS types), `repo_aware` (scan existing conventions first) | `off` | Coding standards injection for agent instructions |
 | **`context_strategy`** | `none`, `file_based_workflow`, `graph_index_pattern`, `long_input_pattern` | auto-selected based on source mode | Context management approach |
 | **`domain`** | `coding`, `data_science_ml`, `research`, `writing`, `email`, `calendar`, `purchasing_tickets`, `travel`, `documents`, `automation`, `finance_legal_medical`, `personal_knowledge`, `creative` | inferred from prompt | Domain and intent detection |

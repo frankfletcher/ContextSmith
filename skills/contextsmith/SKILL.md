@@ -29,7 +29,7 @@ Load this skill when the user's request involves any of:
 Dispatch to exactly one sub-skill based on the user's primary intent:
 
 | User Intent | Sub-Skill |
-|---|---|
+| --- | --- |
 | Create or improve a prompt or seed prompt | `contextsmith-prompt-engineer` |
 | Build, convert, or improve a SKILL.md skill | `contextsmith-skill-engineer` |
 | Migrate a directory of skills to a new profile or location | `contextsmith-skill-migrator` |
@@ -81,7 +81,7 @@ Ask exactly these three questions in order. Use the structured question tool for
 **Q1: "What are you working on?"**
 
 | Option | Maps to |
-|--------|---------|
+| -------- | --------- |
 | A prompt | `contextsmith-prompt-engineer` |
 | A skill (SKILL.md) | `contextsmith-skill-engineer` |
 | Repo instructions (AGENTS.md, etc.) | `contextsmith-instruction-engineer` |
@@ -96,7 +96,7 @@ If the user cannot describe their task after Q2, dispatch to `contextsmith-agent
 **Q2: "Which model will use the result?"**
 
 | Option | Maps to |
-|--------|---------|
+| -------- | --------- |
 | Qwen 3 (6B) | `--target-profile qwen36` |
 | Qwen 3 (14B) | `--target-profile qwen3-14b` |
 | Qwen 3 (32B) | `--target-profile qwen3-32b` |
@@ -110,7 +110,7 @@ If the agent harness identifies its model (e.g., the user is running in opencode
 **Q3: "How much context can it work with?"**
 
 | Option | Maps to |
-|--------|---------|
+| -------- | --------- |
 | 8K — very small | `--context-length 8k` |
 | 64K — common modern | `--context-length 64k` |
 | 128K — larger local or frontier | `--context-length 128k` |
@@ -149,7 +149,7 @@ After Q3, display the full command and parameter table:
 When the user provides flags or intent but omits some parameters, apply these defaults:
 
 | Parameter | Default | Logic |
-|-----------|---------|-------|
+| ----------- | --------- | ------- |
 | `--target-profile` | Harness-derived if available, else `generic-local` | Infer from the agent environment when possible |
 | `--context-length` | `64k` | Safer modern default for most local models |
 | `--mode` | `guided` | Best for interactive work |

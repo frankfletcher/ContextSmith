@@ -5,12 +5,14 @@ Use the harness's structured question tool (e.g., `AskUserQuestion` in OpenCode,
 ## When to Use Structured Questions
 
 Use structured questions when:
+
 - Presenting mutually exclusive options with clear trade-offs
 - Gathering domain, harness, or profile selection
 - Confirming a plan before execution
 - Choosing between alternative approaches
 
 Use open-ended questions when:
+
 - Asking for freeform feedback on a design
 - Asking the user to describe their intent
 - Asking "does this look right?"
@@ -21,13 +23,18 @@ Use open-ended questions when:
 Question: "<clear, specific question>"
 Header: "<short label, max 30 chars>"
 Options:
+
   - Label: "<option name>"
+
     Description: "<one-line trade-off or explanation>"
+
   - Label: "<option name>"
+
     Description: "<one-line trade-off or explanation>"
 ```
 
 Rules:
+
 - 2-5 options per question (3 is ideal)
 - Each option has a one-line description explaining the trade-off
 - Include a recommended default when applicable
@@ -62,34 +69,51 @@ Each step is one question. After each answer, proceed to the next. After all ste
 ## Example: Workflow Config Generation
 
 **Step 1: Understand intent**
+
 ```
 Question: "What kind of workflow should I create?"
 Header: "Workflow Type"
 Options:
+
   - Label: "Coding"
+
     Description: "Software engineering: implement, test, review, deploy"
+
   - Label: "Writing"
+
     Description: "Content creation: draft, edit, review, publish"
+
   - Label: "Research"
+
     Description: "Analysis: gather sources, synthesize, audit, report"
+
   - Label: "Migration"
+
     Description: "Refactoring: plan, execute, validate, rollback"
 ```
 
 **Step 2: Gather parameters**
+
 ```
 Question: "Which model will run this workflow?"
 Header: "Target Model"
 Options:
+
   - Label: "Generic local"
+
     Description: "Default profile for any local/open-weight model"
+
   - Label: "Qwen 3 (6B)"
+
     Description: "Optimized for Qwen3 27B and nearby models"
+
   - Label: "Gemma 4"
+
     Description: "Optimized for Gemma 4 variants"
 ```
 
 **Step 3: Confirm**
+
 ```
 → Workflow config will be generated:
 
@@ -111,6 +135,7 @@ If the user's response to a later question reveals a constraint that invalidates
 ## Integration
 
 This pattern applies to:
+
 - `contextsmith-workflow-developer` — gathering workflow intent
 - `contextsmith` (router) — wizard mode
 - `contextsmith-orchestrator` — refinement questions (absorbed from contextsmith-run)

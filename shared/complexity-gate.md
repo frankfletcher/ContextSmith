@@ -12,7 +12,7 @@ uvx radon mi <path> -s | grep -E " - [BCDEF] "
 ## Cyclomatic Complexity (radon cc)
 
 | Grade | Range | Meaning |
-|-------|-------|---------|
+| ------- | ------- | --------- |
 | A | 1-5 | Low complexity |
 | B | 6-10 | Moderate complexity |
 | C | 11-20 | Complex — must refactor |
@@ -24,7 +24,7 @@ uvx radon mi <path> -s | grep -E " - [BCDEF] "
 ## Maintainability Index (radon mi)
 
 | Grade | Range | Meaning |
-|-------|-------|---------|
+| ------- | ------- | --------- |
 | A | 20-100 | Highly maintainable |
 | B | 10-19 | Moderately maintainable |
 | C | 0-9 | Difficult to maintain |

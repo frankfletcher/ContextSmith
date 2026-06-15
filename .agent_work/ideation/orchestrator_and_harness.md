@@ -19,7 +19,7 @@ The baseline workflow definition should live in YAML or JSON config so the orche
 ## What Each Layer Does
 
 | Layer | Responsibility | Example |
-|---|---|---|
+| --- | --- | --- |
 | Orchestrator | Workflow graph, retries, resume, loop detection | Move from `audit` to `fix` only after validation passes |
 | Harness | Agent execution, permissions, tool hooks, step caps | Run the audit agent with read-only access |
 | Agent | One bounded task | Write audit findings to `audit.md` |
@@ -94,7 +94,7 @@ Typical files:
 ## Common Failure Modes
 
 | Problem | Fix |
-|---|---|
+| --- | --- |
 | Agent tries to hold the whole workflow in memory | Move workflow control into the orchestrator |
 | Phase output is valid but workflow advances too early | Add a validator or tool gate |
 | Agent loops on the same mistake | Add step caps and loop detection |

@@ -10,15 +10,21 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 
 **Phased Planning - Phase Granularity:** Phase count must scale with complexity. Prefer 6-20 phases for large tasks. For `targeted_context_length <= 32k`, prefer more smaller phases. Each phase must fit within the context window.
 
-**Phased Planning - Tool Forecast:** Tool-heavy implementation phases MUST include a context contract with phase type, usable phase budget, tool-output reserve, expected search/read/edit/bash/validation calls, compaction trigger, fresh-session rule, and stop-if-forecast-exceeded rule. Split phases that combine broad discovery, editing, and validation under tight or moderate context.
+**Phased Planning - Tool Forecast:** Tool-heavy implementation phases MUST include a context contract with phase type, usable phase budget, tool-output reserve, expected search/read/edit/bash/validation calls, compaction trigger, fresh-session rule, and stop-if-forecast-exceeded rule. Split phases that combine broad discovery, editing, and
+  validation under tight or moderate context.
 
-**Phased Planning - 12-Step Closeout:** (1) Update STATUS.md, (2) Check off PLAN.md items, (3) Record durable decisions in DECISIONS.md, (4) Record changed files/commands in ARTIFACTS.md, (5) Add compact notes to PHASE_LOG.md, (6) Write carry-forward and do-not-carry-forward notes, (7) Update NEXT_PROMPT.md, (8) Run phase compression and update CONTEXT.md for next phase, (9) Run validation checks — if any fail, set STATUS to "Blocked" and exit, (10) Run implementation plan audit for next phase — if fails, set STATUS to "Blocked" and exit, (11) Include test quality audit for coding work — if fails, set STATUS to "Blocked" and exit, (12) If stop condition met, set STATUS to "Completed" and exit.
+**Phased Planning - 12-Step Closeout:** (1) Update STATUS.md, (2) Check off PLAN.md items, (3) Record durable decisions in DECISIONS.md, (4) Record changed files/commands in ARTIFACTS.md, (5) Add compact notes to PHASE_LOG.md, (6) Write carry-forward and do-not-carry-forward notes, (7) Update NEXT_PROMPT.md, (8) Run phase compression and update
+  CONTEXT.md for next phase, (9) Run validation checks — if any fail, set STATUS to "Blocked" and exit, (10) Run implementation plan audit for next phase — if fails, set STATUS to "Blocked" and exit, (11) Include test quality audit for coding work — if fails, set STATUS to "Blocked" and exit, (12) If stop condition met, set STATUS to "Completed"
+  and exit.
 
-**Implementation Plan Audit - Gates:** Before executing each phase, grade the next-phase plan on: phase granularity, atomicity, dependency ordering, context fit, validation strength, task-state integration, handoff quality, rollback/recovery, test strategy, small-model readiness. Block on failure (grade below C). Output: recommendation + must-fix items.
+**Implementation Plan Audit - Gates:** Before executing each phase, grade the next-phase plan on: phase granularity, atomicity, dependency ordering, context fit, validation strength, task-state integration, handoff quality, rollback/recovery, test strategy, small-model readiness. Block on failure (grade below C). Output: recommendation + must-fix
+  items.
 
-**Implementation Plan Audit - Tool Budget:** Block or split a tool-heavy phase when expected tool use cannot fit the usable phase budget, validation/recovery output is omitted, compaction triggers are missing, broad search is expected after edits begin, or fresh-session behavior is missing for tool-heavy work under tight/moderate targets. Large targets still require tool forecasts and raw-output compaction.
+**Implementation Plan Audit - Tool Budget:** Block or split a tool-heavy phase when expected tool use cannot fit the usable phase budget, validation/recovery output is omitted, compaction triggers are missing, broad search is expected after edits begin, or fresh-session behavior is missing for tool-heavy work under tight/moderate targets. Large
+  targets still require tool forecasts and raw-output compaction.
 
-**Test Quality Audit - Requirements:** Tests must cover baseline use cases, realistic edge cases, failure modes (invalid input, missing data, bad state), and changed behavior. Assertions must be specific enough to catch wrong behavior. Avoid: tests that only check imports, tests that only check "no throw", mocking the method being tested, asserting on implementation details instead of user-visible behavior.
+**Test Quality Audit - Requirements:** Tests must cover baseline use cases, realistic edge cases, failure modes (invalid input, missing data, bad state), and changed behavior. Assertions must be specific enough to catch wrong behavior. Avoid: tests that only check imports, tests that only check "no throw", mocking the method being tested,
+  asserting on implementation details instead of user-visible behavior.
 
 **Test Quality Audit - Weak Smells:** Tests pass regardless of actual output; no real assertions; over-mocking (mocking the system under test); tests duplicate production logic; brittle selectors or string matching that breaks on formatting changes.
 
@@ -41,6 +47,7 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 ## Task State & Context Management
 
 **Persistent Task State - 9-File Layout:**
+
 ```
 .agent_work/sprints/<sprint>/tasks/<YYYY-MM-DD-slug>/
   TASK.md (objective, scope, constraints, success criteria)
@@ -60,13 +67,15 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 
 **Phase Compression - Rules:** Summarize, do not paste raw logs or tool output. Do-Not-Carry-Forward entries prevent the same failed approach from repeating in the next phase.
 
-**Phase Compression - Forecast Exceeded:** Compact or close the phase when actual tool calls exceed forecast by 50%, raw tool output dominates context, validation output grows large, new discovery is needed after edits begin, or the stop condition cannot fit remaining reserve. Handoff with exact evidence anchors, tool ledger, revised next phase, and do-not-carry-forward notes.
+**Phase Compression - Forecast Exceeded:** Compact or close the phase when actual tool calls exceed forecast by 50%, raw tool output dominates context, validation output grows large, new discovery is needed after edits begin, or the stop condition cannot fit remaining reserve. Handoff with exact evidence anchors, tool ledger, revised next phase,
+  and do-not-carry-forward notes.
 
 **Small Context Workflows - Fresh Session:** When resuming work, load only 6 files: TASK.md, STATUS.md, CHECKLIST.md, DECISIONS.md, CONTEXT.md, NEXT_PROMPT.md. Do not load full chat history or all state files. Use more phases for tighter context budgets.
 
 **Context Management - Budget Allocation:** Reserve context space for tool results and output generation. Reading order matters: load task definition before evidence, load constraints before exploration. Use evidence anchors (file:line references) for re-anchoring in long sessions.
 
-**Context Management - Tool-Heavy Reserve:** Reserve 50-65% of context for tool-heavy coding, migration, validation, or discovery phases. Typical executable phase budgets: `32k -> 12k-16k`, `64k -> 24k-32k`, `128k -> 48k-64k`, `256k -> 96k-128k`. Narrow further when system prompts, skill content, repo instructions, validation, recovery, or closeout consume the reserve.
+**Context Management - Tool-Heavy Reserve:** Reserve 50-65% of context for tool-heavy coding, migration, validation, or discovery phases. Typical executable phase budgets: `32k -> 12k-16k`, `64k -> 24k-32k`, `128k -> 48k-64k`, `256k -> 96k-128k`. Narrow further when system prompts, skill content, repo instructions, validation, recovery, or
+  closeout consume the reserve.
 
 **Targeted Context Length - Optimization:** Optimize for the stated context budget, not the model's advertised maximum. Affects: verbosity level, phase count (more phases = tighter per-phase budget), example count, report size, and number of files loaded simultaneously.
 
@@ -74,9 +83,11 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 
 ## Instruction Engineering
 
-**Instruction Precedence - 9-Level Hierarchy:** (1) User's current explicit request, (2) Safety boundaries (Git safety, file safety), (3) Project/repo evidence (existing code patterns, package.json, README), (4) Existing repo instructions (AGENTS.md, CLAUDE.md), (5) Target model constraints, (6) Domain-specific requirements, (7) External skill artifacts, (8) Optional style preferences, (9) Generic best practices. Never average conflicts — higher level always wins.
+**Instruction Precedence - 9-Level Hierarchy:** (1) User's current explicit request, (2) Safety boundaries (Git safety, file safety), (3) Project/repo evidence (existing code patterns, package.json, README), (4) Existing repo instructions (AGENTS.md, CLAUDE.md), (5) Target model constraints, (6) Domain-specific requirements, (7) External skill
+  artifacts, (8) Optional style preferences, (9) Generic best practices. Never average conflicts — higher level always wins.
 
-**Instruction Deduplication - Merge Policy:** Scan existing instructions before adding new ones. Preserve clear/specific/correct content. Strengthen vague or incomplete instructions. Consolidate duplicates into single authoritative entries. Add only what is missing. Guard against token bloat: if total instruction length exceeds context budget, trim lowest-priority entries first.
+**Instruction Deduplication - Merge Policy:** Scan existing instructions before adding new ones. Preserve clear/specific/correct content. Strengthen vague or incomplete instructions. Consolidate duplicates into single authoritative entries. Add only what is missing. Guard against token bloat: if total instruction length exceeds context budget,
+  trim lowest-priority entries first.
 
 **Git Safety - Approval Gates:** Destructive git commands require explicit user approval: `reset --hard`, `clean -fd`/`clean -fdx`, `rebase` (all variants), `push --force`/`--force-with-lease`, branch deletion, amending/squashing/rewriting commits, discarding uncommitted changes. Safe inspection commands: `status`, `diff`, `log --oneline`.
 
@@ -84,9 +95,11 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 
 ## Skill Engineering
 
-**Skill Interoperability - Verification:** Treat upstream skill outputs as inputs to verify, not authoritative truth. 6-tier classification: confirmed (verified against source), likely (high confidence inference), useful suggestion (worth considering but unverified), unsupported (no evidence), conflicting (contradicts verified source), rejected (actively harmful). Always check for workflow collisions: compatible, overlapping, conflicting, unknown.
+**Skill Interoperability - Verification:** Treat upstream skill outputs as inputs to verify, not authoritative truth. 6-tier classification: confirmed (verified against source), likely (high confidence inference), useful suggestion (worth considering but unverified), unsupported (no evidence), conflicting (contradicts verified source), rejected
+  (actively harmful). Always check for workflow collisions: compatible, overlapping, conflicting, unknown.
 
-**Upstream Artifact Audit - 8-Step Process:** (1) Identify artifacts from upstream skill run, (2) Extract claims and instructions, (3) Verify against current codebase state, (4) Classify each using 6-tier system, (5) Preserve confirmed content unchanged, (6) Downgrade unsupported content to suggestions with "unverified" label, (7) Reject conflicting or hallucinated content, (8) Write required report block: Preserved / Modified / Rejected sections with counts and rationale.
+**Upstream Artifact Audit - 8-Step Process:** (1) Identify artifacts from upstream skill run, (2) Extract claims and instructions, (3) Verify against current codebase state, (4) Classify each using 6-tier system, (5) Preserve confirmed content unchanged, (6) Downgrade unsupported content to suggestions with "unverified" label, (7) Reject
+  conflicting or hallucinated content, (8) Write required report block: Preserved / Modified / Rejected sections with counts and rationale.
 
 **Engineering Metadata - Schema:** YAML metadata with 8 recommended fields for skills: name, description, version, author, target_model_family, context_length_budget, dependencies (other skills), last_updated. Record targeted context length when provided by user.
 
@@ -96,11 +109,13 @@ Pre-extracted, self-contained contract summaries from canonical shared reference
 
 **Small Model Atomicity - Requirements:** Instructions must be atomic for smaller models. Single objective per instruction line. No hidden inference leaps — every step is explicit. Inputs and outputs are stated explicitly. Do not chain multiple operations in a single instruction without intermediate verification steps.
 
-**Ralph Loop - Bounded Improvement:** Maximum 2 improvement iterations (hard maximum 3). A-F evaluation across 10 categories before each iteration: structure, completeness, specificity, small-model readiness, loop safety, context fit, test coverage, edge case handling, error recovery, documentation quality. Store iterations under `.agent_work/.../iterations/`. Stop on bloat or semantic drift (output diverges from original objective).
+**Ralph Loop - Bounded Improvement:** Maximum 2 improvement iterations (hard maximum 3). A-F evaluation across 10 categories before each iteration: structure, completeness, specificity, small-model readiness, loop safety, context fit, test coverage, edge case handling, error recovery, documentation quality. Store iterations under
+  `.agent_work/.../iterations/`. Stop on bloat or semantic drift (output diverges from original objective).
 
 **Planner-Executor Workflows - Model Selection:** Use stronger model for planning, audits, and design phases. Use smaller model for atomic phase execution when the plan and task state are explicit. Run one phase per session when context is tight (< 32k budget).
 
-**Side Effect Matrix - Risk Tiers:** Tier 1 (read-only): file reads, git inspection commands — no approval needed. Tier 2 (write own files): creating/editing files in `.agent_work/` or new files — proceed without approval. Tier 3 (modify user files): editing existing user code or configuration — require user confirmation for significant changes. Tier 4 (system/network): package installs, network requests, destructive operations — always require explicit approval.
+**Side Effect Matrix - Risk Tiers:** Tier 1 (read-only): file reads, git inspection commands — no approval needed. Tier 2 (write own files): creating/editing files in `.agent_work/` or new files — proceed without approval. Tier 3 (modify user files): editing existing user code or configuration — require user confirmation for significant changes.
+  Tier 4 (system/network): package installs, network requests, destructive operations — always require explicit approval.
 
 **Output Location - Canonical Paths:** Generated artifacts go under `.agent_work/`. Iterations from Ralph loop go under `.agent_work/sprints/<sprint>/tasks/<YYYY-MM-DD-slug>/iterations/`. Do not scatter outputs across arbitrary directories.
 

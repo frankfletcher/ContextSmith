@@ -29,7 +29,7 @@ Useful layers to test:
 
 ```markdown
 | Run | Ctx | Reasoning | Preserve thinking | Spec decoding | KV K/V | Sampling | Loop? | Notes |
-|---|---:|---|---|---|---|---|---|---|
+| --- | ---: | --- | --- | --- | --- | --- | --- | --- |
 | baseline | 64k | off | false | off | q4/q4 | baseline | no | known stable |
 | A | 128k | on 2048 | true | dflash | turbo/tcq | baseline | yes | loop after long tool run |
 | B | 64k | on 2048 | true | dflash | q4/q4 | baseline | ? | tests DFlash with conservative KV |
@@ -91,6 +91,7 @@ Use AGENTS.md or harness instructions for:
 For runtime-sensitive work, include a short note:
 
 ```markdown
+
 ## Runtime Assumptions
 
 - Targeted context length: 32k

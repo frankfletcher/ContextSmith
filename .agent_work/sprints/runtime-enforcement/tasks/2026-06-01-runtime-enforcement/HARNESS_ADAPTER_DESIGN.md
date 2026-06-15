@@ -1,6 +1,7 @@
 # Harness Adapter Design: Phase 6B
 
 ## Artifact Manifest
+
 - artifact_type: design-document
 - phase: Phase 6B
 - parent_plan: PLAN.md
@@ -14,7 +15,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Permissions System (allow/ask/deny)
 | Capability | Description | Hard Block? |
-|---|---|---|
+| --- | --- | --- |
 | Tool allow | Tool can be used without restriction | No (permissive) |
 | Tool ask | Tool requires user confirmation before each use | Partial (human approval gate) |
 | Tool deny | Tool cannot be used at all | Yes (hard block) |
@@ -23,13 +24,13 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Policies (Experimental)
 | Policy | Description | Status |
-|---|---|---|
+| --- | --- | --- |
 | provider.use | Restrict which providers can be used | Experimental |
 | Custom policies | Not yet supported | N/A |
 
 ### Custom Tools
 | Capability | Description | Hard Block? |
-|---|---|---|
+| --- | --- | --- |
 | Override built-in tools | Replace `edit`, `read`, `write`, `shell` with custom implementations | Yes (can intercept and block) |
 | Custom tool definitions | Add new tools with custom logic | Yes |
 
@@ -37,7 +38,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Gate 1: Phase Boundary Enforcement
 | Field | Value |
-|---|---|
+| --- | --- |
 | Trigger point | Agent attempts to proceed to next phase |
 | Enforcement mechanism | Custom tool override for `write`/`edit` on task-state files |
 | Validator input | `plan_status()` from runner |
@@ -48,7 +49,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Gate 2: Validation Command Execution
 | Field | Value |
-|---|---|
+| --- | --- |
 | Trigger point | Phase closeout requires validation commands |
 | Enforcement mechanism | Custom tool that wraps `shell` with pre-validation check |
 | Validator input | Validation commands from CONTEXT.md |
@@ -60,7 +61,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Gate 3: Artifact Validation
 | Field | Value |
-|---|---|
+| --- | --- |
 | Trigger point | Agent creates or modifies runtime artifacts |
 | Enforcement mechanism | Custom tool override for `write`/`edit` with validation dispatch |
 | Validator input | `runtime.validator` functions |
@@ -71,7 +72,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Gate 4: External Action Approval
 | Field | Value |
-|---|---|
+| --- | --- |
 | Trigger point | Agent attempts external_write or irreversible action |
 | Enforcement mechanism | Tool deny for risky tools + ask for approval-gated tools |
 | Validator input | Domain pack `external_action_boundaries` |
@@ -82,7 +83,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Gate 5: Domain-Specific Constraints
 | Field | Value |
-|---|---|
+| --- | --- |
 | Trigger point | Agent operates in a specific domain |
 | Enforcement mechanism | Custom tool with domain pack validation |
 | Validator input | Domain pack JSON file |
@@ -93,7 +94,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Gate 6: Evidence Ledger Requirements
 | Field | Value |
-|---|---|
+| --- | --- |
 | Trigger point | Phase closeout requires evidence |
 | Enforcement mechanism | Custom tool that checks evidence before closeout |
 | Validator input | `validate_evidence_ledger()` |
@@ -104,7 +105,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 
 ### Gate 7: Requirements Chain Traceability
 | Field | Value |
-|---|---|
+| --- | --- |
 | Trigger point | Agent claims requirement satisfied |
 | Enforcement mechanism | Structural validator checks artifact fields; no custom tool interception |
 | Validator input | `validate_requirements_chain()` |
@@ -116,7 +117,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 ## Enforcement Classification Summary
 
 | Classification | Gates | Description |
-|---|---|---|
+| --- | --- | --- |
 | **Hard-blocked** | Gate 4 | Tool deny prevents action entirely |
 | **Orchestrated** | Gates 1, 2, 3, 5, 6 | Custom tools can intercept and block, but agent can bypass |
 | **Deterministic-only** | Gate 7 | Structural validation only, no enforcement |
@@ -129,12 +130,14 @@ Opencode's permissions system can hard-block specific tools (e.g., deny `shell`,
 
 ### Custom Tools Can Intercept
 Custom tool overrides for `edit`, `read`, `write`, and `shell` can wrap the built-in tools with validation logic. This allows us to:
+
 1. Check validation before allowing the action
 2. Return violations to the agent
 3. Block the action if validation fails
 
 ### Bypass Limitations
 Even with custom tools, the agent can:
+
 1. Use raw bash commands to write files
 2. Skip closeout procedures
 3. Ignore domain pack guidance
@@ -145,7 +148,7 @@ Even with custom tools, the agent can:
 The "raw bash bypass" applies to Gates 1, 3, and 5. Evaluating whether denying `shell` closes this gap:
 
 | Scenario | Deny `shell`? | Effect | Trade-off |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Agent uses `bash -c 'echo ... > file'` | Blocks bash writes | Closes raw bash bypass for Gates 1, 3 | Agent cannot run validation commands (pytest, lint, etc.) |
 | Agent uses `tee` or `dd` | Blocks alternative tools | Closes alias bypass | Same trade-off: blocks legitimate shell use |
 | Agent uses Python `-c` | Blocks Python shell invocations | Closes scripting bypass | Blocks legitimate one-liners |
@@ -157,6 +160,7 @@ The "raw bash bypass" applies to Gates 1, 3, and 5. Evaluating whether denying `
 
 ### Recommended Approach
 Given the bypass limitations, the recommended approach is:
+
 1. **Gate 4 (External Action Approval)**: Use tool deny/ask for hard blocking of risky actions
 2. **Gates 1-3, 5-6**: Use custom tool overrides for orchestrated validation
 3. **Gate 7**: Rely on deterministic structural validation only
@@ -166,6 +170,7 @@ This aligns with Decision 1 (hybrid enforcement) and Decision 10 (full stack fir
 ## Integration Points
 
 ### Custom Tool Definition
+
 ```json
 {
   "name": "contextsmith_write",
@@ -180,8 +185,10 @@ This aligns with Decision 1 (hybrid enforcement) and Decision 10 (full stack fir
 ### Validation Dispatch
 ```python
 def contextsmith_write(path: str, content: str) -> dict:
+
     # Check if path is a runtime artifact
     if is_runtime_artifact(path):
+
         # Validate before write
         result = validate_artifact(artifact_type, content)
         if not result["passed"]:
@@ -190,6 +197,7 @@ def contextsmith_write(path: str, content: str) -> dict:
                 "violations": result["violations"],
                 "message": "Validation failed. Fix violations before writing."
             }
+
     # Proceed with write
     return {"success": True, "path": path}
 ```
@@ -197,6 +205,7 @@ def contextsmith_write(path: str, content: str) -> dict:
 ### Domain Pack Integration
 ```python
 def get_domain_pack(domain: str) -> dict:
+
     # Load domain pack for current domain
     pack_path = f"runtime/domain_packs/{domain}.json"
     return load_json(pack_path)
@@ -215,11 +224,13 @@ The harness adapter files should be declared in each skill's `reference_manifest
 
 ```yaml
 - name: harness_adapter.py
+
   local: true
   required: true
   version: local
 
 - name: harness_config.json
+
   local: true
   required: true
   version: local
@@ -252,22 +263,26 @@ For Phase 6C implementation, gates should be implemented in this order:
 Phase 6C implementation must include these test categories:
 
 ### Gate Integration Tests
+
 - Gate 4 tool deny blocks external_write actions when domain pack marks them as blocked.
 - Gate 4 ask mode requires human approval for requires_approval actions.
 - Gate 3 artifact validation intercepts writes to runtime artifact paths.
 - Gate 3 allows writes to non-artifact paths without validation.
 
 ### Bypass Detection Tests
+
 - Raw bash write bypass is detected by runner's `next_gate()` command.
 - Custom tool override intercepts `write` and `edit` on artifact paths.
 - Shell whitelist allows validation commands but blocks arbitrary writes.
 
 ### Policy Compliance Tests
+
 - Tool deny policy prevents denied tools from executing.
 - Tool ask policy requires human confirmation before execution.
 - Custom tool override replaces built-in tool behavior.
 
 ### Domain Pack Integration Tests
+
 - Domain pack boundaries are loaded and applied to Gate 5.
 - Unknown domain falls back to `general_fallback` pack.
 - Missing domain pack returns error with pack name in message.
@@ -276,6 +291,7 @@ Phase 6C implementation must include these test categories:
 **Validation command**: `python -m pytest tests/test_harness_adapter.py -v`
 
 ## Validation State
+
 - Design phase: no source files edited
 - `python scripts/validate_skills.py` passes
 - `python scripts/token_budget.py --strict` passes
@@ -283,5 +299,6 @@ Phase 6C implementation must include these test categories:
 - **Audit fixes applied**: Gate 2 circular validation resolved (whitelist), Gate 7 classification corrected (structural validator), bypass analysis added, Ralph loop history recorded, packaging manifest entries specified, gate priority ordering defined, implementation test strategy added.
 
 ## Next Steps
+
 - Phase 6C (Harness Adapter Implementation) - implement the adapter based on this design, following gate priority ordering
 - Address ISSUE-1 before Phase 8B rollout

@@ -12,6 +12,7 @@ You have 42 files in `shared/` that get copied into each skill's `references/` f
 The sync script automates propagation. The release builder packages everything for distribution. These are **force multipliers** — they make every future edit safer and faster. Without them, the package grows harder to maintain as it matures.
 
 **Backlog items:**
+
 - [x] `scripts/sync_shared_refs.py` — sync shared references to per-skill copies with SHA-1 hash comparison and `--update-manifests` flag.
 - [x] `scripts/build_release.py` — full release pipeline: sync, validate, version bump, package, bundle, summary.
 - [x] `scripts/package_skill.sh` — individual skill packaging with MANIFEST.json and SHA-256 checksums.
@@ -30,6 +31,7 @@ The whole thesis of ContextSmith is that local models need explicit, harness-awa
 Start with `generic-agent.md`, `cursor.md`, and `aider.md` — those have the largest user bases.
 
 **Backlog items:**
+
 - [ ] Add `references/harness-profiles/`
 - [ ] Add `generic-agent.md`
 - [ ] Add `opencode.md`
@@ -48,6 +50,7 @@ Start with `generic-agent.md`, `cursor.md`, and `aider.md` — those have the la
 You currently ship 4 model profiles (`generic-local`, `qwen36`, `gemma4`, `llama3`). The model landscape moves fast — new models ship weekly, and users are testing models you don't have profiles for yet. A profile-builder skill lets users create and refine profiles from their own runtime observations, model cards, and failure-mode notes. This turns the package from a static set of profiles into a **living, user-extensible system**. It also creates a feedback loop: users who build profiles surface real-world data about what works.
 
 **Backlog items:**
+
 - [ ] `local-model-profile-builder` — create/update model profiles based on user tests, model cards, runtime behavior, and known failure modes.
 
 ---
@@ -57,6 +60,7 @@ You currently ship 4 model profiles (`generic-local`, `qwen36`, `gemma4`, `llama
 With 42 shared references and 5 skills each with their own reference copies, **rule duplication and contradiction drift** is a real risk. An automated duplicate-rule detector catches when the same concept is defined in multiple places with slightly different wording. A reference checker validates that all SKILL.md references actually point to existing files. An exposed-CoT scanner flags phrases that leak reasoning. These are **quality gates** — they turn manual review into automated validation, which pairs naturally with the GitHub Actions workflow you have in the backlog.
 
 **Backlog items:**
+
 - [ ] `scripts/check_no_duplicate_rules.py`
 - [ ] `scripts/check_references.py`
 - [ ] Automated exposed-CoT phrase scanner
@@ -69,6 +73,7 @@ With 42 shared references and 5 skills each with their own reference copies, **r
 Persistent task state is a core feature of your workflows — `.agent_work/` folders with TASK.md, PLAN.md, STATUS.md, etc. But there's no tool to initialize, clean, audit, or resume these folders systematically. A dedicated skill for task-state management would handle folder initialization, cleanup of stale state, size-limit enforcement (which you already have in the backlog), and phase summary compaction. This is useful because **long-running projects accumulate state bloat**, and users need a way to prune and reorganize without losing durable decisions.
 
 **Backlog items:**
+
 - [ ] `agent-task-state-manager` — initialize, clean, audit, or resume persistent task-state folders.
 - [ ] Task-state cleanup skill
 - [ ] State file size-limit enforcement

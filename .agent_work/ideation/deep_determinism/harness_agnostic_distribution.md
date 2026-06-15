@@ -192,6 +192,7 @@ Example policy:
 
 ```yaml
 references:
+
   - shared/documentation-quality.md
   - shared/control-parameters.md
 
@@ -199,6 +200,7 @@ conditional_references:
   opencode:
     when: harness == "opencode" or target == "opencode"
     files:
+
       - shared/harness-opencode.md
       - skills/contextsmith-run/references/harness-opencode.md
 ```
@@ -312,6 +314,7 @@ class HarnessAdapter(ABC):
         Execute one bounded step.
 
         CONTRACT:
+
         - Must raise HarnessTimeoutError if timeout_s is exceeded.
         - Must raise HarnessExecutionError if the harness runtime itself fails.
         - Must never raise for agent-level failures (use HarnessResult.status).
@@ -320,6 +323,7 @@ class HarnessAdapter(ABC):
         - Must be thread-safe if the adapter is used concurrently.
         - Must not modify checkpoint.json (orchestrator owns this).
         - Caller (orchestrator) may call cancel() from another thread.
+
         """
         ...
 
@@ -341,12 +345,14 @@ class HarnessAdapter(ABC):
         Declare what this harness supports.
 
         Standard capability keys:
+
         - supports_model_pinning: bool (can pin to a specific model)
         - supports_step_caps: bool (can limit tool calls)
         - supports_permission_levels: bool (can enforce read-only/edit/external)
         - max_concurrent_steps: int (default 1)
         - supports_structured_output: bool (can return structured agent output)
         - supports_cancellation: bool (can cancel running steps)
+
         """
         ...
 ```
@@ -356,6 +362,7 @@ class HarnessAdapter(ABC):
 Adapters register themselves at import time:
 
 ```python
+
 # In adapters/opencode.py
 class OpenCodeAdapter(HarnessAdapter):
     @property
@@ -382,6 +389,7 @@ adapters/
 The `adapters/__init__.py` maintains a manifest:
 
 ```python
+
 # adapters/__init__.py
 # Add new adapters here to register them with the orchestrator.
 ADAPTER_REGISTRY = [
@@ -408,7 +416,7 @@ REGISTERED → DISCOVERED → VALIDATED → EXECUTING → COMPLETED
 ```
 
 | Phase | What Happens | When |
-|-------|-------------|------|
+| ------- | ------------- | ------ |
 | REGISTERED | `HarnessRegistry.register(AdapterClass)` called | At import time |
 | DISCOVERED | `HarnessRegistry.get(name)` or `_detect_auto()` called | At orchestrator startup |
 | VALIDATED | `adapter.validate_environment()` called | After discovery, must return [] |

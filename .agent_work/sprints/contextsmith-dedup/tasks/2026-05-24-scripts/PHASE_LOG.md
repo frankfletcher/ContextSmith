@@ -1,6 +1,7 @@
 # PHASE_LOG.md
 
 ## Phase 1 Code Review
+
 - Files reviewed: `CONTEXT.md`, `STATUS.md`
 - Validation run: `python scripts/validate_skills.py` — OK (all 5 skills passed)
 - Overall: pass
@@ -11,6 +12,7 @@
 - Remaining risks: None identified.
 
 ## Phase 1 Education Report
+
 - What Changed: Updated `CONTEXT.md` with verified blob hashes, updated `STATUS.md` to mark P1 complete.
 - Design Decisions: No new design decisions needed; all assumptions confirmed.
 - Trade-Offs: None.
@@ -19,6 +21,7 @@
 - Next Phase Preview: Phase 2 will create the first skill manifest (`local-model-prompt-engineer`) with computed blob hashes.
 
 ## Phase 2 Code Review
+
 - Files reviewed: `skills/local-model-prompt-engineer/reference_manifest.yml`
 - Validation run: `python -c "import yaml; yaml.safe_load(open('skills/local-model-prompt-engineer/reference_manifest.yml'))" && echo "OK"` — OK
 - Overall: pass
@@ -29,6 +32,7 @@
 - Remaining risks: None identified.
 
 ## Phase 2 Education Report
+
 - What Changed: Created `skills/local-model-prompt-engineer/reference_manifest.yml` with 53 reference entries (52 shared files + 1 local help.md).
 - Design Decisions: Used git-compatible blob hash algorithm (`blob <size>\0` prefix) for versioning; marked all 52 shared files as `required: true` per Phase 2c concrete answer; used skill root path for local help.md even though file not yet relocated.
 - Trade-Offs: Manifest references help.md at skill root location before Phase 3 relocation; content is identical so hash is valid.
@@ -37,6 +41,7 @@
 - Next Phase Preview: Phase 3 will create manifests for remaining 4 skills and relocate help.md files to skill roots.
 
 ## Phase 3 Code Review
+
 - Files reviewed: 4 new manifest files, 5 moved help.md files
 - Validation run: All 5 manifests validated with 53 entries each — OK
 - Overall: pass
@@ -47,6 +52,7 @@
 - Remaining risks: None identified.
 
 ## Phase 3 Education Report
+
 - What Changed: Created reference_manifest.yml for 4 remaining skills (skill-engineer, skill-migrator, instruction-engineer, agent-evaluator) and relocated all 5 help.md files from references/ to skill roots.
 - Design Decisions: Copied P2 manifest template to remaining skills; updated skill field and description per each skill; used pre-computed blob hashes for shared files (same across all skills); used skill-specific hashes for help.md files; marked all shared files as required: true per Phase 2c decision.
 - Trade-Offs: help.md files remain in references/ until Phase 5 cleanup; both locations contain identical content during transition.
@@ -55,6 +61,7 @@
 - Next Phase Preview: Phase 4 will create sync script to populate references/ directories from shared/ via manifests.
 
 ## Phase 4 Code Review
+
 - Files reviewed: `scripts/sync_shared_refs.py`
 - Validation run: `python scripts/sync_shared_refs.py --verbose` (0 errors), `diff` (0 diffs)
 - Overall: pass (with note)
@@ -65,6 +72,7 @@
 - Remaining risks: Discrepancy between PLAN validation expectation and manifest content (optional files).
 
 ## Phase 4 Education Report
+
 - What Changed: Created `scripts/sync_shared_refs.py` to populate `references/` directories from `shared/` via manifests.
 - Design Decisions: Git-compatible hashing; content-based skipping; manifest-driven filtering; local file handling.
 - Trade-Offs: Optional files excluded; no cleanup (deferred to Phase 5).
@@ -73,6 +81,7 @@
 - Next Phase Preview: Phase 5 will verify sync, delete old copies, and update `.gitignore`.
 
 ## Phase 5 Code Review
+
 - Files reviewed: .gitignore (modified), 5 reference_manifest.yml files (modified)
 - Validation run: `python scripts/validate_skills.py` — OK (all 5 skills passed)
 - Overall: pass (with note about manifest formatting)
@@ -90,6 +99,7 @@
 - Remaining risks: None identified
 
 ## Phase 6 Code Review
+
 - Files reviewed: `scripts/package_skill.sh`
 - Validation run: `./scripts/package_skill.sh local-model-prompt-engineer` — OK (packaged 118 files)
 - Overall: pass (after fixing MUST FIX issues)
@@ -105,6 +115,7 @@
 - Remaining risks: None identified
 
 ## Phase 7 Code Review
+
 - Files reviewed: `scripts/validate_skills.py`, `.github/workflows/validate.yml`
 - Validation run: `python scripts/validate_skills.py` — OK (all 5 skills passed)
 - Overall: pass
@@ -118,6 +129,7 @@
 - Remaining risks: None identified
 
 ## Phase 8 Code Review
+
 - Files reviewed: `CONTRIBUTING.md`, `.gitignore`
 - Validation run: `python scripts/validate_skills.py` — OK (all 5 skills passed)
 - Overall: pass
@@ -132,6 +144,7 @@
 - Remaining risks: None identified.
 
 ## Phase 8 Education Report
+
 - What Changed: Created `CONTRIBUTING.md`, updated `.gitignore`, fixed documentation inaccuracies.
 - Design Decisions: Used standard contribution template; excluded generated artifacts.
 - Trade-Offs: No linting added (per constraints); documentation kept concise.

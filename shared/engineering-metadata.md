@@ -12,8 +12,10 @@ metadata:
   engineered_by: local-model-agent-engineering
   engineered_version: "..."
   target_model_profiles:
+
     - generic-local
     - qwen36
+
   targeted_context_length: "32k"
   context_tier: tight
   optimization_scope: local-open-weight

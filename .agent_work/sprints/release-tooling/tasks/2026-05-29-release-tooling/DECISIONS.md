@@ -1,7 +1,7 @@
 # DECISIONS.md — Release Tooling Sprint
 
 | # | Decision | Reason | Impact |
-|---|----------|--------|--------|
+| --- | ---------- | -------- | -------- |
 | D1 | build_release.py will be Python, not shell | Cross-platform compatibility, native PyYAML/JSON support, subprocess management for calling existing scripts | Requires Python 3 (already a dependency) |
 | D2 | Phase 1 adds --update-manifests flag only; no rewrite of sync_shared_refs.py | Script is production-ready with full CLI surface. Rewriting risks regressions. | Minimal change surface, lower risk |
 | D3 | MANIFEST.json uses SHA-256 for file checksums (not SHA-1) | SHA-256 is the standard for package integrity verification. SHA-1 is used internally by sync for git-compatible blob comparison. | Install scripts can verify with sha256sum |

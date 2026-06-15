@@ -63,7 +63,7 @@ Do not add abstractions unless they simplify the current task or protect an exis
 All Markdown files must pass `markdownlint` with these rules enforced:
 
 | Rule | Code | Requirement |
-|------|------|-------------|
+| ------ | ------ | ------------- |
 | MD022 | `blanks-around-headings` | Headings must be surrounded by blank lines. A `##` or `###` heading needs a blank line before and after it (except at file start). |
 | MD032 | `blanks-around-lists` | Lists must be surrounded by blank lines. A list item (`-`, `*`, `1.`) needs a blank line before and after the list block. |
 | MD013 | `line-length` | Lines must not exceed the configured maximum (default 80, project-configured 350 for task artifacts). |
@@ -71,9 +71,11 @@ All Markdown files must pass `markdownlint` with these rules enforced:
 ### Quick Fixes
 
 ```markdown
+
 # Bad — heading flush with content
 ## Section Title
 Content here
+
 - list item
 
 # Good — blank lines around heading and list
@@ -89,6 +91,7 @@ Do not skip `markdownlint` errors. Fix the formatting; do not change substance j
 ## Validation Evidence
 
 Do not claim tests pass unless a test command was run and observed. If validation was not run, state the command and reason.
+
 ## Write Simple Code First
 
 Avoid ever writing a function that will fail a complexity gate. These patterns keep cyclomatic complexity ≤ B and maintainability ≥ A on the first pass.
@@ -98,6 +101,7 @@ Avoid ever writing a function that will fail a complexity gate. These patterns k
 If a function name contains "and", split it. A function should do one thing, do it well, and return.
 
 ```python
+
 # Bad — two jobs
 def load_and_validate(path):
     data = json.loads(path.read_text())
@@ -117,13 +121,17 @@ def validate_data(data):
 Any if/elif chain with 3+ branches should have each branch extracted into a named function or a dispatch dict.
 
 ```python
+
 # Bad — C complexity from branching
 def handle_status(status):
     if status == "pass":
+
         # 8 lines
     elif status == "fail":
+
         # 8 lines
     elif status == "blocked":
+
         # 8 lines
 
 # Good — dispatch table
@@ -139,6 +147,7 @@ def handle_status(status):
 Return early. Never nest deeper than 3 levels. Each `if` without an `else` that returns early is one less path through the function.
 
 ```python
+
 # Bad — nested
 def process(x):
     if x is not None:
@@ -165,6 +174,7 @@ def process(x):
 If a loop body has its own conditionals or nested loops, extract the body.
 
 ```python
+
 # Bad — loop + conditional = complexity
 for item in items:
     if item.active:
@@ -187,11 +197,14 @@ results = [r for r in (_process_item(i, threshold) for i in items) if r is not N
 A boolean parameter means the function has two behaviors. Extract two functions instead.
 
 ```python
+
 # Bad
 def render(widget, show_details=False):
     if show_details:
+
         # detailed path
     else:
+
         # summary path
 
 # Good
@@ -204,6 +217,7 @@ def render_details(widget): ...
 More than 3 parameters increases coupling and testing complexity. Use a dataclass, config object, or builder pattern.
 
 ```python
+
 # Bad — 5 positional params
 def train(model, data, epochs, lr, batch_size): ...
 

@@ -37,23 +37,31 @@ You execute this loop. Each iteration is one phase.
 5. Read NEXT_PROMPT.md → your bounded task
 6. Read CONTEXT.md → constraints and file map
 7. Execute the phase:
+
    a. Do the work described in NEXT_PROMPT.md
    b. Write expected_outputs per the state definition
+
 8. Validate your artifacts:
+
    a. Check every expected_output file exists and is non-empty
    b. Check required sections present (see Artifact Templates below)
    c. If validation fails and retries < max_retries → retry
    d. If validation fails and retries >= max_retries → set status to "blocked"
+
 9. Write RESULT.json to the task-state directory
 10. Update state files:
+
     a. Write checkpoint.json (phase, status, counters)
     b. Update STATUS.md (current_phase, next_action)
     c. Append to PHASE_LOG.md
     d. Update CHECKLIST.md (mark completed items)
+
 11. Determine next phase:
+
     a. Read transitions from the state definition
     b. Match your result status to a transition condition
     c. The target is your next current_phase
+
 12. Write NEXT_PROMPT.md for the next phase
 13. Update STATUS.md with the new current_phase
 14. Re-read STATUS.md → go to step 2
@@ -64,6 +72,7 @@ You execute this loop. Each iteration is one phase.
 On each loop iteration, read STATUS.md to determine where you are:
 
 ```markdown
+
 # Status
 
 ## Current Phase
@@ -73,6 +82,7 @@ implement_change
 execute
 
 ## Progress
+
 - Phase: 2 of 5
 - Checklist: 1/4 complete
 - Retries remaining: 3
@@ -91,6 +101,7 @@ The `Current Phase` field maps to a key in the workflow config's `states` sectio
 After writing artifacts, validate them:
 
 ```python
+
 # For each expected_output in the state definition:
 for artifact_name in state_definition["expected_outputs"]:
     path = task_state_dir / artifact_name
@@ -101,6 +112,7 @@ for artifact_name in state_definition["expected_outputs"]:
         status = "fail"
         reason = f"Empty artifact: {artifact_name}"
     else:
+
         # Check required sections (see Artifact Templates)
         missing = check_required_sections(path, artifact_name)
         if missing:
@@ -169,6 +181,7 @@ After validation, determine the next phase:
 ## Retry Logic
 
 When validation fails:
+
 1. Increment the retry counter in checkpoint.json
 2. If retries < max_retries → stay in current phase, retry
 3. If retries >= max_retries → follow the `max_retries` transition (usually "blocked")
@@ -193,6 +206,7 @@ Ralph is self-improvement, not blind iteration. Each cycle should address a conc
 ### STATUS.md
 
 ```markdown
+
 # Status
 
 ## Current Phase
@@ -202,6 +216,7 @@ Ralph is self-improvement, not blind iteration. Each cycle should address a conc
 <state-name>
 
 ## Progress
+
 - Phase: <N> of <M>
 - Checklist: <X>/<Y> complete
 - Retries remaining: <N>
@@ -216,6 +231,7 @@ Ralph is self-improvement, not blind iteration. Each cycle should address a conc
 ### PHASE_LOG.md
 
 ```markdown
+
 # Phase Log
 
 ## Phase <name>
@@ -229,6 +245,7 @@ Artifacts: <list>
 ### CHECKLIST.md
 
 ```markdown
+
 # Checklist
 
 - [x] <completed item>
@@ -238,9 +255,11 @@ Artifacts: <list>
 ### NEXT_PROMPT.md
 
 ```markdown
+
 # Next Prompt
 
 ## Current Status
+
 - Phase: <phase-name>
 - State: <state-name>
 - Completed: <list>
@@ -249,18 +268,22 @@ Artifacts: <list>
 <specific bounded instruction>
 
 ## Input Files
+
 - <file>: <what to read>
 
 ## Output Requirements
+
 - <file>: <what to write>
 
 ## Constraints
+
 - <limits>
 ```
 
 ## Termination
 
 The loop ends when:
+
 - STATUS.md `Current Phase` is "done" → workflow complete
 - STATUS.md `Current Phase` is "blocked" → human intervention needed
 - You've been in the same phase for max_retries → set to "blocked"
@@ -277,7 +300,7 @@ When running without RESULT.json support (skill-only path), your status is deter
 ## Reference Loading
 
 | Need | Read |
-|------|------|
+| ------ | ------ |
 | Every run | `references/run-configuration-preview.md` |
 | Workflow config format | `workflow_config_sketch.md` (in deep_determinism) |
 | Artifact templates | `state_artifact_strategy.md` (in deep_determinism) |

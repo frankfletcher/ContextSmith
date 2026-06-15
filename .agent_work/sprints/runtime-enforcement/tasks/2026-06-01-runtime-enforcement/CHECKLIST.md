@@ -1,12 +1,14 @@
 # Checklist: Runtime Enforcement for ContextSmith Skills
 
 ## Artifact Manifest
+
 - artifact_type: checklist
 - parent_task: TASK.md
 - validation_level: planning strict; implementation available checks
 - behavioral_contract: Use this checklist during phase closeout and final audit.
 
 ## Planning Quality
+
 - [x] Problem is scoped to both repo-local validation AND installed-skill runtime enforcement (hybrid).
 - [x] Plan separates deterministic validation from hard harness enforcement.
 - [x] Plan includes CLI and MCP paths using shared validation logic.
@@ -27,6 +29,7 @@
 - [x] Phase 0.5 requires distribution model, runtime dependency policy, first-slice scope, and Phase 1A authorization before implementation.
 
 ## Implementation Safety
+
 - [x] Packaging behavior verified from source or built artifacts.
 - [x] Distribution model recorded before implementation begins.
 - [x] Runtime dependency policy recorded before validator implementation begins.
@@ -43,6 +46,7 @@
 - [x] Next Prompt Compiler does not execute phases, call models, or advance task state beyond writing handoff prompts.
 
 ## Runtime Enforcement Quality
+
 - [x] Universal artifact vocabulary defined with six types.
 - [x] Each artifact has purpose, required fields, and domain-neutral JSON example.
 - [x] Requirements chain schema defined with eight required fields and linear trace model.
@@ -86,6 +90,7 @@
 - [x] Phase 7G Ralph loop: 2 iterations (iteration 1: no additional defects; iteration 2: no-op).
 
 ## Phase 8A: Rollout Scope Selection
+
 - [x] All 7 skills listed in rollout matrix.
 - [x] Each skill classified as selected, deferred, or skipped with one-line reason.
 - [x] Phase 8B target count is explicit and not greater than two.
@@ -93,6 +98,7 @@
 - [x] ISSUE-1 resolution path documented (Option 3: extend sync script).
 
 ### Phase 8C Sub-Phases (Docs/Examples after Skill Rollout)
+
 - [x] Phase 8C.1: Run task-state handoff workflow doc.
 - [x] Phase 8C.2: Schedule with approval gates workflow doc.
 - [ ] Phase 8C.3: Compare travel options workflow doc.
@@ -109,6 +115,7 @@
 - [x] Phase 8A Ralph loop: 2 iterations (iteration 1: no material defects; iteration 2: no-op).
 
 ## Documentation Quality
+
 - [x] Documentation map covers first-value path, use-case lookup, examples, recovery help, and reference details.
 - [x] No documentation implementation begins before the map is approved.
 - [x] Map distinguishes user-facing docs from agent-facing references.
@@ -124,6 +131,7 @@
 - [x] Docs label planned/runtime features honestly.
 
 ## Final Closeout
+
 - [ ] `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md` are current.
 - [ ] Final report lists files changed and validation evidence.
 - [ ] `NEXT_PROMPT.md` can resume the next session without chat history.

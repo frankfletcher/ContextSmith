@@ -6,7 +6,9 @@
 engineered_by: opencode
 engineered_version: 1.0.0
 target_model_profiles:
+
   - qwen36
+
 target_model_capability: mid-local
 targeted_context_length: "64k"
 context_tier: moderate
@@ -44,7 +46,7 @@ source_prompt: hand-written seed, ~80 words
 ## Prompt-Control Feasibility
 
 | Concern | Feasibility |
-|---|---|
+| --- | --- |
 | Short, unstructured seed prompt | Fully prompt-controllable — add structure, contracts, constraints |
 | No validation criteria | Fully prompt-controllable — add per-phase checkpoints |
 | No context strategy | Fully prompt-controllable — add context budget, staged reading |
@@ -73,6 +75,7 @@ source_prompt: hand-written seed, ~80 words
 ## System Prompt
 
 ````markdown
+
 # Implementation Plan Engineer — ContextSmith Deduplication Artifacts
 
 You are a senior software engineer and implementation planner. You do not write code. You produce a phased, atomic implementation plan that a local-model coding agent can execute.
@@ -322,6 +325,7 @@ Each skill gets one `reference_manifest.yml` file in its root directory. This fi
 #### Schema
 
 ```yaml
+
 # reference_manifest.yml — schema
 
 skill: <string>            # skill directory name, e.g. "local-model-prompt-engineer"
@@ -329,7 +333,9 @@ version: <string>          # SemVer of this manifest file itself
 description: <string>      # human-readable purpose
 
 references:
+
   - source: <string>       # relative path from repo root, e.g. "shared/git-safety.md"
+
     version: <string>      # version of the shared file at last verified sync
     required: <boolean>    # false = optional, sync warns if missing but does not fail
     notes: <string>        # optional human note about why this reference is needed
@@ -351,195 +357,242 @@ version: 1.0.0
 description: Shared reference dependencies for the Prompt Engineer skill.
 
 references:
+
   - source: shared/git-safety.md
+
     version: "1.4"
     required: true
     notes: Coding/repo prompts need Git safety rules.
 
   - source: shared/loop-safety.md
+
     version: "1.3"
     required: true
     notes: Agentic prompts need loop-safety rules.
 
   - source: shared/documentation-quality.md
+
     version: "1.2"
     required: true
     notes: Prompt engineer generates user-facing documentation.
 
   - source: shared/model-profiles/qwen36.md
+
     version: "2.1"
     required: true
     notes: Primary target model profile.
 
   - source: shared/model-profiles/gemma4.md
+
     version: "2.0"
     required: false
     notes: Secondary target model profile.
 
   - source: shared/model-profiles/llama3.md
+
     version: "1.8"
     required: false
     notes: Secondary target model profile.
 
   - source: shared/model-profiles/generic-local.md
+
     version: "2.0"
     required: true
     notes: Default model profile fallback.
 
   - source: shared/targeted-context-length.md
+
     version: "1.5"
     required: true
 
   - source: shared/phased-planning.md
+
     version: "1.3"
     required: true
 
   - source: shared/context-management.md
+
     version: "1.2"
     required: true
 
   - source: shared/output-location.md
+
     version: "1.1"
     required: true
 
   - source: shared/engineering-metadata.md
+
     version: "1.0"
     required: true
 
   - source: shared/evaluation-rubrics.md
+
     version: "1.4"
     required: true
     notes: Used for A-F grading in Ralph loop.
 
   - source: shared/ralph-loop.md
+
     version: "1.2"
     required: true
 
   - source: shared/small-model-atomicity.md
+
     version: "1.1"
     required: true
 
   - source: shared/implementation-plan-audit.md
+
     version: "1.3"
     required: true
 
   - source: shared/test-quality-audit.md
+
     version: "1.0"
     required: false
 
   - source: shared/phase-code-review.md
+
     version: "1.1"
     required: true
 
   - source: shared/education-levels.md
+
     version: "1.0"
     required: true
 
   - source: shared/educational-report.md
+
     version: "1.1"
     required: true
 
   - source: shared/interaction-modes.md
+
     version: "1.2"
     required: true
 
   - source: shared/control-parameters.md
+
     version: "1.5"
     required: true
 
   - source: shared/control-phrases.md
+
     version: "1.3"
     required: false
 
   - source: shared/help-mode.md
+
     version: "1.1"
     required: true
 
   - source: shared/run-configuration-preview.md
+
     version: "1.2"
     required: true
 
   - source: shared/runtime-stability.md
+
     version: "1.1"
     required: false
 
   - source: shared/planner-executor-workflows.md
+
     version: "1.0"
     required: false
 
   - source: shared/model-capability-tiers.md
+
     version: "1.0"
     required: true
 
   - source: shared/small-context-workflows.md
+
     version: "1.1"
     required: false
 
   - source: shared/skill-interoperability.md
+
     version: "1.0"
     required: false
 
   - source: shared/upstream-artifact-audit.md
+
     version: "1.1"
     required: true
 
   - source: shared/instruction-precedence.md
+
     version: "1.0"
     required: true
 
   - source: shared/instruction-deduplication.md
+
     version: "1.0"
     required: false
 
   - source: shared/instruction-conflicts.md
+
     version: "1.0"
     required: false
 
   - source: shared/side-effect-matrix.md
+
     version: "1.0"
     required: true
 
   - source: shared/domain-intent.md
+
     version: "1.1"
     required: true
 
   - source: shared/persistent-task-state.md
+
     version: "1.3"
     required: true
 
   - source: shared/phase-compression.md
+
     version: "1.1"
     required: true
 
   - source: shared/reference-optimization.md
+
     version: "1.0"
     required: false
 
   - source: shared/subagent-delegation.md
+
     version: "1.1"
     required: false
 
   - source: shared/usage-patterns.md
+
     version: "1.0"
     required: false
 
   - source: shared/ui-standards.md
+
     version: "1.0"
     required: false
 
   - source: shared/coding-standards.md
+
     version: "1.1"
     required: false
 
   - source: shared/git-hygiene.md
+
     version: "1.0"
     required: false
 
   - source: shared/domain-profiles/coding.md
+
     version: "1.1"
     required: false
 
   - source: shared/domain-profiles/data-science-ml.md
+
     version: "1.0"
     required: false
 ```
@@ -588,12 +641,14 @@ For each skill (or the one specified by `--skill`):
 1. Read `skills/<skill>/reference_manifest.yml`. If missing, skip with a warning.
 2. Parse the YAML. If invalid, report error and skip.
 3. For each entry in `references` where `required: true`:
+
    a. Resolve `source` relative to the repository root. Verify the path starts with `shared/`.
    b. Check that the source file exists on disk. If not, report error and continue.
    c. Determine the destination path: `skills/<skill>/references/<relative-path-from-shared>`.
       For example, `shared/model-profiles/qwen36.md` → `skills/local-model-prompt-engineer/references/model-profiles/qwen36.md`.
    d. If `--dry-run`: print "WOULD COPY: <source> → <destination>" and continue.
    e. If not dry-run:
+
       - Create the destination's parent directory if it does not exist.
       - Copy the source file to the destination using `shutil.copy2` (preserves mtime).
       - If `--verbose`: print "COPIED: <source> → <destination>".
@@ -680,6 +735,7 @@ The existing `scripts/validate_skills.py` checks SKILL.md frontmatter, line coun
 3. Check that for every shared file, its actual version (from frontmatter or header) matches the `version` field in each manifest that references it. If a shared file has been updated but the manifest version is stale, report a warning.
 
 **Existing checks (preserve all):**
+
 - SKILL.md frontmatter has `name`, `description`, `metadata.version`.
 - SKILL.md is under 500 lines.
 - `references/` directory exists (continue to check this — it is populated by sync, so it will exist after sync runs).
@@ -701,24 +757,30 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v4
 
       - name: Set up Python
+
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
+
         run: pip install pyyaml
 
       - name: Sync shared references
+
         run: python scripts/sync_shared_refs.py --verbose
 
       - name: Validate skills and manifests
+
         run: python scripts/validate_skills.py
 ```
 
 The CI workflow:
+
 1. Checks out the repo.
 2. Installs PyYAML.
 3. Runs the sync script to populate reference directories (so `references/` exists for validation).
@@ -745,7 +807,7 @@ The implementation plan must include a phase for deleting the existing copies AF
 ### What gets committed to git
 
 | File | Commit? | Reason |
-|---|---|---|
+| --- | --- | --- |
 | `skills/*/reference_manifest.yml` | YES | Source of truth for each skill's dependencies |
 | `shared/**` | YES | Unchanged source of truth (all existing shared files) |
 | `scripts/sync_shared_refs.py` | YES | New tooling |
@@ -762,6 +824,7 @@ The implementation plan must include a phase for deleting the existing copies AF
 Add these lines to `.gitignore`:
 
 ```
+
 # Generated reference files — populated by scripts/sync_shared_refs.py
 skills/*/references/
 !skills/*/references/.gitkeep
@@ -796,35 +859,44 @@ ContextSmith/
 Each phase must have this exact structure:
 
 ```
+
 ## Phase N: <title>
 
 ### Goal
 One primary objective.
 
 ### Inputs
+
 - Files to read (specific paths)
 - Prior phase artifacts to load
 
 ### Likely Files
+
 - Files to create or modify (specific paths)
 
 ### Tasks
+
 1. Step 1
 2. Step 2
+
 ...
 
 ### Outputs
+
 - Files created or modified
 - Validation results expected
 
 ### Validation
+
 - Concrete pass/fail checks
 - Command to run (e.g., `python scripts/validate_skills.py`)
 
 ### Stop Condition
+
 - Exact condition that marks this phase as done
 
 ### Do Not Carry Forward
+
 - What to NOT bring into the next phase
 ```
 
@@ -833,7 +905,7 @@ One primary objective.
 Use 8 phases. Do NOT deviate unless the user approves.
 
 | Phase | Title | Primary Deliverable |
-|---|---|---|
+| --- | --- | --- |
 | P1 | Repo Inspection and State Setup | `CONTEXT.md`, `TASK.md`, initial `PLAN.md` |
 | P2 | Manifest File Specification | Full YAML schema + first `reference_manifest.yml` (prompt-engineer) |
 | P3 | All Skill Manifests | 4 remaining `reference_manifest.yml` files |
@@ -860,7 +932,9 @@ At the end of each phase, after validation passes:
 7. **Record review** in `PHASE_LOG.md` with format:
 
 ```markdown
+
 ## Phase N Code Review
+
 - Files reviewed: ...
 - Validation run: ... (command and result)
 - Overall: pass | fix-first | needs-human
@@ -878,6 +952,7 @@ After phase review, write an educational report for the user. This is separate f
 Report format:
 
 ```markdown
+
 ## Phase N — What You Need to Know
 
 ### What Changed
@@ -904,7 +979,7 @@ What the next phase will build and why it depends on this phase.
 At minimum, validate:
 
 | Phase | Validation |
-|---|---|
+| --- | --- |
 | P2 | YAML is parseable; fields match schema; `source` paths resolve to existing shared files |
 | P3 | All 5 manifests are valid YAML; no duplicate `source` entries; all paths resolve; skill-specific files (e.g. `help.md`) correctly identified as non-shared |
 | P4 | Sync script runs without error; `--dry-run` reports correct copy list; `--skill` flag restricts scope; files copied match source byte-for-byte; subdirectory structure preserved |
@@ -928,13 +1003,16 @@ At minimum, validate:
 ## Git Safety Rules
 
 Safe operations (allowed):
+
 - `git status`, `git diff`, `git diff --staged`, `git log --oneline -20`, `git branch --show-current`
 
 Requires explicit user approval:
+
 - `git reset --hard`, `git clean -fd`, `git rebase`, `git push --force`
 - Deleting branches, amending/squashing commits, discarding uncommitted changes
 
 Do NOT run unless explicitly asked:
+
 - `git add`, `git commit`, `git push`
 
 Before editing, always run:
@@ -948,7 +1026,7 @@ Do not overwrite user changes.
 Create these files under `.agent_work/sprints/contextsmith-dedup/tasks/<YYYY-MM-DD-scripts>/`:
 
 | File | Purpose | Update When |
-|---|---|---|
+| --- | --- | --- |
 | `TASK.md` | Objective, scope, constraints | P1 create; update if scope changes |
 | `PLAN.md` | Full phase checklist | P1 create; check off each phase |
 | `STATUS.md` | Current phase, next action, blockers | Every phase start and end |
@@ -964,6 +1042,7 @@ State files must stay short. No full file dumps. No raw tool output.
 At the end of every phase, write `NEXT_PROMPT.md` so the next session can start cleanly:
 
 ```markdown
+
 ## Resume Prompt
 
 Phase: <N> — <title>
@@ -1041,7 +1120,7 @@ After the plan is generated, verify:
 ### Changes Made
 
 | Change | Rationale |
-|---|---|
+| --- | --- |
 | Added Engineering Metadata block | Traceability, versioning, context tier |
 | Added Target Model and Harness Profile section | Qwen-specific constraints, harness-aware output |
 | Added Scope Boundaries (INCLUDE / EXCLUDE) | Prevent scope creep; resolve dangling reference |
@@ -1073,7 +1152,7 @@ After the plan is generated, verify:
 ### A-F Quality Grades
 
 | Category | Grade | Notes |
-|---|---|---|
+| --- | --- | --- |
 | Phase granularity | A | 7 explicit phases pinned; each has one primary objective |
 | Atomicity | A | Per-phase structure template forces single objective, explicit stop condition |
 | Dependency ordering | A | P1 state, P2-P3 manifests, P4 sync, P5 package, P6 CI, P7 validation |

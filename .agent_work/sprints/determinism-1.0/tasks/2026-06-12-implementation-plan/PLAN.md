@@ -19,6 +19,7 @@ absorbs contextsmith-run patterns, then hardens determinism with 10 additional w
 Before starting, set up the development environment:
 
 ```bash
+
 # Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -78,12 +79,14 @@ Every phase must append its audit findings to `AUDIT_REPORT.md`. Never overwrite
 ### AUDIT_REPORT.md Template
 
 ```markdown
+
 # Audit Report: <Phase Name>
 
 ## Summary
 <one-line conclusion>
 
 ## Findings
+
 - <Severity>: <description>
   - Evidence: <where>
   - Fix: <how>
@@ -97,6 +100,7 @@ pass / fail / conditional-pass
 For each phase, run these commands to validate:
 
 ```bash
+
 # Validate skills
 uv run python scripts/validate_skills.py
 
@@ -152,6 +156,7 @@ Rule: Never import from `orchestrator.orchestrator` in state_reader, checkpoint,
 Follow existing test conventions in `tests/`:
 
 ```python
+
 # tests/test_orchestrator_state.py
 import pytest
 from pathlib import Path
@@ -176,6 +181,7 @@ Reference: `tests/test_validator.py` for patterns.
 Validators return lists of strings in this format:
 
 ```python
+
 # Success
 return []
 
@@ -289,19 +295,23 @@ The `>>` operator appends. The `'REPORT'` heredoc delimiter (quoted) prevents va
 ### Educational Report Template
 
 ````markdown
+
 # Educational Report: <Phase Name>
 
 ## What Was Done
+
 - Created `orchestrator/<file>.py` with <N> functions
 - Key functions: `function1()`, `function2()`
 - Design decision: <what and why>
 
 ## Why It Matters
+
 - This component handles <responsibility>
 - Without it, <what would break>
 - It connects to <other components> by <how>
 
 ## How It Works
+
 1. <Step 1 of the algorithm>
 2. <Step 2 of the algorithm>
 3. <Step 3 of the algorithm>
@@ -322,6 +332,7 @@ def function2(arg1: Path) -> list[str]:
 ```
 
 ### For Small Models
+
 - <Concrete example of how to use this code>
 - <Common mistakes to avoid>
 - <What to check if something goes wrong>
@@ -865,11 +876,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Fix 4 pre-existing E501 line-too-long errors in `orchestrator/orchestrator.py`.
 
 **Steps:**
+
 1. Read lines 219, 244, 254, 267
 2. Break each long line at 88 chars using parentheses or intermediate variables
 3. Run `ruff format` and `ruff check`
 
 **Expected outputs:**
+
 - Clean `ruff check orchestrator/ --select E,F,W,I`
 - Clean `ruff format orchestrator/ --check`
 
@@ -878,12 +891,14 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Replace the "HARD STOP — DO NOT EXECUTE IN CURRENT SESSION" text with a `.phase_gate` flag file mechanism. NEXT_PROMPT.md instead reads: "Wait for .phase_gate_ready at <task-dir>/.phase_gate before executing. Do NOT proceed without this file."
 
 **Steps:**
+
 1. Update the handoff pattern in `shared/persistent-task-state.md` or document the .phase_gate convention
 2. Update NEXT_PROMPT.md template in orchestrator SKILL.md artifacts section
 3. Remove `.agent_work/sprints/.../tasks/2026-06-12-implementation-plan/.phase_gate` if present (clean slate)
 4. Create a brief convention doc in shared/ or document inline
 
 **Expected outputs:**
+
 - NEXT_PROMPT.md template updated to use .phase_gate
 - Convention documented
 
@@ -892,11 +907,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** The orchestrator SKILL.md Reference Loading table references `.agent_work/ideation/deep_determinism/` files. Replace with formats described inline or references that exist in standalone installations.
 
 **Steps:**
+
 1. Read orchestrator SKILL.md Reference Loading section
 2. Replace deep_determinism spec file paths with inline format descriptions or shared/project references
 3. Verify validation still passes
 
 **Expected outputs:**
+
 - Clean orchestrator SKILL.md with no deep_determinism path references
 
 ### Sub-phase 5.5d: Create shared/harness-generic.md
@@ -904,12 +921,14 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Create the generic harness companion for the orchestrator skill. This is the fallback for unknown harnesses — skill-only mode, no optimizations, inline results.
 
 **Steps:**
+
 1. Read `shared/harness-opencode.md` for format reference
 2. Create `shared/harness-generic.md` following the companion template from orchestrator_as_skill.md
 3. Update orchestrator reference_manifest.yml to reference it
 4. Verify validation
 
 **Expected outputs:**
+
 - `shared/harness-generic.md` — companion file
 - `skills/contextsmith-orchestrator/references/harness-generic.md` — local copy
 - Updated orchestrator reference_manifest.yml
@@ -919,11 +938,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Move to project-level versioning. After this sprint, all ContextSmith skills move to 2.0.0. Per-skill version metadata is deprecated in favor of the single project version in PACKAGE_SPEC.md. Document the decision here; the actual version stamp happens at the end of Phase 6 after the router is finalized.
 
 **Steps:**
+
 1. Update PACKAGE_SPEC.md with versioning decision (project-level version, deprecate per-skill)
 2. Update AGENTS.md with versioning convention
 3. Do NOT bump SKILL.md versions yet — that happens after Phase 6e when the final skill set is settled
 
 **Expected outputs:**
+
 - Updated PACKAGE_SPEC.md
 - Updated AGENTS.md
 
@@ -932,11 +953,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Add detail to Phase 6 sub-phases 6d (workflow-developer meta-config) so the meta-config phase definitions are concrete.
 
 **Steps:**
+
 1. Read current Phase 6d description in PLAN.md
 2. Expand steps to include concrete phase definitions for the meta-config workflow_config.yaml
 3. Add example config snippet
 
 **Expected outputs:**
+
 - Enhanced Phase 6d in PLAN.md
 
 ### Sub-phase 5.5g: Update Ralph rationale in PLAN.md
@@ -944,11 +967,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Clarify that 3 Ralph iterations per sub-phase is intentional. No-op is valid evidence — it means no material defect was found. The Ralph Loop Configuration section should state this explicitly.
 
 **Steps:**
+
 1. Read current Ralph Loop Configuration section
 2. Add explicit note: "No-op iterations are valid evidence. They mean no material defect was found. Do not invent changes to satisfy the iteration count."
 3. Keep 3 iterations as-is
 
 **Expected outputs:**
+
 - Updated Ralph Loop Configuration section
 
 ---
@@ -962,6 +987,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Catalog every concept in contextsmith-run SKILL.md and local references. No file changes.
 
 **Steps:**
+
 1. Read contextsmith-run SKILL.md sections — Runtime Contract, Supported Inputs, Control Parameters, Local-Model Execution Rules, Domain Routing, Interaction Modes, Execution Contract Compiler, Preflight Gate, Reference Selection, Execution Workflow, Task-State Execution, Validation Gate, Self-Audit Gate, Ralph Loop, Evidence Ledger, Completion Criteria, Failure Handling, Required Output, Artifact Manifest
 2. Read 8 local-only references: execution-contract-core.md, execution-contract.md, evidence-ledger-core.md, evidence-ledger.md, domain-packs.md, interaction-refinement.md, task-state-execution.md, help.md
 3. Read reference_manifest.yml for reference mapping
@@ -972,6 +998,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Absorb all patterns from contextsmith-run into the orchestrator skill.
 
 **Steps:**
+
 1. Rewrite orchestrator SKILL.md to include:
    - Supported Inputs (raw prompts, prompt files, NEXT_PROMPT.md, task-state dirs, plans, checklists)
    - Config auto-generation: no workflow_config.yaml → route through workflow-developer
@@ -999,6 +1026,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Target: ~400 lines of instruction content; heavy domain/contract detail stays in reference files
 
 **Expected outputs:**
+
 - `skills/contextsmith-orchestrator/SKILL.md` — rewritten
 
 **Validation:** `python scripts/validate_skills.py` passes.
@@ -1008,6 +1036,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Copy 8 local-only references from run to orchestrator; add missing shared refs to orchestrator manifest. Note: harness-generic.md was already created in sub-phase 5.5d — do NOT copy it again.
 
 **Steps:**
+
 1. Copy contextsmith-run's local references: execution-contract-core, execution-contract, evidence-ledger-core, evidence-ledger, domain-packs, interaction-refinement, task-state-execution, help
 2. Verify they don't duplicate existing orchestrator references
 3. Update orchestrator reference_manifest.yml
@@ -1015,6 +1044,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Verify harness-generic.md from 5.5d is still in orchestrator references/ and manifest
 
 **Expected outputs:**
+
 - `skills/contextsmith-orchestrator/references/` — updated with 8 new files
 - `skills/contextsmith-orchestrator/reference_manifest.yml` — updated
 
@@ -1025,6 +1055,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Create workflow_config.yaml for the config-generation process. Orchestrator runs this meta-config when invoked by the workflow-developer skill.
 
 **Steps:**
+
 1. Create `skills/contextsmith-workflow-developer/workflow_config.yaml`
 2. Define phases with concrete state definitions for each:
 
@@ -1034,14 +1065,21 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
        permissions: read-only
        max_retries: 2
        transitions:
+
          - condition: pass
+
            target: select_domain_template
+
          - condition: max_retries
+
            target: blocked
        expected_outputs:
+
          - requirements.md
+
        phase_prompt: |
          Ask 4 structured questions to gather workflow intent:
+
          1. What domain does this workflow cover? (software, data, ML, writing, research, ops)
          2. What is the top-level task or problem?
          3. What files or inputs are involved?
@@ -1051,10 +1089,14 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
        permissions: read-only
        max_retries: 1
        transitions:
+
          - condition: pass
+
            target: customize_config
        expected_outputs:
+
          - selected_template.yaml
+
        phase_prompt: |
          Based on requirements.md, select the best-matching domain template from
          references/domain-templates/. Copy it to selected_template.yaml.
@@ -1063,16 +1105,25 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
        permissions: edit
        max_retries: 3
        transitions:
+
          - condition: output_valid
+
            target: validate_config
+
          - condition: pass
+
            target: validate_config
+
          - condition: max_retries
+
            target: blocked
        expected_outputs:
+
          - workflow_config.yaml
+
        phase_prompt: |
          Customize selected_template.yaml with the gathered requirements:
+
          - Fill in workflow_id, domain, mode from requirements
          - Add/modify state definitions for the specific workflow
          - Set permissions, transitions, expected_outputs per state
@@ -1082,16 +1133,25 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
        permissions: read-only
        max_retries: 2
        transitions:
+
          - condition: pass
+
            target: confirm_config
+
          - condition: fail
+
            target: customize_config
+
          - condition: max_retries
+
            target: blocked
        expected_outputs:
+
          - validation_report.md
+
        phase_prompt: |
          Validate workflow_config.yaml against schemas/workflow_config.schema.json:
+
          - Check all required fields present
          - Verify state references in transitions are valid
          - Check permission values are valid
@@ -1101,10 +1161,14 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
        permissions: read-only
        max_retries: 1
        transitions:
+
          - condition: pass
+
            target: output_config
        expected_outputs:
+
          - confirmed_config.yaml
+
        phase_prompt: |
          Show the config to the user for confirmation. Ask:
          "Is this workflow_config.yaml correct? (yes/no/modify)"
@@ -1115,10 +1179,14 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
        permissions: edit
        max_retries: 1
        transitions:
+
          - condition: pass
+
            target: done
        expected_outputs:
+
          - workflow_config.yaml
+
        phase_prompt: |
          Finalize and write the workflow_config.yaml to the target location.
          Create companion task-state files (TASK.md, STATUS.md, PLAN.md) if needed.
@@ -1129,6 +1197,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 5. Keep domain templates in references/domain-templates/
 
 **Expected outputs:**
+
 - `skills/contextsmith-workflow-developer/workflow_config.yaml` — meta-config
 - `skills/contextsmith-workflow-developer/SKILL.md` — slimmed
 
@@ -1139,6 +1208,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Remove contextsmith-run skill and all references to it.
 
 **Steps:**
+
 1. Delete `skills/contextsmith-run/` directory
 2. Remove contextsmith-run from router routing table
 3. Merge wizard Q1 execute options into one: "Execute a task" → orchestrator
@@ -1158,6 +1228,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 8. Apply project-wide version stamp: update all surviving SKILL.md metadata.version to "2.0.0"
 
 **Expected outputs:**
+
 - `skills/contextsmith-run/` — deleted
 - `skills/contextsmith/SKILL.md` — updated
 - All surviving skills at version 2.0.0
@@ -1221,11 +1292,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** `validation_mode` (strict/relaxed/none) already exists on `StepContract` but is never read by the orchestrator's validation branch. All validations are equally strict — cannot distinguish "warn on missing optional artifact" from "block on missing required."
 
 **Files to read:**
+
 - `orchestrator/orchestrator.py` (post-execution validation logic around `validate_artifacts`)
 - `orchestrator/adapters/base.py` (StepContract dataclass — confirm `validation_mode` field)
 - `orchestrator/validators.py` (current validate_artifacts return format)
 
 **Steps:**
+
 1. Read `validation_mode` from `step_contract.validation_mode` after harness execution.
 2. In the validation branch of `_execute_and_validate_step()` or equivalent:
    - `strict` (default): Block on any validation failure. Current behavior.
@@ -1238,6 +1311,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - None mode skips validation entirely
 
 **Expected outputs:**
+
 - Updated `orchestrator/orchestrator.py` — validation branch respects `validation_mode`
 - Updated `schemas/workflow_config.schema.json` — optional `validation_mode` field in state definitions
 - Updated `tests/test_validators.py` — validation mode tests
@@ -1249,10 +1323,12 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** `checkpoint_before_run` exists on `StepContract` but is never called. Without it, a crash during agent dispatch leaves no evidence of whether the agent was launched. Wire the write half only — this creates crash evidence on disk without building the full auto-recovery decision table.
 
 **Files to read:**
+
 - `orchestrator/orchestrator.py` (dispatch sequence: `_execute_and_validate_step` and the code around it)
 - `orchestrator/checkpoint.py` (`write_checkpoint`, `update_checkpoint`)
 
 **Steps:**
+
 1. In the orchestrator dispatch path, before calling `adapter.execute()`, check `step_contract.checkpoint_before_run`.
 2. If true, write a checkpoint with a `pre_dispatch: true` marker and the current timestamp. Use `write_checkpoint()`.
 3. After the agent returns and artifacts are validated (in the normal checkpoint update), write a post-execution checkpoint without the `pre_dispatch` marker. The normal checkpoint write already happens — just add `pre_dispatch: false`.
@@ -1264,6 +1340,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 6. Write the limitation in a comment at the checkpoint write site: `# Crash recovery: pre-dispatch evidence only. Auto-recovery not implemented — operator checks artifacts if crash is suspected.`
 
 **Expected outputs:**
+
 - Updated `orchestrator/orchestrator.py` — pre-dispatch checkpoint write and startup warning
 - Updated `tests/test_checkpoint.py` — pre-dispatch checkpoint tests
 
@@ -1274,11 +1351,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Currently the orchestrator only distinguishes 0 (done), 1 (blocked), 2 (continue). Config errors, state inconsistencies, and internal crashes produce the same exit codes. Add distinct codes so callers can automate different responses.
 
 **Files to read:**
+
 - `orchestrator/constants.py` (current exit code definitions)
 - `orchestrator/orchestrator.py` (each return/exit path)
 - `orchestrator/cli.py` (all subcommand exit paths)
 
 **Steps:**
+
 1. Add to `orchestrator/constants.py`:
    ```python
    EXIT_DONE = 0
@@ -1301,6 +1380,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - Valid run → exit code 0, 1, or 2 as appropriate
 
 **Expected outputs:**
+
 - Updated `orchestrator/constants.py` — 6 named exit codes
 - Updated `orchestrator/orchestrator.py` — each error path returns distinct code
 - Updated `tests/test_cli.py` — exit code verification tests
@@ -1312,11 +1392,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Currently counters are checked during transition resolution (after the agent ran). If a phase has reached `max_retries`, the orchestrator still dispatches the agent one more time before realizing it's blocked. This wastes an agent cycle and risks side effects.
 
 **Files to read:**
+
 - `orchestrator/orchestrator.py` (dispatch sequence before `adapter.execute()`)
 - `orchestrator/step_compiler.py` (`resolve_next_state` — current counter check location)
 - `orchestrator/checkpoint.py` (counter read/increment)
 
 **Steps:**
+
 1. In the orchestrator dispatch path, before `adapter.execute()` and after the contract is compiled, check `counters[current_state].retries >= max_retries`.
 2. If exceeded, skip dispatch entirely. Log: `"[{state}] Max retries ({max_retries}) reached. Transitioning to blocked."` Return `EXIT_BLOCKED` immediately.
 3. The dispatch path becomes: compile contract → validate counters → if exceeded, blocked → dispatch → collect result → resolve transition → update counters.
@@ -1327,6 +1409,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - Counter validation happens before dispatch, not after
 
 **Expected outputs:**
+
 - Updated `orchestrator/orchestrator.py` — pre-dispatch counter gate
 - Updated `tests/test_orchestrator_integration.py` — counter gate tests
 
@@ -1337,11 +1420,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Currently timeout is per-harness only. A single long-running state can hang the entire workflow with no per-state timeout enforcement. Add `timeout_s` to the workflow config state definitions and wire it into StepContract.
 
 **Files to read:**
+
 - `schemas/workflow_config.schema.json` (state definition properties)
 - `orchestrator/step_compiler.py` (`compile_step_contract` — where StepContract fields are populated)
 - `orchestrator/adapters/base.py` (StepContract dataclass — confirm `timeout_s` field)
 
 **Steps:**
+
 1. Add `timeout_s` to the workflow config schema's state definition as an optional integer (minimum 1, default 300 or harness default).
 2. In `compile_step_contract()`, read `timeout_s` from the state definition. If absent, fall back to a config-level `default_timeout_s` field. If that's also absent, use 300 (5 minutes).
 3. The value flows through StepContract to the harness adapter, which already enforces `timeout_s` — this just makes it configurable per-state.
@@ -1352,6 +1437,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - State with `timeout_s: 0` or negative is rejected
 
 **Expected outputs:**
+
 - Updated `schemas/workflow_config.schema.json` — optional `timeout_s` in state definitions
 - Updated `orchestrator/step_compiler.py` — reads `timeout_s` from state definition
 - Updated `tests/test_step_compiler.py` — timeout_s resolution tests
@@ -1363,11 +1449,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** `model_pin` exists on `StepContract` and the OpenCode adapter already reads it, but the workflow config schema has no field for it and the step compiler never reads it from the config. Complete the pipeline.
 
 **Files to read:**
+
 - `schemas/workflow_config.schema.json` (state definition properties)
 - `orchestrator/step_compiler.py` (`compile_step_contract`)
 - `.agent_work/ideation/deep_determinism/workflow_config_sketch.md` (model_pin usage examples)
 
 **Steps:**
+
 1. Add `model_pin` to the workflow config schema's state definition as an optional string.
 2. In `compile_step_contract()`, read `model_pin` from the state definition. Pass it through to `StepContract.model_pin`.
 3. The OpenCode adapter already has `_build_command()` logic that uses `contract.model_pin` when set — this completes the data pipeline without modifying the adapter.
@@ -1377,6 +1465,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - State with empty string `model_pin` is treated as None
 
 **Expected outputs:**
+
 - Updated `schemas/workflow_config.schema.json` — optional `model_pin` in state definitions
 - Updated `orchestrator/step_compiler.py` — reads `model_pin` from state definition
 - Updated `tests/test_step_compiler.py` — model_pin tests
@@ -1388,11 +1477,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** `ralph_max_cycles` exists on `StepContract` but the workflow config schema has no field for it and the step compiler never reads it from config. The plan hardcodes 3 Ralph iterations uniformly — you can't say "this state gets 1 pass, that state gets 5."
 
 **Files to read:**
+
 - `schemas/workflow_config.schema.json` (state definition properties)
 - `orchestrator/step_compiler.py` (`compile_step_contract`)
 - `orchestrator/adapters/base.py` (StepContract dataclass — confirm `ralph_max_cycles` field)
 
 **Steps:**
+
 1. Add `ralph_max_cycles` to the workflow config schema's state definition as an optional integer (minimum 0, default 3).
 2. In `compile_step_contract()`, read `ralph_max_cycles` from the state definition. Default to 3 if absent.
 3. The value flows through StepContract to the orchestrator's transition resolver, which already checks `step_contract.ralph_max_cycles` when deciding whether to enter/exit the Ralph loop.
@@ -1402,6 +1493,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - State with `ralph_max_cycles: 0` disables Ralph (Ralph loop is skipped)
 
 **Expected outputs:**
+
 - Updated `schemas/workflow_config.schema.json` — optional `ralph_max_cycles` in state definitions
 - Updated `orchestrator/step_compiler.py` — reads `ralph_max_cycles` from state definition
 - Updated `tests/test_step_compiler.py` — ralph_max_cycles tests
@@ -1413,11 +1505,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** When the orchestrator replaces contextsmith-run, existing task-state directories may not have RESULT.json. The orchestrator must handle missing RESULT.json gracefully by falling back to artifact presence + exit code. This is the backward-compatibility layer for the run-to-orchestrator migration.
 
 **Files to read:**
+
 - `.agent_work/ideation/deep_determinism/migration_run_to_orchestrator.md` (lines 59-63, fallback protocol)
 - `orchestrator/orchestrator.py` (post-execution result collection)
 - `orchestrator/adapters/base.py` (HarnessResult — confirm all status values)
 
 **Steps:**
+
 1. In the post-execution result collection path in `orchestrator.py`, after harness execution:
    - If `harness_result.status` is already set from RESULT.json, use it as-is.
    - If `harness_result.status` is unknown/unset and no RESULT.json was found:
@@ -1434,6 +1528,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - RESULT.json present takes priority over artifact presence
 
 **Expected outputs:**
+
 - Updated `orchestrator/orchestrator.py` — RESULT.json fallback logic
 - Updated `skills/contextsmith-orchestrator/SKILL.md` — fallback documented
 - Updated `tests/test_orchestrator_integration.py` — fallback tests
@@ -1445,11 +1540,13 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Task:** Nowhere in the orchestrator code or SKILL.md does it explicitly state that the orchestrator owns state transitions — not the agent. An agent could claim "status: done, next_action: done" in RESULT.json and the orchestrator's current code would follow it. The orchestration loop should document and enforce this.
 
 **Files to read:**
+
 - `orchestrator/orchestrator.py` (`resolve_next_state` and transition logic)
 - `skills/contextsmith-orchestrator/SKILL.md` (agent-facing instructions)
 - `.agent_work/ideation/deep_determinism/audit_and_ralph_state_machine.md` (line 83: "The agent's output is only evidence; it does not define the state machine.")
 
 **Steps:**
+
 1. In `orchestrator/orchestrator.py`, above `resolve_next_state()`, add a docstring block:
    ```python
    def resolve_next_state(...):
@@ -1480,6 +1577,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    - Agent returns RESULT.json with `status: "fail"` but transition condition is `pass` for next state → orchestrator resolves based on config, not agent hint
 
 **Expected outputs:**
+
 - Updated `orchestrator/orchestrator.py` — docstring on `resolve_next_state` + code audit
 - Updated `skills/contextsmith-orchestrator/SKILL.md` — "agent output is evidence" paragraph
 - Updated `tests/test_orchestrator_integration.py` — transition authority tests
@@ -1574,6 +1672,7 @@ Each iteration does the same thing:
 **1. Critique** — Review the implementation against the execution contract. Identify material defects, gaps, edge cases, or spec violations.
 
 **2. Strategic review (mandatory):**
+
 - Ask: "Does this work progress the goals of the sprint/task? How?"
 - Ask: "Beyond baseline requirements, how can this be improved?"
 - Ask: "What is the gap between 'done' and 'well done'?"
@@ -1582,6 +1681,7 @@ Each iteration does the same thing:
 - Record what strategic improvements were identified and applied
 
 **3. Cross-reference with future phases:** Before acting on any improvement, check whether it is already covered by a future phase of the implementation plan. If already planned:
+
 - Add concrete detail to that future phase's description in PLAN.md (steps, expected outputs, validation)
 - Add any new checklist items to CHECKLIST.md under the correct future phase
 - Record the decision in DECISIONS.md with reference to the phase where it will be implemented
@@ -1594,6 +1694,7 @@ Each iteration does the same thing:
 ### Handling Complex Improvements
 
 If the strategic review identifies changes that are complex, multi-file, cross-cutting, would take longer than the current sub-phase allows, AND are NOT already covered by a future phase, do NOT try to implement them in one pass. Instead:
+
 1. Add a new sub-phase or phase to PLAN.md documenting the improvement work
 2. Update CHECKLIST.md with the new items
 3. Update STATUS.md and NEXT_PROMPT.md to reflect the adjusted plan
@@ -1664,7 +1765,7 @@ Phase 7 depends on all previous phases.
 ### Findings: Current C-Ranked Functions
 
 | File | Function | Complexity | Target |
-|------|----------|-----------|--------|
+| ------ | ---------- | ----------- | -------- |
 | orchestrator/orchestrator.py | `_execute_and_validate_step` | C (19) | ≤ B (10) |
 | orchestrator/orchestrator.py | `run` | C (18) | ≤ B (10) |
 | orchestrator/orchestrator.py | `run_workflow` | C (13) | ≤ B (10) |
@@ -1680,11 +1781,13 @@ Phase 7 depends on all previous phases.
 **Task:** Add radon complexity checks to AGENTS.md, orchestrator SKILL.md reference loading table, and shared validation references.
 
 **Steps:**
+
 1. Update AGENTS.md with complexity/maintainability section (done)
 2. Add a `references/complexity-gate.md` to orchestrator and shared/ so the rule is loadable as a reference
 3. Reference it from orchestrator SKILL.md reference loading table
 
 **Expected outputs:**
+
 - Updated AGENTS.md
 - `shared/complexity-gate.md`
 - `skills/contextsmith-orchestrator/references/complexity-gate.md`
@@ -1695,6 +1798,7 @@ Phase 7 depends on all previous phases.
 **Task:** Extract helper functions from `_execute_and_validate_step`, `run`, and `run_workflow` to bring each under B (10).
 
 **Approach:**
+
 - `_execute_and_validate_step` (C/19): Extract RESULT.json fallback into `_apply_result_fallback()` and validation-mode branches into private helpers.
 - `run` (C/18): Extract pre-dispatch setup into `_run_predispatch_setup()`. Extract post-dispatch persistence into a cleaner flow.
 - `run_workflow` (C/13): Already has clear structure — may need minimal changes.
@@ -1704,6 +1808,7 @@ Phase 7 depends on all previous phases.
 **Task:** Extract helper functions from `validate_checkpoint_file` (C/17) and `validate_state_consistency` (C/15).
 
 **Approach:**
+
 - `validate_checkpoint_file`: Extract required-field check and config-cross-reference check.
 - `validate_state_consistency`: Break into section-based validators.
 
@@ -1730,7 +1835,7 @@ uv run pytest tests/ -q
 The following were identified during Phase 6 completion review and should be addressed in Phase 7:
 
 | Finding | Priority | Where to Fix |
-|---------|----------|-------------|
+| --------- | ---------- | ------------- |
 | Dedicated unit tests needed for 10 new determinism features (exit codes, validation_mode, checkpoint_before_run, pre-dispatch counter, RESULT.json fallback, append validation, model_pin, agent-evidence rules) | High | Phase 7a |
 | Integration tests should exercise each new determinism feature end-to-end | High | Phase 7b |
 | schema deprecation warning: draft-07 metaschema | Low | Phase 7c or standalone |
@@ -1772,6 +1877,7 @@ The following were identified during Phase 6 completion review and should be add
 **Task:** Extend `tests/test_orchestrator_integration.py` with end-to-end integration tests.
 
 **Must include:**
+
 - Test: load config → execute all phases → verify done state
 - Test: resume after simulated crash (pre-dispatch marker detection)
 - Test: max retries → blocked (pre-dispatch counter check)
@@ -1786,6 +1892,7 @@ The following were identified during Phase 6 completion review and should be add
 ### Sub-phase 7c: Update validation script
 
 **Task:** Update validate_skills.py to recognize new skills. Also address:
+
 - Verify orchestrator SKILL.md artifact templates could be extracted (document, don't necessarily do)
 - Document markdownlint MD060 table-style issues in docs/workflows/ (pre-existing, not blocking)
 
@@ -1804,12 +1911,14 @@ Move the full artifact templates (STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PR
 Update `$schema` in `schemas/workflow_config.schema.json` from `draft-07` to `https://json-schema.org/draft/2020-12/schema` if compatible. Update metaschema URI. Test all fixtures still validate.
 
 ### Sub-phase 8c: Update user-facing docs
+
 - Update CONTRIBUTING.md if needed
 - Run markdownlint across all docs/ and fix MD060 table-style issues
 - Update EXAMPLES_LIBRARY.md with orchestrator examples (contextsmith-run → orchestrator migration notes)
 
 ### Sub-phase 8d: CHANGELOG entry
 Write a comprehensive CHANGELOG.md entry covering:
+
 - contextsmith-run removed, all execution via contextsmith-orchestrator
 - Determinism hardening: exit codes 0-5, validation modes, pre-dispatch checkpoints, per-state parameters
 - Append-only file protection with auto-repair
@@ -1828,6 +1937,7 @@ Run: `ruff check`, `ruff format --check`, `validate_skills.py`, `pytest`, `markd
 Audit all phases 1-9 against the A-F rubric. Verify every expected_output from every sub-phase exists and is non-empty.
 
 ### Sub-phase 9c: Project closeout
+
 - Verify git status is clean
 - Check staged_skills/ in .agent_work/ for stale artifacts
 - Write final DECISIONS.md entry

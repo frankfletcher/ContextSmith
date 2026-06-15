@@ -13,6 +13,7 @@ ContextSmith is model-aware agent instruction engineering. It started with small
 Examples: smaller local/open-weight models, quantized models, constrained VRAM, tight context.
 
 Use:
+
 - atomic steps
 - more phases
 - compact artifacts
@@ -25,6 +26,7 @@ Use:
 ### mid-local
 
 Use:
+
 - moderate phase size
 - compact but less micro-managed instructions
 - selective references
@@ -33,6 +35,7 @@ Use:
 ### large-local
 
 Use:
+
 - richer context when justified
 - still avoid full-repo dumps
 - maintain loop/Git safety and validation gates
@@ -40,6 +43,7 @@ Use:
 ### frontier-cloud
 
 Use:
+
 - broader planning and synthesis
 - richer tradeoff analysis
 - fewer but more substantial phases when context permits
@@ -48,6 +52,7 @@ Use:
 ### reasoning-specialized
 
 Use for:
+
 - architecture planning
 - debugging hypotheses
 - implementation plan audits
@@ -60,6 +65,7 @@ Do not request exposed chain-of-thought by default. Request concise rationale, d
 ### coding-specialized
 
 Use for:
+
 - repo edits
 - code review
 - test generation
@@ -79,7 +85,9 @@ Generated artifacts may include:
 ```yaml
 metadata:
   target_model_profiles:
+
     - qwen36
+
   target_model_capability: small-local
   targeted_context_length: 32k
   context_tier: tight

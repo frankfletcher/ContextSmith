@@ -32,6 +32,7 @@ Without enforcement, models skip phases, merge steps, or produce incomplete outp
 ### Implementation Approach
 
 Create an opencode-specific specialization only if the backing code exists. Until then, document the pattern and keep it concept-level. When implemented, the package could contain:
+
 - `phase_gate.ts` — validates phase prerequisites before allowing continuation
 - `artifact_check.ts` — verifies required files exist at each phase boundary
 - `validation_run.ts` — executes `scripts/validate_skills.py` and gates progress on success
@@ -65,6 +66,7 @@ No action needed. If ContextSmith creates an opencode specialization, it natural
 ContextSmith could define a general pattern: "use external tools for validation rather than asking the model to self-check." For opencode, this maps to MCP servers.
 
 Specific use cases:
+
 - A local MCP server that runs `scripts/validate_skills.py` and returns structured results
 - A remote MCP server for checking skill compatibility against a registry
 
@@ -85,6 +87,7 @@ Skip MCP for now. Custom Tools cover the same ground with less overhead. Revisit
 ### General Pattern Opportunity: Phase Commands
 
 ContextSmith workflows could map to commands:
+
 - `/contextsmith-audit` — triggers the agent-evaluator skill with pre-loaded criteria
 - `/contextsmith-migrate` — triggers the skill-migrator with backup and staging
 - `/contextsmith-validate` — runs the validation script and reports results
@@ -120,7 +123,7 @@ Each command frontmatter specifies the appropriate agent, model, and temperature
 ContextSmith skills already define roles (evaluator, engineer, migrator, prompt-engineer). These map naturally to opencode agents, but not because of temperature. The useful agent features are permissions, step limits, model pinning, and role-specific system prompts:
 
 | ContextSmith Skill | Agent Config | Key Controls | Permissions |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | agent-evaluator | `contextsmith-auditor` | `steps`, model pinning | read-only, no bash |
 | skill-engineer | `contextsmith-builder` | model pinning, repo access | edit allow, bash allow |
 | skill-migrator | `contextsmith-migrator` | `steps`, retry policy | edit + bash for backup ops |
@@ -204,6 +207,7 @@ The orchestrator idea and the OpenCode harness idea are complementary:
 5. **Commands are entry points only.** They help users start the right workflow with the right agent, but they are not the source of truth for progression.
 
 In practice, this means the cleanest design is:
+
 - `Workflow DSL` in Python for the deterministic state machine
 - `AgentInvoker` to call OpenCode with the correct role profile
 - `Validator Registry` to check files and command results
@@ -246,7 +250,7 @@ Create `skills/contextsmith-opencode/` or `docs/reference/opencode-integration.m
 The core problem ContextSmith tries to solve is: **models skip steps**. There are three layers of defense:
 
 | Layer | Mechanism | Can Model Ignore? |
-|---|---|---|
+| --- | --- | --- |
 | **Instructions** (SKILL.md) | "Follow these phases in order" | Yes — model can skip |
 | **Tools** (Custom Tools) | Must call `phase_complete()` to proceed | Partially — model can call out of order |
 | **Plugins** (Event Hooks) | Intercepts tool calls, runs validation | No — runs outside model control |

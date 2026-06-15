@@ -21,17 +21,22 @@ mode: phased-run
 
 baseline:
   required_steps:
+
     - load_task_state
     - compile_contract
     - execute_current_phase
     - validate_artifacts
     - close_phase
     - write_next_prompt
+
   required_gates:
+
     - validate_artifacts
     - self_audit
     - ralph_review
+
   required_files:
+
     - STATUS.md
     - PLAN.md
     - CONTEXT.md
@@ -39,9 +44,13 @@ baseline:
 
 overlay:
   add_steps:
+
     - human_approval_gate
+
   remove_steps:
+
     - ralph_review
+
   notes: "Overlay may narrow or extend behavior, but cannot remove required baseline gates without explicit approval."
 
 step_contracts:
@@ -49,10 +58,13 @@ step_contracts:
     agent: contextsmith-run
     permissions: read-only|edit|external-action
     inputs:
+
       - NEXT_PROMPT.md
       - STATUS.md
       - PLAN.md
+
     outputs:
+
       - phase artifacts
       - ARTIFACTS.md
       - PHASE_LOG.md
@@ -60,6 +72,7 @@ step_contracts:
 validation:
   schema: runtime/phase_contract.schema.json
   required_checks:
+
     - file_exists
     - command
     - json_schema

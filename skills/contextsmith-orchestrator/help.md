@@ -27,7 +27,7 @@
 ## Key Parameters
 
 | Parameter | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `--run-mode` | `single`, `single-with-state`, `phase`, `phased-run`, `dry-run`, or `audit-only` |
 | `--interaction` | `silent`, `confirm`, `refine`, `collaborative`, or `review-gate` |
 | `--domain` | task domain for validation and audit lenses |

@@ -5,7 +5,7 @@ Refinement mode lets the user guide execution without turning the run into an op
 ## Modes
 
 | Mode | Question behavior |
-|------|-------------------|
+| ------ | ------------------- |
 | `silent` | Ask only when blocked or unsafe. |
 | `confirm` | Ask one approval question before side effects. |
 | `refine` | Ask up to the question budget before execution. |
@@ -26,7 +26,7 @@ Refinement mode lets the user guide execution without turning the run into an op
 Defaults:
 
 | Interaction | Default budget |
-|-------------|----------------|
+| ------------- | ---------------- |
 | `silent` | 0 |
 | `confirm` | 1 |
 | `refine` | 3 |
@@ -64,7 +64,7 @@ Use these when no stronger domain-specific question applies.
 Convert answers into explicit contract fields.
 
 | User choice | Contract effect |
-|-------------|-----------------|
+| ------------- | ----------------- |
 | Preview only | `run_mode: dry-run`, `side_effects: none` |
 | Ask before edits | `interaction: review-gate` |
 | Apply safe edits | `side_effects: file-editing`, `validation: available` |

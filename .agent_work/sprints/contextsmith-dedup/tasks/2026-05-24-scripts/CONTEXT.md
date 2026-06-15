@@ -1,6 +1,7 @@
 # CONTEXT.md
 
 ## Repo Map
+
 ```
 ContextSmith/
 ├── shared/                           # 52 canonical reference files (35 root + 8 domain-profiles/ + 4 model-profiles/)
@@ -17,6 +18,7 @@ ContextSmith/
 ```
 
 ## Key Facts
+
 - **No version metadata** in any shared file — use git blob hashes for versioning
 - **All 5 skills** have identical reference file sets (52 shared + 1 help.md)
 - **help.md** is skill-local (NOT in shared/) and currently lives in references/
@@ -26,6 +28,7 @@ ContextSmith/
 - **No CI** exists
 
 ## Skip Rules
+
 - Do NOT modify any SKILL.md file
 - Do NOT modify any file in shared/
 - Do NOT add new dependencies beyond PyYAML
@@ -33,7 +36,7 @@ ContextSmith/
 
 ## Shared File Blob Hashes (Reference Table)
 | File | Blob Hash |
-|---|---|
+| --- | --- |
 | shared/coding-standards.md | 14484e29d3eec2cb591f8f1aeb1dbfa3a36b9a4b |
 | shared/context-management.md | 6e7d2dafcf947ef4305060efc8ce2b2d95682e14 |
 | shared/control-parameters.md | d65cd90034824c859658ed83efa6e019201e3ab9 |

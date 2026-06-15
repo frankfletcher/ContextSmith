@@ -1,6 +1,7 @@
 # User Documentation Map — Phase 7A
 
 ## Artifact Manifest
+
 - artifact_type: documentation_map
 - generated_by: Phase 7A execution
 - phase: 7A
@@ -12,7 +13,7 @@
 
 ### Existing User-Facing Docs
 | File | Purpose | Status | Assessment |
-|------|---------|--------|------------|
+| ------ | --------- | -------- | ------------ |
 | `README.md` | Landing page, capabilities, quick commands, installation | Exists | Needs refresh: reorganize for reader journey, add runtime enforcement section, update project status |
 | `docs/QUICKSTART.md` | Fastest path to first useful result | Exists | Verify covers a single complete workflow end-to-end |
 | `docs/USER_GUIDE.md` | General usage guide | Exists | May overlap with QUICKSTART; assess whether to merge or specialize |
@@ -25,7 +26,7 @@
 
 ### Existing Workflow Docs (`docs/workflows/`)
 | File | Purpose | Status |
-|------|---------|--------|
+| ------ | --------- | -------- |
 | `docs/workflows/README.md` | Workflows index | Exists |
 | `docs/workflows/AGENTS_MD_GUIDE.md` | How to use AGENTS.md engineering | Exists |
 | `docs/workflows/SMALL_CONTEXT_WORKFLOWS.md` | Small context coding workflow | Exists |
@@ -37,14 +38,14 @@
 
 ### Existing Concept Docs (`docs/concepts/`)
 | File | Purpose | Status |
-|------|---------|--------|
+| ------ | --------- | -------- |
 | `docs/concepts/README.md` | Concepts index | Exists |
 | `docs/concepts/MODEL_PROFILES.md` | Model profile explanations | Exists |
 | `docs/concepts/RALPH_LOOP.md` | Ralph improvement loop | Exists |
 
 ### Existing Reference Docs (`docs/reference/`)
 | File | Purpose | Status |
-|------|---------|--------|
+| ------ | --------- | -------- |
 | `docs/reference/README.md` | Reference index | Exists |
 | `docs/reference/CONTROL_PARAMETERS.md` | Parameter reference | Exists |
 | `docs/reference/EXAMPLES.md` | Reference examples | Exists |
@@ -52,13 +53,13 @@
 
 ### Contributing Docs (`docs/contributing/`)
 | File | Purpose | Audience |
-|------|---------|----------|
+| ------ | --------- | ---------- |
 | `docs/contributing/documentation-style.md` | Voice and style guide | Contributors |
 | `docs/contributing/documentation-review-checklist.md` | Quality review criteria | Contributors |
 
 ### Identified Gaps
 | Gap | Priority | Phase Assignment |
-|-----|----------|------------------|
+| ----- | ---------- | ------------------ |
 | Runtime enforcement user guide (what it is, how to use CLI/MCP) | High | Phase 7D |
 | Domain packs user guide (what they are, how to create one) | High | Phase 7D |
 | Next Prompt Compiler user guide | Medium | Phase 7D |
@@ -77,24 +78,25 @@ Several files exist at both `docs/` root and in subdirectories (e.g., `docs/AGEN
 
 ```
 README.md
-  |
+  |  |
   v
 docs/QUICKSTART.md  (fastest path to first value)
-  |
+  |  |
   v
 docs/WHICH_SKILL.md  (choose a workflow)
-  |
+  |  |
   v
 docs/workflows/<specific-workflow>.md  (detailed how-to)
-  |
+  |  |
   v
 docs/reference/  (parameter reference, versioning)
-  |
+  |  |
   v
 docs/concepts/  (model profiles, Ralph loop, etc.)
 ```
 
 **Alternative paths:**
+
 - `README.md` -> `docs/EXAMPLES.md` (inspiration-first users)
 - `README.md` -> `docs/FAQ.md` (question-driven users)
 - `README.md` -> `docs/RUNTIME_STABILITY.md` (runtime enforcement interested)
@@ -104,7 +106,7 @@ docs/concepts/  (model profiles, Ralph loop, etc.)
 ## 3. Primary User Jobs
 
 | User Job | Entry Point | Supporting Docs |
-|----------|-------------|-----------------|
+| ---------- | ------------- | ----------------- |
 | Create a plan | `WHICH_SKILL.md` -> `workflows/IMPLEMENTATION_PLAN_AUDIT.md` | `concepts/MODEL_PROFILES.md`, `reference/CONTROL_PARAMETERS.md` |
 | Run a plan | `QUICKSTART.md` -> `workflows/` | `concepts/RALPH_LOOP.md` |
 | Validate a phase | `workflows/PHASE_CODE_REVIEW.md` | `RUNTIME_STABILITY.md` |
@@ -119,6 +121,7 @@ docs/concepts/  (model profiles, Ralph loop, etc.)
 ## 4. User-Facing vs Agent-Facing Classification
 
 ### User-Facing (polish for readability)
+
 - `README.md`
 - `docs/QUICKSTART.md`
 - `docs/USER_GUIDE.md`
@@ -134,6 +137,7 @@ docs/concepts/  (model profiles, Ralph loop, etc.)
 - `docs/contributing/` (all)
 
 ### Agent-Facing (keep imperative, do not soften)
+
 - `skills/*/SKILL.md`
 - `skills/*/references/`
 - `shared/` (42 reference files)
@@ -148,6 +152,7 @@ docs/concepts/  (model profiles, Ralph loop, etc.)
 Every substantial Markdown file (more than 5 sections) should include a table of contents immediately after the top-level heading:
 
 ```markdown
+
 # Title
 
 - [Section 1](#section-1)
@@ -173,7 +178,7 @@ Every substantial Markdown file (more than 5 sections) should include a table of
 ## 7. Phase Assignment
 
 | Phase | Focus | Files |
-|-------|-------|-------|
+| ------- | ------- | ------- |
 | **7B** | README refresh | `README.md` — reorganize for reader journey, add runtime section, fix links, add TOC |
 | **7C** | Quickstart polish | `docs/QUICKSTART.md` — single complete workflow, expected output, add TOC |
 | **7D** | Runtime workflow docs | `docs/RUNTIME_STABILITY.md` (user-facing rewrite), new domain packs guide, new Next Prompt Compiler guide |
@@ -186,6 +191,7 @@ Every substantial Markdown file (more than 5 sections) should include a table of
 ## 8. Runtime Enforcement Feature Labeling
 
 Per NEXT_PROMPT.md guidance:
+
 - **Implemented (available):** Validator CLI (`runtime/validator.py`), 6 domain packs, Next Prompt Compiler, Runner skeleton, contextsmith-run pilot integration
 - **Active development:** MCP adapter (design complete, Phase 6C pending), Harness adapter (design complete, Phase 6C pending)
 - **Design only:** Orchestrated runner (full implementation), cross-harness benchmarks, automated behavioral tests

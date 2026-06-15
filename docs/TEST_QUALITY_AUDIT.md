@@ -93,26 +93,31 @@ For LLM/RAG code, also check:
 ## Example output
 
 ```markdown
+
 ## Test Quality Summary
 
 Overall grade: B-
 
 ## Strong Tests
+
 - `tests/test_parser.py::test_valid_multiline_input`
   - Why: covers normal use case and asserts exact parsed structure.
 
 ## Weak Tests
+
 - `tests/test_parser.py::test_parser_does_not_crash`
   - Problem: only asserts no exception; would pass with incorrect output.
   - Fix: assert expected parsed fields.
 
 ## Missing Tests
+
 - empty input
 - malformed multiline input
 - Unicode input
 - backward compatibility with single-line input
 
 ## Recommended Additions
+
 1. Add baseline happy-path test with realistic fixture.
 2. Add boundary test for empty input.
 3. Add regression test for the bug fixed in this change.

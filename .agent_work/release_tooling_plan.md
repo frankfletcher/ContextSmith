@@ -1,6 +1,7 @@
 # Implementation Plan: Repo & Release Tooling
 
 ## Artifact Manifest
+
 ```yaml
 ---
 artifact_type: implementation_plan
@@ -16,13 +17,17 @@ parameters:
   --planner-profile: qwen36
   --executor-profile: qwen36
 references:
+
   - shared/phased-planning.md
   - shared/implementation-plan-audit.md
   - shared/git-safety.md
+
 behavioral_contracts:
+
   - Plan must be executable by qwen36 in guided mode
   - Each phase must be atomic and testable
   - No code changes — plan file output only
+
 ---
 ```
 
@@ -32,6 +37,7 @@ behavioral_contracts:
 There are 42 files in `shared/` that get copied into each skill's `references/` for standalone installation. Keeping them in sync is manual — every edit to a shared reference requires deciding whether each of 5 skills needs an updated copy (42 × 5 = 210 potential operations). The sync script automates propagation; the release builder packages everything for distribution. These are force multipliers that make every future edit safer and faster.
 
 **Backlog items from the idea:**
+
 - [x] `scripts/sync_shared_refs.py` — **COMPLETE** (see audit below)
 - [ ] `scripts/build_release.py` — **NOT STARTED** (does not exist)
 
@@ -39,6 +45,7 @@ There are 42 files in `shared/` that get copied into each skill's `references/` 
 
 ### `scripts/sync_shared_refs.py` — COMPLETE (160 lines)
 A production-ready sync tool with full CLI surface:
+
 - `--skill <name>` / `--all` for targeted or bulk sync
 - `--dry-run` previews without writing
 - `--force` overwrites even if content matches
@@ -50,11 +57,13 @@ A production-ready sync tool with full CLI surface:
 - YAML error handling, missing file detection, required/optional reference support
 
 **Remaining gaps (minor):**
+
 - No "update manifests" mode — when content changes, the stored hash in `reference_manifest.yml` stays stale. A `--update-manifests` flag would recompute hashes and write them back.
 - No summary report (e.g., JSON output of what changed for CI integration).
 
 ### `scripts/package_skill.sh` — PARTIALLY COMPLETE (75 lines)
 A functional packaging script with these capabilities:
+
 - Validates skill directory and SKILL.md existence
 - Directory traversal protection on skill name input
 - Extracts version from `reference_manifest.yml` via PyYAML
@@ -63,6 +72,7 @@ A functional packaging script with these capabilities:
 - Reports file count in output
 
 **Gaps to address:**
+
 - No pre-package validation gate (should run `validate_skills.py` before packaging)
 - No `MANIFEST.json` inside the package (file list + checksums for install verification)
 - Zip-only format (no tar.gz for Unix-friendly distribution)
@@ -71,6 +81,7 @@ A functional packaging script with these capabilities:
 
 ### `scripts/validate_skills.py` — FUNCTIONAL (200 lines)
 Covers:
+
 - SKILL.md frontmatter validation (name, description, metadata.version)
 - Line count warning at 500 lines
 - Reference manifest validation (skill name match, source existence, duplicate detection, shared/ prefix check)
@@ -78,10 +89,12 @@ Covers:
 - Shared reference format validation (ATX headings, no YAML frontmatter) — only checks 3 specific files
 
 **Gaps:**
+
 - Shared reference format check only runs on 3 hardcoded files, not all 42 in `shared/`
 - No SKILL.md internal cross-reference validation (does SKILL.md mention files that don't exist in references/)
 
 ### What does NOT exist yet
+
 - `scripts/build_release.py` — the main missing piece from the backlog
 - Installation scripts (`install_skill.sh`, `install_all.sh`)
 - Release documentation (`docs/RELEASE_PROCESS.md`)
@@ -97,15 +110,18 @@ Covers:
 **Context:** The sync script already detects stale hashes and warns about them, but doesn't fix them. After syncing references, the manifests still contain old hashes. This means the next sync run will warn again even though content is correct.
 
 **Tasks:**
+
 1. Add `--update-manifests` flag to argparse in `scripts/sync_shared_refs.py`.
 2. When this flag is set, after copying files, recompute SHA-1 blob hash for each source file and write the updated hash back into the corresponding `reference_manifest.yml` (in `skills/<name>/reference_manifest.yml`).
 3. Write manifests only when at least one hash changed (avoid unnecessary file writes).
 4. Add a summary line: "Updated N hashes in M manifests."
 
 **Deliverables:**
+
 - Updated `scripts/sync_shared_refs.py` with `--update-manifests` flag
 
 **Tests:**
+
 1. Run `python scripts/sync_shared_refs.py --skill local-model-prompt-engineer --verbose` — verify it still works unchanged.
 2. Deliberately edit one shared reference (e.g., add a blank line to `shared/git-safety.md`), then run with `--update-manifests` — verify the hash updates in all manifests that reference that file.
 3. Run without `--update-manifests` — verify no manifest files are modified.
@@ -122,6 +138,7 @@ Covers:
 **Context:** The current script packages without validating the skill first, produces no manifest inside the zip, and has no checksum file. This means broken skills can be packaged silently, and there's no way to verify package integrity after download.
 
 **Tasks:**
+
 1. Add a pre-package validation step: run `python scripts/validate_skills.py` and abort with exit code 1 if it fails. (The validator checks all skills; add a `--skill <name>` filter to validate_skills.py if needed, or accept that it validates all.)
 2. Generate `MANIFEST.json` inside the staging directory before zipping:
    - Fields: `skill_name`, `version`, `package_date`, `files` (array of `{path, sha256, size}` for each file in the skill).
@@ -129,10 +146,12 @@ Covers:
 4. Replace the fragile `unzip -l | tail -1` file count with a reliable Python one-liner or `zipinfo` command.
 
 **Deliverables:**
+
 - Updated `scripts/package_skill.sh` with validation gate, MANIFEST.json generation, SHA-256 checksum
 - Optionally: `--skill <name>` filter added to `scripts/validate_skills.py` (only if needed for single-skill packaging)
 
 **Tests:**
+
 1. Package each of the 5 skills individually — verify zip, MANIFEST.json inside zip, and .sha256 file are created.
 2. Extract a zip and verify MANIFEST.json checksums match actual files: `python3 -c "import json,hashlib; ..."` for each entry.
 3. Verify SHA-256 file validates the zip: `sha256sum -c dist/<skill>.sha256`.
@@ -149,26 +168,31 @@ Covers:
 **Context:** This is the backlog item explicitly called out in the ideas document. It does not exist yet. The script should be Python (not shell) for cross-platform compatibility and to leverage PyYAML/JSON natively.
 
 **Tasks:**
+
 1. Create `scripts/build_release.py` with argparse CLI:
    - `--version <semver>` — set version for all skills (optional, defaults to current versions)
    - `--package` — run full pipeline: sync → validate → package all skills
    - `--dry-run` — preview without writing packages or modifying manifests
    - `--dist-dir <path>` — output directory (default: `dist/`)
 2. Pipeline implementation (run in order):
+
    a. **Sync phase:** Call `sync_shared_refs.py --all --in-place` to update `skills/*/references/`.
    b. **Manifest update phase:** Call `sync_shared_refs.py --all --update-manifests` to refresh hashes.
    c. **Validation phase:** Run `validate_skills.py`, abort on failure with clear message.
    d. **Version bump (if --version specified):** Update `metadata.version` in each SKILL.md frontmatter and `version` in each `reference_manifest.yml`. Check git status first — abort if SKILL.md files have uncommitted changes.
    e. **Package phase:** Call `package_skill.sh` for each of the 5 skills, collecting output to `dist/`.
+
 3. Generate `dist/RELEASE_SUMMARY.json`:
    - Array of skill entries: `{name, version, zip_path, sha256_path, file_count, total_size_bytes}`
    - Top-level: `{release_date, total_skills, total_size_bytes}`
 4. Print a formatted summary table to stdout after completion.
 
 **Deliverables:**
+
 - `scripts/build_release.py` (new file)
 
 **Tests:**
+
 1. `python scripts/build_release.py --dry-run --package` — verify it prints the plan without creating files in dist/.
 2. `python scripts/build_release.py --package` — verify all 5 zips, SHA-256 files, and RELEASE_SUMMARY.json are created in dist/.
 3. `python scripts/build_release.py --version 1.1.0 --package` — verify version bumps in SKILL.md and manifests (run on a branch or revert after test).
@@ -185,6 +209,7 @@ Covers:
 **Context:** Users need a simple way to install skills from the zip packages. The target is `~/.claude/skills/` (or equivalent for other agents). Scripts should handle backup, version comparison, and verification.
 
 **Tasks:**
+
 1. Create `scripts/install_skill.sh`:
    - Usage: `install_skill.sh <zip-file> [target-dir]`
    - Default target: `~/.claude/skills/`
@@ -201,10 +226,12 @@ Covers:
    - Exit code 1 if any installation failed
 
 **Deliverables:**
+
 - `scripts/install_skill.sh` (new file)
 - `scripts/install_all.sh` (new file)
 
 **Tests:**
+
 1. Create a temp directory, install one skill from dist/ — verify files extracted correctly.
 2. Install the same skill again — verify it skips (same version).
 3. Manually bump installed version down, reinstall — verify backup created and new version installed.
@@ -221,6 +248,7 @@ Covers:
 **Context:** Without documentation, the scripts are unusable by anyone other than their author. The README needs an installation section so visitors can get started immediately.
 
 **Tasks:**
+
 1. Create `docs/RELEASE_PROCESS.md`:
    - Prerequisites (Python 3, PyYAML, zip)
    - Step-by-step release checklist:
@@ -237,11 +265,13 @@ Covers:
    - Add entries for new scripts and improvements
 
 **Deliverables:**
+
 - `docs/RELEASE_PROCESS.md` (new file)
 - Updated `README.md` with installation section
 - Updated `CHANGELOG.md` with release tooling entries
 
 **Tests:**
+
 1. Follow the RELEASE_PROCESS.md steps from scratch on a clean checkout — verify they work without modification.
 2. Verify README installation commands are copy-paste executable.
 
@@ -256,6 +286,7 @@ Covers:
 **Context:** This is the quality gate that ensures future changes don't break the release workflow. It should be fast enough to run before committing.
 
 **Tasks:**
+
 1. Create `scripts/test_release.sh`:
    - Set up a temp directory (e.g., `/tmp/contextsmith-release-test-$$`)
    - Clean: remove temp dist/ and staging directories
@@ -267,9 +298,11 @@ Covers:
 2. Make the script idempotent and safe to run multiple times.
 
 **Deliverables:**
+
 - `scripts/test_release.sh` (new file)
 
 **Tests:**
+
 1. Run `bash scripts/test_release.sh` — verify it passes with exit code 0.
 2. Deliberately break a skill, run again — verify it fails with clear error message.
 3. Fix the skill, run again — verify it passes.
@@ -307,7 +340,7 @@ Track progress in `.agent_work/sprints/release-tooling/tasks/`:
 ## Risk Assessment
 
 | Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
+| ------ | ------------ | -------- | ------------ |
 | `build_release.py` subprocess calls fail on macOS (different zip path) | Low | Medium | Use Python zipfile module as fallback; test on macOS if available |
 | Version bump overwrites uncommitted SKILL.md changes | Low | High | Git status check before modifying; abort with clear error if dirty |
 | MANIFEST.json generation adds dependency (jq or Python) | N/A | Low | Python already required (sync_shared_refs.py uses PyYAML) |

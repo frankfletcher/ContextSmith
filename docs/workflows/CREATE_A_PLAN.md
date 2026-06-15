@@ -30,6 +30,7 @@ If you need to audit an existing plan instead of creating one, see [Implementati
 Write a concise task description. Include the goal, scope, and any known constraints.
 
 **Example:**
+
 ```
 Migrate our AGENTS.md file to support Qwen3-32B model profiles.
 In scope: model profile sections, context budget rules, tool call patterns.
@@ -41,6 +42,7 @@ Out of scope: skill migration, prompt rewriting.
 Use the `contextsmith-instruction-engineer` or `contextsmith-prompt-engineer` skill to generate the plan.
 
 **Example prompt:**
+
 ```
 Create an implementation plan for migrating our AGENTS.md file
 to support Qwen3-32B model profiles. Break it into phases with
@@ -49,6 +51,7 @@ validation gates. Store task state under
 ```
 
 The agent will create:
+
 - `TASK.md` — objective, scope, constraints
 - `PLAN.md` — phased implementation plan with validation gates
 - `STATUS.md` — current phase and next action

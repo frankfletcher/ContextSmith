@@ -20,6 +20,7 @@ Path 2: Harness-aware (deterministic, optimized)
 Both paths use identical workflow configs, artifact contracts, checkpoint formats, and validation rules. The difference is who runs the loop: the agent (skill-only) or Python code (harness-aware).
 
 Key design decisions:
+
 - **Orchestrator skill** is the universal base — works in any harness, ~200 lines
 - **Harness companions** are thin reference files (~40 lines each) that add harness-specific optimizations — they enhance but never gate
 - **Orchestrator-as-code** adds determinism, crash recovery, external validation, and timeout enforcement
@@ -29,6 +30,7 @@ Key design decisions:
 ## Start Here
 
 **New to this system?** Read in this order:
+
 1. This file (index)
 2. `orchestrator_as_skill.md` (two execution paths — start here to understand the design)
 3. `implementation_guide.md` (linear implementation path)
@@ -41,7 +43,7 @@ Key design decisions:
 The following must be created before any implementation code:
 
 | Prerequisite | Status | Notes |
-|-------------|--------|-------|
+| ------------- | -------- | ------- |
 | `schemas/workflow_config.schema.json` | **Done** | Validates both example configs, 10/10 negative tests pass |
 | `schemas/agent_config.schema.json` | **Done** | Validates both example agent configs |
 | OpenCode CLI flag verification | **Verified** | `--agent`, `--model`, `--prompt`, `--file`, `--format json` confirmed. `--max-steps` does not exist — use agent config `steps` field instead. See `orchestrator_and_harness.md` adapter section. |
@@ -52,7 +54,7 @@ See `implementation_prerequisites.md` for the full gap analysis.
 ## File Role Map
 
 | File | What It Specifies | Key Detail Added |
-|------|-------------------|-------------------|
+| ------ | ------------------- | ------------------- |
 | [Implementation Guide](implementation_guide.md) | Linear implementation path, canonical type locations, build order | Phase-by-phase deliverables, gates, spec file map, minimal artifact set |
 | [Orchestrator Idea](orchestrator_idea.md) | State machine spec, CLI, checkpoint format, startup/resume, error matrix, function reference | Complete state transition table, orchestrator.py function signatures, checkpoint JSON schema, CLI interface, error handling matrix |
 | [Orchestrator and Harness](orchestrator_and_harness.md) | Harness adapter interface, subprocess model, error propagation | HarnessAdapter ABC, StepContract/HarnessResult dataclasses, HarnessRegistry, OpenCode adapter specifics, subprocess timeout enforcement |
@@ -81,7 +83,7 @@ These files are authored for the **planner agent** — a model that converts the
 ## Content Counts
 
 | File | Lines | Detail Type |
-|------|-------|-------------|
+| ------ | ------- | ------------- |
 | implementation_guide.md | ~150 | Implementation path |
 | orchestrator_idea.md | ~330 | Implementation specification |
 | orchestrator_and_harness.md | ~280 | Interface contract |

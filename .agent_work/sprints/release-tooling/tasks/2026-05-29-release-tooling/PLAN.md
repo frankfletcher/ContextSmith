@@ -17,12 +17,16 @@ parameters:
   --planner-profile: qwen36
   --executor-profile: qwen36
 references:
+
   - shared/phased-planning.md
   - shared/implementation-plan-audit.md
   - shared/git-safety.md
+
 behavioral_contracts:
+
   - Plan must be executable by qwen36 in guided mode
   - Each phase must be atomic and testable
+
 ---
 ```
 
@@ -42,6 +46,7 @@ behavioral_contracts:
 - [x] 1.5 Add summary line: "Updated N hashes in M manifests"
 
 **Tests:**
+
 - [x] T1.1: `python scripts/sync_shared_refs.py --skill local-model-prompt-engineer --verbose` works unchanged
 - [x] T1.2: Edit a shared ref, run with `--update-manifests`, verify hash updates in all affected manifests
 - [x] T1.3: Run without flag — no manifest files modified
@@ -64,6 +69,7 @@ behavioral_contracts:
 - [x] 2.4 Replace fragile `unzip -l | tail -1` with reliable Python one-liner or `zipinfo`
 
 **Tests:**
+
 - [x] T2.1: Package each of 5 skills — zip, MANIFEST.json inside zip, .sha256 file created
 - [x] T2.2: Extract zip, verify MANIFEST.json checksums match actual files
 - [x] T2.3: `sha256sum -c dist/<skill>.sha256` validates
@@ -90,6 +96,7 @@ behavioral_contracts:
 - [x] 3.8 Print formatted summary table to stdout
 
 **Tests:**
+
 - [ ] T3.1: `--dry-run --package` prints plan without creating files
 - [ ] T3.2: `--package` creates all 5 zips, SHA-256 files, RELEASE_SUMMARY.json in dist/
 - [ ] T3.3: `--version X.Y.Z --package` bumps versions (test on branch or revert after)
@@ -110,6 +117,7 @@ behavioral_contracts:
 - [x] 4.2 Create `install_all.sh <dist-dir> [target-dir]` — find all zips in dist/, call install_skill.sh for each, report status
 
 **Tests:**
+
 - [x] T4.1: Install one skill to temp dir — files extracted correctly
 - [x] T4.2: Install same skill again — skips (same version)
 - [x] T4.3: Bump installed version down, reinstall — backup created, new version installed
@@ -131,6 +139,7 @@ behavioral_contracts:
 - [x] 5.3 Update `CHANGELOG.md` — add entries for new scripts and improvements
 
 **Tests:**
+
 - [x] T5.1: Follow RELEASE_PROCESS.md from scratch on clean checkout — all commands reference existing scripts, pipeline dry-run verified
 - [x] T5.2: README installation commands are copy-paste executable — scripts exist, are executable, and dry-run passes
 
@@ -153,6 +162,7 @@ behavioral_contracts:
 - [x] 5.5.6 Update `README.md` installation section with bundle install command
 
 **Tests:**
+
 - [x] T5.5.1: `--package --bundle` creates bundle zip with all 5 skill directories
 - [x] T5.5.2: `sha256sum -c dist/contextsmith-all-bundle.zip.sha256` validates
 - [x] T5.5.3: Extract bundle — all 5 skills present with correct structure
@@ -172,6 +182,7 @@ behavioral_contracts:
 - [x] 6.2 Make script idempotent and safe to run multiple times
 
 **Tests:**
+
 - [x] T6.1: `bash scripts/test_release.sh` passes with exit code 0 (74/74, stable across 3 runs)
 - [x] T6.2: Break a skill — test fails with clear error
 - [x] T6.3: Fix skill — test passes again
@@ -199,7 +210,7 @@ Phase 1 can run in parallel with Phase 2. Phases 3-6 are sequential.
 ## Risk Assessment
 
 | Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
+| ------ | ------------ | -------- | ------------ |
 | build_release.py subprocess calls fail on macOS | Low | Medium | Use Python zipfile module as fallback |
 | Version bump overwrites uncommitted SKILL.md changes | Low | High | Git status check before modifying; abort if dirty |
 | MANIFEST.json generation adds dependency | N/A | Low | Python already required (PyYAML) |

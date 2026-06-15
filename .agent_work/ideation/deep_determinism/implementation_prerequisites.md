@@ -15,11 +15,13 @@ The current docs describe what happens when everything works. They do not descri
 How does the orchestrator detect that a previous run was interrupted?
 
 Options:
+
 - check for a `.lock` or `checkpoint.json` file at startup
 - compare `STATUS.md` current phase against `PHASE_LOG.md` last entry
 - require explicit phase closeout; any unclosed phase at startup is treated as interrupted
 
 Recovery action when interrupted:
+
 - revert to the last validated checkpoint
 - re-run the interrupted phase from scratch (permission: safe for read-only audit phases, risky for write phases)
 - resume mid-phase if the phase is idempotent
@@ -29,6 +31,7 @@ Recovery action when interrupted:
 If the agent writes 3 of 5 expected artifacts and then the harness stops it (step cap, crash, timeout), what happens?
 
 Options:
+
 - fail the phase; the orchestrator rejects partial output
 - accept partial output if `CHECKLIST.md` confirms remaining items are incomplete
 - require atomic output directories with a `.done` sentinel file
@@ -36,6 +39,7 @@ Options:
 #### Phase timeouts
 
 Should phases have wall-clock timeouts? If so:
+
 - who enforces them (orchestrator, harness, or both)?
 - what is the default timeout for each phase type (audit vs edit vs validate)?
 - what happens on timeout (retry, skip, block)?
@@ -45,6 +49,7 @@ Should phases have wall-clock timeouts? If so:
 How many retries per phase before the workflow blocks permanently?
 
 Options:
+
 - 3 retries for validation failures, 1 for structural failures
 - exponential backoff between retries
 - human escalation after max retries (write a BLOCKED.md artifact)
@@ -80,6 +85,7 @@ schemas/
 ```
 
 Each schema should be:
+
 - valid JSON Schema (draft-07 or 2020-12)
 - referenced by validation scripts
 - versioned alongside the orchestrator
@@ -120,6 +126,7 @@ We have 12 ideation documents and at least 8 major components to build. Without 
 Why first: every other component references these contracts.
 
 Deliverables:
+
 - `schemas/workflow_config.schema.json`
 - `schemas/phase_contract.schema.json`
 - `schemas/agent_config.schema.json`
@@ -133,6 +140,7 @@ Gate: validation script passes against the existing workflow_config_sketch.md ex
 Why second: the orchestrator is the control plane. Without it, nothing runs.
 
 Deliverables:
+
 - `orchestrator.py` — step selection, checkpoint read/write, phase transitions
 - stateless shell that reads state, prints next step, and exits
 - state file read/write helpers
@@ -143,6 +151,7 @@ Gate: orchestrator can load a workflow config and task-state directory, print th
 #### Phase 3 — OpenCode Harness Adapter (days 11-15)
 
 Deliverables:
+
 - `adapters/opencode.py` — maps generic step contracts to OpenCode agent profiles
 - launch packet construction
 - result collection and validation
@@ -153,6 +162,7 @@ Gate: adapter can run an audit step end-to-end on an OpenCode agent and collect 
 #### Phase 4 — Skill integration (days 16-20)
 
 Deliverables:
+
 - wire orchestrator into `contextsmith-run` skill
 - `workflow-developer` skill for generating workflow configs
 - `--harness opencode` flag integration
@@ -163,6 +173,7 @@ Gate: `contextsmith run <handoff>` executes the full cycle through orchestrator,
 #### Phase 5 — User-facing features (days 21-30)
 
 Deliverables:
+
 - `SUMMARY.md`, `AUDIT_REPORT.md`, `EDUCATIONAL_REPORT.md` generation
 - `--dry-run` mode
 - `inspect` subcommand for workflow state
@@ -193,6 +204,7 @@ The orchestrator runs agents and harnesses. Without a real harness, how do we te
 #### Adapter tests (mock harness, real contracts)
 
 ```python
+
 # tests/test_opencode_adapter.py
 def test_adapter_builds_correct_packet():
     adapter = OpenCodeAdapter()
@@ -207,6 +219,7 @@ def test_adapter_builds_correct_packet():
 These require an actual OpenCode installation. Run only in CI or on-demand.
 
 ```python
+
 # tests/integration/test_full_audit_cycle.py
 def test_audit_phase_completes():
     result = orchestrator.run_phase("audit-03", workdir=test_dir)
@@ -217,6 +230,7 @@ def test_audit_phase_completes():
 #### Test harness
 
 The orchestrator should accept a `--test-mode` flag that:
+
 - disables real agent invocation
 - simulates agent responses from fixture files
 - validates the state machine transitions regardless of agent availability
@@ -234,7 +248,7 @@ python orchestrator.py --test-mode --fixture tests/fixtures/audit_pass.json
 ### Required test cases
 
 | Test | Input | Expected Output |
-|------|-------|-----------------|
+| ------ | ------- | ----------------- |
 | Config validation pass | valid workflow YAML | exit 0 |
 | Config validation fail | missing required field | exit 3, error message |
 | Fresh start | config + empty state dir | STATUS.md created, state = init |
@@ -289,6 +303,7 @@ contextsmith validate              # checks installation is correct
 #### Documentation entry point
 
 A single `INSTALL.md` at the repo root covering:
+
 - system requirements
 - pip install command(s)
 - first-run init
@@ -306,6 +321,7 @@ The artifact set will grow over time (e.g., adding `CHECKLIST.md`). Existing tas
 #### Forward-compatible baseline
 
 The orchestrator should tolerate missing optional artifacts:
+
 - if `CHECKLIST.md` does not exist, treat all items as incomplete
 - if `AUDIT_REPORT.md` does not exist, skip the audit review gate
 - required artifacts are declared per workflow config, not hardcoded
@@ -325,6 +341,7 @@ contextsmith migrate --from v1 --to v2 --dir .agent_work/
 ```
 
 This script:
+
 - reads each task-state directory
 - adds missing required files with sensible defaults
 - updates artifact references
@@ -345,7 +362,7 @@ The orchestrator decides what gets executed. The harness enforces permissions. B
 ### Threat Model
 
 | Threat | Impact | Mitigation |
-|--------|--------|------------|
+| -------- | -------- | ------------ |
 | Agent writes garbage to state files | Orchestrator reads invalid state | Schemas: orchestrator re-validates state files after agent writes |
 | Harness adapter ignores permissions | Agent can edit files it shouldn't | Boundary: orchestrator runs harness in subprocess with limited permissions |
 | Orchestrator config is tampered | Workflow bypasses required gates | Config is trusted input owned by the user, not by the agent |
@@ -362,6 +379,7 @@ The orchestrator decides what gets executed. The harness enforces permissions. B
 ### Tool integrity
 
 Custom tools and plugins (`.opencode/tools/`) must be treated as executable code:
+
 - warn the user if tools are modified between runs
 - do not load tools from untrusted paths
 - tool outputs are validated against schemas, not trusted by contents alone
@@ -449,6 +467,7 @@ The entire deterministic workflow stack assumes a valid workflow config already 
 How does the system go from user prompt to validated workflow config?
 
 Options:
+
 - LLM generates a YAML config directly against the schema, then the orchestrator validates it and refuses to start on schema-failure
 - multi-step: LLM produces a freeform plan, a validator skill converts it to structured YAML, orchestrator validates
 - human writes the config, the orchestrator only validates (current implicit assumption)
@@ -458,6 +477,7 @@ Options:
 How does the system know a generated plan covers all necessary aspects?
 
 Options:
+
 - schema validation only (structural, not semantic)
 - checklist of required phase types (audit, edit, validate, closeout) — plan must include at least one of each
 - reference to a domain template: "for skill-engineering workflows, these phases are required"
@@ -468,6 +488,7 @@ Options:
 Should plan generation be a single shot or a generate-validate-refine loop?
 
 Options:
+
 - single shot — if validation fails, reject and stop
 - loop — generate, validate, feed errors back to the generator, retry (N attempts)
 - loop with human escalation — after N retries, present the failure to the user with options
@@ -480,10 +501,12 @@ plan_generation:
   max_generation_retries: 3
   completeness_check: required-phase-types
   required_phase_types:
+
     - audit
     - edit
     - validate
     - closeout
+
   validation: schema-plus-checklist
 ```
 
@@ -516,6 +539,7 @@ The ideation assumes agents produce exactly the expected artifacts with expected
 When is an agent's output "unexpected"?
 
 Options:
+
 - missing expected artifact (clear deviation)
 - extra artifact that changes the task scope (deviation)
 - valid artifact with different internal structure than expected (deviation)
@@ -527,6 +551,7 @@ Options:
 When a deviation is detected, what happens?
 
 Options:
+
 - log and continue — treat deviations as normal, the plan was approximate
 - block and escalate — deviations require human review
 - route to a deviation-review phase — a second agent evaluates whether the deviation is acceptable
@@ -537,6 +562,7 @@ Options:
 Which is authoritative: the plan's expected shape or the schema's valid shape?
 
 Options:
+
 - schema is authoritative — if it passes schema, it's valid regardless of the plan
 - plan is authoritative — the agent must match the plan's expected outputs even if other shapes are schema-valid
 - hybrid — schema is the floor, plan expectations add additional constraints
@@ -566,6 +592,7 @@ The current design has a single "blocked" terminal state. There is no protocol f
 What events cause a human escalation?
 
 Options:
+
 - max retries exceeded (current: write BLOCKED.md)
 - validation failure that cannot be resolved by retry
 - deviation detected and deviation policy says escalate
@@ -578,6 +605,7 @@ Options:
 How is the human presented with the request?
 
 Options:
+
 - write a `HUMAN_INPUT_REQUESTED.md` with question, options, and context
 - write a structured JSON request that a CLI tool can render
 - surface via orchestrator stdout/stderr with a `--await-human` flag
@@ -588,6 +616,7 @@ Options:
 After the human responds, how does the workflow continue?
 
 Options:
+
 - human edits a file (e.g., fills in `HUMAN_DECISION.md` with the chosen option), orchestrator detects the file change and resumes
 - human runs `contextsmith resume --decision <path>` with the decision file
 - human provides input directly via orchestrator stdin
@@ -598,6 +627,7 @@ Options:
 What if the human doesn't respond?
 
 Options:
+
 - wait indefinitely (blocked until input arrives)
 - timeout after N hours, mark as stale, require explicit resume
 - apply a default decision after timeout
@@ -607,10 +637,12 @@ Options:
 ```yaml
 human_escalation:
   triggers:
+
     - max-retries-exceeded
     - unresolvable-validation-failure
     - human-approval-gate
     - agent-requested-clarification
+
   format: HUMAN_INPUT_REQUESTED.md
   resume: contextsmith-resume --decision <path>
   timeout: 24h
@@ -632,6 +664,7 @@ Sections 1 (Error Recovery) and 4 (Testing) touch on idempotency but do not reso
 Should phases be classified by idempotency?
 
 Options:
+
 - read-only phases are inherently idempotent (audit, review, validate)
 - write phases are not idempotent unless explicitly designed to be (edit, create, migrate)
 - every phase should declare its idempotency in the step contract
@@ -642,6 +675,7 @@ Options:
 How does the orchestrator detect that a phase has already been completed?
 
 Options:
+
 - checkpoint.json contains a `completed_phases` list — if the phase id is present, skip it
 - each phase writes a `.phase_done` sentinel file on completion
 - the orchestrator re-runs validation on the phase's outputs; if valid, treat as complete
@@ -652,6 +686,7 @@ Options:
 Should the orchestrator prevent running a completed phase again?
 
 Options:
+
 - hard block — orchestrator refuses to dispatch a completed phase
 - soft block — warns but allows if `--force` is passed
 - no guard — phases are always re-runnable (idempotent by design)
@@ -681,6 +716,7 @@ The entire ideation models execution as strictly sequential (one phase → one a
 How do phases declare dependencies?
 
 Options:
+
 - sequential only — phase N runs after phase N-1, no other model needed
 - artifact-level dependencies — phase B depends on `AUDIT_REPORT.md` from phase A, not on phase A having "run"
 - tag-based — phases declare `depends_on: [audit-complete, schema-validated]` using named gates
@@ -691,6 +727,7 @@ Options:
 Should the orchestrator support running independent phases concurrently?
 
 Options:
+
 - no — sequential is simpler and safer for MVP
 - yes, within a subprocess pool — independent phases run in parallel, orchestrator waits for all to complete before advancing the DAG
 - yes, with resource limits — configurable max-concurrent-phases, respect shared resource locks
@@ -700,6 +737,7 @@ Options:
 What happens when two parallel phases write to the same file?
 
 Options:
+
 - detect and block — orchestrator checks for write-conflicts before dispatching parallel phases
 - last-writer-wins — accept but log the conflict
 - require disjoint output directories — parallel phases must write to separate subdirectories
@@ -729,6 +767,7 @@ When a workflow is stuck or produces unexpected results, the user has no way to 
 How does the orchestrator identify a specific run?
 
 Options:
+
 - directory path is the identity (`.agent_work/sprints/<sprint>/tasks/<date-slug>/`)
 - manifest file in the task directory records run metadata (run_id, workflow_id, start_time, end_time, status)
 - git commit hash (if the directory is version-controlled)
@@ -739,6 +778,7 @@ Options:
 For each phase execution, what should the orchestrator persist?
 
 Options:
+
 - status, duration, retry count, agent used, exit reason
 - input checksum (hash of NEXT_PROMPT.md + STATUS.md at dispatch time)
 - output checksum (hash of all produced artifacts)
@@ -750,6 +790,7 @@ Options:
 How does the user compare two runs?
 
 Options:
+
 - `contextsmith diff <run-a> <run-b>` — prints phase-by-phase status diff
 - `contextsmith history <task-dir>` — lists all runs with summary stats
 - `contextsmith replay <run-id> <phase-id>` — re-executes a specific phase using the recorded input
@@ -759,6 +800,7 @@ Options:
 Should the orchestrator flag when a phase that previously passed now fails?
 
 Options:
+
 - manual only — user compares runs
 - automatic — orchestrator checks previous run results before retry and warns on regression
 - gate-on-history — workflow config can require "this phase has never passed in any prior run" before allowing a different path
@@ -769,12 +811,14 @@ Options:
 run_comparison:
   run_identity: manifest-file-with-uuid
   recorded_per_phase:
+
     - status
     - duration
     - retry_count
     - agent
     - input_checksum
     - output_checksum
+
   comparison_tool: contextsmith-diff
   regression_detection: manual-initial
 ```
@@ -794,6 +838,7 @@ ContextSmith skills are pure instruction files (SKILL.md). They describe what a 
 Should skills export a machine-readable workflow shape?
 
 Options:
+
 - SKILL.md frontmatter gains a `workflow` key with phase names, required gates, and output artifacts
 - a separate `workflow.yaml` lives alongside SKILL.md in each skill directory
 - the orchestrator derives the workflow shape by analyzing the skill's reference manifest
@@ -804,6 +849,7 @@ Options:
 Should the orchestrator discover available skills and their workflows at runtime?
 
 Options:
+
 - no — workflow config pins the skill by name, orchestrator loads it from a known path
 - yes — orchestrator scans `skills/` for SKILL.md files with workflow frontmatter and builds a registry
 - hybrid — skill registry built at install time, cached for runtime use
@@ -813,6 +859,7 @@ Options:
 When a workflow config references a skill, should the skill's default phase contracts be inherited?
 
 Options:
+
 - no — workflow config must define all phase contracts explicitly
 - yes — skill defines defaults, workflow config can override specific fields
 - skill defines required contracts that the workflow config must include (schema validation)
@@ -833,7 +880,7 @@ skill_orchestrator_contract:
 Before writing implementation code, we need decisions on:
 
 | # | Item | Depends on | Minimum viable | Status |
-|---|------|------------|----------------|--------|
+| --- | ------ | ------------ | ---------------- | -------- |
 | 1 | Error recovery policy | — | Accept current decisions; refine later | **Partially resolved** — skeleton decisions in section 1 are sufficient for MVP |
 | 2 | Workflow config schema | — | Write `workflow_config.schema.json` | **Resolved** — `schemas/workflow_config.schema.json` created, validates both examples |
 | 3 | Agent config schema | — | Write `agent_config.schema.json` | **Resolved** — `schemas/agent_config.schema.json` created, validates both examples |
@@ -854,6 +901,7 @@ Before writing implementation code, we need decisions on:
 **Critical path:** All design gaps are resolved. Item 10 (plan generation) has a complete spec with domain templates. OpenCode CLI flags are verified. The orchestrator SKILL.md is drafted. An end-to-end example exists. The remaining work is implementation — no blocking design decisions remain.
 
 **Resolved architecture decisions (this pass):**
+
 - Transport model: harness adapter runs in-process, agent runtime runs as subprocess (section 7 updated)
 - OpenCode CLI flags: **verified** (2026-06-12) — `--agent`, `--model`, `--prompt`, `--file`, `--format json` confirmed. `--max-steps` does not exist — use agent config `steps` field instead.
 - Fix state transition: clarified in `audit_and_ralph_state_machine.md`

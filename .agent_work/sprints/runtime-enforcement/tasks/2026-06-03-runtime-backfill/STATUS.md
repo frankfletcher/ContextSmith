@@ -7,6 +7,7 @@ COMPLETE — All 3 artifacts fixed
 None. All scoped artifacts have been updated and validated.
 
 ## Progress
+
 - Task created
 - Plan created with Phase B0-B8
 - Phase B0: Audit complete. 2 artifacts need updates, 1 needs minor fix, 5 acceptable.
@@ -15,6 +16,7 @@ None. All scoped artifacts have been updated and validated.
 - Phase B3: QUICKSTART.md "Next 30 Minutes" section reworded to frame runtime enforcement as the standard execution path. validate_skills.py passes.
 
 ## Constraints
+
 - Small-model executable phases
 - Each sub-phase bounded to one artifact area
 - Ralph loop: 2 iterations per phase

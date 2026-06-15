@@ -5,6 +5,7 @@
 **Status:** All phases complete (2026-05-29)
 
 ## Completed Phases
+
 - Planning artifacts created.
 - ContextSmith skill contracts updated so future long-running planning prompts, generated instructions, generated skills, migrations, and audits require concrete task-state files instead of a single narrative plan file.
 - Phase 1: `--update-manifests` flag added to `scripts/sync_shared_refs.py`.

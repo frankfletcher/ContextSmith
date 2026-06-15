@@ -41,6 +41,7 @@ This prints every step the pipeline will execute without modifying any files.
 ### 3. Run the release pipeline
 
 ```bash
+
 # Without version bump (uses current versions from manifests)
 python scripts/build_release.py --package --individual
 
@@ -67,6 +68,7 @@ The pipeline executes in this order:
 ### 4. Verify the output
 
 ```bash
+
 # Check all zip checksums
 sha256sum -c dist/*.sha256
 
@@ -75,6 +77,7 @@ cat dist/RELEASE_SUMMARY.json
 ```
 
 Each `dist/` entry:
+
 - `{skill}-{version}.zip` — the skill package
 - `{skill}-{version}.sha256` — zip-level checksum for `sha256sum -c`
 - `contextsmith-release.zip` — source/all-skills release bundle
@@ -84,6 +87,7 @@ Each `dist/` entry:
 ### 5. Test installation (optional but recommended)
 
 ```bash
+
 # Install a single skill to a temp directory
 bash scripts/install_skill.sh dist/contextsmith-prompt-engineer-1.7.1.zip /tmp/test-install
 
@@ -163,6 +167,7 @@ python scripts/validate_skills.py
 ### "ERROR: zip command not found"
 
 Install the `zip` package:
+
 - Ubuntu/Debian: `sudo apt install zip unzip`
 - macOS: `brew install zip`
 - Fedora: `sudo dnf install zip unzip`
@@ -194,6 +199,7 @@ This keeps the two most recent backups.
 ### Automated publish
 
 ```bash
+
 # Build and publish in one command
 bash scripts/publish_release.sh 1.7.1
 
@@ -214,6 +220,7 @@ bash scripts/publish_release.sh 1.7.1 --notes my-notes.md
 ```
 
 The publish script:
+
 1. Builds the release (calls `build_release.py --package --individual`)
 2. Verifies all SHA-256 checksums
 3. Creates an annotated git tag
@@ -226,6 +233,7 @@ The publish script:
 If you prefer to publish manually:
 
 ```bash
+
 # Build
 python scripts/build_release.py --package --individual
 

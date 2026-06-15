@@ -62,26 +62,32 @@ When relevant, check:
 ## Output Format
 
 ```markdown
+
 ## Test Quality Summary
 
 Overall grade:
 Recommendation: ship | improve tests first | add edge cases | rewrite weak tests | needs human review
 
 ## Strong Tests
+
 - ...
 
 ## Weak Tests
+
 - test/path::name
   - Problem:
   - Why it matters:
   - Fix:
 
 ## Missing Tests
+
 - ...
 
 ## Over-Mocking Risks
+
 - ...
 
 ## Recommended Additions
+
 1. ...
 ```

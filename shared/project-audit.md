@@ -46,6 +46,7 @@ Write findings to `EXTRA_AUDIT.md` (or `EXTRA_AUDIT.md.new` for orchestrator-man
 ## Output Format
 
 ```markdown
+
 ## Audit Summary
 
 Assessment: on-track / needs-course-correction / off-track
@@ -55,7 +56,7 @@ Plan accuracy: plan-is-current / plan-needs-update
 ## Findings
 
 | Finding | Severity | Location | Already in PLAN? | Note |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 
 ## Strengths
 

@@ -19,6 +19,7 @@ Individual skills may have their own versions, but package releases are the main
 ## Changelog Format
 
 ```markdown
+
 ## v1.4.0
 
 **Released:** YYYY-MM-DD

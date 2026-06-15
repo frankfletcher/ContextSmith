@@ -1,6 +1,7 @@
 # Status: Runtime Enforcement for ContextSmith Skills
 
 ## Artifact Manifest
+
 - artifact_type: status
 - parent_task: TASK.md
 - current_phase: Phase 9 (Final Closeout Audit) complete. Task complete.
@@ -11,6 +12,7 @@
 Phase 6A (MCP Adapter Design) complete (PASS, A-level). Phase 6B (Harness Adapter Design) complete (PASS, A-level). Phase 7A (User Documentation Map) complete. Phase 7B (README Refresh) complete. Phase 7C (Quickstart Polish) complete. Phase 7D (Runtime Workflow Docs) complete. Phase 7E (Use-Case Workflow Docs) complete. Phase 7F (Examples Library) complete. Phase 7G (Documentation Quality Audit) complete. Phase 8A (Rollout Scope Selection) complete. Phase 8C.1 (Run Task-State Handoff Workflow Doc) complete. Phase 8C.2 (Schedule with Approval Gates Workflow Doc) complete. Phase 8C.3 (Compare Travel Options Workflow Doc) complete. Phase 8C.4 (Prompt Engineering Example) complete. Phase 8C.5 (Implementation Plan Creation Example) complete. Phase 8C.6 (Plan Audit Example) complete. Phase 8C.7 (Meeting Scheduling Example) complete. Phase 8C.8 (Travel Comparison Example) complete. Phase 8C.9 (Skill Migration Example) complete. Phase 8C.10 (Custom Domain Pack Example) complete. Phase 8C.11 (Agent Evaluation Example) complete.
 
 ## Completed
+
 - Created task-state package for deterministic runtime enforcement planning.
 - Captured architecture direction: universal protocol, domain packs, shared validator core, CLI, optional runner, MCP, and harness adapters.
 - Defined phased implementation plan with validation gates.
@@ -86,12 +88,15 @@ Phase 6A (MCP Adapter Design) complete (PASS, A-level). Phase 6B (Harness Adapte
 - **Phase 8C.11 complete**: Agent Evaluation Example — added Example 11 to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with Status, Scenario, Input, Prompt, What happens (7 steps), Expected output (Summary Grade, Strengths, Weaknesses, A-F Rubric table, Loop/Git/Context Safety, Domain-Specific Risks, Duplicate/Conflicting Instructions, High-Risk Issues, Suggested Next Action), and Recovery. Updated TOC. Clarified audit-only default behavior in step 1. Ralph loop: 2 iterations (iteration 1 added audit-only mode clarification; iteration 2 no-op by evidence). All validations pass: `validate_skills.py` OK, `token_budget.py --strict` OK.
 
 ## Next Action
+
 1. Phase B0 (Runtime Framing Backfill Audit) — audit codebase artifacts for runtime framing deviations from updated PLAN.md. Task: `2026-06-03-runtime-backfill/`.
 
 ## Blockers
+
 - (none)
 
 ## Approval Boundaries
+
 - Ask before editing `PACKAGE_SPEC.md`.
 - Ask before adding dependencies other than pytest, which is pre-approved by current user for runtime tests.
 - Ask before modifying user-level opencode config.

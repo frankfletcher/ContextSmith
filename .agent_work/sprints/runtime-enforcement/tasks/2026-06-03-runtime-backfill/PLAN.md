@@ -1,7 +1,5 @@
 # Plan: Runtime Framing Backfill
 
-
-
 # Important Note
 
 1. There are 2 PLAN.md files - make sure you know or have inferred which PLAN is being referred to at all times.  
@@ -23,17 +21,20 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Read PLAN.md Architecture Direction and Enforcement Levels sections for the canonical framing.
 2. Read each artifact in scope and check for runtime framing language.
 3. Record deviations in `AUDIT_RESULTS.md`.
 4. Classify each artifact as: `aligned`, `minor-fix`, `needs-update`, or `no-runtime-mentions`.
 
 **Outputs:**
+
 - `AUDIT_RESULTS.md` with per-artifact deviation notes.
 - `STATUS.md` updated with next phase.
 - `NEXT_PROMPT.md` for Phase B1.
 
 **Validation:**
+
 - All scoped artifacts are classified.
 - Deviations are specific and actionable.
 
@@ -53,12 +54,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Read current README.md runtime section.
 2. Compare against PLAN.md Architecture Direction framing.
 3. Apply minimal edits to align framing.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 
@@ -78,12 +81,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Read current RUNTIME_ENFORCEMENT.md.
 2. Compare against PLAN.md framing.
 3. Apply minimal edits to align framing.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 
@@ -103,12 +108,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Read current QUICKSTART.md.
 2. Check if runtime framing deviates from PLAN.md.
 3. Apply minimal edits if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 
@@ -128,12 +135,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Read current EXAMPLES_LIBRARY.md.
 2. Check if runtime framing deviates from PLAN.md.
 3. Apply minimal edits if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 
@@ -153,12 +162,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Read both workflow docs.
 2. Check if runtime framing deviates from PLAN.md.
 3. Apply minimal edits if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 
@@ -178,12 +189,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Grep shared/ for runtime-related framing.
 2. Read relevant files.
 3. Apply minimal edits if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 
@@ -203,12 +216,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Grep skills/*/SKILL.md for runtime-related framing.
 2. Read relevant sections.
 3. Apply minimal edits if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 
@@ -227,17 +242,20 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Re-read PLAN.md Architecture Direction and Enforcement Levels.
 2. Spot-check each artifact that was updated.
 3. Confirm framing is consistent.
 4. Record final alignment status.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 - All artifacts are classified as `aligned` or `no-runtime-mentions`.
 
 ## Plan Completion Criteria
+
 - All scoped artifacts are audited.
 - Deviations are fixed with minimal edits.
 - Validation passes after each phase.

@@ -70,6 +70,7 @@ controls:
   step_cap: 10
   validation_mode: strict
 expected_outputs:
+
   - audit.md
   - AUDIT_REPORT.md
   - PHASE_LOG.md
@@ -108,11 +109,13 @@ Example instruction bundle:
 ```yaml
 role: contextsmith-auditor
 instructions:
+
   - read STATUS.md first
   - follow NEXT_PROMPT.md
   - write output to audit.md
   - update CHECKLIST.md as items complete
   - stop after the first blocking issue
+
 limits:
   permissions: read-only
   step_cap: 10
@@ -362,6 +365,7 @@ def start(self, agent: str, packet: LaunchPacket) -> HarnessResult:
         proc = subprocess.run(
             cmd,
             cwd=packet.task_state_dir,
+
             # No capture_output — agent output streams to user in real-time
             text=True,
             timeout=packet.timeout_s,
@@ -443,7 +447,7 @@ def _collect_artifacts(self, state_dir: str, expected: list[str]) -> dict[str, s
 ### Artifact Validation Rules
 
 | Check | Logic | Pass Condition |
-|-------|-------|----------------|
+| ------- | ------- | ---------------- |
 | File exists | `path.exists()` | True for all expected |
 | Non-empty | `path.stat().st_size > 0` | True for all expected |
 | No path traversal | resolved path starts with state_dir | True for all |
@@ -478,6 +482,7 @@ The agent writes `RESULT.json` to the task-state directory before exiting. The h
 ```
 
 The harness checks:
+
 - Does RESULT.json exist in the state directory?
 - Is it valid JSON?
 - Does it contain a `status` field?
@@ -498,7 +503,7 @@ No artifacts written → status = "fail"
 ### Communication Summary
 
 | Channel | Direction | Purpose | Captured? |
-|---------|-----------|---------|-----------|
+| --------- | ----------- | --------- | ----------- |
 | stdout | Agent → User | Real-time visibility of agent work | No — streams to user |
 | RESULT.json | Agent → Orchestrator | Structured status for state machine | Yes — read from disk |
 | Artifacts | Agent → Disk | Task output files | Yes — validated by orchestrator |
@@ -521,6 +526,7 @@ Step caps prevent the agent from making infinite tool calls.
 ### OpenCode Implementation
 
 **Verified (2026-06-12):** OpenCode does NOT have a `--max-steps` flag. Step limiting is done via:
+
 - Agent config `steps` field in `.opencode/agents/*.md` (e.g., `steps: 10`)
 - Prompt instructions ("stop after N tool calls")
 - Timeout enforcement in the harness adapter
@@ -571,6 +577,7 @@ def _cap_reached(self, proc: subprocess.CompletedProcess, packet: LaunchPacket) 
 ### Handling Partial Output on Cap Reached
 
 When the step cap is reached:
+
 1. The harness collects whatever artifacts exist (partial output)
 2. The harness returns `status: "fail"` with reason `"step_cap_reached"`
 3. The orchestrator decides retry vs. block based on retry counters
@@ -583,6 +590,7 @@ When the step cap is reached:
 For reproducibility, the harness writes a structured instructions file before launching the agent. This file serves as the authoriative record of what the agent was asked to do.
 
 ```yaml
+
 # .agent_instructions.yaml (written to task_state_dir before agent launch)
 
 step_id: audit-03
@@ -596,6 +604,7 @@ agent:
 task:
   prompt_file: NEXT_PROMPT.md
   instructions:
+
     - Read STATUS.md first to understand current phase context.
     - "Follow NEXT_PROMPT.md exactly. Do not skip steps."
     - Write findings to AUDIT_REPORT.md.
@@ -608,6 +617,7 @@ limits:
 
 outputs:
   expected:
+
     - AUDIT_REPORT.md
     - EVIDENCE.md
     - CHECKLIST.md
@@ -616,12 +626,14 @@ outputs:
 context:
   current_phase: audit
   completed_phases:
+
     - init
     - plan-01
     - execute-02
 ```
 
 This file is NOT read by the agent. It is written for:
+
 - Debugging: what exactly was the agent asked to do?
 - Audit: can we replay the exact same instruction set?
 - Recovery: on crash, what was the agent's task when it died?

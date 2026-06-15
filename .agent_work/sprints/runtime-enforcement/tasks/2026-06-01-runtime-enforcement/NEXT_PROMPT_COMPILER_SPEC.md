@@ -1,6 +1,7 @@
 # Next Prompt Compiler Specification
 
 ## Artifact Manifest
+
 - artifact_type: specification
 - phase: 5A
 - target_profile: qwen36
@@ -13,7 +14,7 @@ The Next Prompt Compiler is a read-only tool that reads task-state files and gen
 ## Inputs
 
 | Input | Required | Source |
-|---|---|---|
+| --- | --- | --- |
 | `STATUS.md` | Yes | Current phase name, next action, blockers |
 | `PLAN.md` | Yes | Current phase block: goal, actions, validation, context contract |
 | `CONTEXT.md` | Yes | File map, constraints, validation commands, skip rules |
@@ -31,9 +32,11 @@ The compiler generates a `NEXT_PROMPT.md` with these sections in order:
 ### 1. Artifact Manifest
 
 ```markdown
+
 # Next Prompt: <phase name>
 
 ## Artifact Manifest
+
 - artifact_type: next_prompt
 - phase: <phase id>
 - target_profile: <from PLAN.md artifact manifest or default qwen36>
@@ -48,6 +51,7 @@ A single paragraph stating the phase goal and hard boundary. Derived from the PL
 ### 3. Read Order
 
 Ordered list of files the executor should read first. Derived from:
+
 - `STATUS.md` (always first)
 - Current phase block in `PLAN.md` (always second)
 - `CONTEXT.md` (always third)
@@ -64,11 +68,11 @@ Numbered list of concrete actions from the PLAN.md phase `## Actions` section. E
 ### 6. Allowed and Disallowed Actions
 
 | Allowed | Disallowed |
-|---|---|
+| --- | --- |
 | <from phase actions> | <from phase stop_rule> |
 | <from CONTEXT.md validation commands> | editing files outside workspace |
-| | proceeding to next phase |
-| | invoking models |
+|  | proceeding to next phase |
+|  | invoking models |
 
 Disallowed actions are derived from the phase `stop_rule`, CONTEXT.md constraints, and the universal hard-stop rule (no phase advancement).
 
@@ -79,6 +83,7 @@ Exact commands from CONTEXT.md `## Validation Commands` section, filtered to tho
 ### 8. Task-State Closeout Requirements
 
 ```markdown
+
 ## Closeout
 
 Update `STATUS.md`, `PHASE_LOG.md`, `ARTIFACTS.md`, `CONTEXT.md`, `CHECKLIST.md`, and `NEXT_PROMPT.md` with compact facts only. Record changed files, commands run, validation result, blockers, carry-forward, do-not-carry-forward, and next action.
@@ -89,9 +94,11 @@ This section is generated from PLAN.md's `## Required Phase Closeout` template, 
 ### 9. Recovery Procedure
 
 ```markdown
+
 ## Recovery
 
 If validation fails or the phase cannot complete:
+
 1. Stop. Do not widen scope or start the next phase.
 2. Set `STATUS.md` to `Blocked` with the failed gate and exact reason.
 3. Add a `PHASE_LOG.md` entry with attempted action and validation result.
@@ -103,9 +110,11 @@ Derived from PLAN.md's `## Recovery Procedure` section.
 ### 10. Self-Audit Requirements
 
 ```markdown
+
 ## Self-Audit
 
 Before closeout, verify:
+
 - Original phase goal satisfied or blocker recorded
 - All validation commands executed or blocker documented
 - Side-effect boundaries respected
@@ -118,6 +127,7 @@ Derived from the domain pack's self-audit lens (defaults to `general_fallback` i
 ### 11. Expected Final Output Format
 
 ```markdown
+
 ## Result
 ## Evidence
 ## Self-Audit
@@ -132,6 +142,7 @@ Standardized output format for the executor's final response.
 ### 12. Hard Stop
 
 ```markdown
+
 ## Hard Stop
 
 Do not proceed to <next phase>. Do not implement features outside this phase. Do not invoke models or execute phases. Do not edit files outside the current phase scope.
@@ -188,7 +199,7 @@ Options:
 Comparing this spec's output template against the Phase 4B NEXT_PROMPT.md file:
 
 | Spec Section | NEXT_PROMPT.md Section | Match |
-|---|---|---|
+| --- | --- | --- |
 | 1. Artifact Manifest | `## Artifact Manifest` | Yes |
 | 2. Mission | `## Mission` | Yes |
 | 3. Read Order | `## Read Order` | Yes |

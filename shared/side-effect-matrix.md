@@ -3,7 +3,7 @@
 Use this reference to choose interaction mode and approval requirements.
 
 | Action Type | Examples | Default Mode | Approval |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Read-only | inspect files, summarize docs, audit prompt | YOLO or guided | not required |
 | Local reversible write | edit prompt, create AGENTS.md, stage skill output | guided | usually not required if staged |
 | Local risky write | overwrite source files, modify dirty repo files | guided/review-gate | required when user work may be overwritten |

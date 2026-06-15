@@ -15,7 +15,7 @@ Do not load every task-state file in full if the context budget is tight. Read t
 ## Phase Modes
 
 | Mode | Behavior |
-|------|----------|
+| ------ | ---------- |
 | `phase` | Execute only the current phase, then stop after state update. |
 | `phased-run` | Execute phases sequentially until complete, blocked, validation fails, context risk appears, or approval is needed. |
 | `dry-run` | Validate readiness and report the next action. |

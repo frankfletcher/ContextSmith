@@ -7,10 +7,12 @@
 ## Problem Statement
 
 ContextSmith skills (prompt-engineer, skill-engineer, instruction-engineer) have deep knowledge of:
+
 - A 37-parameter control system (`shared/control-parameters.md`)
 - 49 canonical behavioral references (`shared/`) covering phased planning, self-audit, test quality, loop safety, etc.
 
 When these skills generate artifacts (prompts, implementation plans, next prompts), that knowledge does NOT propagate to the generated output. The generated prompt is unaware of:
+
 1. Which parameters were active during its creation
 2. Which behavioral references apply to its execution
 3. How to chain those parameters/references to downstream artifacts it generates (e.g., a prompt generating an implementation plan, which generates phase prompts)
@@ -24,7 +26,7 @@ When these skills generate artifacts (prompts, implementation plans, next prompt
 ### D1: Manifest-Based Inheritance (Chosen Over Alternatives)
 
 | Approach | Description | Why Rejected/Chosen |
-|----------|-------------|---------------------|
+| ---------- | ------------- | --------------------- |
 | A: Parameter Block Injection | Embed only active params as parseable blocks | Too light — doesn't propagate behavioral knowledge |
 | B: Embedded Behavioral Contracts | Condense reference requirements into generated prompts | Good, but standalone-only; no upgrade path when ContextSmith is installed downstream |
 | C: Parameterized Templates | Make references themselves parameterized templates | Overly heavy; requires template engine, breaks existing refs |
@@ -33,6 +35,7 @@ When these skills generate artifacts (prompts, implementation plans, next prompt
 ### D2: ATX Heading Section Placement (Not YAML Frontmatter)
 
 The artifact manifest lives as an ATX heading section (`## Artifact Manifest`) at the top of generated artifacts, not as YAML frontmatter. Reasons:
+
 - Works in all markdown renderers and agent parsers
 - Easy for small models to read and generate
 - No delimiter ambiguity with SKILL.md-style `---` fences
@@ -40,6 +43,7 @@ The artifact manifest lives as an ATX heading section (`## Artifact Manifest`) a
 ### D3: Pre-Extracted Behavioral Contracts + Skill Can Append
 
 Behavioral contracts (condensed requirements from each reference) are pre-extracted into a canonical file. Skills copy the relevant contracts rather than generating them on-the-fly. Reasons:
+
 - Consistent across runs and artifacts
 - Auditable — can diff contract changes
 - No generation variance in critical instructions
@@ -60,6 +64,7 @@ Every downstream artifact inherits from its parent. Children can inherit, narrow
 **Parsing rules:** Parse CLI flags first, user prose overrides flags on conflict, normalize aliases, record parsed controls in output.
 
 **Common flags (37 total):**
+
 ```bash
 --mode fast|deep|guided|yolo|review-gate|audit-only
 --target-profile qwen36|gemma4|llama3|generic-local
@@ -82,7 +87,7 @@ Every downstream artifact inherits from its parent. Children can inherit, narrow
 
 **Current defaults in generated artifacts (6 params only):**
 | Parameter | Default | Description |
-|-----------|---------|-------------|
+| ----------- | --------- | ------------- |
 | `--mode` | `guided` | Interaction mode |
 | `--target-profile` | `qwen36` | Target model profile |
 | `--context-length` | `64k` | Targeted context window |
@@ -99,7 +104,7 @@ Every downstream artifact inherits from its parent. Children can inherit, narrow
 **Key references by category:**
 
 | Category | Files | Purpose |
-|----------|-------|---------|
+| ---------- | ------- | --------- |
 | Planning | `phased-planning.md`, `implementation-plan-audit.md` | Phase structure, granularity rules, A-F audit rubric |
 | Execution | `persistent-task-state.md`, `phase-compression.md` | Task state files, debrief format, carry-forward/do-not-carry-forward |
 | Verification | `test-quality-audit.md`, `phase-code-review.md` | Test quality rubric, post-phase code review gates |
@@ -116,6 +121,7 @@ Every downstream artifact inherits from its parent. Children can inherit, narrow
 ### Current Artifact Generation
 
 **Prompt Engineer outputs:**
+
 - Prompt package (14-section template): Engineering Metadata, Assumptions, Target Model/Harness, Domain/Intent, Prompt-Control Feasibility, Context Strategy, Interaction Mode, System Prompt, User Prompt Template, Examples, Validation/Test Plan, Loop/Git/File Safety, Persistent Task State, Subagent Delegation, Runtime Recommendations, Educational Change Report
 - Required report: Original Strengths/Weaknesses, Changes Made, Why Improved, A-F Grades, Remaining Risks, Files Written, Non-Execution Check
 
@@ -146,6 +152,7 @@ Every downstream artifact inherits from its parent. Children can inherit, narrow
 Every generated artifact includes this block after the title, before any other content:
 
 ```markdown
+
 # <Artifact Title>
 
 ## Artifact Manifest
@@ -157,7 +164,7 @@ Every generated artifact includes this block after the title, before any other c
 ### Parameters
 
 | Parameter | Value | Source |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | `--mode` | guided | default |
 | `--target-profile` | qwen36 | user-set |
 | `--context-length` | 32k | narrowed from 64k (per-phase tight context) |
@@ -169,7 +176,7 @@ Every generated artifact includes this block after the title, before any other c
 ### References Applied
 
 | Reference | Version | Contract Summary |
-|-----------|---------|-----------------|
+| ----------- | --------- | ----------------- |
 | `phased-planning` | 1.0 | Phase structure, granularity rules, 12-step closeout procedure |
 | `implementation-plan-audit` | 1.0 | A-F pre-execution grading rubric, 10 audit questions |
 | `test-quality-audit` | 1.0 | Test quality rubric, weak test smells, ML/LLM-specific checks |
@@ -204,7 +211,7 @@ Every generated artifact includes this block after the title, before any other c
 ### Source Values for Parameters
 
 | Source | Meaning |
-|--------|---------|
+| -------- | --------- |
 | `user-set` | Explicitly provided by the user in this session |
 | `inherited` | Copied from parent artifact's manifest without modification |
 | `default` | Set to the system default (from SKILL.md default table) |
@@ -256,7 +263,7 @@ Root Prompt (params: mode=guided, context-length=64k, ralph=2)
 ### Artifact Type → Default References Matrix
 
 | Artifact Type | Always Includes | Conditionally Adds |
-|---------------|-----------------|-------------------|
+| --------------- | ----------------- | ------------------- |
 | Prompt (general) | control-parameters, loop-safety | domain-profile (if domain known), targeted-context-length (if ctx provided) |
 | Implementation Plan | phased-planning, implementation-plan-audit, persistent-task-state, phase-compression | test-quality-audit (if coding), phase-code-review (if --phase-review on) |
 | NEXT_PROMPT.md | persistent-task-state, loop-safety, phase-compression | All parent plan refs (inherited) |
@@ -272,6 +279,7 @@ Root Prompt (params: mode=guided, context-length=64k, ralph=2)
 #### 1A: Create `shared/artifact-manifest.md`
 
 Canonical specification for the artifact manifest system. Must include:
+
 - Manifest format specification (as designed above)
 - ATX heading placement rules
 - Parameter source values table (`user-set | inherited | default | narrowed`)
@@ -287,7 +295,7 @@ Pre-extracted contract summaries for each of the ~30 most relevant references. E
 **Contract entries needed (derived from current shared/ refs):**
 
 | Reference | Contract Summary (to pre-extract) |
-|-----------|----------------------------------|
+| ----------- | ---------------------------------- |
 | `phased-planning` | Phase structure requirements (10 fields per phase), granularity rule (6-20 phases for large tasks, scale with context budget), 12-step closeout procedure |
 | `implementation-plan-audit` | A-F rubric categories (phase granularity, atomicity, dependency ordering, context fit, validation strength, task-state integration, handoff quality, rollback/recovery, test strategy, small-model readiness), 10 audit questions, output format with recommendation + must-fix |
 | `test-quality-audit` | A-F rubric (baseline coverage, edge-case realism, failure-mode coverage, assertion strength, regression-catching power, changed-behavior coverage, fixture realism, isolation/determinism, over-mocking risk, maintainability), weak test smells list, ML/LLM-specific checks |
@@ -314,6 +322,7 @@ Pre-extracted contract summaries for each of the ~30 most relevant references. E
 #### 1C: Create `shared/parameter-narrowing-rules.md`
 
 Specifies when and how child artifacts may narrow inherited parameters:
+
 - Allowed narrowings with examples (context-length, ralph iterations, education-level)
 - Forbidden widenings without justification
 - Justification format for exceptions
@@ -324,6 +333,7 @@ Specifies when and how child artifacts may narrow inherited parameters:
 #### 2A: Update `skills/local-model-prompt-engineer/SKILL.md`
 
 **Changes needed:**
+
 1. Replace current "Default Parameters" section (lines ~131-145) with manifest-based approach
 2. Add generation rule: "All generated artifacts MUST include an Artifact Manifest section per `references/artifact-manifest.md`"
 3. Add parameter tracking instructions: how to determine source value for each param (`user-set | inherited | default | narrowed`)
@@ -333,6 +343,7 @@ Specifies when and how child artifacts may narrow inherited parameters:
 7. Add example of what a complete prompt output looks like with manifest
 
 **Specific edits:**
+
 - Section "0. Apply Default Parameters" → rename to "Apply Parameters and Build Manifest", expand with full procedure
 - Section "Ensure all generated artifacts implement the parameter inheritance system" (lines 246-249) → replace with manifest propagation rules
 - Add new section after "Required Output": "Artifact Manifest Requirements" with embedding instructions
@@ -340,6 +351,7 @@ Specifies when and how child artifacts may narrow inherited parameters:
 #### 2B: Update `skills/local-model-skill-engineer/SKILL.md`
 
 Same pattern as 2A, adapted for skill generation:
+
 - Generated SKILL.md files must include artifact manifest
 - Skill-specific parameters (`--reference-policy`, `--metadata`, `--in-place`) included in manifest
 - References applied must include skill-interoperability, upstream-artifact-audit (if migrating)
@@ -347,6 +359,7 @@ Same pattern as 2A, adapted for skill generation:
 #### 2C: Update `skills/local-model-instruction-engineer/SKILL.md`
 
 Same pattern as 2A, adapted for instruction file generation:
+
 - Generated AGENTS.md/CLAUDE.md files must include artifact manifest
 - Instruction-specific parameters included in manifest
 - References applied must include instruction-deduplication, instruction-precedence, git-safety
@@ -354,6 +367,7 @@ Same pattern as 2A, adapted for instruction file generation:
 #### 2D: Copy New References to Per-Skill `references/` Directories
 
 For each of the three engineer skills, copy:
+
 - `artifact-manifest.md` → each skill's `references/`
 - `behavioral-contracts.md` → each skill's `references/`
 - `parameter-narrowing-rules.md` → each skill's `references/`
@@ -363,6 +377,7 @@ For each of the three engineer skills, copy:
 #### 3A: Update `scripts/validate_skills.py`
 
 Add validation checks for:
+
 - SKILL.md files reference `artifact-manifest.md` in their generation instructions
 - Generated artifact examples include manifest sections (if examples exist)
 - New shared references have correct format (no frontmatter, ATX headings only)
@@ -370,6 +385,7 @@ Add validation checks for:
 #### 3B: Add Example Manifests to Each Skill
 
 Each engineer skill should have a compact example of what a complete output looks like with the manifest, showing:
+
 - A prompt with manifest (prompt-engineer)
 - A generated skill with manifest (skill-engineer)
 - An AGENTS.md with manifest (instruction-engineer)
@@ -389,6 +405,7 @@ Each engineer skill should have a compact example of what a complete output look
 ### Atomicity Requirements
 
 Each implementation phase must:
+
 - Have a single, clear objective
 - Name specific files to create or edit
 - Include explicit validation steps (run `python scripts/validate_skills.py`, check file exists, verify format)
@@ -398,19 +415,23 @@ Each implementation phase must:
 ### File Boundaries
 
 **New files to create:**
+
 1. `shared/artifact-manifest.md` — manifest spec (~200 lines expected)
 2. `shared/behavioral-contracts.md` — pre-extracted contracts (~300 lines expected)
 3. `shared/parameter-narrowing-rules.md` — narrowing rules (~80 lines expected)
 
 **Files to edit:**
+
 1. `skills/local-model-prompt-engineer/SKILL.md` — replace default params section, add manifest generation rules
 2. `skills/local-model-skill-engineer/SKILL.md` — same pattern
 3. `skills/local-model-instruction-engineer/SKILL.md` — same pattern
 
 **Files to copy (new per-skill references):**
+
 - For each of 3 engineer skills: copy the 3 new shared files to `references/`
 
 **Validation:**
+
 - Run `python scripts/validate_skills.py` after all edits
 - May need to update `scripts/validate_skills.py` with new checks
 
@@ -441,6 +462,7 @@ Phase 3B (example manifests) — depends on all above
 ## Success Criteria
 
 After implementation:
+
 1. Generated prompts include an Artifact Manifest with parameters (with provenance), references applied, and behavioral contracts
 2. Generated implementation plans inherit params from parent prompt, narrow context-length per phase, add planning-specific references
 3. Generated NEXT_PROMPT.md files inherit from their plan, carry forward phase debrief facts, track chain-of provenance

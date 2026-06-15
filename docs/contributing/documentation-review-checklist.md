@@ -54,6 +54,7 @@ Avoid overusing:
 When auditing documentation, return:
 
 ```markdown
+
 ## Documentation Quality Summary
 
 ## Strengths

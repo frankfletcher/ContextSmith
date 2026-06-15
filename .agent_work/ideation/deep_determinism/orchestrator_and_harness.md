@@ -19,7 +19,7 @@ The baseline workflow definition should live in YAML or JSON config so the orche
 ## What Each Layer Does
 
 | Layer | Responsibility | Example |
-|---|---|---|
+| --- | --- | --- |
 | Orchestrator | Workflow graph, retries, resume, loop detection | Move from `audit` to `fix` only after validation passes |
 | Harness | Agent execution, permissions, tool hooks, step caps | Run the audit agent with read-only access |
 | Agent | One bounded task | Write audit findings to `audit.md` |
@@ -99,7 +99,7 @@ Typical files:
 ## Common Failure Modes
 
 | Problem | Fix |
-|---|---|
+| --- | --- |
 | Agent tries to hold the whole workflow in memory | Move workflow control into the orchestrator |
 | Phase output is valid but workflow advances too early | Add a validator or tool gate |
 | Agent loops on the same mistake | Add step caps and loop detection |
@@ -187,6 +187,7 @@ class HarnessAdapter(ABC):
         Execute one bounded step.
 
         This method:
+
         1. Translates the StepContract into harness-native commands
         2. Launches the agent or runtime (stdout streams to user, NOT captured)
         3. Waits for completion or timeout
@@ -227,6 +228,7 @@ class HarnessAdapter(ABC):
 ### Base Implementation
 
 Every adapter must:
+
 1. Inherit from `HarnessAdapter`
 2. Implement `name`, `validate_environment`, `execute`, `cancel`
 3. Register itself by calling `HarnessRegistry.register()` at module import time
@@ -284,6 +286,7 @@ class HarnessRegistry:
     @classmethod
     def _detect_auto(cls) -> HarnessAdapter:
         """Auto-detect: check environment for known harness runtimes."""
+
         # 1. Check if running inside OpenCode (OPencode_API env var)
         # 2. Check for ACP environment variables
         # 3. Default to generic (file-based, no agent runtime)
@@ -327,10 +330,12 @@ The adapter runs IN-PROCESS with the orchestrator. The harness runtime (e.g., Op
 ```python
 def execute(self, contract: StepContract, state_dir: Path) -> HarnessResult:
     try:
+
         # Launch agent as subprocess — stdout streams to user, NOT captured
         proc = subprocess.run(
             self._build_command(contract),
             cwd=state_dir,
+
             # No capture_output — agent output streams to user in real-time
             text=True,
             timeout=contract.timeout_s,
@@ -353,7 +358,7 @@ The OpenCode adapter is the default harness. It translates step contracts into O
 ### Agent Profile Mapping
 
 | StepContract.permissions | Permissions | OpenCode Agent Config |
-|---|---|---|
+| --- | --- | --- |
 | "read-only" | `edit: deny`, `bash: deny` (except known scripts), `webfetch: deny` | contextsmith-auditor |
 | "edit" | `edit: allow`, `bash: allow`, `external_directory: deny` | contextsmith-builder |
 | "external-action" | `edit: allow`, `bash: allow`, `external_directory: allow` | contextsmith-migrator |
@@ -363,7 +368,7 @@ The OpenCode adapter is the default harness. It translates step contracts into O
 The adapter constructs the OpenCode invocation. **Verified against OpenCode CLI (2026-06-12):**
 
 | Assumed Flag | Actual Flag | Status |
-|---|---|---|
+| --- | --- | --- |
 | `--agent` | `--agent` | ✅ Exists |
 | `--model` | `--model` / `-m` | ✅ Exists |
 | `--prompt-file` | `--file` / `-f` | ⚠️ Different name, attaches file |
@@ -372,6 +377,7 @@ The adapter constructs the OpenCode invocation. **Verified against OpenCode CLI 
 | `--format json` | `--format json` | ✅ Exists (on `opencode run`) |
 
 **Note:** `--max-steps` does not exist in OpenCode. Step limiting must be done via:
+
 - Agent config `steps` field (in `.opencode/agents/*.md`)
 - Prompt instructions ("stop after N tool calls")
 - Timeout enforcement in the adapter
@@ -494,6 +500,7 @@ A harness crash must never corrupt orchestrator state. The checkpoint file is wr
 ### No Silent Failures
 
 Every error path produces:
+
 1. A log entry (structured, timestamped)
 2. An error entry in checkpoint.json
 3. A STATUS.md update with the blocking condition

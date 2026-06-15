@@ -48,7 +48,6 @@ Usually returns a revised skill or staged skill package, semantic diff, referenc
 - `--executor-profile <profile>`
 - `--focus implementation-plan|test-quality|runtime-stability|agents-md|prompt|skill`
 
-
 ## Additional Controls
 
 - `--review-config` / `--preview-config`: show inferred parameters before important work.

@@ -37,6 +37,7 @@ All dependencies available
 **Setup and Validation Commands:**
 
 ```bash
+
 # Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -58,6 +59,7 @@ uv run pytest tests/ -v
 **Prerequisites:**
 
 ```bash
+
 # Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -74,6 +76,7 @@ uv run ruff --version
 **Validation Commands:**
 
 ```bash
+
 # Validate skills
 uv run python scripts/validate_skills.py
 

@@ -39,14 +39,17 @@ Do not perform cosmetic refactors or expand scope.
 ## Report Format
 
 ```markdown
+
 # Phase Code Review
 
 ## Scope
+
 - Phase:
 - Files reviewed:
 - Validation run:
 
 ## Summary
+
 - Overall assessment:
 - Main risk:
 - Recommendation: proceed | fix first | needs human review
@@ -54,26 +57,33 @@ Do not perform cosmetic refactors or expand scope.
 ## Findings
 
 ### Must Fix
+
 - ...
 
 ### Should Fix
+
 - ...
 
 ### Notes for Later
+
 - ...
 
 ## Test Quality
+
 - Baseline tests:
 - Edge cases:
 - Missing tests:
 - Weak assertions:
 
 ## Improvements Applied
+
 - ...
 
 ## Remaining Risks
+
 - ...
 
 ## User Learning Notes
+
 - ...
 ```

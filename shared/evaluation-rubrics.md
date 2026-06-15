@@ -50,6 +50,7 @@ Grade whether the artifact handles upstream tool/skill contributions correctly:
 - resolves workflow collisions
 - avoids duplicate safeguards
 - respects valid domain-specific artifacts
+
 ## Additional v1.4.0 Rubrics
 
 Add these A-F categories when relevant:

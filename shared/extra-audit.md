@@ -81,28 +81,34 @@ Every extra-audit step writes `EXTRA_AUDIT.md` to the task state directory. This
 The orchestrator merges `.new` segments (see `orchestrator.orchestrator:PROTECTED_FILES`). Agents should write `EXTRA_AUDIT.md.new` instead of appending directly.
 
 ```markdown
+
 ## Extra Audit — YYYY-MM-DD
 
 ### Baseline Status
+
 - Validation: pass / partial / fail
 - Plan accuracy: plan-is-current / plan-needs-update / plan-is-blocking
 
 ### Trajectory Assessment
+
 - Current trajectory: converging / drifting / needs-rescoping
 - Key observation:
 
 ### Findings
 
 | Finding | Lens | Severity | Action | Already in PLAN? |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 
 ### Risks Not Yet Addressed
+
 - ...
 
 ### What Would a Fresh Agent Need?
+
 - ...
 
 ### Tradeoffs Accepted
+
 - What was knowingly deferred or left imperfect, and why that was the right call.
 ```
 
@@ -120,15 +126,24 @@ extra_audit:
   max_retries: 2
   timeout_s: 300
   transitions:
+
     - condition: pass
+
       target: closeout
+
     - condition: fail
+
       target: extra_audit
+
     - condition: max_retries
+
       target: blocked
   expected_outputs:
+
     - EXTRA_AUDIT.md
+
   inputs:
+
     - AUDIT_REPORT.md
     - PLAN.md
     - STATUS.md

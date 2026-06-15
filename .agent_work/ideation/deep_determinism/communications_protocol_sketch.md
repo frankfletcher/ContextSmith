@@ -37,6 +37,7 @@ controls:
   ralph_required: true
   checkpoint_before_run: true
 expected_outputs:
+
   - audit.md
   - AUDIT_REPORT.md
   - STATUS.md
@@ -57,10 +58,12 @@ Suggested payload:
 ```yaml
 role: contextsmith-auditor
 instructions:
+
   - read STATUS.md first
   - follow NEXT_PROMPT.md
   - write output to audit.md
   - do not skip validation
+
 limits:
   permissions: read-only
   step_cap: 10
@@ -101,14 +104,18 @@ step_id: audit-03
 status: fail
 reason: validation_failed
 artifacts:
+
   - audit.md
   - PHASE_LOG.md
   - CHECKLIST.md
   - SUMMARY.md
+
 validation:
   passed: false
   failures:
+
     - missing required field: validation_status
+
 checkpoint:
   written: true
   path: .agent_work/.../checkpoint.json
@@ -186,6 +193,7 @@ The open choices from the initial sketch are resolved as follows:
 Orchestrator and harness communicate via in-process Python method calls, not stdin/stdout JSON or file-based messaging. The `HarnessAdapter` abstract class defines `execute(contract, state_dir) -> HarnessResult` as the sole interface.
 
 Rationale:
+
 - The orchestrator and harness adapter share a process boundary for simplicity
 - The adapter translates to whatever transport the underlying harness needs (subprocess, HTTP, etc.)
 - File-based messaging would add latency and complexity without benefit at this layer
@@ -387,19 +395,23 @@ Used when the harness itself encounters an error (not the agent):
 2. Orchestrator calls harness_adapter.execute(step_request, state_dir)
 
 3. Harness adapter:
+
    a. Validates that step_request has all required fields → reject if missing
    b. Translates permissions into harness-native controls
    c. Launches agent subprocess with:
+
       - Agent profile (from step_request.agent_profile)
       - Input files (from step_request.inputs, read from disk)
       - Timeout (subprocess.run(timeout=step_request.timeout_s))
       - Step cap (if supported by harness)
+
    d. Waits for subprocess completion
    e. Scans state_dir for expected_outputs
    f. Runs post-execution validation (file checks, schema checks)
    g. Returns HarnessResult
 
 4. Orchestrator:
+
    a. Checks HarnessResult.status
    b. If fail: increments retry counter, checks max_retries
    c. Applies state transition rules to determine next step
@@ -418,6 +430,7 @@ Used when the harness itself encounters an error (not the agent):
 4. subprocess.TimeoutExpired raised
 5. Adapter catches it, raises HarnessTimeoutError
 6. Orchestrator catches HarnessTimeoutError:
+
    a. Kills subprocess (proc.kill())
    b. Logs timeout event
    c. Records error in checkpoint.json errors array
@@ -434,10 +447,12 @@ Used when the harness itself encounters an error (not the agent):
 3. Orchestrator checks phase_started and last_updated timestamps
 4. If gap > 5 minutes → assumes crash
 5. Orchestrator determines resume action:
+
    a. If phase was "init", "plan", "closeout" → retry from start (idempotent)
    b. If phase was "execute", "fix", "ralph_revise" → retry from start (non-idempotent,
       previous partial output is discarded)
    c. If phase was "audit", "validate", "ralph_critique" → retry from start (read-only, safe)
+
 6. Orchestrator updates STATUS.md, checkpoint.json to reflect retry state
 7. Returns exit code 2 (continue)
 ```
@@ -461,7 +476,7 @@ Both orchestrator and harness enforce these rules on every message:
 ## Communication Contract Summary
 
 | Aspect | Decision |
-|--------|----------|
+| -------- | ---------- |
 | User entry point | Router skill in OpenCode (user never leaves harness) |
 | Orchestrator entry | Router calls `python -m orchestrator` via bash tool |
 | Transport | In-process Python method call (orchestrator ↔ harness) |

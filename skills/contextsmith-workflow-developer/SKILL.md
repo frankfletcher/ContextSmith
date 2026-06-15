@@ -24,7 +24,7 @@ The skill delegates to `contextsmith-orchestrator` with the meta-config at `work
 The meta-config phases:
 
 | Phase | What Happens |
-|-------|-------------|
+| ------- | ------------- |
 | `gather_requirements` | Ask 4 structured questions about domain, task, inputs, and success criteria |
 | `select_domain_template` | Pick the best domain template from references/domain-templates/ |
 | `customize_config` | Fill in the selected template with gathered requirements |
@@ -46,6 +46,7 @@ The orchestrator produces:
 ## After Generation
 
 After generating the config, offer:
+
 1. **Run now** — invoke `contextsmith-orchestrator` with the new config
 2. **Edit first** — present the config for manual editing
 3. **Save only** — write files to task-state directory, user runs later
@@ -53,7 +54,7 @@ After generating the config, offer:
 ## Reference Loading
 
 | Need | Read |
-|------|------|
+| ------ | ------ |
 | Meta-config details | `workflow_config.yaml` |
 | Domain templates | `references/domain-templates/<domain>.yaml` |
 | Config schema detail | `schemas/workflow_config.schema.json` |

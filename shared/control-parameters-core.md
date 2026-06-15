@@ -15,6 +15,7 @@ Use this core reference for routine parsing. Use `control-parameters.md` only fo
 **Confirmation before execution is the default.** Every skill that performs file changes, multi-step work, or side effects must summarize parameters and plan, then ask the user to confirm before proceeding.
 
 Opt-out:
+
 - `--mode yolo` — skip all confirmations
 - `--no-preview-config` — skip the parameter/plan preview
 - `--interaction silent` — ask only when blocked or unsafe
@@ -25,7 +26,7 @@ See `run-configuration-preview.md` for the confirmation format and rules.
 ## Core Aliases
 
 | Alias | Normalized control |
-|---|---|
+| --- | --- |
 | `--ctx` | `--context-length` |
 | `--no-ralph` | `--ralph 0` |
 | `silent-unless-blocked` | `silent` |

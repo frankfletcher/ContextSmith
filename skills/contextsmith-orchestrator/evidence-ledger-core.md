@@ -28,7 +28,9 @@ If any required item is `missing_evidence`, the run is not complete.
 ## Compact Final Evidence
 
 ```markdown
+
 ## Evidence
+
 - Parameters: ...
 - Validation: passed|failed|blocked|not_required (...)
 - Self-Audit: passed|issues_found|blocked|not_required

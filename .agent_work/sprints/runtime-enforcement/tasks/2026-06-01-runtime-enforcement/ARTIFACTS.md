@@ -1,6 +1,7 @@
 # Artifacts: Runtime Enforcement for ContextSmith Skills
 
 ## Artifact Manifest
+
 - artifact_type: artifact-index
 - parent_task: TASK.md
 - status: Phase 8C.5 complete (Implementation Plan Creation Example)
@@ -8,7 +9,7 @@
 
 ## Task-State Files
 | File | Purpose | Status |
-|---|---|---|
+| --- | --- | --- |
 | `TASK.md` | Objective, scope, constraints | Created |
 | `PLAN.md` | Phased implementation plan | Created |
 | `STATUS.md` | Current phase and next action | Created |
@@ -21,7 +22,7 @@
 
 ## Future Implementation Artifacts
 | Artifact | Expected Phase | Status |
-|---|---:|---|
+| --- | ---: | --- |
 | Packaging discovery notes | 0 | Complete — recorded in CONTEXT.md and DECISIONS.md |
 | Runtime surface decision matrix | 0.5 | Complete — recorded in DECISIONS.md |
 | Runtime dependency policy | 0.5 | Complete — stdlib-only JSON for the first slice; YAML deferred, recorded in DECISIONS.md |
@@ -65,6 +66,7 @@
 | Implementation plan creation example | 8C.5 | Complete — Example 5 in `docs/examples/EXAMPLES_LIBRARY.md` |
 
 ## Validation Evidence
+
 - 2026-06-01: `python scripts/validate_skills.py` passed. Output reported all 7 skills OK and `Validation complete`.
 - 2026-06-01: Implementation plan audit completed; plan refined to add context contracts, split rollout, token-budget validation, recovery rules, and a distribution decision gate.
 - 2026-06-01: Post-refinement validation passed: `python scripts/validate_skills.py` and `python scripts/token_budget.py --strict`.
@@ -124,7 +126,7 @@
 
 ## Phase 3G Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `runtime/domain_packs/general_fallback.json` | Corrected fallback trigger to wildcard `*` |
 | `tests/fixtures/domain_pack_general_fallback.json` | Matched fixture to runtime pack wildcard trigger |
 | `runtime/validator.py` | Added schema rule 10 enforcement for `general_fallback` |
@@ -132,13 +134,13 @@
 
 ## Phase 4A Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `skills/contextsmith-run/SKILL.md` | Added "Runtime Validators" subsection to Validation Gate, "Runtime Artifacts" subsection to Evidence Ledger, runtime validation step 9 to Execution Workflow |
 | `skills/contextsmith-run/reference_manifest.yml` | Added 10 local entries for runtime files (validator.py, cli.py, __init__.py, 6 domain pack JSON files) |
 
 ## Phase 8B Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `scripts/sync_shared_refs.py` | Fixed ISSUE-1: preserves directory structure for `local: true` entries; added `--repo-root` CLI option |
 | `tests/test_sync_shared_refs.py` | NEW — 3 regression tests for directory structure preservation |
 | `skills/contextsmith-prompt-engineer/reference_manifest.yml` | Added 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs) |
@@ -147,61 +149,62 @@
 
 ## Phase 8B1 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `skills/contextsmith-skill-engineer/reference_manifest.yml` | Added 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs) |
 | `skills/contextsmith-skill-engineer/SKILL.md` | Added runtime validation section (step 9) with CLI reference |
 | `scripts/token_budget.py` | Increased contextsmith-skill-engineer budget from 3200 to 3400 |
 
 ## Phase 8B2 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `skills/contextsmith-instruction-engineer/reference_manifest.yml` | Added 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs) |
 | `skills/contextsmith-instruction-engineer/SKILL.md` | Added runtime validation section (step 8) with CLI reference |
 | `scripts/token_budget.py` | Increased contextsmith-instruction-engineer budget from 3400 to 3600 |
 
 ## Phase 8B3 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `skills/contextsmith-skill-migrator/reference_manifest.yml` | Added 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs) |
 | `skills/contextsmith-skill-migrator/SKILL.md` | Added runtime validation section (step 8) with CLI reference |
 
 ## Phase 8B4 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `skills/contextsmith-agent-evaluator/reference_manifest.yml` | Added 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs) |
 | `skills/contextsmith-agent-evaluator/SKILL.md` | Added runtime validation section (step 8) with CLI reference |
 | `scripts/token_budget.py` | Increased contextsmith-agent-evaluator budget from 1900 to 2100 |
 
 ## Phase 8C.1 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `docs/workflows/RUN_TASK_STATE_HANDOFF.md` | NEW — workflow guide for resuming tasks from NEXT_PROMPT.md handoffs (99 lines) |
 | `docs/workflows/README.md` | Added Run a Task-State Handoff entry |
 
 ## Phase 8C.2 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `docs/workflows/SCHEDULE_WITH_APPROVAL_GATES.md` | NEW — workflow guide for scheduling with approval gates (95 lines) |
 | `docs/workflows/README.md` | Added Schedule with Approval Gates entry |
 
 ## Phase 8C.3 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `docs/workflows/COMPARE_TRAVEL_OPTIONS.md` | NEW — workflow guide for comparing travel options without purchasing (106 lines) |
 | `docs/workflows/README.md` | Added Compare Travel Options entry |
 
 ## Phase 8C.4 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `docs/examples/EXAMPLES_LIBRARY.md` | Added Example 4 (Prompt Engineering) with Status, Scenario, Input, Prompt, What happens, Expected output, and Recovery; updated TOC; removed prompt engineering from Deferred Examples |
 
 ## Phase 8C.5 Changed Artifacts
 | File | Change |
-|---|---|
+| --- | --- |
 | `docs/examples/EXAMPLES_LIBRARY.md` | Example 5 (Implementation Plan Creation) present with Status, Scenario, Input, Prompt, What happens, Expected output, and Recovery; Deferred Examples correctly excludes implementation plan creation (3 remain) |
 
 ## Phase 8B1-8B4 Plan — ALL COMPLETE
 Phase 8B1-8B4 each integrated runtime validation into one deferred skill, following the Phase 8B pattern:
+
 - Phase 8B1: `contextsmith-skill-engineer` — COMPLETE
 - Phase 8B2: `contextsmith-instruction-engineer` — COMPLETE
 - Phase 8B3: `contextsmith-skill-migrator` — COMPLETE
@@ -212,36 +215,42 @@ Each sub-phase added 10 runtime file entries to `reference_manifest.yml`, added 
 ## Phase 8C Documentation Workstream
 
 ### Phase 8C.1: Run Task-State Handoff Workflow Doc
+
 - **Artifact**: `docs/workflows/RUN_TASK_STATE_HANDOFF.md` (99 lines)
 - **Status**: Complete — created workflow doc, updated README, validations pass, Ralph loop 2 iterations
 - **Pattern**: Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md structure
 - **Key Content**: 5-step workflow for resuming tasks from NEXT_PROMPT.md handoffs
 
 ### Phase 8C.2: Schedule with Approval Gates Workflow Doc
+
 - **Artifact**: `docs/workflows/SCHEDULE_WITH_APPROVAL_GATES.md` (95 lines)
 - **Status**: Complete — created workflow doc, updated README, validations pass, Ralph loop 2 iterations
 - **Pattern**: Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md structure with approval gate specifics
 - **Key Content**: 5-step workflow for scheduling tasks requiring human approval gates, references `shared/side-effect-matrix.md`
 
 ### Phase 8C.3: Compare Travel Options Workflow Doc
+
 - **Artifact**: `docs/workflows/COMPARE_TRAVEL_OPTIONS.md` (106 lines)
 - **Status**: Complete — created workflow doc, updated README, validations pass, Ralph loop 2 iterations
 - **Pattern**: Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md structure with travel/purchase domain specifics
 - **Key Content**: 5-step workflow for comparing travel options without purchasing, references `shared/side-effect-matrix.md`
 
 ### Phase 8C.4: Prompt Engineering Example
+
 - **Artifact**: `docs/examples/EXAMPLES_LIBRARY.md` (Example 4 added)
 - **Status**: Complete — added example, updated TOC, removed from Deferred, validations pass, Ralph loop 2 iterations
 - **Pattern**: Follows established example pattern with Status, Scenario, Input, Prompt, What happens, Expected output, Recovery
 - **Key Content**: contextsmith-prompt-engineer invocation with --target-profile, --domain, --ralph flags; expected output shows Engineering Metadata, System Prompt, User Prompt Template, Context Strategy, Validation and Test Plan, Ralph Summary, Risks
 
 ### Phase 8C.5: Implementation Plan Creation Example
+
 - **Artifact**: `docs/examples/EXAMPLES_LIBRARY.md` (Example 5)
 - **Status**: Complete — verified example pattern compliance, validations pass, Ralph loop 2 iterations
 - **Pattern**: Follows established example pattern with Status, Scenario, Input, Prompt, What happens, Expected output, Recovery
 - **Key Content**: contextsmith-instruction-engineer invocation for phased plan creation; expected output shows Detected Project Profile, Changes Made, Safeguards, Validation Notes, Ralph Summary, Risks, Files Written
 
 ## Phase 8C Documentation Summary
+
 - Total workflow docs created: 3 (8C.1, 8C.2, 8C.3)
 - Total examples created: 2 (8C.4, 8C.5)
 - Total lines: 300 (under 130 per doc limit)
@@ -251,7 +260,7 @@ Each sub-phase added 10 runtime file entries to `reference_manifest.yml`, added 
 
 ## Phase 0 Files Inspected
 | File | Purpose |
-|---|---|
+| --- | --- |
 | `scripts/build_release.py` | Release pipeline: sync, validate, bundle, individual packaging |
 | `scripts/package_skill.sh` | Individual skill zip: stage, manifest, checksum, zip |
 | `scripts/sync_shared_refs.py` | Reference sync: manifest-driven copy to staging |

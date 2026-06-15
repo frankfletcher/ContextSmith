@@ -159,7 +159,6 @@ Please ask before making changes.
 
 The skill should not blindly YOLO. It should ask one concise clarification question or default to the safer review-gate behavior for file changes.
 
-
 ## Run Configuration Preview
 
 Use `--review-config` or `--preview-config` when you want ContextSmith to show inferred parameters before it proceeds. Use `--no-review-config` when you want to skip that preview for low-risk work.

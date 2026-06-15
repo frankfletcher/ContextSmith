@@ -1,9 +1,11 @@
 # ARTIFACTS.md
 
 ## Files to Create
+
 - `schemas/artifact_schemas.yaml` - artifact schema registry (PLAN.md with phase_tree, STATUS.md with Current Sub-phase)
 
 ## Files to Modify
+
 - `orchestrator/state_reader.py` - added _parse_phase_tree(), _parse_flat_phases(), _calc_completion(); updated read_plan() and read_status()
 - `orchestrator/validators.py` - added validate_phase_tree_structure(), validate_plan_phase_order()
 - `orchestrator/step_compiler.py` - added _extract_subphase_budget(), _name_matches(); updated compile_step_contract() to accept current_subphase
@@ -14,12 +16,15 @@
 - `tests/test_step_compiler.py` - added TestExtractSubphaseBudget
 
 ## Files Pending
+
 - `docs/reference/ARTIFACT_SCHEMAS.md` - documentation
 
 ## Files Completed
+
 - `schemas/workflow_config.schema.json` - added artifact_schemas extension with ArtifactSchemaOverride
 
 ## Commands to Run
+
 - `uv run python scripts/validate_skills.py`
 - `uv run ruff check orchestrator/ --select E,F,W,I`
 - `uv run ruff format orchestrator/ --check`

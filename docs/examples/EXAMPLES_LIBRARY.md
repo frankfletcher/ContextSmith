@@ -28,6 +28,7 @@ Practical examples you can copy, adapt, and compare. Each example shows the inpu
 **Input:** A task directory with `STATUS.md`, `PLAN.md`, `CONTEXT.md`, and `NEXT_PROMPT.md`.
 
 **Prompt:**
+
 ```
 Run the prompt in this file:
 .agent_work/sprints/my-project/tasks/2026-06-01-setup/NEXT_PROMPT.md
@@ -35,6 +36,7 @@ Run the prompt in this file:
 ```
 
 **What happens:**
+
 1. The agent reads `STATUS.md` to determine the current phase.
 2. The agent reads `PLAN.md` for the phase requirements.
 3. The agent reads `CONTEXT.md` for constraints and known facts.
@@ -45,7 +47,9 @@ Run the prompt in this file:
 8. The agent updates task-state files and generates the next `NEXT_PROMPT.md`.
 
 **Expected output:**
+
 ```
+
 ## Result
 Phase 2A (Validator Core) complete. Created runtime/validator.py with 6 validators.
 26 pytest tests pass.
@@ -76,47 +80,56 @@ Phase 2B (Domain Pack Validator) is next.
 **Input:** A JSON artifact file and a domain pack.
 
 **Command — validate a domain pack itself:**
+
 ```bash
 python -m runtime.cli domain-pack runtime/domain_packs/software_engineering.json
 ```
 
 **Expected output:**
+
 ```
 PASS  runtime/domain_packs/software_engineering.json
 ```
 
 **Command — validate a phase contract:**
+
 ```bash
 python -m runtime.cli phase-contract tests/fixtures/phase_contract_good.json
 ```
 
 **Expected output:**
+
 ```
 PASS  tests/fixtures/phase_contract_good.json
 ```
 
 **Command — validate an evidence ledger:**
+
 ```bash
 python -m runtime.cli evidence tests/fixtures/evidence_ledger_good.json
 ```
 
 **Expected output:**
+
 ```
 PASS  tests/fixtures/evidence_ledger_good.json
 ```
 
 **When validation fails:**
+
 ```bash
 python -m runtime.cli phase-contract tests/fixtures/phase_contract_bad_missing_fields.json
 ```
 
 **Expected output:**
+
 ```
 FAIL  tests/fixtures/phase_contract_bad_missing_fields.json
   Rule 1: artifact_type must be "phase_contract" — got "wrong_type"
 ```
 
 **Available domain packs:**
+
 | Domain | Use When |
 | --- | --- |
 | `software_engineering` | Coding, testing, refactoring |
@@ -135,12 +148,14 @@ FAIL  tests/fixtures/phase_contract_bad_missing_fields.json
 **Scenario:** A phase fails validation. Instead of continuing blindly, the workflow records the failure and stops for human input.
 
 **What triggers recovery:**
+
 - Validation command fails and cannot be fixed within the phase scope.
 - Required context is missing or inconsistent.
 - Side effects exceed permission boundaries.
 - The phase hits a hard stop rule.
 
 **Recovery procedure (from NEXT_PROMPT.md):**
+
 1. Update `STATUS.md` with the blocker and current state.
 2. Update `PHASE_LOG.md` with the failure and what was attempted.
 3. Update `NEXT_PROMPT.md` with recovery instructions.
@@ -151,7 +166,9 @@ FAIL  tests/fixtures/phase_contract_bad_missing_fields.json
 The agent attempts Phase 3C but `python -m pytest tests/ -v` reports 2 failures.
 
 **Agent updates `STATUS.md`:**
+
 ```markdown
+
 ## Current Phase
 Phase 3C blocked. pytest reports 2 failures in test_validator.py.
 Blocker: Rule 9 test expects approval_gates to match external_action_boundaries,
@@ -162,17 +179,23 @@ Fix the scheduling domain pack, then re-run Phase 3C.
 ```
 
 **Agent updates `PHASE_LOG.md`:**
+
 ```markdown
+
 ### Phase 3C — Blocked (2026-06-02)
+
 - Attempted: created scheduling domain pack and fixture, added validator tests
 - Result: pytest fails — 2 tests in TestDomainPackScheduling
 - Root cause: approval_gates entry "send_calendar_invite" has no matching
+
   external_action_boundaries entry
+
 - Action: stop and await human input
 ```
 
 **Human fix:**
 Edit `runtime/domain_packs/scheduling.json` to add the missing `external_action_boundaries` entry, then resume:
+
 ```
 Run the prompt in this file:
 .agent_work/sprints/my-project/tasks/2026-06-01-my-task/NEXT_PROMPT.md
@@ -190,12 +213,14 @@ Run the prompt in this file:
 **Input:** Task description, target model profile, and domain.
 
 **Prompt:**
+
 ```
 Create a model-aware prompt for code review assistance.
 --target-profile qwen36 --domain software-engineering --ralph 2
 ```
 
 **What happens:**
+
 1. The agent classifies the request: target model, domain, source mode, and side-effect tier.
 2. The agent checks prompt-control feasibility for the requested improvements.
 3. The agent selects relevant references from the skill's reference library.
@@ -205,12 +230,15 @@ Create a model-aware prompt for code review assistance.
 7. The agent delivers the prompt package with an educational report.
 
 **Expected output:**
+
 ```
+
 ## Engineering Metadata
 Target: qwen36 | Domain: software-engineering | Mode: guided
 
 ## System Prompt
 You are a code review assistant for Python projects. For each pull request:
+
 1. Identify logic errors, security issues, and performance concerns
 2. Reference specific line numbers and file paths
 3. Suggest concrete fixes with code diffs
@@ -228,6 +256,7 @@ Source mode: file-based. Load only changed files and test fixtures.
 Re-anchor after each review section to maintain file context.
 
 ## Validation and Test Plan
+
 - Review output includes line references for all findings
 - No exposed chain-of-thought in review comments
 - Risk classifications match side-effect matrix tiers
@@ -253,12 +282,14 @@ Prompt is ready for use. Test with actual PR diffs before production use.
 **Input:** Project description, scope, and target model profile.
 
 **Prompt:**
+
 ```
 Create an implementation plan for migrating our Python project from unittest to pytest.
 --target-profile qwen36 --domain software-engineering --ralph 2
 ```
 
 **What happens:**
+
 1. The agent classifies the instruction target: implementation plan for a coding migration.
 2. The agent inspects the repository selectively — existing test files, build config, and instruction files.
 3. The agent scans existing safeguards to reuse or strengthen them rather than duplicate.
@@ -268,24 +299,29 @@ Create an implementation plan for migrating our Python project from unittest to 
 7. The agent runs 2 Ralph loop iterations to review and fix material defects in the plan.
 
 **Expected output:**
+
 ```
+
 ## Detected Project Profile
 Language: Python | Tests: unittest (42 files) | Framework: none
 Existing instruction files: AGENTS.md (loop safety present, no phase plan)
 
 ## Changes Made
+
 - Added phased implementation plan with 5 phases
 - Required task-state directory at .agent_work/sprints/migration/tasks/2026-06-03-pytest/
 - Added validation gates: pytest dry-run, coverage check, lint pass per phase
 - Added phase debrief and do-not-carry-forward notes
 
 ## Safeguards Reused / Strengthened / Added
+
 - Reused: existing loop-safety rules from AGENTS.md
 - Strengthened: Git safety now requires approval before branch deletion
 - Added: persistent task state with required artifact list
 - Added: phase closeout validation requiring test pass before advancement
 
 ## Validation Notes
+
 - All 5 phases have explicit stop rules and validation commands
 - Task-state directory structure matches persistent-task-state.md spec
 - Plan includes test strategy and phase code review gates
@@ -320,6 +356,7 @@ Plan assumes no third-party test fixtures with custom unittest subclasses.
 **Input:** A plan file (e.g., `PLAN.md`) or a task-state directory.
 
 **Prompt:**
+
 ```
 Audit the implementation plan at .agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/PLAN.md
 for completeness and small-model reliability.
@@ -327,6 +364,7 @@ for completeness and small-model reliability.
 ```
 
 **What happens:**
+
 1. The agent classifies the artifact as an implementation plan.
 2. The agent selects the target model profile (qwen36).
 3. The agent inspects the plan against rubric criteria (context contracts, phase budgets, validation gates, etc.).
@@ -334,42 +372,51 @@ for completeness and small-model reliability.
 5. The agent delivers the audit report with grades, strengths, weaknesses, and recommended fixes.
 
 **Expected output:**
+
 ```
+
 ## Summary Grade
 B+ (Good overall structure, some minor weaknesses in phase budgeting clarity).
 
 ## Strengths
+
 - Plan defines a clear universal protocol and domain packs.
 - Phase contracts include context budgets and stop rules.
 - Recovery procedure is well-defined.
 
 ## Weaknesses
+
 - Phase 0 discovery budget (78k) exceeds baseline estimate (40k-45k).
 - Some phase contracts lack explicit validation_output_reserve details.
 
 ## A-F Rubric
 | Dimension | Grade | Reason | Recommended Fix |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Context Strategy | A | Clear read order and session boundaries. | None. |
 | Persistent Task State | B+ | Required files listed, but some phases missing explicit validation_output_reserve. | Add validation_output_reserve to all implementation phases. |
 | Loop Safety | A | Ralph loop iterations required. | None. |
 | Git/File Safety | A | Approval boundaries defined. | None. |
 
 ## Loop / Git / Context Safety
+
 - Loop safety: Ralph loop iterations specified.
 - Git safety: Destructive operations require approval.
 - Context safety: Fresh session rules defined.
 
 ## Domain-Specific Risks
+
 - None identified for this coding domain plan.
 
 ## Duplicate or Conflicting Instructions
+
 - None identified.
 
 ## High-Risk Issues
+
 - Phase 0 budget estimation might be too low for complex discovery tasks.
 
 ## Suggested Next Action
+
 - Fix phase budget estimates and add validation_output_reserve to Phase 2A, 2B, 2C.
 - Re-run audit.
 ```
@@ -387,15 +434,19 @@ B+ (Good overall structure, some minor weaknesses in phase budgeting clarity).
 **Input:** Participants, time zones, duration, preferred dates.
 
 **Prompt:**
+
 ```
 Schedule a meeting with the following details:
+
 - Participants: Alice (EST), Bob (PST)
 - Duration: 1 hour
 - Preferred dates: Tomorrow 2-4pm EST, day after 10am-12pm EST
+
 --domain scheduling --ralph 2
 ```
 
 **What happens:**
+
 1. The agent classifies the request as a scheduling task.
 2. The agent loads the scheduling domain pack.
 3. The agent resolves time zones and finds candidate slots.
@@ -403,14 +454,18 @@ Schedule a meeting with the following details:
 5. The agent records sent confirmation evidence.
 
 **Expected output:**
+
 ```
+
 ## Candidate Slots
+
 - Tomorrow 2:00 PM - 3:00 PM EST (11:00 AM - 12:00 PM PST)
 - Tomorrow 3:00 PM - 4:00 PM EST (12:00 PM - 1:00 PM PST)
 - Day after 10:00 AM - 11:00 AM EST (7:00 AM - 8:00 AM PST)
 
 ## Approval Request
 Send calendar invite for Tomorrow 2:00 PM - 3:00 PM EST?
+
 - Participants: Alice (EST), Bob (PST)
 - Time zones resolved: EST, PST
 - Duration: 1 hour
@@ -418,6 +473,7 @@ Send calendar invite for Tomorrow 2:00 PM - 3:00 PM EST?
 
 ## Sent Confirmation
 Calendar invite sent for Tomorrow 2:00 PM - 3:00 PM EST.
+
 - Invite ID: 12345
 - Participants notified: Alice, Bob
 - Evidence: invite ID recorded
@@ -436,17 +492,21 @@ Calendar invite sent for Tomorrow 2:00 PM - 3:00 PM EST.
 **Input:** Dates, airports, passenger count, budget constraint.
 
 **Prompt:**
+
 ```
 Compare flight options for a business trip:
+
 - Departure: JFK (New York)
 - Arrival: LAX (Los Angeles)
 - Dates: 2026-06-15 to 2026-06-18
 - Passengers: 1
 - Budget: $500 max
+
 --domain travel_purchase --ralph 2
 ```
 
 **What happens:**
+
 1. The agent classifies the request as a travel comparison task.
 2. The agent loads the travel_purchase domain pack.
 3. The agent searches for available flights matching the criteria.
@@ -454,16 +514,19 @@ Compare flight options for a business trip:
 5. The agent presents a comparison table without implying purchase capability.
 
 **Expected output:**
+
 ```
+
 ## Flight Options Comparison
 
 | Airline | Departure | Arrival | Price | Fees | Refund Terms | Notes |
-|---------|-----------|---------|-------|------|--------------|-------|
+| --------- | ----------- | --------- | ------- | ------ | -------------- | ------- |
 | Delta | 2026-06-15 08:00 | 2026-06-15 11:00 | $420 | $35 | Non-refundable | Direct flight |
 | United | 2026-06-15 10:00 | 2026-06-15 13:00 | $380 | $45 | Refundable ($50 fee) | 1 stop |
 | American | 2026-06-15 14:00 | 2026-06-15 17:00 | $350 | $50 | Non-refundable | 1 stop |
 
 ## Residual Risk Disclosure
+
 - Prices are timestamped: 2026-06-04 10:30 UTC
 - Fees and baggage policies may change
 - No booking or purchase is implied
@@ -486,12 +549,14 @@ Option 1 (Delta) offers the best balance of price and convenience, but Option 3 
 **Input:** Existing SKILL.md file, target profile (e.g., generic-local).
 
 **Prompt:**
+
 ```
 Migrate the skill at skills/contextsmith-prompt-engineer/SKILL.md for small-model compatibility.
 --target-profile generic-local --ralph 2
 ```
 
 **What happens:**
+
 1. The agent classifies the request as a skill migration task.
 2. The agent analyzes the source skill's structure and content.
 3. The agent applies model profiles and context-aware workflows.
@@ -499,7 +564,9 @@ Migrate the skill at skills/contextsmith-prompt-engineer/SKILL.md for small-mode
 5. The agent validates the migrated skill against budget and validation constraints.
 
 **Expected output:**
+
 ```
+
 ## Migration Summary
 Source: skills/contextsmith-prompt-engineer/SKILL.md
 Target profile: generic-local
@@ -507,6 +574,7 @@ Line count: 279 (within 3000 line budget)
 Token count: 3797 (within 3800 token budget)
 
 ## Changes Made
+
 - Added target-profile metadata to frontmatter
 - Simplified complex workflows for small-model execution
 - Added explicit context budget constraints
@@ -514,6 +582,7 @@ Token count: 3797 (within 3800 token budget)
 - Optimized reference selection for local models
 
 ## Validation Results
+
 - `python scripts/validate_skills.py`: OK
 - `python scripts/token_budget.py --strict`: OK
 - Skill preserves source behavior: PASS
@@ -525,6 +594,7 @@ Iteration 1: tightened context budget constraints and added explicit reference s
 Iteration 2: no-op by evidence.
 
 ## Residual Risks
+
 - Some complex workflows may require further simplification for very small models
 - Recommendation: test with actual local model execution before production use
 ```
@@ -542,11 +612,13 @@ Iteration 2: no-op by evidence.
 **Input:** Domain name, triggers, required artifacts, validation gates, approval boundaries.
 
 **Command:**
+
 ```bash
 python -m runtime.cli domain-pack runtime/domain_packs/education.json
 ```
 
 **What happens:**
+
 1. The agent defines the domain name and triggers (e.g., "education", "lesson-planning").
 2. The agent lists required artifacts (e.g., `requirements_chain`, `phase_contract`).
 3. The agent defines validation gates (e.g., check audience level, learning objectives).
@@ -555,6 +627,7 @@ python -m runtime.cli domain-pack runtime/domain_packs/education.json
 6. The agent validates the domain pack using the validator CLI.
 
 **Expected output:**
+
 ```json
 {
   "domain_name": "education",
@@ -597,6 +670,7 @@ python -m runtime.cli domain-pack runtime/domain_packs/education.json
 ```
 
 **Validation Output:**
+
 ```
 PASS  runtime/domain_packs/education.json
 ```
@@ -614,12 +688,14 @@ PASS  runtime/domain_packs/education.json
 **Input:** An AGENTS.md file or agent workflow specification, target model profile.
 
 **Prompt:**
+
 ```
 Evaluate the agent workflow at AGENTS.md for small-model reliability and context safety.
 --target-profile qwen36 --domain software-engineering --ralph 2
 ```
 
 **What happens:**
+
 1. The agent classifies the artifact as an agent instruction file (AGENTS.md) and runs in audit-only mode (no file modifications).
 2. The agent selects the target model profile (qwen36) and detects the domain (software-engineering).
 3. The agent inspects the workflow against rubric criteria: context strategy, persistent task state, loop safety, Git/file safety, side-effect boundaries, and no exposed chain-of-thought.
@@ -629,17 +705,21 @@ Evaluate the agent workflow at AGENTS.md for small-model reliability and context
 7. The agent delivers the evaluation report with grades, strengths, weaknesses, and recommended fixes.
 
 **Expected output:**
+
 ```
+
 ## Summary Grade
 B+ (Good overall structure with clear safeguards. Minor weaknesses in context budget specification and state file requirements.)
 
 ## Strengths
+
 - Git safety rules are explicit and cover destructive operations.
 - Loop safety prevents repeated identical tool calls.
 - Side-effect tiers are defined with approval boundaries.
 - Coding standards reference PEP 8 and project conventions.
 
 ## Weaknesses
+
 - Context budget limits are not specified for tool-heavy phases.
 - Persistent task state section lists files but does not require compact factual content.
 - No explicit compaction trigger when context approaches limits.
@@ -647,7 +727,7 @@ B+ (Good overall structure with clear safeguards. Minor weaknesses in context bu
 
 ## A-F Rubric
 | Dimension | Grade | Reason | Recommended Fix |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Context Strategy | B | Read order defined but no budget limits or compaction trigger. | Add usable_phase_budget and compaction_trigger to tool-heavy phases. |
 | Persistent Task State | B+ | Required files listed but content guidelines vague. | Require compact factual state: paths, commands, results, decisions, next action. |
 | Loop Safety | A | Explicit no-repeat rule and max retry limit. | None. |
@@ -656,22 +736,27 @@ B+ (Good overall structure with clear safeguards. Minor weaknesses in context bu
 | No Chain-of-Thought | A | No exposed reasoning requirements. | None. |
 
 ## Loop / Git / Context Safety
+
 - Loop safety: Ralph loop iterations specified, no repeated identical calls.
 - Git safety: Destructive operations (reset --hard, rebase, force push) require approval.
 - Context safety: Fresh session rules for tool-heavy phases, but no explicit budget limit.
 
 ## Domain-Specific Risks
+
 - Software engineering: no explicit test strategy or code review gate for multi-file changes.
 - Recommendation: add pytest/lint validation requirement before phase closeout.
 
 ## Duplicate or Conflicting Instructions
+
 - None identified. Git safety rules are consistent across sections.
 
 ## High-Risk Issues
+
 - Missing NEXT_PROMPT.md handoff requirement could cause context drift in multi-phase workflows.
 - No explicit stop rule for when validation fails twice.
 
 ## Suggested Next Action
+
 - Add context budget limits and compaction triggers to tool-heavy phases.
 - Require NEXT_PROMPT.md generation at phase closeout for resumable workflows.
 - Add test strategy and code review gates for software engineering tasks.

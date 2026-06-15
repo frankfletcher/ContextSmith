@@ -1,6 +1,7 @@
 # Thin-Skill Writing Guide
 
 ## Artifact Manifest
+
 - artifact_type: reference-guide
 - phase: 4B
 - target_profile: qwen36
@@ -19,6 +20,7 @@ A thin skill is a routing contract, not an instruction manual. The SKILL.md tell
 **After (thin):** Reference the runtime artifact and let the validator check it.
 
 ```markdown
+
 ## Validation Gate
 When `runtime/` is available, use `python -m runtime.cli <subcommand> <artifact.json>`.
 Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`.
@@ -46,6 +48,7 @@ The validator owns the rules. The skill owns the instruction to call it.
 
 ```yaml
 - source: runtime/validator.py
+
   version: local
   required: true
   local: true

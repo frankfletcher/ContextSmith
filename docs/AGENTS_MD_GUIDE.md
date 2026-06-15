@@ -98,6 +98,7 @@ For data-science and ML repos, add guidance when relevant:
 A small but powerful block:
 
 ```markdown
+
 ## Agentic Loop Safety
 
 Do not execute identical consecutive tool calls.
@@ -105,6 +106,7 @@ Do not execute identical consecutive tool calls.
 If the same command, patch, edit, or generated code block appears twice without progress, stop repeating it.
 
 After a failure:
+
 1. inspect the error
 2. make at most one targeted correction
 3. if the same failure repeats, change strategy
@@ -116,6 +118,7 @@ After a failure:
 A useful compact block:
 
 ```markdown
+
 ## Git Safety
 
 Before editing, run `git status --short`.

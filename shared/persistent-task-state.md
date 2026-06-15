@@ -53,7 +53,8 @@ All state files that accumulate history (DECISIONS.md, PHASE_LOG.md, ARTIFACTS.m
 
 ## Downstream Prompt Requirements
 
-When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The downstream model must understand that the deliverable is not only a narrative plan. It is a reusable work package that a later execution session can resume without the original chat transcript.
+When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The downstream model must understand that the
+  deliverable is not only a narrative plan. It is a reusable work package that a later execution session can resume without the original chat transcript.
 
 The downstream prompt MUST require the agent to create or update a task-state directory at:
 
@@ -73,9 +74,11 @@ The downstream prompt MUST require these artifacts:
 - `PHASE_LOG.md`: compact phase entries
 - `NEXT_PROMPT.md`: short resume prompt for the next session or first execution phase
 
-The downstream prompt MUST tell the agent to write these files, not merely mention them. A section named "Persistent Task State" may summarize the directory and file responsibilities, but it is not a substitute for creating the files. If planning-only mode forbids code changes, state that task-state files are allowed planning artifacts and source-code edits remain forbidden.
+The downstream prompt MUST tell the agent to write these files, not merely mention them. A section named "Persistent Task State" may summarize the directory and file responsibilities, but it is not a substitute for creating the files. If planning-only mode forbids code changes, state that task-state files are allowed planning artifacts and
+  source-code edits remain forbidden.
 
-The downstream prompt MUST require each state file to stay compact. Do not paste raw logs, full source files, long transcripts, or hidden reasoning into state files. Store objective facts: paths, commands, validation results, decisions, constraints, skip rules, and the next actionable instruction. `NEXT_PROMPT.md` must be directly usable as the first prompt in a fresh session.
+The downstream prompt MUST require each state file to stay compact. Do not paste raw logs, full source files, long transcripts, or hidden reasoning into state files. Store objective facts: paths, commands, validation results, decisions, constraints, skip rules, and the next actionable instruction. `NEXT_PROMPT.md` must be directly usable as the
+  first prompt in a fresh session.
 
 For each planned phase, require the fields from `phased-planning.md`: goal, inputs, likely files/directories, explicit tasks, testing/validation steps, unit and integration tests where relevant, outputs/artifacts, validation checks, stop condition, and handoff notes. Require phase closeout to update the state files and refresh `NEXT_PROMPT.md`.
 

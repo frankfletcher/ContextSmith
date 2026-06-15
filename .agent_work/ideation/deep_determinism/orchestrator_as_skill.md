@@ -23,6 +23,7 @@ Path 2: Harness-aware (optimized)
 ```
 
 Both paths share:
+
 - Same workflow config format (`workflow_config.schema.json`)
 - Same artifact contracts (STATUS.md, PLAN.md, NEXT_PROMPT.md, etc.)
 - Same checkpoint.json format
@@ -42,19 +43,25 @@ The orchestrator SKILL.md instructs the agent to run a self-contained loop. The 
 2. Read STATUS.md → determine current phase
 3. Look up current phase in config → get step contract
 4. Execute the phase:
+
    a. Read NEXT_PROMPT.md for the bounded task
    b. Read CONTEXT.md for constraints and file map
    c. Do the work (you are the agent)
    d. Write expected artifacts per the step contract
+
 5. Validate artifacts:
+
    a. Check all expected_outputs exist and are non-empty
    b. Check required sections present per artifact templates
    c. If validation fails → record issue, retry (up to max_retries)
+
 6. Update state:
+
    a. Write checkpoint.json (phase, status, counters)
    b. Update STATUS.md (current phase, next action)
    c. Append to PHASE_LOG.md
    d. Update CHECKLIST.md
+
 7. Generate NEXT_PROMPT.md for the next phase
 8. If current phase has a transition to done → complete
 9. If current phase has a transition to blocked → stop, ask user
@@ -72,6 +79,7 @@ The agent validates its own artifacts against the workflow config. This is less 
 ### Termination
 
 The loop ends when:
+
 - The workflow reaches a `done` state
 - The workflow reaches a `blocked` state
 - The agent detects it has exceeded max_retries for a phase
@@ -92,6 +100,7 @@ These limitations are acceptable for the skill-only path. The tradeoff is: zero 
 This is the path described in `orchestrator_idea.md`, `orchestrator_and_harness.md`, and the rest of the deep_determinism specs. The orchestrator is a Python module. The harness adapter launches agents as subprocesses. RESULT.json is the structured result channel.
 
 The harness-aware path adds:
+
 - Deterministic loop (Python `while` loop, not LLM judgment)
 - External validation (validators run after the agent, not by the agent)
 - Crash recovery (checkpoint.json read at startup, resume from last valid state)
@@ -101,6 +110,7 @@ The harness-aware path adds:
 ### When to Use
 
 Use the harness-aware path when:
+
 - You have Python available
 - Your harness can run bash commands
 - You need deterministic execution
@@ -108,6 +118,7 @@ Use the harness-aware path when:
 - You need external validation
 
 Use the skill-only path when:
+
 - You don't have Python
 - Your harness can't run bash
 - You're pasting into a chat interface
@@ -133,6 +144,7 @@ Each companion has exactly three sections:
 ### Companion Template
 
 ```markdown
+
 # Harness: <name>
 
 ## Agent Launch
@@ -164,7 +176,7 @@ Describe how the agent communicates structured results.
 ### Existing Companions
 
 | Companion | File | Harness |
-|-----------|------|---------|
+| ----------- | ------ | --------- |
 | OpenCode | `references/harness-opencode.md` | OpenCode CLI with agent profiles, --max-steps, RESULT.json |
 | Cursor | `references/harness-cursor.md` | Cursor with .cursorrules, inline results |
 | Generic | `references/harness-generic.md` | Any harness, no optimizations, inline results |
@@ -174,16 +186,21 @@ Describe how the agent communicates structured results.
 The orchestrator skill loads companions conditionally:
 
 ```yaml
+
 # In reference_manifest.yml
+
 - source: shared/harness-opencode.md
+
   load: conditional
   when: harness is opencode or agent is running in OpenCode
 
 - source: shared/harness-cursor.md
+
   load: conditional
   when: harness is cursor or agent is running in Cursor
 
 - source: shared/harness-generic.md
+
   load: conditional
   when: harness is unknown or no other companion matches
 ```
@@ -199,6 +216,7 @@ The companion is loaded ONLY when the harness is detected or specified. If no co
 Copy the orchestrator skill into your agent's skills directory. No Python, no packages, no config.
 
 ```
+
 # For any harness
 Copy skills/contextsmith-orchestrator/ → your agent's skills directory
 Copy shared/ → your agent's references directory (optional, for richer context)
@@ -216,6 +234,7 @@ contextsmith init --harness opencode
 ```
 
 Creates:
+
 - `.contextsmith/` with default workflow configs
 - `.opencode/agents/contextsmith-*.md` with agent profiles
 - `.opencode/commands/contextsmith-*.md` with user-facing commands
@@ -228,6 +247,7 @@ Install the orchestrator as code, but use the skill for the router and workflow-
 
 ```bash
 pip install contextsmith
+
 # Use /contextsmith to generate a workflow config
 # Use python -m orchestrator to run it deterministically
 ```
@@ -239,7 +259,7 @@ Works in: OpenCode, Cursor, any harness with both skills and bash.
 ## What Each Installation Method Weighs
 
 | Component | Skill-only | Harness-optimized | Hybrid |
-|-----------|-----------|-------------------|--------|
+| ----------- | ----------- | ------------------- | -------- |
 | Orchestrator SKILL.md | ~200 lines | — | ~200 lines |
 | Harness companion | ~40 lines | — | ~40 lines |
 | Python orchestrator | — | ~500 lines | ~500 lines |
@@ -260,6 +280,7 @@ Works in: OpenCode, Cursor, any harness with both skills and bash.
 `contextsmith-run` is the current execution skill (342 lines). It has its own execution contract compilation, evidence ledger, validation gates, and Ralph loops. The orchestrator-as-skill replaces its internal loop logic with the workflow-config-driven loop.
 
 Two options:
+
 1. **contextsmith-run becomes the orchestrator skill**: Rewrite its loop to use workflow configs. Keep its existing references (execution-contract, evidence-ledger, domain-packs).
 2. **Orchestrator is a new skill, contextsmith-run delegates to it**: contextsmith-run detects when a workflow config exists and routes to the orchestrator. For simple prompts without configs, it uses its existing logic.
 
@@ -270,7 +291,7 @@ Option 2 is safer — it preserves backward compatibility for existing contextsm
 The router skill dispatches to the orchestrator instead of directly to contextsmith-run when a workflow config exists. The router's routing table becomes:
 
 | User Intent | Sub-Skill |
-|---|---|
+| --- | --- |
 | Execute a workflow config | `contextsmith-orchestrator` |
 | Execute a simple prompt | `contextsmith-run` |
 | Generate a workflow config | `contextsmith-workflow-developer` |

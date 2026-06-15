@@ -58,6 +58,7 @@ Run the prompt-engineering skill:
 Paste your prompt when asked.
 
 **Expected output:**
+
 - An optimized prompt tailored for the target model profile
 - A list of assumptions and what changed
 - A validation checklist you can use to test the result
@@ -98,6 +99,7 @@ For multi-step projects, the standard execution path goes through runtime enforc
 ```
 
 **Expected output after all three steps:**
+
 - A compact `AGENTS.md` with Git safety, loop safety, and project-specific standards
 - An audit report with strengths, weaknesses, and specific improvement recommendations
 - Execution results with validation evidence, self-audit, and Ralph summaries
@@ -120,6 +122,7 @@ Use this when a prompt is vague, bloated, or written for a frontier model but ne
 ```
 
 **Expected output:**
+
 - Optimized prompt or prompt package
 - Assumptions and model/context strategy
 - Validation checklist
@@ -140,6 +143,7 @@ Use this when you want better repo instructions for a coding agent.
 ```
 
 **Expected output:**
+
 - Repo scan summary
 - Recommended instruction blocks
 - Concise `AGENTS.md` with Git safety, loop safety, and coding standards
@@ -158,6 +162,7 @@ Use this when a plan was created by a strong model and you want to verify a smal
 ```
 
 **Expected output:**
+
 - Phase granularity grade
 - Atomicity grade
 - Context-fit grade
@@ -180,6 +185,7 @@ Use this when you want ContextSmith controls enforced during execution, not only
 ```
 
 **Expected output:**
+
 - Compact execution contract
 - Domain-specific refinement questions when choices matter
 - Validation evidence or a recorded blocker
@@ -200,6 +206,7 @@ Use this when tests exist but you suspect they are shallow or agent-generated fl
 ```
 
 **Expected output:**
+
 - Baseline behavior coverage review
 - Edge-case realism assessment
 - Assertion-strength review
@@ -220,6 +227,7 @@ Use this when you have a `SKILL.md` and want it optimized for local/open-weight 
 ```
 
 **Expected output:**
+
 - Source-contract extraction
 - Converted skill optimized for target profiles
 - Semantic diff showing what changed
@@ -241,6 +249,7 @@ Use this when you want to stage changes across a whole skills directory without 
 ```
 
 **Expected output:**
+
 - Inventory and risk classification
 - Backup of originals
 - Staging directory with manifest

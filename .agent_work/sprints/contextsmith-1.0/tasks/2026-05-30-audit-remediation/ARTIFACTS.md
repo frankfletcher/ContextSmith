@@ -1,9 +1,11 @@
 # Artifacts: ContextSmith v1.5.1 Audit Remediation
 
 ## Created Files
+
 - `shared/minimal-behavioral-contracts.md` - model-specific behavioral contracts for 6 model families
 
 ## Modified Files
+
 - `skills/local-model-prompt-engineer/SKILL.md` - extracted lines 113-135 to shared reference (291 -> 269 lines)
 - `shared/targeted-context-length.md` - added Phase-Specific Budgets section and Phase Types table
 - `shared/behavioral-contracts.md` - added cross-reference to minimal-behavioral-contracts.md
@@ -11,6 +13,7 @@
 - `CHANGELOG.md` - added v1.5.2 entry
 
 ## Commits
+
 - 17ae7b2 - fix: extract context budget section to shared reference (finding #1)
 - 4bdf198 - fix: add ml-heavy phase type with 80k budget (finding #2)
 - 6770a92 - fix: create minimal behavioral contracts for small models (finding #3)

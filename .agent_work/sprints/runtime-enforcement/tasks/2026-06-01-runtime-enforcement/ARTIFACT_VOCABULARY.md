@@ -1,6 +1,7 @@
 # Universal Artifact Vocabulary
 
 ## Artifact Manifest
+
 - artifact_type: artifact-vocabulary
 - parent_task: TASK.md
 - phase: 1A
@@ -18,6 +19,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 **Purpose:** Traces original user requirements through phases and evidence so nothing is silently dropped.
 
 **Required fields:**
+
 - `id` — unique requirement identifier
 - `source` — original text or path to source artifact
 - `domain` — domain label (e.g., `software`, `writing`, `scheduling`, `general`)
@@ -26,6 +28,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 - `status` — one of `pending`, `passed`, `blocked`, `waived_by_user`
 
 **Example:**
+
 ```json
 {
   "artifact_type": "requirements_chain",
@@ -45,6 +48,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 **Purpose:** Bounds a single execution phase so the model knows what it must accomplish and cannot drift.
 
 **Required fields:**
+
 - `phase_id` — unique phase identifier
 - `objective` — one-sentence description of what this phase must produce
 - `domain` — domain label matching the requirements chain
@@ -74,6 +78,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 **Purpose:** Encapsulates domain-specific validation gates and approval boundaries without making the core domain-specific.
 
 **Required fields:**
+
 - `domain` — domain name (e.g., `software`, `travel_purchase`, `general_fallback`)
 - `triggers` — conditions that activate this pack
 - `required_artifacts` — artifact types this domain requires
@@ -118,6 +123,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 **Purpose:** Records declared obligations and the evidence that satisfies them, so validators can check claims against proof.
 
 **Required fields:**
+
 - `id` — unique evidence identifier
 - `requirement_id` — requirement this evidence satisfies
 - `phase_id` — phase that produced this evidence
@@ -149,6 +155,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 **Purpose:** Documents authorization for irreversible, external, private, costly, or high-risk actions.
 
 **Required fields:**
+
 - `id` — unique approval identifier
 - `requirement_ids` — requirements this approval relates to
 - `action` — description of the action requiring approval
@@ -184,6 +191,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 **Purpose:** Validates that a phase is complete before advancing, recording what was done, what evidence exists, and whether it's safe to proceed.
 
 **Required fields:**
+
 - `phase_id` — phase being closed out
 - `objective_met` — boolean, true if the phase objective was achieved
 - `artifacts_produced` — list of output artifact paths or IDs

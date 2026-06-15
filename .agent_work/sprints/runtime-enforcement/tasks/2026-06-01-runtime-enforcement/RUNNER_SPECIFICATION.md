@@ -1,6 +1,7 @@
 # Runner Specification
 
 ## Artifact Manifest
+
 - artifact_type: specification
 - phase: 5E
 - target_profile: qwen36
@@ -13,7 +14,7 @@ The Runner is a read-only CLI tool that provides orchestration support for Conte
 ## Inputs
 
 | Input | Required | Source |
-|---|---|---|
+| --- | --- | --- |
 | `STATUS.md` | Yes | Current phase name, next action, blockers, validation state |
 | `PLAN.md` | Yes | Current phase block: goal, actions, validation, context contract |
 | `CONTEXT.md` | Yes | File map, constraints, validation commands, skip rules |
@@ -31,6 +32,7 @@ The Runner is a read-only CLI tool that provides orchestration support for Conte
 **Usage**: `python -m runtime.cli plan-status <task_dir>`
 
 **Output**: JSON with the following structure:
+
 ```json
 {
   "phase": "Phase 5E",
@@ -73,6 +75,7 @@ The Runner is a read-only CLI tool that provides orchestration support for Conte
 ### Read-Only Commands
 
 The runner provides two read-only commands:
+
 1. **plan-status**: Returns current phase and task state summary
 2. **next-gate**: Returns next validation gate or blocker information
 
@@ -81,6 +84,7 @@ Both commands are read-only and do not modify task state.
 ### Validation Dispatch
 
 The runner dispatches validation to the existing CLI validator:
+
 - Uses `runtime/validator.py` functions for artifact validation
 - Does not implement custom validation logic
 - Reuses existing domain packs and validation rules
@@ -88,6 +92,7 @@ The runner dispatches validation to the existing CLI validator:
 ### Output Format
 
 Both commands output JSON for programmatic consumption:
+
 - Human-readable when printed to stdout
 - Machine-parseable for integration with other tools
 - Compact and focused on essential information
@@ -133,6 +138,7 @@ def next_gate(task_dir: Path | str) -> Dict[str, Any]:
 ### Integration with CLI
 
 The runner commands are integrated into the existing `runtime/cli.py`:
+
 - Added `plan-status` and `next-gate` subcommands
 - Uses the same argparse infrastructure as validator commands
 - Returns JSON output for programmatic consumption

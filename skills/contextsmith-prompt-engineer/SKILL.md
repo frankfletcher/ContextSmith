@@ -39,7 +39,6 @@ Before finalizing, verify:
 - Did I preserve the downstream task as instructions inside the generated prompt?
 - Did I avoid solving, explaining, coding, summarizing, or analyzing the seed task myself?
 
-
 ## Help Mode
 
 For `help`, `describe`, `examples`, `modes`, `parameters`, `quickstart`, or CLI equivalents, return usage guidance from `references/help.md` and `references/help-mode.md`; do not run the normal workflow.
@@ -80,23 +79,17 @@ If the prompt was previously modified by another optimizer, skill, or generator,
 
 Use `references/instruction-precedence.md` when upstream artifacts conflict with user/project/model/domain requirements.
 
-
-
 ## Model Capability and Planner/Executor Profiles
 
 When the user provides `--target-capability`, `--planner-profile`, or `--executor-profile`, load `references/model-capability-tiers.md` and `references/planner-executor-workflows.md`.
 
 Use stronger/planner profiles for planning, audits, architecture, test strategy, and final review. Use smaller/executor profiles for atomic phase execution when the plan and task state are explicit.
 
-
-
 ## Education Level and Artifact Verbosity
 
 If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
 
 Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
-
-
 
 ## Implementation Plan, Test, and Phase Review Audits
 
@@ -112,10 +105,10 @@ When generating or auditing coding plans, tests, or phase workflows, use:
 
 For coding domains, every generated implementation plan must include test strategy, phase code review gates, phase debriefs, and plan-completion audit requirements. Tests must be audited for usefulness, not just pass/fail status.
 
-When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The deliverable is not only a narrative plan; it must be a reusable work package that a later execution session can resume without the original chat transcript.
+When the requested prompt will make a downstream agent create an implementation plan for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, compile the downstream prompt as a plan-package initializer unless the user explicitly asks for a single-file plan. The deliverable is not only a narrative plan; it must
+be a reusable work package that a later execution session can resume without the original chat transcript.
 
 > Task-state and phase planning requirements: see shared/persistent-task-state.md#downstream-prompt-requirements
-
 
 ## Run Configuration Preview
 
@@ -124,6 +117,7 @@ Before executing any file-changing work, summarize parameters and plan, then ask
 Use `references/run-configuration-preview.md` for the confirmation format.
 
 The confirmation must include:
+
 1. **Parameters table** — all selected flags with explanations for inferred values
 2. **Plan** — numbered steps of what will be done
 3. **Question** — structured question asking to proceed, modify, or see more detail
@@ -149,7 +143,7 @@ Determine active parameters from user input, then build an Artifact Manifest for
 Default parameter values:
 
 | Parameter | Default | Description |
-|-----------|---------|-------------|
+| ----------- | --------- | ------------- |
 | `--mode` | `guided` | Interaction mode (guided, yolo, deep, etc) |
 | `--target-profile` | `generic-local` (harness-derived when available) | Target model profile |
 | `--context-length` | `64k` | Targeted context window |
@@ -167,6 +161,7 @@ Building the manifest:
 6. Append custom contracts for domain-specific requirements not covered by canonical contracts
 
 All generated artifacts MUST include an `## Artifact Manifest` ATX heading section after the title, before any other content. output type: prompt, prompt package, plan, agent prompt, evaluator, JSON/schema, instruction file
+
 - whether this is one-shot, reusable, long-running, or agentic
 
 ### 2. Check Prompt-Control Feasibility
@@ -199,6 +194,7 @@ Load only relevant references:
 Return these sections unless the user requests otherwise:
 
 ```markdown
+
 ## Engineering Metadata
 ## Assumptions
 ## Target Model and Harness Profile
@@ -228,7 +224,8 @@ For tool-using prompts, add loop-safety rules. For coding/repo prompts, add Git/
 
 ### 6. Ralph Loop
 
-Run the declared Ralph iterations (`--ralph`, default `2`) unless explicitly disabled. Use `references/ralph-loop.md` for the loop contract, save iterations in the canonical location from `references/output-location.md`, grade each iteration A-F using `references/evaluation-rubrics.md`, and stop early only with recorded evidence that further iterations would be no-op or bloat.
+Run the declared Ralph iterations (`--ralph`, default `2`) unless explicitly disabled. Use `references/ralph-loop.md` for the loop contract, save iterations in the canonical location from `references/output-location.md`, grade each iteration A-F using `references/evaluation-rubrics.md`, and stop early only with recorded evidence that further
+iterations would be no-op or bloat.
 
 ### 7. Audit Before Delivery
 
@@ -245,13 +242,14 @@ Check:
 - instructions are de-duplicated and non-contradictory
 - validation/test plan exists for reusable prompts
 - declared parameters, required audits, and Ralph iterations have evidence or a blocker
- - educational report explains strengths, weaknesses, changes, and remaining risks
+- educational report explains strengths, weaknesses, changes, and remaining risks
 
 ### 8. Runtime Validation
 
 Validate generated artifacts using the runtime validator. This is the default — generated artifacts should pass structural validation before delivery.
 
 ```bash
+
 # Validate a requirements chain
 python -m runtime.cli requirements <artifact.json>
 
@@ -276,6 +274,7 @@ If the user asks about local model loops, server settings, speculative decoding,
 Deliver the optimized prompt package plus a concise report:
 
 ```markdown
+
 ## Original Strengths
 ## Original Weaknesses
 ## Changes Made
@@ -297,4 +296,5 @@ All generated artifacts MUST include an Artifact Manifest section per `reference
 
 ## Documentation Quality
 
-When generating or editing README material, user guides, educational reports, AGENTS.md explanations, or other reader-facing documentation, use `references/documentation-quality.md`. Keep generated artifacts factual, practical, and easy to act on. Avoid overused generated-writing patterns, unsupported claims, and unnecessary imperatives in user documentation.
+When generating or editing README material, user guides, educational reports, AGENTS.md explanations, or other reader-facing documentation, use `references/documentation-quality.md`. Keep generated artifacts factual, practical, and easy to act on. Avoid overused generated-writing patterns, unsupported claims, and unnecessary imperatives in user
+documentation.

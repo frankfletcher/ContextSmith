@@ -17,6 +17,7 @@ Use this workflow when you want to resume a multi-phase ContextSmith task from a
 ## When to Use This Workflow
 
 Use this workflow when:
+
 - Resuming a multi-phase task after an agent session ends
 - Handing off work to another agent or session
 - Continuing after an interruption or context limit
@@ -52,6 +53,7 @@ Run the prompt in this file:
 ```
 
 The agent will:
+
 1. Read `STATUS.md` for the current phase
 2. Read `PLAN.md` for phase requirements
 3. Read `CONTEXT.md` for constraints and known facts

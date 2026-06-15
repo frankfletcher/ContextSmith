@@ -45,7 +45,6 @@ Returns summary grade, strengths, weaknesses, A-F rubric table, high-risk issues
 - `--executor-profile <profile>`
 - `--focus implementation-plan|test-quality|runtime-stability|agents-md|prompt|skill`
 
-
 ## Additional Controls
 
 - `--review-config` / `--preview-config`: show inferred parameters before important work.

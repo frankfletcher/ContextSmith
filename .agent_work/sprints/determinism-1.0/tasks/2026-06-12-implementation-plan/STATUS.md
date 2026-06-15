@@ -28,6 +28,7 @@ done
 ## Deep Determinism Project — COMPLETE
 
 All 9 phases finished. The orchestrator supports deterministic workflow execution with:
+
 - Exit codes 0-5 (done, blocked, continue, config error, state inconsistency, internal error)
 - Configurable validation modes (strict, relaxed, none)
 - Pre-dispatch checkpointing with crash evidence

@@ -13,7 +13,7 @@ This guide walks through the eight main tasks you will encounter when using runt
 - [4. Validate a Phase](#4-validate-a-phase)
 - [5. Read Evidence and Phase Closeout](#5-read-evidence-and-phase-closeout)
 - [6. Fix a Failed Gate](#6-fix-a-failed-gate)
-- [7. Resume from NEXT_PROMPT.md](#7-resume-from-nextpromptmd)
+- [7. Resume from NEXT_PROMPT.md](#7-resume-from-next_promptmd)
 - [8. Know When Human Approval Is Required](#8-know-when-human-approval-is-required)
 - [Enforcement Levels](#enforcement-levels)
 - [Non-Coding Examples](#non-coding-examples)
@@ -25,6 +25,7 @@ Runtime enforcement adds validation gates to agent workflows. Each phase of work
 If you have not yet completed the [quickstart](../QUICKSTART.md), do that first. This guide assumes you can install ContextSmith and invoke a skill.
 
 **Available now:**
+
 - Validator CLI for checking artifacts
 - 6 domain packs (software engineering, writing, research, scheduling, travel/purchase, general fallback)
 - Next Prompt Compiler for generating phase handoff prompts
@@ -32,6 +33,7 @@ If you have not yet completed the [quickstart](../QUICKSTART.md), do that first.
 - Pilot integration in the `contextsmith-orchestrator` skill
 
 **Active development:**
+
 - MCP adapter for tool-based validation from any agent
 - Harness adapter for hard-blocking enforcement in supported environments
 - Full orchestrated runner with automated gate loops
@@ -49,6 +51,7 @@ Provide a task description and ask the agent to create a phased plan. The plan s
 - Expected output
 
 **Example prompt:**
+
 ```
 Create an implementation plan for migrating our AGENTS.md file
 to support Qwen3-32B model profiles. Break it into phases with
@@ -74,11 +77,13 @@ Domain packs define what validation gates apply to your workflow. ContextSmith s
 Most tasks match a single domain. If your task spans multiple domains, pick the one with the most restrictive approval boundaries. When unsure, `general_fallback` provides safe defaults.
 
 **Example -- scanning a domain pack:**
+
 ```bash
 python -m runtime.cli domain-pack runtime/domain_packs/software_engineering.json
 ```
 
 Expected output:
+
 ```
 PASS  runtime/domain_packs/software_engineering.json
 ```
@@ -91,12 +96,14 @@ Runtime enforcement works best when the agent executes one phase, validates, the
 Point the agent at your task directory and let it execute the current phase.
 
 **Example prompt:**
+
 ```
 Run the current phase from .agent_work/sprints/my-task/tasks/2026-06-01-my-task/
 Use contextsmith-orchestrator with --ralph 2 and --validation available.
 ```
 
 **What the agent does:**
+
 1. Reads `STATUS.md` to find the current phase
 2. Reads the phase definition from `PLAN.md`
 3. Executes the phase within declared boundaries
@@ -121,17 +128,21 @@ After a phase completes, validate its artifacts using the runtime validator CLI.
 | `domain-pack` | Domain pack (schema compliance, approval boundary alignment) |
 
 **Example:**
+
 ```bash
 python -m runtime.cli closeout .agent_work/sprints/my-task/tasks/2026-06-01-my-task/phase_closeout.json
 ```
 
 **Exit codes:**
+
 - `0` -- validation passed
 - `1` -- validation failed (violations listed in output)
 - `2` -- usage error or file-read error
 
 **Runner commands:**
+
 ```bash
+
 # Check current plan status
 python -m runtime.cli plan-status .agent_work/sprints/my-task/tasks/2026-06-01-my-task/
 
@@ -144,6 +155,7 @@ python -m runtime.cli next-gate .agent_work/sprints/my-task/tasks/2026-06-01-my-
 Each completed phase produces an evidence ledger and a phase closeout record. These are JSON artifacts that summarize what happened.
 
 **Evidence ledger** shows:
+
 - Which parameters were applied
 - What validation ran and whether it passed
 - Self-audit results
@@ -151,12 +163,14 @@ Each completed phase produces an evidence ledger and a phase closeout record. Th
 - Changed files and produced artifacts
 
 **Phase closeout** shows:
+
 - Whether the phase passed or failed
 - Validation results for each gate
 - Blockers, if any
 - Carry-forward notes for the next phase
 
 **Where to find them:**
+
 - `ARTIFACTS.md` -- lists all produced artifacts with paths
 - `PHASE_LOG.md` -- compact entry per phase with results
 - `STATUS.md` -- current phase and validation state
@@ -166,6 +180,7 @@ Each completed phase produces an evidence ledger and a phase closeout record. Th
 When validation fails, the CLI outputs the specific violations. Use these to make targeted corrections.
 
 **Example failure:**
+
 ```
 FAIL  phase_closeout.json
   violation: Rule 3 - validation_status is missing
@@ -173,12 +188,14 @@ FAIL  phase_closeout.json
 ```
 
 **What to do:**
+
 1. Open the failing artifact
 2. Add the missing field or fix the violation
 3. Re-run the validator
 4. If the fix requires changing the phase output, re-run the phase with a corrected prompt
 
 **Recovery procedure for blocked phases:**
+
 1. Record the blocker in `STATUS.md`
 2. Update `PHASE_LOG.md` with blocker details
 3. Update `ARTIFACTS.md` with partial findings
@@ -196,11 +213,13 @@ When a phase completes, it generates a `NEXT_PROMPT.md` for the next phase. This
 - Recovery procedure
 
 **To resume:**
+
 ```
 Run the prompt in .agent_work/sprints/my-task/tasks/2026-06-01-my-task/NEXT_PROMPT.md
 ```
 
 The Next Prompt Compiler can also generate these handoff prompts:
+
 ```bash
 python -m runtime.cli next-prompt .agent_work/sprints/my-task/tasks/2026-06-01-my-task/
 ```
@@ -212,11 +231,13 @@ Use `--dry-run` to preview without writing, or `--compact` for a smaller output 
 Runtime enforcement distinguishes between actions the agent can take autonomously and actions that require human approval.
 
 **Always requires approval:**
+
 - External actions (sending emails, making API calls, posting content)
 - Irreversible actions (deleting data, force-pushing to Git, purchasing)
 - Actions outside the declared phase scope
 
 **Does not require approval:**
+
 - Reading local files and context
 - Writing local artifacts (docs, code, task state)
 - Running validation commands
@@ -226,6 +247,7 @@ Runtime enforcement distinguishes between actions the agent can take autonomousl
 The agent creates an `approval_record` artifact before taking an external action. This record includes the action description, risk level, and a request for approval. The workflow pauses until you respond.
 
 **Example approval record:**
+
 ```json
 {
   "artifact_type": "approval_record",
@@ -260,6 +282,7 @@ Domain: scheduling. Require approval before sending calendar invites.
 ```
 
 The agent will:
+
 1. Create a phase contract for the scheduling task
 2. Check the `scheduling` domain pack for validation gates
 3. Draft the meeting details
@@ -276,6 +299,7 @@ Domain: travel_purchase. Do not book anything.
 ```
 
 The agent will:
+
 1. Use the `travel_purchase` domain pack
 2. Compare options and record evidence for each
 3. Produce a comparison with prices, times, and layovers
@@ -291,6 +315,7 @@ Domain: writing_editing. Ralph loop: 2 iterations.
 ```
 
 The agent will:
+
 1. Read the existing document
 2. Apply the rewrite with the `writing_editing` domain validation
 3. Run 2 Ralph loop iterations to improve quality

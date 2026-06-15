@@ -7,6 +7,7 @@ Agent work artifacts are usually local operational state, not project source.
 By default, suggest adding these paths to `.gitignore`:
 
 ```gitignore
+
 # Agent work state
 .agent_work/
 .agent-task/

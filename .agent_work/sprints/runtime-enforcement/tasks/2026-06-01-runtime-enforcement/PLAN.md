@@ -1,6 +1,7 @@
 # Universal Runtime Enforcement Implementation Plan
 
 ## Artifact Manifest
+
 - artifact_type: implementation-plan
 - parent_task: TASK.md
 - target_profile: qwen36 (inherited; executor profile for atomic phases)
@@ -14,6 +15,7 @@
 - behavioral_contract: Each phase must be small enough for a local model, must preserve universal skill/agent/prompt applicability, and must end with evidence, task-state updates, and a next action.
 
 ## Engineering Metadata
+
 - planner: contextsmith-prompt-engineer
 - revised: 2026-06-01
 - domain: universal agent tooling, runtime validation, skill packaging, domain packs
@@ -28,6 +30,7 @@ The system should let a user create a plan, run one bounded phase at a time, val
 Do not trust a small model to carry a sweeping architecture in memory.
 
 Instead:
+
 - a stronger planner or human review defines the universal protocol and domain-pack rules;
 - a small executor model performs one tiny implementation phase at a time;
 - validators check artifacts outside the model;
@@ -50,7 +53,7 @@ Build a `contextsmith-runtime` layer with one validator core and integration sur
 Use these labels everywhere. Do not blur them. Orchestrated workflow enforcement is the default — workflows go through it unless explicitly opted out. Deterministic validation is the foundation. Harness hard blocking elevates gates where the harness supports it. Human approval remains explicit for irreversible actions.
 
 | Level | Meaning | Example |
-|---|---|---|
+| --- | --- | --- |
 | Deterministic validation | A tool checks artifacts and returns pass/fail evidence. Foundation for all enforcement. | CLI validates an evidence ledger. |
 | Orchestrated workflow enforcement | Default mode. A runner only advances if validators pass. Opt-out available, not the norm. | Plan runner sends correction prompts until closeout passes. |
 | Harness hard blocking | Elevates orchestrated gates to hard blocks where the harness supports it. | opencode permission hook blocks an external action. |
@@ -60,7 +63,7 @@ Use these labels everywhere. Do not blur them. Orchestrated workflow enforcement
 The protocol must support more than coding:
 
 | Domain | Example | Required gates |
-|---|---|---|
+| --- | --- | --- |
 | Software engineering | Implement a validator | tests, lint/validation, changed files, closeout |
 | Writing/editing | Rewrite an email | source preservation, tone check, final draft evidence |
 | Research | Summarize papers | source citations, uncertainty, unsupported-claim check |
@@ -70,6 +73,7 @@ The protocol must support more than coding:
 | General fallback | Any prompt/agent task | requirements trace, evidence, validation or blocker |
 
 ## Small-Model Execution Rules
+
 - Every implementation phase is one bounded unit with one primary objective.
 - Tool-heavy phases run in a fresh session. Never chain multiple implementation or test phases in one session.
 - Fresh-session read order: `STATUS.md`, current phase in `PLAN.md`, `CONTEXT.md`, `CHECKLIST.md`, then exact files named by the phase.
@@ -96,6 +100,7 @@ context_contract:
 ```
 
 **Budgeting notes:**
+
 - Phase 0 actual: 78k tokens for a discovery phase (4-8 reads, 1 dry-run, 0 edits). Use as baseline for discovery phases that read multiple files and produce task-state artifacts.
 - `usable_phase_budget` should be a numeric estimate, not just `small` or `moderate`.
 - For a 64k executor context, small-model phases should normally target 20k-45k usable tokens. Anything estimated above 45k must either be split or explicitly marked for a larger-context/frontier executor.
@@ -108,6 +113,7 @@ context_contract:
 Every phase, including read-only design phases, must close with a compact debrief. Update all files that changed in relevance; do not paste raw logs.
 
 Required closeout fields:
+
 - `STATUS.md`: current state, validation state, blocker if any, next required action.
 - `PHASE_LOG.md`: one compact entry with completed work, evidence, validation, blockers, and next action.
 - `ARTIFACTS.md`: created or changed artifacts, source files, fixtures, commands, and validation evidence.
@@ -117,6 +123,7 @@ Required closeout fields:
 - `NEXT_PROMPT.md`: exact resume prompt for the next phase.
 
 Required debrief content:
+
 - carry forward: facts, files, decisions, and commands needed next.
 - do not carry forward: raw command output, broad search results, stale assumptions, and resolved dead ends.
 - validation evidence: commands/checks run, status, and short result.
@@ -137,6 +144,7 @@ Use this when a phase fails validation, exceeds scope, or cannot self-correct sa
 Runtime enforcement changes the project architecture, source code, skill operation model, and user workflows. Documentation is part of the implementation, not an afterthought.
 
 User-facing documentation must:
+
 - explain the pain point and benefits clearly;
 - minimize time to first value with quick paths and copy-paste examples;
 - provide lookup material for detailed use cases;
@@ -166,6 +174,7 @@ context_contract:
 ```
 
 **Inputs:**
+
 - `scripts/build_release.py`
 - `scripts/package_skill.sh`
 - `scripts/sync_shared_refs.py`
@@ -174,6 +183,7 @@ context_contract:
 - `PACKAGE_SPEC.md` read-only unless approval is given
 
 **Actions:**
+
 1. Inspect package and release scripts.
 2. Record what individual skill zips include.
 3. Record what release bundles include.
@@ -181,10 +191,12 @@ context_contract:
 5. Record any approval needed before changing package design.
 
 **Outputs:**
+
 - Packaging facts in `CONTEXT.md`.
 - Open packaging decisions in `DECISIONS.md`.
 
 **Validation:**
+
 - Every claim cites exact file paths or commands inspected.
 - No source behavior is changed.
 
@@ -203,6 +215,7 @@ context_contract:
 ```
 
 **Required decisions:**
+
 1. Distribution model:
    - per-skill manifest entries for runtime files;
    - separate `contextsmith-runtime` package;
@@ -223,11 +236,13 @@ context_contract:
 **Education:** This prevents a small model from trying to implement every runtime surface at once. The core must be stable before the default runtime surfaces multiply behavior.
 
 **Outputs:**
+
 - Decision entry in `DECISIONS.md`.
 - Distribution model, runtime dependency policy, and narrowed first-slice scope in `STATUS.md` and `NEXT_PROMPT.md`.
 - Explicit `Phase 1A authorized: yes|no` statement with reason.
 
 **Validation:**
+
 - Decision matrix compares at least the three distribution options above.
 - Dependency policy states whether PyYAML is required, optional, or avoided for the first slice.
 - No implementation phase starts until Phase 0.5 records the chosen distribution model and authorization result.
@@ -247,6 +262,7 @@ context_contract:
 ```
 
 **Artifacts to define:**
+
 - `requirements_chain`
 - `phase_contract`
 - `domain_pack`
@@ -255,11 +271,13 @@ context_contract:
 - `phase_closeout`
 
 **Actions:**
+
 1. Create a compact schema note under this task directory.
 2. For each artifact, define purpose, required fields, and one tiny example.
 3. Keep examples domain-neutral.
 
 **Validation:**
+
 - No artifact requires hidden reasoning.
 - Each artifact can be represented as YAML or JSON.
 - Each artifact is reusable for coding, scheduling, travel, writing, and research.
@@ -279,6 +297,7 @@ context_contract:
 ```
 
 **Required fields:**
+
 - requirement id
 - source text or source path
 - domain
@@ -291,6 +310,7 @@ context_contract:
 **Education:** This is what prevents the model from satisfying only the current prompt while forgetting earlier requirements.
 
 **Validation:**
+
 - Example traces one requirement from task request to phase output to validation evidence.
 
 ## Phase 1B.5: Approval Record Schema
@@ -308,6 +328,7 @@ context_contract:
 ```
 
 **Required fields:**
+
 - approval id
 - linked requirement ids
 - action requiring approval
@@ -320,6 +341,7 @@ context_contract:
 - residual risk disclosure for high-risk actions
 
 **Validation:**
+
 - Example shows travel purchase approval remains `requested` or `denied` unless explicit user approval exists.
 - No approval record implies permission for external action without evidence.
 
@@ -338,6 +360,7 @@ context_contract:
 ```
 
 **Required fields:**
+
 - domain name
 - triggers
 - required artifacts
@@ -349,6 +372,7 @@ context_contract:
 - example blocked closeout
 
 **Starter domain packs:**
+
 - `software_engineering`
 - `writing_editing`
 - `research_summary`
@@ -357,6 +381,7 @@ context_contract:
 - `general_fallback`
 
 **Validation:**
+
 - Each starter domain pack fits on one screen.
 - No domain pack requires new dependencies.
 
@@ -375,12 +400,14 @@ context_contract:
 ```
 
 **Review questions:**
+
 1. Can the schema support coding, scheduling, travel, writing, research, and fallback tasks?
 2. Are approval boundaries explicit for external actions?
 3. Can a small model emit the artifacts without carrying long instructions?
 4. Are validators deterministic enough to implement simply?
 
 **Validation:**
+
 - Approved, or corrections are recorded before implementation.
 
 ## Phase 2A: Minimal Validator Core
@@ -399,6 +426,7 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Create the runtime validator module in the location approved by Phase 0.5.
 2. Implement parsing according to the Phase 0.5 dependency policy; do not assume YAML support unless that decision explicitly approved it.
 3. Implement `validate_requirements_chain(path)`.
@@ -409,6 +437,7 @@ context_contract:
 8. Return `{"passed": bool, "violations": list, "warnings": list}` from every public validator.
 
 **Validation:**
+
 - Module imports successfully.
 - Each public validator returns the expected result shape for a tiny valid fixture.
 - Approval records reject missing approval status for external or high-risk actions.
@@ -430,11 +459,13 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Implement `validate_domain_pack(path)`.
 2. Check required fields and allowed side-effect tiers.
 3. Do not implement custom scheduling/travel/business logic yet.
 
 **Validation:**
+
 - Good starter domain pack passes.
 - Missing approval gates fail for high-risk domains such as travel purchase.
 
@@ -454,6 +485,7 @@ context_contract:
 ```
 
 **Subcommands:**
+
 - `requirements`
 - `phase-contract`
 - `evidence`
@@ -462,11 +494,13 @@ context_contract:
 - `domain-pack`
 
 **Exit codes:**
+
 - `0`: passed
 - `1`: validation failed
 - `2`: usage or file-read error
 
 **Validation:**
+
 - `--help` works.
 - A passing fixture exits `0`.
 - A failing fixture exits `1` and lists exact violations.
@@ -489,6 +523,7 @@ context_contract:
 **Pytest status:** pre-approved by current user.
 
 **Fixtures:**
+
 - good and bad `requirements_chain`
 - good and bad `phase_contract`
 - good and bad `evidence_ledger`
@@ -497,6 +532,7 @@ context_contract:
 - good and bad `domain_pack`
 
 **Validation:**
+
 - `python -m pytest tests/ -v` passes.
 - Negative tests assert specific violation text.
 - `python scripts/validate_skills.py` passes if skill files changed.
@@ -518,12 +554,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Use the packaging facts from Phase 0.
 2. Stage or package the minimal runtime artifacts if safe.
 3. Invoke the validator from the staged path or record why unavailable.
 4. If packaging cannot carry runtime files, document one fallback path: separate runtime package, repo-level CLI install, or generated artifact-only validation.
 
 **Validation:**
+
 - Evidence shows the command works outside normal source-file assumptions, or a blocker is recorded.
 - If blocked, `STATUS.md`, `PHASE_LOG.md`, `ARTIFACTS.md`, and `NEXT_PROMPT.md` name the fallback path and required decision.
 
@@ -543,6 +581,7 @@ context_contract:
 ```
 
 **Required gates:**
+
 - requirement trace exists
 - phase contract exists
 - evidence ledger exists
@@ -568,6 +607,7 @@ context_contract:
 ```
 
 **Required gates:**
+
 - changed files listed
 - project validation command run or blocker recorded
 - tests added or test gap explained
@@ -590,6 +630,7 @@ context_contract:
 ```
 
 **Required gates:**
+
 - participants known
 - time zones resolved or blocker recorded
 - duration known
@@ -613,6 +654,7 @@ context_contract:
 ```
 
 **Required gates:**
+
 - dates, airports, passenger count, and constraints recorded
 - price source and timestamp recorded
 - fees, baggage, refund/cancellation terms recorded or unavailable noted
@@ -635,6 +677,7 @@ context_contract:
 ```
 
 **Required gates:**
+
 - source material or user intent preserved
 - audience, tone, and format recorded or blocker noted
 - final draft claims do not add unsupported facts
@@ -657,6 +700,7 @@ context_contract:
 ```
 
 **Required gates:**
+
 - sources listed with paths or URLs
 - unsupported claims flagged or removed
 - uncertainty and limitations recorded
@@ -678,6 +722,7 @@ context_contract:
 ```
 
 **Validation:**
+
 - Each domain pack is compact.
 - Each separates deterministic validation from approval and external action boundaries.
 - General fallback can handle unknown domains.
@@ -698,12 +743,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Keep SKILL.md thin.
 2. Point to runtime artifacts and validator gates.
 3. Do not paste full schemas into SKILL.md if references or generated artifacts can hold them.
 4. If context rises above budget, stop after drafting the integration note and move validation to a fresh session.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 - Runtime validator tests pass.
@@ -742,6 +789,7 @@ context_contract:
 **Purpose:** The compiler turns task state into `NEXT_PROMPT.md` and optional `PHASE_<N>_SMALL_MODEL_PROMPT.md` files. It does not run the model. It prepares safe handoffs.
 
 **Inputs:**
+
 - `STATUS.md`
 - current phase block in `PLAN.md`
 - `CONTEXT.md`
@@ -750,6 +798,7 @@ context_contract:
 - optional phase-specific artifacts
 
 **Required generated prompt sections:**
+
 - artifact manifest
 - mission and hard phase boundary
 - read order
@@ -765,6 +814,7 @@ context_contract:
 - deep education notes for the human operator
 
 **Validation:**
+
 - Compiler spec proves it can generate the Phase 0 prompt shape without nested Markdown fence issues.
 - Generated prompt includes validation, audit, closeout, recovery, and hard-stop sections.
 - Generated prompt does not ask the small model to make broad architecture decisions.
@@ -785,6 +835,7 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Implement a CLI command such as `next-prompt` or equivalent per Phase 0.5 distribution decision.
 2. Read the current phase from `STATUS.md` and `PLAN.md`.
 3. Generate `NEXT_PROMPT.md` with detailed small-model execution instructions.
@@ -793,6 +844,7 @@ context_contract:
 6. Do not run the phase and do not call any model.
 
 **Validation:**
+
 - Generated Phase 0 prompt includes all required sections.
 - Generated prompt renders cleanly as Markdown.
 - Prompt hard-stops before Phase 0.5.
@@ -814,6 +866,7 @@ context_contract:
 ```
 
 **Required tests:**
+
 - Good Phase 0 fixture generates a prompt with mission, read order, validation, audit, closeout, recovery, and hard stop.
 - Missing current phase fails with a clear violation.
 - Generated prompt does not include instructions to execute the next phase.
@@ -821,6 +874,7 @@ context_contract:
 - Generated prompt includes deep education notes when requested.
 
 **Validation:**
+
 - `python -m pytest tests/ -v` passes.
 - `python scripts/validate_skills.py` passes if skill files changed.
 - `python scripts/token_budget.py --strict` passes if skill or reference files changed.
@@ -840,6 +894,7 @@ context_contract:
 ```
 
 **Runner loop:**
+
 1. Read task state.
 2. Select current phase and domain pack.
 3. Build a compact model prompt.
@@ -867,12 +922,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Implement read-only commands first, such as `plan-status` and `next-gate`.
 2. Implement validation dispatch to the existing CLI validator.
 3. Reuse the Next Prompt Compiler when producing phase handoffs.
 4. Do not automate model invocation yet.
 
 **Validation:**
+
 - Good task-state fixture reports next gate.
 - Bad fixture reports exact missing artifacts.
 - Pytest covers pass/fail runner behavior.
@@ -892,6 +949,7 @@ context_contract:
 ```
 
 **Tools:**
+
 - `validate_requirements`
 - `validate_phase_contract`
 - `validate_evidence`
@@ -916,6 +974,7 @@ context_contract:
 ```
 
 **Validation:**
+
 - Capability matrix labels every gate as hard-blocked, orchestrated, deterministic-only, or human approval.
 - Positive completion criterion: every proposed harness gate includes trigger point, enforcement mechanism, validator input, pass behavior, fail behavior, and bypass limitation.
 - If no hard-blocking path exists, phase completes with an advisory-only matrix and no config changes.
@@ -936,6 +995,7 @@ context_contract:
 ```
 
 **Inputs:**
+
 - `README.md`
 - `docs/`
 - `docs/contributing/documentation-style.md`
@@ -944,6 +1004,7 @@ context_contract:
 - Implemented and planned runtime features from prior phases, labeled by user-visible status.
 
 **Actions:**
+
 1. Inventory existing docs and identify pages to update or create.
 2. Define the reader path: README -> quickstart -> choose-a-workflow -> examples -> detailed how-to -> reference.
 3. List the primary user jobs: create a plan, run a plan, validate a phase, recover from a blocker, use a domain pack, review examples.
@@ -952,10 +1013,12 @@ context_contract:
 6. Record website-readiness constraints: stable headings, clear page purpose, examples that can become website sections, and no hidden chat-only context.
 
 **Outputs:**
+
 - User documentation map in `ARTIFACTS.md` or a task artifact referenced from `ARTIFACTS.md`.
 - Updated `NEXT_PROMPT.md` naming the first documentation edit phase.
 
 **Validation:**
+
 - Documentation map covers first-value path, use-case lookup, examples, recovery help, and reference details.
 - No documentation implementation begins before the map is approved.
 
@@ -975,6 +1038,7 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Keep the README catchy, practical, and concrete.
 2. Explain the pain point in user terms: long agent tasks lose requirements, skip validation, or become hard to resume.
 3. Explain the benefit in user terms: ContextSmith helps users create clearer plans, run smaller phases, validate evidence, and recover cleanly.
@@ -983,6 +1047,7 @@ context_contract:
 6. Avoid generic AI copy and repeated contrastive constructions.
 
 **Validation:**
+
 - New users can identify one useful first action in under one minute.
 - README links to quickstart, examples, concepts, workflows, and reference docs.
 - README does not claim unimplemented runtime adapters as production-ready.
@@ -1004,6 +1069,7 @@ context_contract:
 ```
 
 **Required content:**
+
 - What to install.
 - Which skill to use first.
 - One prompt-engineering example.
@@ -1015,6 +1081,7 @@ context_contract:
 - A visible `next 30 minutes` path for users ready to create a reusable task-state plan.
 
 **Validation:**
+
 - Quickstart has a table of contents.
 - Every command or skill invocation is factual for the current repo state.
 - The first useful workflow is short and clearly marked.
@@ -1035,6 +1102,7 @@ context_contract:
 ```
 
 **Required user tasks:**
+
 - Create an implementation plan.
 - Choose a domain or fallback workflow.
 - Run one phase at a time.
@@ -1045,6 +1113,7 @@ context_contract:
 - Know when human approval is required.
 
 **Concepts to define only as needed:**
+
 - Requirements chain.
 - Domain pack.
 - Evidence ledger.
@@ -1052,6 +1121,7 @@ context_contract:
 - Enforcement levels.
 
 **Validation:**
+
 - File has a table of contents.
 - Enforcement levels are accurately labeled.
 - Non-coding examples are included.
@@ -1075,6 +1145,7 @@ context_contract:
 ```
 
 **Starter workflows:**
+
 - Create a small-model implementation plan.
 - Run a task-state handoff with validation.
 - Build or improve a skill.
@@ -1082,6 +1153,7 @@ context_contract:
 - Compare travel options without purchasing.
 
 **Validation:**
+
 - Each workflow has a table of contents.
 - Each workflow includes inputs, commands or prompts, expected artifacts, validation, and common failure modes.
 - External actions clearly require human approval.
@@ -1103,6 +1175,7 @@ context_contract:
 ```
 
 **Example types:**
+
 - Prompt engineering.
 - Implementation plan creation.
 - Plan audit.
@@ -1113,6 +1186,7 @@ context_contract:
 - Failure and recovery.
 
 **Validation:**
+
 - Examples are labeled as implemented, planned, or illustrative.
 - Examples reduce cognitive load by showing expected outputs, not only inputs.
 - No example performs an irreversible external action.
@@ -1134,6 +1208,7 @@ context_contract:
 ```
 
 **Audit checks:**
+
 - README still sells ContextSmith and explains the pain point clearly.
 - README routes users into further docs.
 - Docs prioritize how to use the system over how the architecture is built.
@@ -1161,16 +1236,19 @@ context_contract:
 ```
 
 **Actions:**
+
 1. List every skill as `selected`, `deferred`, or `skipped` with one-line reason.
 2. Select an exact rollout target count: `0`, `1`, or `2` skills.
 3. Name the exact skill or skills for Phase 8B.
 4. If more skills seem eligible, record them as deferred; do not expand Phase 8B.
 
 **Outputs:**
+
 - Rollout matrix in `ARTIFACTS.md` or a task artifact referenced from `ARTIFACTS.md`.
 - `STATUS.md` and `NEXT_PROMPT.md` naming the exact Phase 8B target skill or stating no rollout is approved.
 
 **Validation:**
+
 - Matrix explains selected, deferred, and skipped skills.
 - No skill files edited in this phase.
 - Phase 8B target count is explicit and is not greater than two.
@@ -1191,17 +1269,20 @@ context_contract:
 ```
 
 **Inputs:**
+
 - Exact target skill or skills from Phase 8A.
 - Pilot integration evidence from Phase 4A.
 - Thin-skill writing guide from Phase 4B.
 - Documentation quality audit from Phase 7G.
 
 **Actions:**
+
 1. Edit only the Phase 8A target skill or skills.
 2. If two skills were selected and the first skill raises context or validation risk, stop after the first and update Phase 8A/`NEXT_PROMPT.md`.
 3. Do not start any deferred skill in this phase.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 - `python -m pytest tests/ -v` passes.
@@ -1224,12 +1305,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Add 10 runtime file entries to `skills/contextsmith-skill-engineer/reference_manifest.yml` (validator.py, cli.py, __init__.py, 6 domain packs).
 2. Add compact runtime validation section to `skills/contextsmith-skill-engineer/SKILL.md` following thin-skill pattern.
 3. Update token budget in `scripts/token_budget.py` if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 - `python -m pytest tests/ -v` passes.
@@ -1251,12 +1334,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Add 10 runtime file entries to `skills/contextsmith-skill-migrator/reference_manifest.yml`.
 2. Add compact runtime validation section to `skills/contextsmith-skill-migrator/SKILL.md`.
 3. Update token budget if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 - `python -m pytest tests/ -v` passes.
@@ -1278,12 +1363,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Add 10 runtime file entries to `skills/contextsmith-instruction-engineer/reference_manifest.yml`.
 2. Add compact runtime validation section to `skills/contextsmith-instruction-engineer/SKILL.md`.
 3. Update token budget if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 - `python -m pytest tests/ -v` passes.
@@ -1305,12 +1392,14 @@ context_contract:
 ```
 
 **Actions:**
+
 1. Add 10 runtime file entries to `skills/contextsmith-agent-evaluator/reference_manifest.yml`.
 2. Add compact runtime validation section to `skills/contextsmith-agent-evaluator/SKILL.md`.
 3. Update token budget if needed.
 4. Run validation commands.
 
 **Validation:**
+
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 - `python -m pytest tests/ -v` passes.
@@ -1332,6 +1421,7 @@ context_contract:
 ```
 
 **Content:**
+
 - When to use task-state handoffs vs. single-prompt tasks.
 - How to structure `NEXT_PROMPT.md` for handoff.
 - Running with `--ralph` and `--validation` flags.
@@ -1339,6 +1429,7 @@ context_contract:
 - Expected artifacts and validation evidence.
 
 **Validation:**
+
 - File has a table of contents.
 - Workflow includes inputs, commands, expected artifacts, validation, and common failure modes.
 - `python scripts/validate_skills.py` passes.
@@ -1360,6 +1451,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Collecting participants, time zones, and availability constraints.
 - Using the scheduling domain pack for validation.
 - Approval gates before sending invites or messages.
@@ -1367,6 +1459,7 @@ context_contract:
 - Common failure modes: missing time zones, unavailable participants, skipped approval.
 
 **Validation:**
+
 - File has a table of contents.
 - External actions clearly require human approval.
 - `python scripts/validate_skills.py` passes.
@@ -1388,6 +1481,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Recording dates, airports, passenger count, and constraints.
 - Using the travel_purchase domain pack for validation.
 - Price source, timestamp, and fee/refund evidence requirements.
@@ -1396,6 +1490,7 @@ context_contract:
 - Common failure modes: missing price timestamps, unstated constraints, implied booking capability.
 
 **Validation:**
+
 - File has a table of contents.
 - No purchase, payment, or irreversible action without explicit user approval.
 - `python scripts/validate_skills.py` passes.
@@ -1417,6 +1512,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Scenario: create a model-aware prompt with targeted context length and domain-specific guidance.
 - Input: task description, target model profile, domain pack.
 - Command or prompt: contextsmith-prompt-engineer invocation.
@@ -1424,6 +1520,7 @@ context_contract:
 - How to judge success: prompt fits target budget, includes required sections, passes validation.
 
 **Validation:**
+
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
 - `python scripts/validate_skills.py` passes.
@@ -1445,6 +1542,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Scenario: generate a phased implementation plan with validation gates for a small project.
 - Input: project description, constraints, target profile.
 - Command or prompt: contextsmith-instruction-engineer invocation.
@@ -1452,6 +1550,7 @@ context_contract:
 - How to judge success: plan stays atomic, phases are small-model executable, validation gates are explicit.
 
 **Validation:**
+
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
 - `python scripts/validate_skills.py` passes.
@@ -1473,6 +1572,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Scenario: review an implementation plan for completeness and small-model reliability.
 - Input: existing PLAN.md, target profile.
 - Command or prompt: contextsmith-agent-evaluator invocation.
@@ -1480,6 +1580,7 @@ context_contract:
 - How to judge success: audit catches real issues, recommendations are actionable, grades are justified.
 
 **Validation:**
+
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
 - `python scripts/validate_skills.py` passes.
@@ -1501,6 +1602,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Scenario: schedule a cross-timezone meeting with approval gates.
 - Input: participants, time zones, duration, preferred dates.
 - Command or prompt: contextsmith-run with scheduling domain pack.
@@ -1508,6 +1610,7 @@ context_contract:
 - How to judge success: time zones resolved, approval obtained before sending, evidence recorded.
 
 **Validation:**
+
 - Example is labeled as implemented.
 - No external calendar API calls implied.
 - `python scripts/validate_skills.py` passes.
@@ -1529,6 +1632,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Scenario: compare flight options for a business trip without purchasing.
 - Input: dates, airports, passenger count, budget constraint.
 - Command or prompt: contextsmith-run with travel_purchase domain pack.
@@ -1536,6 +1640,7 @@ context_contract:
 - How to judge success: prices timestamped, fees disclosed, no booking implied, approval required for purchase.
 
 **Validation:**
+
 - Example is labeled as implemented.
 - No purchase, payment, or irreversible action implied.
 - `python scripts/validate_skills.py` passes.
@@ -1557,6 +1662,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Scenario: migrate an existing skill for small-model compatibility with target-profile metadata.
 - Input: existing SKILL.md, target profile (e.g., generic-local).
 - Command or prompt: contextsmith-skill-migrator invocation.
@@ -1564,6 +1670,7 @@ context_contract:
 - How to judge success: skill passes validation, stays under line budget, preserves source behavior.
 
 **Validation:**
+
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
 - `python scripts/validate_skills.py` passes.
@@ -1585,6 +1692,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Scenario: create a custom domain pack for a new use case (e.g., education/lesson planning).
 - Input: domain name, triggers, required artifacts, validation gates, approval boundaries.
 - Command: validator CLI to validate the custom domain pack.
@@ -1592,6 +1700,7 @@ context_contract:
 - How to judge success: pack is compact, separates deterministic checks from approval gates, passes validator.
 
 **Validation:**
+
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
 - `python scripts/validate_skills.py` passes.
@@ -1613,6 +1722,7 @@ context_contract:
 ```
 
 **Content:**
+
 - Scenario: evaluate an agent workflow for small-model reliability and context safety.
 - Input: AGENTS.md or agent workflow file, target profile.
 - Command or prompt: contextsmith-agent-evaluator invocation.
@@ -1620,6 +1730,7 @@ context_contract:
 - How to judge success: evaluation catches real issues, grades are justified, recommendations are actionable.
 
 **Validation:**
+
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
 - `python scripts/validate_skills.py` passes.
@@ -1640,6 +1751,7 @@ context_contract:
 ```
 
 **Audit checks:**
+
 - Universal protocol supports coding, writing, research, scheduling, travel/purchase, and fallback.
 - Small-model phases stayed atomic.
 - Domain packs are compact.
@@ -1650,6 +1762,7 @@ context_contract:
 - Approval boundaries remain explicit.
 
 ## Plan Completion Criteria
+
 - Packaging facts are known before implementation.
 - Runtime surface scope is narrowed before coding.
 - Universal artifacts are defined before validators.

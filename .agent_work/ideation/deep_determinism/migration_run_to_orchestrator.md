@@ -7,7 +7,7 @@ This doc explains how existing `contextsmith-run` users transition to the orches
 The orchestrator inherits most of its contracts from `contextsmith-run`. These are unchanged:
 
 | Component | Status |
-|-----------|--------|
+| ----------- | -------- |
 | Task-state directory layout | Unchanged |
 | Artifact files (STATUS.md, PLAN.md, NEXT_PROMPT.md, etc.) | Unchanged |
 | Execution contract format | Unchanged |
@@ -27,6 +27,7 @@ Users who have task-state directories from `contextsmith-run` can use them with 
 `contextsmith-run` infers workflow shape from the input type (prompt, plan, task-state folder). The orchestrator reads a workflow config YAML that declares the shape explicitly.
 
 **Before (contextsmith-run):**
+
 ```
 User: /contextsmith-run the prompt in NEXT_PROMPT.md
 → Skill detects task-state handoff
@@ -35,6 +36,7 @@ User: /contextsmith-run the prompt in NEXT_PROMPT.md
 ```
 
 **After (orchestrator):**
+
 ```
 User: /contextsmith-orchestrator the workflow in workflow_config.yaml
 → Orchestrator reads config
@@ -45,6 +47,7 @@ User: /contextsmith-orchestrator the workflow in workflow_config.yaml
 ### 2. Loop control moves out of the skill
 
 `contextsmith-run` has its own loop logic (phased-run mode, Ralph loops, self-audit). The orchestrator moves this logic into either:
+
 - Python code (harness-aware path)
 - A separate orchestrator skill (skill-only path)
 
@@ -53,6 +56,7 @@ User: /contextsmith-orchestrator the workflow in workflow_config.yaml
 ### 3. Validation becomes external
 
 `contextsmith-run` validates artifacts within the skill (the agent checks its own work). The orchestrator validates externally:
+
 - Harness-aware: validators run after the agent subprocess exits
 - Skill-only: the agent validates per the orchestrator skill's instructions (less reliable, but still structured)
 
@@ -75,11 +79,13 @@ No changes to existing setup. Use the orchestrator for new phased workflows. Kee
 Existing task-state directories from `contextsmith-run` work with the orchestrator as-is. The only addition needed is a workflow config file.
 
 **Steps:**
+
 1. Create a `workflow_config.yaml` that describes your workflow's phases
 2. Place it in the task-state directory (or reference it from the orchestrator)
 3. Run the orchestrator instead of `contextsmith-run`
 
 **Example config for a simple audit workflow:**
+
 ```yaml
 workflow_id: my-audit
 version: 1
@@ -88,12 +94,17 @@ mode: phased-run
 
 baseline:
   required_steps:
+
     - load_context
     - audit_output
     - close
+
   required_gates:
+
     - audit
+
   required_files:
+
     - STATUS.md
     - PLAN.md
     - CONTEXT.md
@@ -106,12 +117,17 @@ states:
     max_retries: 2
     timeout_s: 30
     transitions:
+
       - condition: pass
+
         target: audit_output
+
       - condition: fail
+
         target: blocked
     expected_outputs: []
     inputs:
+
       - STATUS.md
       - PLAN.md
 
@@ -122,15 +138,24 @@ states:
     max_retries: 3
     timeout_s: 300
     transitions:
+
       - condition: pass
+
         target: close
+
       - condition: fail
+
         target: audit_output
+
       - condition: max_retries
+
         target: blocked
     expected_outputs:
+
       - AUDIT_REPORT.md
+
     inputs:
+
       - PLAN.md
       - CONTEXT.md
 
@@ -141,18 +166,26 @@ states:
     max_retries: 2
     timeout_s: 60
     transitions:
+
       - condition: pass
+
         target: done
+
       - condition: fail
+
         target: close
     expected_outputs:
+
       - SUMMARY.md
       - NEXT_PROMPT.md
+
     inputs:
+
       - STATUS.md
       - AUDIT_REPORT.md
 
 phase_order:
+
   - load_context
   - audit_output
   - close
@@ -160,6 +193,7 @@ phase_order:
 validation:
   schema: schemas/workflow_config.schema.json
   required_checks:
+
     - file_exists
     - json_schema
 ```
@@ -169,6 +203,7 @@ validation:
 Replace all `contextsmith-run` usage with the orchestrator. This is the long-term goal but not required for MVP.
 
 **Steps:**
+
 1. Install the orchestrator (pip install or skill-only)
 2. Create workflow configs for all recurring workflows
 3. Update router to dispatch to orchestrator for phased work
@@ -197,6 +232,7 @@ During the transition, both skills can coexist:
 ```
 
 The router skill (`contextsmith`) dispatches to the right one based on intent:
+
 - "Run this prompt" → `contextsmith-run`
 - "Execute this workflow" → `contextsmith-orchestrator`
 - "Create a workflow for..." → `contextsmith-workflow-developer`
@@ -204,7 +240,7 @@ The router skill (`contextsmith`) dispatches to the right one based on intent:
 ## Timeline
 
 | Phase | What | When |
-|-------|------|------|
+| ------- | ------ | ------ |
 | MVP | Orchestrator skill + OpenCode companion | Immediate |
 | Transition | Router dispatches to orchestrator for phased work | After MVP |
 | Full migration | Orchestrator replaces contextsmith-run for phased work | After validation |

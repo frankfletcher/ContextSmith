@@ -1,6 +1,7 @@
 # Domain Pack Schema
 
 ## Artifact Manifest
+
 - artifact_type: artifact-schema
 - parent_task: TASK.md
 - phase: 1C
@@ -18,7 +19,7 @@ Each domain pack corresponds to a single domain.
 ### Required Fields
 
 | Field | Type | Description |
-|---|---|---|
+| --- | --- | --- |
 | `domain` | string | Domain name (e.g., `software_engineering`, `travel_purchase`, `general_fallback`) |
 | `triggers` | string[] | Keywords or conditions that activate this pack (e.g., `["meeting", "calendar"]`) |
 | `required_artifacts` | string[] | Artifact types this domain requires from the universal vocabulary |
@@ -30,7 +31,7 @@ Each domain pack corresponds to a single domain.
 ### Optional Fields
 
 | Field | Type | Description |
-|---|---|---|
+| --- | --- | --- |
 | `example_good_closeout` | object | Minimal example of a passing phase closeout for this domain |
 | `example_blocked_closeout` | object | Minimal example of a blocked phase closeout for this domain |
 | `notes` | string | Additional context for validators or domain pack authors |
@@ -393,17 +394,21 @@ The Phase 2 validator accepts JSON only. This YAML shape is a documentation aid 
 artifact_type: domain_pack
 domain: scheduling
 triggers:
+
   - meeting
   - calendar
   - schedule
   - availability
   - timezone
+
 required_artifacts:
+
   - requirements_chain
   - phase_contract
   - evidence_ledger
   - approval_record
   - phase_closeout
+
 validation_gates:
   participants_known:
     description: All meeting participants identified
@@ -422,9 +427,11 @@ validation_gates:
     required: true
     check_type: field_presence
 approval_gates:
+
   - send_invite
   - modify_calendar
   - cancel_event
+
 external_action_boundaries:
   read_calendar: allowed
   propose_slots: allowed

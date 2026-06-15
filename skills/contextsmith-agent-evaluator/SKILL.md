@@ -51,23 +51,17 @@ When evaluating an artifact, grade targeted context fit using `references/target
 
 Check whether upstream tools or skills introduced unsupported requirements, duplicate workflows, conflicting instructions, or hallucinated dependencies. Recommend rejection or downgrade of unsupported additions.
 
-
-
 ## Model Capability and Planner/Executor Profiles
 
 When the user provides `--target-capability`, `--planner-profile`, or `--executor-profile`, load `references/model-capability-tiers.md` and `references/planner-executor-workflows.md`.
 
 Use stronger/planner profiles for planning, audits, architecture, test strategy, and final review. Use smaller/executor profiles for atomic phase execution when the plan and task state are explicit.
 
-
-
 ## Education Level and Artifact Verbosity
 
 If the user provides `--education-level` or `--artifact-verbosity`, load `references/education-levels.md`.
 
 Keep model-facing artifacts compact when `targeted_context_length` is tight. Put teaching detail in separate reports instead of bloating prompts, skills, AGENTS.md files, or phase instructions.
-
-
 
 ## Implementation Plan, Test, and Phase Review Audits
 
@@ -83,12 +77,13 @@ When generating or auditing coding plans, tests, or phase workflows, use:
 
 For coding domains, implementation plans should include test strategy, code review gates, and phase debriefs. Tests should be audited for usefulness, not just pass/fail status.
 
-When auditing implementation plans, planner prompts, generated skills, or repo instruction files for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, grade whether persistent task state is concrete. A passing artifact must make the work resumable from files, not from chat memory. Flag as a high-risk issue when the artifact only describes a "Persistent Task State" section but does not require or create `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md` in a canonical `.agent_work/sprints/.../tasks/.../` directory.
+When auditing implementation plans, planner prompts, generated skills, or repo instruction files for long-running, multi-file, migration, release, refactor, validation-heavy, or coding work, grade whether persistent task state is concrete. A passing artifact must make the work resumable from files, not from chat memory. Flag as a high-risk issue
+when the artifact only describes a "Persistent Task State" section but does not require or create `TASK.md`, `PLAN.md`, `STATUS.md`, `DECISIONS.md`, `CONTEXT.md`, `CHECKLIST.md`, `ARTIFACTS.md`, `PHASE_LOG.md`, and `NEXT_PROMPT.md` in a canonical `.agent_work/sprints/.../tasks/.../` directory.
 
 For planning-only workflows, verify that the artifact distinguishes allowed planning artifacts from forbidden source-code edits. For phased execution, verify that each closeout refreshes state files and `NEXT_PROMPT.md`.
 
-Also grade state hygiene. The artifact should require compact, factual state files containing paths, commands, validation results, decisions, constraints, and next actions. Penalize artifacts that encourage raw transcript dumps, full logs, full source copies, or hidden reasoning in task state. Treat a missing or vague `NEXT_PROMPT.md` handoff as a context-continuity failure.
-
+Also grade state hygiene. The artifact should require compact, factual state files containing paths, commands, validation results, decisions, constraints, and next actions. Penalize artifacts that encourage raw transcript dumps, full logs, full source copies, or hidden reasoning in task state. Treat a missing or vague `NEXT_PROMPT.md` handoff as a
+context-continuity failure.
 
 ## Run Configuration Preview
 
@@ -113,11 +108,10 @@ Use `reference_manifest.yml` to determine which references to load. References w
 9. Recommend improvements in priority order.
 10. State whether a Ralph loop, prompt engineer, skill engineer, instruction engineer, or migrator should be used next.
 
-
-
 ## Runtime Validation
 
-Validate audited artifacts with `python -m runtime.cli <subcommand> <artifact.json>`. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs under `runtime/domain_packs/`. Use `--validation none` to opt out. If runtime module unavailable, record blocker.
+Validate audited artifacts with `python -m runtime.cli <subcommand> <artifact.json>`. Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`. Exit codes: `0` pass, `1` violations, `2` error. Domain packs under `runtime/domain_packs/`. Use `--validation none` to opt out. If runtime module unavailable,
+record blocker.
 
 ## Runtime Stability Notes
 
@@ -126,11 +120,13 @@ If the user asks about local model loops, server settings, speculative decoding,
 ## Required Output
 
 ```markdown
+
 ## Summary Grade
 ## Strengths
 ## Weaknesses
 ## A-F Rubric
 | Dimension | Grade | Reason | Recommended Fix |
+
 ## Loop / Git / Context Safety
 ## Domain-Specific Risks
 ## Duplicate or Conflicting Instructions
@@ -140,9 +136,9 @@ If the user asks about local model loops, server settings, speculative decoding,
 
 Use constructive critique. Do not rewrite the artifact unless requested.
 
-
 ## Documentation Quality
 
-When generating or editing README material, user guides, educational reports, AGENTS.md explanations, or other reader-facing documentation, use `references/documentation-quality.md`. Keep generated artifacts factual, practical, and easy to act on. Avoid overused generated-writing patterns, unsupported claims, and unnecessary imperatives in user documentation.
+When generating or editing README material, user guides, educational reports, AGENTS.md explanations, or other reader-facing documentation, use `references/documentation-quality.md`. Keep generated artifacts factual, practical, and easy to act on. Avoid overused generated-writing patterns, unsupported claims, and unnecessary imperatives in user
+documentation.
 
 Support `--focus documentation-quality` for README/docs/user-guide audits.

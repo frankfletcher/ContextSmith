@@ -47,6 +47,7 @@ How it works:
 - agent re-reads STATUS.md and loops
 
 Tradeoffs vs orchestrator.py:
+
 - less deterministic (LLM drives the loop, not code)
 - no crash recovery (session boundary = potential state loss)
 - self-validation is weaker than external validation
@@ -174,6 +175,7 @@ How they work:
 Example:
 
 ```md
+
 # Status
 
 Current phase: validate
@@ -353,6 +355,7 @@ Example:
 
 ```yaml
 references:
+
   - harness-opencode.md
   - documentation-quality.md
 ```

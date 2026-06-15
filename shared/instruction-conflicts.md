@@ -24,7 +24,9 @@ Before finalizing prompts, skills, or instruction files, scan for conflicting or
 ## Report Format
 
 ```markdown
+
 ## Instruction Conflicts
+
 - Conflict:
 - Location:
 - Resolution:
