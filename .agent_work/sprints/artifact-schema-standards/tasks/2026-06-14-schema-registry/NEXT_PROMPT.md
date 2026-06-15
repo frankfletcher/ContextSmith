@@ -3,56 +3,53 @@
 You are continuing work on the ContextSmith artifact schema standards task.
 
 ## Current Status
-- Phase: 10 of 11
-- Sub-phase: 10.1
+
+- Phase: 11 of 11
+- Sub-phase: 11.1
 - State: execute
 
 ## Sub-phase
-Sub-phase 10.1: Implementation plan audit
+Sub-phase 11.1: Extra-audit workflow config
 
 ## Sub-phase Tasks
-- [ ] Run implementation plan audit
-- [ ] Fix any must-fix items
+
+- [x] Create .contextsmith/audit-with-extra.json workflow config [ALREADY EXISTS — verified in Phase 10.1]
+- [ ] Validate config against schema
+- [ ] Test with dry run
 
 ## Your Task
-Run the implementation plan audit across all phases of the artifact schema standards project. Review:
+The `.contextsmith/audit-with-extra.json` workflow config already exists. It chains `audit_current_phase` → `extra_audit` with read-only permissions. Your job is to:
 
-1. Whether Phases 1-9 were delivered to spec
-2. Whether the implementation plan (PLAN.md) accurately reflects what was built
-3. Whether any must-fix gaps exist
-4. Whether the validation pipeline documents are consistent with the implementation
-
-Fix any must-fix items found during the audit. Record findings in the audit report.
+1. **Validate** the config against `schemas/workflow_config.schema.json` — at minimum check that it satisfies the schema (all required fields, valid transitions, valid phase_order, valid domain enum).
+2. **Test with a dry run** — use a safe command to verify the orchestrator can parse and validate the config. If no dry-run command exists, verify by running structural validation and recording the result.
+3. **Document findings** — if the config passes validation, record that. If there are schema violations, fix them.
 
 ## Input Files
-- STATUS.md: Current workflow state
-- PLAN.md: Phase plan with all phases and tasks
-- CONTEXT.md: Project context and constraints
-- CHECKLIST.md: Task tracking
-- ARTIFACTS.md: Artifact inventory
-- PHASE_LOG.md: Phase history
-- EDUCATIONAL_REPORT.md: Per-phase educational reports
-- AUDIT_REPORT.md: Audit findings
-- DECISIONS.md: Design decisions
-- schemas/artifact_schemas.yaml: Artifact schema registry
-- schemas/workflow_config.schema.json: Workflow config schema
-- orchestrator/validators.py: Validation functions
-- orchestrator/state_reader.py: State parsing
-- orchestrator/orchestrator.py: Main orchestrator
-- shared/implementation-plan-audit.md: Audit reference
-- shared/project-audit.md: Full project audit prompt
+
+- `.contextsmith/audit-with-extra.json`: Existing workflow config (audit + extra_audit chaining)
+- `.contextsmith/workflow.json`: Reference workflow config (for comparison)
+- `schemas/workflow_config.schema.json`: Schema definition
+- `STATUS.md`: Current workflow state
+- `PLAN.md`: Phase plan with all phases and tasks
+- `CONTEXT.md`: Project context and constraints
+- `CHECKLIST.md`: Task tracking
+- `ARTIFACTS.md`: Artifact inventory
+- `PHASE_LOG.md`: Phase history
+- `shared/extra-audit.md`: Extra-audit reference (strategic lenses)
+- `shared/project-audit.md`: Full project audit prompt
 
 ## Output Requirements
-- Run the audit and record findings
-- Fix any must-fix items found
-- Update CHECKLIST.md
+
+- Validate config against schema — record result in CHECKLIST.md
+- Test with dry run or structural validation — record result
 - Create .new segment files for EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md
 
 ## Constraints
-- Context Budget: 16k
+
+- Context Budget: 8k
 - Do not introduce new features or scope
 - Do not modify schemas or orchestrator code unless fixing a must-fix bug
-- Follow existing doc style
+- Follow existing doc and JSON style conventions
 
 ### REPORT FILES: USE `.new` SEGMENTS — BUT MERGE MANUALLY
 
@@ -63,6 +60,7 @@ The orchestrator (with `.new` auto-merging) is part of the planned build, NOT th
 3. **Then remove** the `.new` file.
 
 Write these `.new` segment files (and merge manually):
+
 - `EDUCATIONAL_REPORT.md.new` — new sub-phase explanation entry
 - `AUDIT_REPORT.md.new` — new audit rubric entry
 - `PHASE_LOG.md.new` — new phase log entry
@@ -73,19 +71,21 @@ Write these `.new` segment files (and merge manually):
 
 ## Self-Audit
 Before closeout, verify:
+
 - Original phase goal satisfied or blocker recorded
 - All validation commands executed or blocker documented
 - Side-effect boundaries respected
 - Task state updated with compact facts
 
 ## Hard Stop
-Current phase is Phase 10: Final Audit and Validation.
+Current phase is Phase 11: Tooling and Audit Infrastructure.
 Do not proceed beyond it. Do not edit files outside this phase scope.
 Do not fix nice-to-have items — only must-fix.
 
 ## Expected Output Format
 
 ```
+
 ## Result
 [summary of changes]
 
