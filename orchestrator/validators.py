@@ -287,7 +287,7 @@ def load_artifact_schemas() -> dict:
         with open(schema_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         return data.get("artifacts", {}) if data else {}
-    except yaml.YAMLError, OSError:
+    except (yaml.YAMLError, OSError):
         return {}
 
 

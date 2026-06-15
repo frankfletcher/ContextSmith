@@ -281,3 +281,57 @@ Completed the final sub-phase of the artifact schema standards project. Three ta
 - Ruff lint and format clean
 - All 8 skills validate
 - The project has been delivered to spec across all phases
+## Sub-phase 12.1: Orchestrator CLI packaging
+
+### What was done
+
+Added a proper build system and CLI entry point to pyproject.toml so the orchestrator is installable as `contextsmith-orchestrator`.
+
+### Changes made
+
+1. **pyproject.toml** — Updated from a minimal stub to a proper Python package config:
+   - Added `[build-system]` with hatchling backend (required for entry point scripts to work)
+   - Added `[project.scripts]` with `contextsmith-orchestrator = "orchestrator.cli:main"`
+   - Added `[tool.hatch.build.targets.wheel.packages]` so hatchling knows to ship `orchestrator/`
+   - Updated description from placeholder
+
+### Why decisions were made
+
+- **hathling vs setuptools**: Hatchling is the modern standard and handles entry points cleanly. The project was already using Python 3.14 features so hatchling was a natural fit.
+- **Entry point name `contextsmith-orchestrator`**: Distinct from `contextsmith` (the project namespace) to avoid namespace collisions. The `-orchestrator` suffix makes it clear this is the runtime component.
+- **No `setuptools` dependency**: Hatchling ships with pip/uv and doesn't need an explicit dependency declaration beyond `requires = ["hatchling"]`.
+
+### What was learned
+
+- Hatchling's default wheel file selection requires either a matching package directory or an explicit `[tool.hatch.build.targets.wheel.packages]` config. Without it, `pip install -e .` fails with "Unable to determine which files to ship."
+- The `contextsmith-orchestrator` script lands in the venv `bin/` directory and works both directly (with venv active) and via `uv run`. This matches the project's existing `uv run` convention.
+- Both `python -m orchestrator` and `python -m orchestrator.cli` work as entry points, with `__main__.py` providing the module-level dispatch.
+## Phase 12: Packaging and Distribution
+
+### Overview
+
+Phase 12 transformed ContextSmith from a skill-only distribution to a proper installable Python package with CLI, wheel distribution, CI/CD, and plugin system.
+
+### Sub-phase 12.2: Distribution packaging
+
+Added `--wheel` flag to `build_release.py` to build Python wheels alongside existing skill zips. Updated `test_release.sh` to replace `contextsmith-run` (renamed to `contextsmith-workflow-developer`) and added Step 10 for wheel install testing in a fresh venv. Created `.github/workflows/publish.yml` for PyPI publishing on tag push.
+
+Key lesson: The token_budget `--strict` check is a pre-existing blocker for the full pipeline. The wheel build itself works independently and was verified with a manual build + fresh venv install.
+
+### Sub-phase 12.3: Adapter plugin system
+
+Migrated from hardcoded `ADAPTER_REGISTRY` to `importlib.metadata.entry_points(group="contextsmith.adapters")`. Added `[project.entry-points."contextsmith.adapters"]` to pyproject.toml. Added fallback to hardcoded list when entry points are unavailable (development without pip install). Created 6 tests in `tests/test_adapter_discovery.py`.
+
+Key lesson: `importlib.reload()` is needed in the fallback path because `importlib.import_module()` returns cached modules without re-running registration code. This was discovered during testing.
+
+### Sub-phase 12.7: Complexity refactor
+
+Extracted `_log_subphase_budget()` and `_finalize_step_execution()` from `run()`, reducing its cyclomatic complexity from C(15) to B(8). No C/D/E/F grades remain anywhere in orchestrator/. This was a straightforward extraction of naturally bounded blocks from the main function — the post-execution sequence (append-only verify, .new merge, sub-phase advancement, step completion) formed a clean extraction boundary.
+
+### Final state
+
+- 429 tests pass (up from 423)
+- All 8 skills validate at version 2.2.0
+- Ruff clean, ruff format clean
+- Version consistency across pyproject.toml, PACKAGE_SPEC.md, and all skills
+- No functions in orchestrator/ have cyclomatic complexity > B

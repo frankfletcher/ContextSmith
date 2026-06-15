@@ -1,5 +1,35 @@
 # Changelog
 
+## v2.3.0
+
+**Released:** 2026-06-15
+
+### Added
+
+- Added `contextsmith-orchestrator` CLI entry point for pip-installable orchestrator runtime (`pyproject.toml`, `[project.scripts]`).
+- Added `--wheel` flag to `build_release.py` — builds Python wheel via `pyproject-build` alongside skill zips.
+- Added `.github/workflows/publish.yml` — builds wheel + sdist and publishes to PyPI on tag push `v*.*.*`.
+- Added `.github/workflows/validate.yml` — CI matrix across Python 3.10, 3.11, 3.12 with validate_skills, ruff, pytest, markdownlint, changelog lint, and version consistency checks.
+- Added `.pre-commit-config.yaml` — ruff (check + format) and pre-commit-hooks (trailing-whitespace, check-yaml, end-of-file-fixer).
+- Added `scripts/lint_changelog.py` — keepachangelog format validation.
+- Added `scripts/validate_version_consistency.py` — ensures pyproject.toml, PACKAGE_SPEC.md, and all skill SKILL.md versions match.
+- Added adapter plugin system via `[project.entry-points."contextsmith.adapters"]` — `discover_adapters()` uses `importlib.metadata.entry_points` with hardcoded fallback.
+- Added `tests/test_adapter_discovery.py` — 6 tests for entry-point-based adapter registration and fallback.
+- Added `D14_GATE_PASSED` sentinel to `.agent_work/` — machine-checkable flag for orchestrator-as-runtime commitment.
+
+### Changed
+
+- Relaxed `requires-python` from `>=3.14` to `>=3.10` in pyproject.toml for broader compatibility.
+- Moved `pytest` and `ruff` from `[project.dependencies]` to `[project.optional-dependencies] dev`.
+- Consolidated project version to v2.2.0 across pyproject.toml, PACKAGE_SPEC.md, and all 8 skill SKILL.md frontmatter (`validate_version_consistency.py` passes).
+- Adapter discovery migrated from hardcoded `ADAPTER_REGISTRY` to dynamic `importlib.metadata.entry_points` with fallback.
+- Extracted `_log_subphase_budget()` and `_finalize_step_execution()` from `orchestrator.orchestrator.run()` — cyclomatic complexity dropped from C(15) to B(8). No C/D/E/F grades remain in `orchestrator/`.
+
+### Fixed
+
+- Fixed `test_release.sh`: replaced obsolete `contextsmith-run` with `contextsmith-workflow-developer` in expected skills list; added Step 10 wheel install test.
+- Fixed `test_detect_auto` to accept any available adapter (not hardcoded to generic) — matches real harness environment.
+
 ## v2.2.0
 
 **Released:** 2026-06-15

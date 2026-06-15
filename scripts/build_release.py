@@ -117,6 +117,41 @@ def step_token_budget(dry_run=False):
     return True
 
 
+def step_wheel(dist_dir, dry_run=False):
+    """Build Python wheel via pyproject-build."""
+    print("\n=== Step D2: Wheel ===")
+
+    if dry_run:
+        print("  [DRY-RUN] Would build wheel via python -m build")
+        return True
+
+    try:
+        import build as build_module  # noqa: F401
+    except ImportError:
+        print("ERROR: 'build' package not installed. Run: pip install build")
+        return False
+
+    dist_dir.mkdir(parents=True, exist_ok=True)
+
+    ok, output = run_cmd(
+        [sys.executable, "-m", "build", "--wheel", "--outdir", str(dist_dir)],
+        dry_run=False,
+        label="Build wheel",
+    )
+    if not ok:
+        print(f"ERROR: wheel build failed:\n{output}")
+        return False
+
+    # Find the built wheel
+    wheels = list(dist_dir.glob("*.whl"))
+    if not wheels:
+        print("ERROR: no .whl file found in dist dir after build")
+        return False
+
+    print(f"  Built wheel: {wheels[0].name}")
+    return True
+
+
 def check_git_clean():
     """Check that tracked files have no uncommitted changes. Returns True if clean."""
     result = subprocess.run(
@@ -163,17 +198,15 @@ def bump_version(skill_name, new_version):
         # Simpler approach: just do a regex replacement on the whole text
         return "\n".join(new_lines)
 
-    # Simpler and more reliable: regex replace on the full text
-        # pattern = r"(^---\n.*?^---\n)(?=\n)"
     m = re.match(r"(^---\n)(.*?)(\n---\n)", text, re.S | re.M)
     if m:
-        frontmatter_yaml = m.group(2)
+        frontmatter_yaml = m[2]
         new_fm = re.sub(
             r"(^|\n)(\s*)version:\s*\S+",
             rf"\1\2version: {new_version}",
             frontmatter_yaml,
         )
-        text = m.group(1) + new_fm + m.group(3) + text[m.end():]
+        text = m[1] + new_fm + m[3] + text[m.end():]
         skill_md.write_text(text)
         print(f"    Updated SKILL.md metadata.version -> {new_version}")
 
@@ -278,6 +311,22 @@ def step_bundle(dist_dir, dry_run=False):
     if docs_src.exists():
         shutil.copytree(docs_src, staging / "docs")
         print("  COPY docs/")
+
+    # Copy orchestrator/ package
+    orch_src = REPO_ROOT / "orchestrator"
+    if orch_src.exists():
+        shutil.copytree(orch_src, staging / "orchestrator")
+        print("  COPY orchestrator/")
+
+    # Copy pyproject.toml
+    shutil.copy2(REPO_ROOT / "pyproject.toml", staging / "pyproject.toml")
+    print("  COPY pyproject.toml")
+
+    # Copy schemas/
+    schemas_src = REPO_ROOT / "schemas"
+    if schemas_src.exists():
+        shutil.copytree(schemas_src, staging / "schemas")
+        print("  COPY schemas/")
 
     # Copy skills/ (SKILL.md only — references synced next)
     skills = discover_skills()
@@ -468,6 +517,11 @@ def main():
         help="Also create individual per-skill zip packages",
     )
     parser.add_argument(
+        "--wheel",
+        action="store_true",
+        help="Build Python wheel via pyproject-build alongside skill zips",
+    )
+    parser.add_argument(
         "--dist-dir",
         type=Path,
         default=None,
@@ -507,6 +561,9 @@ def main():
         steps.append(
             ("Version bump", lambda: step_version_bump(args.version, args.dry_run))
         )
+
+    if args.wheel:
+        steps.append(("Wheel", lambda: step_wheel(dist_dir, args.dry_run)))
 
     if args.individual:
         steps.append(("Package", lambda: step_package(dist_dir, args.dry_run)))

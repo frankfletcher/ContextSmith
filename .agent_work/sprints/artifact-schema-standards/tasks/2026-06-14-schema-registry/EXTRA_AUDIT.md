@@ -295,3 +295,46 @@ If the goal was "put ContextSmith into a state where someone can install and run
 | `.contextsmith/audit-with-extra.json` validated but never executed via real orchestrator run | Blind Spot | acceptable tradeoff | Schema-validated, dry-run passes. Real execution requires orchestrator adoption. | Yes (Phase 11.1) |
 | No mechanism for agents to detect D14 gate status — each agent re-evaluates from scratch | Blind Spot | should-fix | Add `D14_GATE_PASSED` sentinel file that agents check before deciding merge strategy | No |
 
+
+## Extra Audit — 2026-06-15 (Phase 12 Completion)
+
+### Baseline Status
+
+- Validation: pass (429 tests, ruff clean, 8/8 skills, version consistent)
+- Plan accuracy: plan-is-current
+
+### Trajectory Assessment
+
+- **Current trajectory**: converged and complete
+- **Key observation**: The project started with schema design and ended with packaging — textbook dependency order. Every phase built on the previous one without rework. The trajectory is clean and coherent.
+
+### Findings
+
+| Finding | Lens | Severity | Action | Already in PLAN? |
+| --- | --- | --- | --- | --- |
+| `run()` complexity was C(15) throughout most of the project — extracted to B(8) only in final phase | Dependency Surface | should-fix | Extracted in 12.7. Was acceptable debt but would have amplified if the orchestrator grew further before extraction. | Yes (12.7) |
+| `test_release.sh` blocked by token budget `--strict` check — pre-existing skills exceed budgets | Scope Pressure | acceptable tradeoff | The token budgets are stale. A separate phase to recalibrate budgets would fix the pipeline. | No |
+| `requires-python = ">=3.14"` excludes Python 3.10–3.13 — validate.yml matrix targets those versions but pip install would fail | Blind Spot Scan | must-fix | The CI matrix claims 3.10/3.11/3.12 but pyproject.toml only allows 3.14. Pip install in CI would fail silently or with a confusing error. PLAN.md 12.1 listed relaxing this but it was outside NEXT_PROMPT.md scope for the agent that executed 12.1. | Partially (12.1 mentions it) |
+| Version consolidated to v2.2.0 but CHANGELOG.md already has v2.2.0 for Phase 11 — Phase 12 would be v2.3.0 | Trajectory | should-fix | Phase 12 changes should be under a new v2.3.0 header in CHANGELOG.md. Using v2.2.0 for the pyproject.toml version is fine (it's the current release), but the next CHANGELOG entry needs v2.3.0. | No |
+| Adapter discovery fallback uses `importlib.reload()` on cached modules — correct but could cause subtle issues if modules have side effects beyond registration | Blind Spot Scan | acceptable tradeoff | The reload is safe for these adapters (registration is the only module-level effect). If more adapters are added with heavier module-level code, the reload approach should be revisited. | No |
+| Wheel build tested in fresh venv but `test_release.sh` end-to-end pipeline is blocked | Scope Pressure | acceptable tradeoff | The individual components work (wheel build, install, CLI). The full pipeline failure is pre-existing (token budgets). Not introduced by this phase. | No |
+
+### Strengths
+
+- **Complexity discipline held**: 12 phases later, every function in orchestrator/ is ≤ B cyclomatic complexity and ≥ A maintainability. The extraction in 12.7 brought the one outlier back in line.
+- **Test growth with no regressions**: 429 tests, zero regressions across all phases. Each phase added tests; none removed or broke existing ones.
+- **No dead code**: Every function, schema, config, and script added across 12 phases is exercised by tests, used by the pipeline, or referenced in documentation.
+- **Version consistency**: All 10 version sources now match — a small thing that signals project hygiene.
+
+### Risks Not Yet Addressed
+
+1. **`requires-python = ">=3.14"` vs CI matrix (3.10–3.12)**: This is the most concrete blocker. The CI workflow targets Python 3.10–3.12 but pip install would fail on all of them because pyproject.toml declares `requires-python = ">=3.14"`. This must be fixed before the CI workflow can actually run.
+2. **CHANGELOG.md v2.2.0 vs v2.3.0**: The v2.2.0 entry describes Phase 11 completion. Phase 12 work needs a v2.3.0 entry. Currently the pyproject.toml version matches v2.2.0, which is fine for the package version itself (it reflects the latest release), but the CHANGELOG needs a new header for Phase 12 changes.
+3. **Token budgets stale**: 6 of 8 skills exceed their token budgets. The `--strict` check in the release pipeline blocks full automation. Recalibrating budgets is a small task but unblocks the release pipeline entirely.
+
+### Plan for Gaps (do not execute)
+
+1. Fix `requires-python` in pyproject.toml: relax from `>=3.14` to `>=3.10`.
+2. Move `pytest`, `ruff` from `[project.dependencies]` to `[project.optional-dependencies] dev`.
+3. Add v2.3.0 header to CHANGELOG.md documenting Phase 12 changes.
+4. Recalibrate token budgets across all 8 skills to match current line counts.

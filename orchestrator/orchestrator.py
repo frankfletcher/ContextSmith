@@ -849,6 +849,67 @@ def _clear_predispatch_marker(step_contract, checkpoint, config, state_dir) -> N
         write_checkpoint(state_dir, pre)
 
 
+def _log_subphase_budget(step_contract, current_state: str) -> None:
+    """Log sub-phase context budget with warning if it exceeds 64k."""
+    if step_contract.subphase_context_budget > 0:
+        budget_k = step_contract.subphase_context_budget // 1000
+        if step_contract.subphase_context_budget > 64000:
+            logger.warning(
+                f"[{current_state}] Sub-phase '{step_contract.subphase_name}' "
+                f"budget ({budget_k}k) exceeds typical usable window (64k). "
+                f"Consider splitting into smaller sub-phases."
+            )
+        else:
+            logger.info(f"[{current_state}] Sub-phase budget: {budget_k}k")
+
+
+def _finalize_step_execution(
+    execution,
+    state_dir: Path,
+    current_phase: str,
+    current_state: str,
+    checkpoint,
+    config: dict,
+    step_contract,
+    context: dict,
+    plan: dict,
+    status: dict,
+) -> int:
+    """Finalize step execution: verify append-only, merge .new, handle sub-phase.
+
+    Returns an exit code (EXIT_DONE, EXIT_BLOCKED, EXIT_CONTINUE,
+    or EXIT_INTERNAL_ERROR).
+    """
+    for repair in _verify_and_repair_append_only_files(state_dir):
+        logger.warning(f"[orchestrator] {repair}")
+
+    for merge in _merge_new_artifact_segments(state_dir):
+        logger.info(f"[orchestrator] {merge}")
+
+    if execution is None:
+        return EXIT_BLOCKED
+
+    harness_result, validation = execution
+    if validation.get("passed", False):
+        subphase_code = _try_advance_subphase(
+            state_dir, plan, status, step_contract, config, context
+        )
+        if subphase_code is not None:
+            return subphase_code
+
+    return _complete_step_flow(
+        execution,
+        current_state,
+        current_phase,
+        checkpoint,
+        config,
+        step_contract,
+        context,
+        state_dir,
+        plan,
+    )
+
+
 def run(
     config_path: str,
     state_dir: str,
@@ -886,16 +947,7 @@ def run(
     if step_contract is None:
         return EXIT_BLOCKED
 
-    if step_contract.subphase_context_budget > 0:
-        budget_k = step_contract.subphase_context_budget // 1000
-        if step_contract.subphase_context_budget > 64000:
-            logger.warning(
-                f"[{current_state}] Sub-phase '{step_contract.subphase_name}' "
-                f"budget ({budget_k}k) exceeds typical usable window (64k). "
-                f"Consider splitting into smaller sub-phases."
-            )
-        else:
-            logger.info(f"[{current_state}] Sub-phase budget: {budget_k}k")
+    _log_subphase_budget(step_contract, current_state)
 
     dispatch_validation = _validate_state_for_dispatch(status, checkpoint, config)
     if dispatch_validation is not None:
@@ -930,33 +982,17 @@ def run(
         _clear_predispatch_marker(step_contract, checkpoint, config, state_dir)
         return EXIT_INTERNAL_ERROR
 
-    for repair in _verify_and_repair_append_only_files(state_dir):
-        logger.warning(f"[orchestrator] {repair}")
-
-    for merge in _merge_new_artifact_segments(state_dir):
-        logger.info(f"[orchestrator] {merge}")
-
-    if execution is None:
-        return EXIT_BLOCKED
-
-    harness_result, validation = execution
-    if validation.get("passed", False):
-        subphase_code = _try_advance_subphase(
-            state_dir, plan, status, step_contract, config, context
-        )
-        if subphase_code is not None:
-            return subphase_code
-
-    return _complete_step_flow(
+    return _finalize_step_execution(
         execution,
-        current_state,
+        state_dir,
         current_phase,
+        current_state,
         checkpoint,
         config,
         step_contract,
         context,
-        state_dir,
         plan,
+        status,
     )
 
 
@@ -1148,6 +1184,7 @@ def _generate_next_prompt(
     """
     prompt_path = state_dir / "NEXT_PROMPT.md"
 
+    nl = "\n"
     subphase_section = ""
     subphase_name = getattr(step_contract, "subphase_name", "")
     if subphase_name and plan:
@@ -1174,7 +1211,7 @@ You are continuing a workflow on {context.get("project", "unknown")}.
 
 ## Current Status
 - Phase: {step_contract.step_id}
-- State: {next_state}{f"\\n- Sub-phase: {subphase_name}" if subphase_name else ""}
+- State: {next_state}{nl + "- Sub-phase: " + subphase_name if subphase_name else ""}
 
 ## Your Task
 Execute the next phase of the workflow.

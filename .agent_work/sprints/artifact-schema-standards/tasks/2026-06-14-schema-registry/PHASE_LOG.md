@@ -162,3 +162,36 @@
 - **Validation**: PLAN.md structure verified. All cross-references (PLAN.md → STATUS.md → CHECKLIST.md → DECISIONS.md → CONTEXT.md → ARTIFACTS.md) consistent.
 - **Artifacts**: PLAN.md, STATUS.md, CHECKLIST.md, DECISIONS.md, CONTEXT.md, ARTIFACTS.md, NEXT_PROMPT.md, RESULT.json
 - **Action**: Phase 12.1 is next: orchestrator packaging (CLI entry point, pip-installable).
+## Phase 12: Packaging and Distribution (Sub-phase 12.1)
+
+### Summary
+
+Added Python packaging infrastructure to make the orchestrator installable as a CLI tool.
+
+### Changes
+
+- **pyproject.toml**: Added `[build-system]` (hatchling), `[project.scripts]` (`contextsmith-orchestrator = "orchestrator.cli:main"`), `[tool.hatch.build.targets.wheel]` (`packages = ["orchestrator/"]`), updated description from placeholder.
+
+### Verification
+
+- `uv pip install -e .` — PASS
+- `python -m orchestrator.cli --help` — subcommands listed correctly
+- `python -m orchestrator --help` — same output as above
+- `uv run contextsmith-orchestrator --help` — same output as above
+- `uv run pytest tests/ -v` — 423/423 passed
+
+### Decisions
+
+- Entry point named `contextsmith-orchestrator` (not `contextsmith`) to avoid namespace collision with the project name and to clearly identify this as the runtime CLI.
+
+### Next
+
+Ready for Sub-phase 12.2: Distribution packaging (release pipeline, wheel build, PyPI publish workflow).
+## Phase 12: Packaging and Distribution — Complete
+
+- **Status**: Complete
+- **Date**: 2026-06-15
+- **Changes**: Phase 12 completed across 7 sub-phases (12.1-12.7). Orchestrator CLI is pip-installable (`contextsmith-orchestrator`). Wheel distribution pipeline added. Adapter plugin system migrated to entry points (importlib.metadata). CI/CD workflows added (validate.yml, publish.yml). Pre-commit config added. Changelog lint script created. Version consolidated to v2.2.0 across pyproject.toml, PACKAGE_SPEC.md, and all 8 skills. D14_GATE_PASSED sentinel added. `run()` complexity reduced from C(15) to B(8).
+- **Validation**: 429 pytest, ruff clean, ruff format clean, validate_skills clean (8/8), version consistency OK (all v2.2.0), radon cc no C/D/E/F.
+- **Artifacts**: pyproject.toml, build_release.py, test_release.sh, .github/workflows/{validate,publish}.yml, .pre-commit-config.yaml, scripts/lint_changelog.py, scripts/validate_version_consistency.py, .agent_work/D14_GATE_PASSED, tests/test_adapter_discovery.py, orchestrator/adapters/__init__.py, orchestrator/orchestrator.py
+- **Action**: Project complete. All 12 phases delivered.

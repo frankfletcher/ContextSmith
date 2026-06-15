@@ -63,7 +63,7 @@ echo ""
 
 # Step 1: Full pipeline run
 echo "=== Step 1: Full Pipeline Run ==="
-if python "$REPO_ROOT/scripts/build_release.py" --package --bundle --individual --dist-dir "$DIST_DIR" > "$TEST_ROOT/pipeline.log" 2>&1; then
+if python "$REPO_ROOT/scripts/build_release.py" --package --bundle --individual --wheel --dist-dir "$DIST_DIR" > "$TEST_ROOT/pipeline.log" 2>&1; then
     pass "Pipeline completed successfully"
 else
     fail "Pipeline failed (see $TEST_ROOT/pipeline.log)"
@@ -87,7 +87,7 @@ EXPECTED_SKILLS=(
     "contextsmith-skill-migrator"
     "contextsmith-instruction-engineer"
     "contextsmith-agent-evaluator"
-    "contextsmith-run"
+    "contextsmith-workflow-developer"
 )
 
 for skill in "${EXPECTED_SKILLS[@]}"; do
@@ -308,6 +308,39 @@ if errors > 0:
         fail "$skill: MANIFEST.json not found for checksum verification"
     fi
 done
+echo ""
+
+# Step 10: Wheel install test
+echo "=== Step 10: Wheel Install Test ==="
+WHEEL_FILE=$(find "$DIST_DIR" -maxdepth 1 -name "*.whl" 2>/dev/null | head -1)
+if [ -n "$WHEEL_FILE" ] && [ -f "$WHEEL_FILE" ]; then
+    pass "Wheel exists: $(basename "$WHEEL_FILE")"
+
+    # Create a fresh venv and install the wheel
+    WHEEL_VENV="$TEST_ROOT/wheel-venv"
+    python -m venv "$WHEEL_VENV"
+    if "$WHEEL_VENV/bin/pip" install "$WHEEL_FILE" > "$TEST_ROOT/wheel_install.log" 2>&1; then
+        pass "Wheel installed successfully in fresh venv"
+
+        # Test that contextsmith-orchestrator CLI works
+        if "$WHEEL_VENV/bin/contextsmith-orchestrator" --help > "$TEST_ROOT/wheel_help.log" 2>&1; then
+            pass "contextsmith-orchestrator --help works from wheel install"
+        else
+            fail "contextsmith-orchestrator --help failed from wheel install"
+        fi
+
+        # Verify python -m orchestrator works
+        if "$WHEEL_VENV/bin/python" -m orchestrator --help > "$TEST_ROOT/wheel_module_help.log" 2>&1; then
+            pass "python -m orchestrator --help works from wheel install"
+        else
+            fail "python -m orchestrator --help failed from wheel install"
+        fi
+    else
+        fail "Wheel installation failed (see $TEST_ROOT/wheel_install.log)"
+    fi
+else
+    fail "No wheel found in $DIST_DIR — wheel build may have failed or --wheel was not used"
+fi
 echo ""
 
 # Final summary

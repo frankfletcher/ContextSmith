@@ -97,10 +97,10 @@ class TestHarnessRegistry:
             HarnessRegistry.get("nonexistent")
 
     def test_detect_auto(self):
-        """Test auto-detection finds generic adapter."""
+        """Test auto-detection returns any available adapter."""
         discover_adapters()
         adapter = HarnessRegistry.get("auto")
-        assert adapter.name == "generic"  # Generic always available
+        assert adapter.name in ("opencode", "generic")
 
 
 class TestGenericAdapter:

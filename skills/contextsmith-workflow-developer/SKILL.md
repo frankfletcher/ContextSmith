@@ -2,7 +2,7 @@
 name: contextsmith-workflow-developer
 description: Generate workflow configs from natural language intent. Delegates to the orchestrator using its own meta-config. Use when you need to create a workflow config YAML, plan a multi-phase project, or generate task-state files for structured execution.
 metadata:
-  version: "2.0.0"
+  version: "2.2.0"
   package: ContextSmith
   target: local-open-weight-models
 ---

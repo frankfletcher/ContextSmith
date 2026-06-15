@@ -48,7 +48,7 @@ class GenericAdapter(HarnessAdapter):
         if result_file.exists():
             try:
                 envelope = json.loads(result_file.read_text(encoding="utf-8"))
-            except json.JSONDecodeError, OSError:
+            except (json.JSONDecodeError, OSError):
                 pass
 
         artifacts = self._collect_existing(contract, state_dir)
@@ -127,7 +127,7 @@ class GenericAdapter(HarnessAdapter):
             return None
         try:
             return json.loads(fixture_file.read_text(encoding="utf-8"))
-        except json.JSONDecodeError, OSError:
+        except (json.JSONDecodeError, OSError):
             return None
 
     def _write_fixture_artifacts(self, fixture: dict, state_dir: Path) -> list[str]:

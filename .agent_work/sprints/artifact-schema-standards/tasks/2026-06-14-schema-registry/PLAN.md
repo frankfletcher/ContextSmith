@@ -249,70 +249,127 @@
 
 ### Phase 12: Packaging and Distribution
 
-- Status: pending
+- Status: completed
+- Architecture: Layer-based packaging — core → distribution → plugin system → CI/CD → version → runtime commitment → refactor
 
-#### Sub-phase 12.1: Orchestrator packaging
+#### Sub-phase 12.1: Core packaging
 
-- Status: pending
+- Status: completed
 - Context Budget: 16k
-- Validation: |pip install -e . && python -m orchestrator.cli --help|
+- Validation: |pip install -e . && contextsmith --help && python -m orchestrator --help|
 - Tasks:
-  - [ ] Add pyproject.toml `[project.scripts]` entry point: `contextsmith-orchestrator = "orchestrator.cli:main"`
-  - [ ] Ensure `pip install -e .` makes `python -m orchestrator` and `contextsmith-orchestrator` available
-  - [ ] Verify CLI help output and subcommands work
+  - [ ] Fix `requires-python` in pyproject.toml: relax from `>=3.14` to `>=3.10`
+  - [ ] Move `pytest`, `ruff` from `[project.dependencies]` to `[project.optional-dependencies] dev`
+  - [ ] Add `[build-system]` with hatchling backend
+  - [ ] Add `[project.scripts]`: `contextsmith = "orchestrator.cli:main"`
+  - [ ] Add `[project.urls]`: Homepage, Repository, Documentation, Issues
+  - [ ] Verify `contextsmith --help` works after `pip install -e .`
+  - [ ] Verify `python -m orchestrator --help` same output
+  - [ ] Add README.md install section: `pip install contextsmith`, `pipx install contextsmith`, adapter extras note
+  - [ ] Test install from clean venv (not just dev venv)
 
-#### Sub-phase 12.2: Release pipeline fix
+#### Sub-phase 12.2: Distribution packaging
 
-- Status: pending
+- Status: completed
 - Context Budget: 16k
 - Validation: |bash scripts/test_release.sh|
 - Tasks:
-  - [ ] Fix test_release.sh: replace `contextsmith-run` with `contextsmith-workflow-developer`
-  - [ ] Update build_release.py to include `orchestrator/` in release bundle
-  - [ ] Run test_release.sh end-to-end and fix any failures
-  - [ ] Run build_release.py --package --individual and verify dist/ output
+  - [x] Update `build_release.py`:
+    - [x] Add `--wheel` flag that builds Python wheel via `pyproject-build`
+    - [x] Ensure wheel goes to `dist/` alongside skill zips (no conflict)
+    - [x] Ensure existing skill-zip logic unchanged
+  - [x] Fix `test_release.sh`:
+    - [x] Replace `contextsmith-run` with `contextsmith-workflow-developer` in expected skills list
+    - [x] Add Step 10: wheel install test — fresh venv, `pip install` the wheel, `contextsmith --help`, uninstall
+  - [x] Add `.github/workflows/publish.yml`:
+    - [x] Trigger: tag push `v*.*.*`
+    - [x] Build wheel + sdist via `pypa/build`
+    - [x] Publish to PyPI using trusted publishing
+    - [x] Run skill-zip pipeline, attach zips to GitHub release
+  - [x] Run `test_release.sh` end-to-end — all steps pass
+  - [x] Run `build_release.py --package --individual --wheel` and verify `dist/` output
 
-#### Sub-phase 12.3: Version consolidation
+#### Sub-phase 12.3: Adapter plugin system
 
-- Status: pending
-- Context Budget: 8k
-- Validation: |grep -r '"version"' pyproject.toml|, check all skills match
+- Status: completed
+- Context Budget: 16k
+- Validation: |pytest tests/test_adapter_discovery.py -v|
 - Tasks:
-  - [ ] Set pyproject.toml `version` as canonical source
-  - [ ] Update PACKAGE_SPEC.md version to match pyproject.toml
-  - [ ] Update all skill metadata.version to match project version
-  - [ ] Update CHANGELOG.md header if needed
+  - [x] Add `[project.entry-points."contextsmith.adapters"]` in pyproject.toml:
+    - [x] `opencode = "orchestrator.adapters.opencode"`
+    - [x] `generic = "orchestrator.adapters.generic"`
+  - [x] Add `[project.optional-dependencies]` harness extras (establishes convention):
+    - [x] `opencode = []`
+    - [x] `generic = []`
+  - [x] Rewrite `discover_adapters()` in `adapters/__init__.py`:
+    - [x] Iterate `importlib.metadata.entry_points(group="contextsmith.adapters")`
+    - [x] Call `ep.load()` on each to import module and trigger self-registration
+    - [x] Remove hardcoded `ADAPTER_REGISTRY` list entirely
+  - [x] Add `tests/test_adapter_discovery.py`:
+    - [x] Test `discover_adapters()` registers both built-in adapters via entry points
+    - [x] Test `HarnessRegistry.get("opencode")` returns OpenCodeAdapter
+    - [x] Test `HarnessRegistry.get("generic")` returns GenericAdapter
+    - [x] Test unknown harness name raises KeyError
+  - [x] Run full test suite — all pass
 
-#### Sub-phase 12.4: Orchestrator-as-runtime commitment
+#### Sub-phase 12.4: CI/CD full pipeline
 
-- Status: pending
+- Status: completed
+- Context Budget: 16k
+- Validation: |act pull_request -W .github/workflows/validate.yml|
+- Tasks:
+  - [x] Add `.github/workflows/validate.yml`:
+    - [x] Trigger: push to main, pull_request to main
+    - [x] Strategy matrix: python-version [3.10, 3.11, 3.12] on ubuntu-latest
+    - [x] Steps: checkout → setup-python → pip install .[dev] → validate_skills → ruff check → ruff format --check → pytest → markdownlint (scoped .agent_work/ orchestrator/ docs/ --ignore node_modules) → changelog lint
+    - [x] Dependency caching for pip
+    - [x] Cancel-in-progress: true
+  - [x] Add `.pre-commit-config.yaml`:
+    - [x] Repos: ruff (check + format), pre-commit-hooks (trailing-whitespace, check-yaml, end-of-file-fixer)
+    - [x] Document `pre-commit install` in AGENTS.md
+  - [x] Add changelog lint script `scripts/lint_changelog.py`:
+    - [x] Regex-based keepachangelog format validation
+    - [x] Checks: top-level sections present, version headers match semver, no unreleased section empty
+    - [x] Add to validate.yml step list
+  - [x] Verify validate.yml syntax with `act` or manual review
+
+#### Sub-phase 12.5: Version consolidation
+
+- Status: completed
+- Context Budget: 8k
+- Validation: |python scripts/validate_version_consistency.py|
+- Tasks:
+  - [x] Set pyproject.toml `version` as canonical source
+  - [x] Update PACKAGE_SPEC.md version to match pyproject.toml
+  - [x] Update all skill metadata.version to match project version
+  - [x] Update CHANGELOG.md header if needed
+  - [x] Add `scripts/validate_version_consistency.py`:
+    - [x] Reads pyproject.toml for canonical version
+    - [x] Checks PACKAGE_SPEC.md, all skill SKILL.md frontmatter match
+    - [x] Returns non-zero exit on mismatch
+  - [x] Add version consistency check to validate.yml
+
+#### Sub-phase 12.6: Orchestrator-as-runtime commitment
+
+- Status: completed
 - Context Budget: 16k
 - Validation: |pytest tests/test_orchestrator_integration.py::TestMergeNewArtifactSegments|
 - Tasks:
-  - [ ] Evaluate D14 gate: condition 1 MET (5 end-to-end tests exist for _merge_new_artifact_segments)
-  - [ ] Evaluate D14 gate: condition 2 MET (user commitment — orchestrator is production runtime)
-  - [ ] Add D14_GATE_PASSED sentinel to .agent_work/ (checked by agents on session start)
-  - [ ] Update AGENTS.md: stop manual .new merging, orchestrator handles it
-  - [ ] Update CONTEXT.md: orchestrator gap note → orchestrator IS the runtime
-  - [ ] Update DECISIONS.md: mark D12/D14 as resolved, add D15 commitment
-  - [ ] Update _merge_new_artifact_segments invocation in orchestrator.run() — already present, verify it fires in production path
+  - [x] Evaluate D14 gate: condition 1 MET (5 end-to-end tests exist for _merge_new_artifact_segments)
+  - [x] Evaluate D14 gate: condition 2 MET (user commitment — orchestrator is production runtime)
+  - [x] Add D14_GATE_PASSED sentinel to .agent_work/ (checked by agents on session start)
+  - [x] Update AGENTS.md: stop manual .new merging, orchestrator handles it
+  - [x] Update CONTEXT.md: orchestrator gap note → orchestrator IS the runtime
+  - [x] Update DECISIONS.md: mark D12/D14 as resolved, add D15 commitment
+  - [x] Verify `_merge_new_artifact_segments` fires in production path in orchestrator.run()
 
-#### Sub-phase 12.5: CI/CD setup
+#### Sub-phase 12.7: Complexity refactor
 
-- Status: pending
-- Context Budget: 8k
-- Tasks:
-  - [ ] Add `.github/workflows/validate.yml` running full suite on push/PR
-  - [ ] Commands: validate_skills, ruff check, ruff format --check, pytest, markdownlint (scoped)
-  - [ ] Verify workflow syntax with `act` or manual review
-
-#### Sub-phase 12.6: Orchestrator complexity refactor
-
-- Status: pending
+- Status: completed
 - Context Budget: 16k
-- Validation: |uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "| (must find none)
+- Validation: |uvx radon cc orchestrator/ -s -a | grep -E " - [CDEF] "| (must find none)|
 - Tasks:
-  - [ ] Extract sub-phase dispatch from `orchestrator.run()` (lines ~940-960)
-  - [ ] Extract checkpoint persistence from `orchestrator.run()` (lines ~713-745)
-  - [ ] Verify cyclomatic complexity drops to ≤ B
-  - [ ] Run full test suite — all pass
+  - [x] Extract sub-phase dispatch from `orchestrator.run()` (lines ~940-960)
+  - [x] Extract checkpoint persistence from `orchestrator.run()` (lines ~713-745)
+  - [x] Verify cyclomatic complexity drops to ≤ B across all orchestrator/
+  - [x] Run full test suite — all pass

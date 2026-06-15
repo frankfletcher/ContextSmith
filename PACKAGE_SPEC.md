@@ -6,7 +6,7 @@ ContextSmith Skills
 
 ## Version
 
-v1.7.1
+v2.2.0
 
 ## Thesis
 

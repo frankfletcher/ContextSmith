@@ -152,7 +152,7 @@ class OpenCodeAdapter(HarnessAdapter):
         if result_file.exists():
             try:
                 envelope = json.loads(result_file.read_text(encoding="utf-8"))
-            except json.JSONDecodeError, OSError:
+            except (json.JSONDecodeError, OSError):
                 pass
 
         if envelope:

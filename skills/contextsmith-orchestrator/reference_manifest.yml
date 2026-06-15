@@ -1,70 +1,72 @@
 skill: contextsmith-orchestrator
-version: "2.0.0"
-description: Shared and local reference dependencies for the ContextSmith Orchestrator skill.
+version: 2.0.0
+description: Shared and local reference dependencies for the ContextSmith Orchestrator
+  skill.
 references:
 - source: shared/run-configuration-preview.md
-  version: 4612b87bb23a1ca88b8419145e1fd381b90ca68a
+  version: 94cdd716ffda602b2e6bd758bf17db7393b3c6f0
   required: true
   load: always
 - source: shared/control-parameters-core.md
-  version: e5dfcf00636d99ffc45e5566efcd0a4f19252322
+  version: 708bb9f0c80596ed8dde8d45c1502b4f26608ecb
   required: true
   load: always
 - source: skills/contextsmith-orchestrator/execution-contract-core.md
-  version: TBD
+  version: 02db628f41455ab95f757846820c9bf4519a4dfa
   required: true
   local: true
   notes: Always-loaded runtime obligations for cache-efficient enforcement.
   load: always
 - source: skills/contextsmith-orchestrator/evidence-ledger-core.md
-  version: TBD
+  version: 6a74886577e4bec3323cf2fb2c1fc31785f74448
   required: true
   local: true
   notes: Always-loaded evidence requirements for cache-efficient enforcement.
   load: always
 - source: shared/persistent-task-state.md
-  version: 6b5ba1d26fa47851ce06882c878434be62d21f9f
+  version: 31106e203df483e6c927ad80bb246d639c5d4a3e
   required: true
   load: conditional
   when: phased or long-running work
 - source: shared/harness-opencode.md
-  version: TBD
+  version: 36acf94773fc070192a1adc50d3be6f7bfeacd21
   required: true
   load: conditional
   when: harness is opencode or agent is running in OpenCode
 - source: shared/ralph-loop.md
-  version: 5950e79ed5008cb26d7bde97db6ab90b0280ae08
+  version: 607fcf61de8f463fd22ab99dd83aa95a85dbc7f8
   required: true
   load: conditional
   when: Ralph iterations > 0
 - source: shared/evaluation-rubrics.md
-  version: 6492250665a63970e092f729c280ecdb9fa5046b
+  version: e3bd77f1aadc6e7145a615ed991ebb56d147102e
   required: true
   load: conditional
   when: grading or Ralph loop active
 - source: shared/loop-safety.md
-  version: bc8cd164a91b84fa5f32259ac53e392954e7e0c7
+  version: f563eccc8a57235aa23dd11db208e9193ad2df34
   required: true
   load: conditional
   when: tool use or agentic loops
 - source: shared/file-safety.md
-  version: TBD
+  version: 7b10fd59f5470bafb84ddb5f0f0469394d6db5ce
   required: true
-  notes: File operation safety — read-before-write, append for records, verify after write.
+  notes: "File operation safety \u2014 read-before-write, append for records, verify\
+    \ after write."
   load: conditional
   when: file creation or modification
 - source: shared/git-safety.md
-  version: 32748a1b9b452cb4ef49d3fd02ac25a6a4b43ee8
+  version: b38b68a6585cfe742f0fcccdb874b20c950b8e27
   required: true
   load: conditional
   when: coding or repo work
 - source: shared/side-effect-matrix.md
-  version: 646b309d8ccf59b5e2aac7493671cf8c93f0edcd
+  version: cfc4cad292661c3c8e17572875c8a7006733a6eb
   required: true
   load: conditional
   when: classifying side effects
 - source: shared/harness-generic.md
-  version: TBD
+  version: 9413129ffd3c7d570bac2a022f8e61813a60ee74
   required: true
   load: conditional
   when: harness is unknown or no other companion matches
@@ -74,17 +76,17 @@ references:
   load: conditional
   when: target is small local model
 - source: shared/complexity-gate.md
-  version: TBD
+  version: 3a8aac9d32250573b4ee125b2bcb3a29ad9a809f
   required: true
   load: conditional
   when: enforcing code complexity and maintainability gates
 - source: shared/artifact-manifest-core.md
-  version: 43d9ba9dedcb4010de4894a69dfae9f6391ebb18
+  version: 3b598c69b40c855be5468d19e4097cbfbd71cb8f
   required: true
   load: conditional
   when: artifact manifest schema detail needed
 - source: shared/behavioral-contracts.md
-  version: a701cb7251289c8c73fa4fcf8feddb7691dd1f50
+  version: fa5a4bd8c70257f57d7f8a6c0f922d44113759f6
   required: true
   load: conditional
   when: defining execution contract or behavior boundaries
@@ -94,7 +96,7 @@ references:
   load: conditional
   when: mode behavior unclear
 - source: shared/domain-intent.md
-  version: 320def729d99d3d9a69ad854b055a14b1f511497
+  version: 369f0b77253c01159253d4566d0329e8c52c4703
   required: true
   load: conditional
   when: classifying task domain
@@ -109,17 +111,17 @@ references:
   load: conditional
   when: complex context (long docs, RAG, multi-turn)
 - source: shared/targeted-context-length.md
-  version: 608c36fa0181b44a0b5893506a7d3e7c6f4b915e
+  version: 105a727d911350fea8e9c7564e9d47e945fa33b9
   required: true
   load: conditional
   when: user provides targeted context length
 - source: shared/model-capability-tiers.md
-  version: feabc377d10fbc5ecd19746e7853f7100d8f61f9
+  version: a9fdc205f31c8c677cbc5b150590308ef7349380
   required: true
   load: conditional
   when: using target-capability or planner/executor
 - source: shared/git-hygiene.md
-  version: 2cfd279d185b4f68301015f823266181783bbba6
+  version: f684c8fb80b0c4e9b1a39fb14d84f8bd4a855d0e
   required: true
   load: conditional
   when: coding or repo work
@@ -129,17 +131,17 @@ references:
   load: conditional
   when: determining output file location
 - source: shared/phased-planning.md
-  version: ecf597cdb54453a77c1b757af0cca8d1066ea12b
+  version: a81af2061b22311ec9e1ed3a7b15ed62313d71a5
   required: true
   load: conditional
   when: phased or long-running work
 - source: shared/implementation-plan-audit.md
-  version: 746fc6944ce6e1dedc631326237481e69a4a45cd
+  version: 1456eb8a504108fca0b52863adaa699c2e17f215
   required: true
   load: conditional
   when: implementation plan work
 - source: shared/phase-code-review.md
-  version: fdd1f6359db85717634e3516e747611f03dc924d
+  version: 984c15cb23a990d39e1426f9370d05c31131d423
   required: true
   load: conditional
   when: coding phase review
@@ -149,12 +151,12 @@ references:
   load: conditional
   when: education-level is deep or teaching
 - source: shared/documentation-quality.md
-  version: fe5be97e08f59cff8efff178fa40c9da6518a082
+  version: 2738772ec57259c01917eb84d69310af9b35dba0
   required: true
   load: conditional
   when: generating or editing documentation
 - source: shared/coding-standards.md
-  version: 209414e6853a9d7581d8a81ee0b93142b185b13e
+  version: 9fa4814e8d4d0217afd19e6d4465fb0c47741673
   required: true
   load: conditional
   when: coding domain
@@ -164,56 +166,57 @@ references:
   load: conditional
   when: frontend or UI domain
 - source: shared/structured-questioning.md
-  version: TBD
+  version: 96cc527ffff7034a12351df36f37a52a95c05fd1
   required: true
   load: conditional
   when: refine mode or structured questions needed
 - source: skills/contextsmith-orchestrator/execution-contract.md
-  version: TBD
+  version: d73fe33f8fc540eed5d93dbddafeeeeb16833be8
   required: true
   local: true
   notes: Runtime contract compilation and declared-vs-enforced checks.
   load: conditional
   when: contract schema detail needed
 - source: skills/contextsmith-orchestrator/interaction-refinement.md
-  version: TBD
+  version: 1c69c118757337abbb72eb6238f4ed0cc1b4171c
   required: true
   local: true
   notes: Refine-mode question rules and parameter mapping.
   load: conditional
   when: refine mode interaction
 - source: skills/contextsmith-orchestrator/domain-packs.md
-  version: TBD
+  version: 69909bfa101fd567ce928a5879bfaa9c0a0c8e3a
   required: true
   local: true
   notes: Domain-specific refinement, validation, self-audit, and Ralph lenses.
   load: conditional
   when: domain-specific refinement or validation
 - source: skills/contextsmith-orchestrator/task-state-execution.md
-  version: TBD
+  version: 55de261d474f875499f3df8e9ebda13b6ba9bf69
   required: true
   local: true
   notes: Phase and NEXT_PROMPT task-state execution rules.
   load: conditional
   when: phased task-state execution
 - source: skills/contextsmith-orchestrator/evidence-ledger.md
-  version: TBD
+  version: fe7423245907d2b18671f48ed4d48bb422e68b96
   required: true
   local: true
   notes: Evidence format for runtime obligation enforcement.
   load: conditional
   when: evidence format detail needed
 - source: skills/contextsmith-orchestrator/help.md
-  version: TBD
+  version: 980f40e735d5ca76592fe33b01e91ff80473bf76
   required: true
   local: true
   notes: Skill-specific help documentation.
   load: conditional
   when: help mode invoked
 - source: skills/contextsmith-orchestrator/artifact-templates.md
-  version: TBD
+  version: 2351cb48e3e77e0ef2ed39966e7016b5dcf6591f
   required: true
   local: true
-  notes: Full artifact templates for STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md, RESULT.json, and checkpoint.json.
+  notes: Full artifact templates for STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md,
+    RESULT.json, and checkpoint.json.
   load: conditional
   when: generating task-state artifacts

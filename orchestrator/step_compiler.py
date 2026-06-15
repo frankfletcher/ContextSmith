@@ -90,7 +90,7 @@ def _extract_subphase_budget(plan: dict, subphase_name: str) -> int:
                     raw = raw.replace("k", "")
                 try:
                     return int(float(raw) * multiplier)
-                except ValueError, TypeError:
+                except (ValueError, TypeError):
                     return 0
 
     return 0

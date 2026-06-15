@@ -1,0 +1,4 @@
+D14_GATE_PASSED
+Condition 1: 5 end-to-end integration tests for _merge_new_artifact_segments exist — MET
+Condition 2: Orchestrator is the production runtime (D15 commitment) — MET
+Date: 2026-06-15

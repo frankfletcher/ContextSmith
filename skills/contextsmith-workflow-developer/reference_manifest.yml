@@ -1,55 +1,56 @@
 skill: contextsmith-workflow-developer
-version: "1.0.0"
-description: Shared and local reference dependencies for the ContextSmith Workflow Developer skill.
+version: 1.0.0
+description: Shared and local reference dependencies for the ContextSmith Workflow
+  Developer skill.
 references:
 - source: shared/structured-questioning.md
-  version: TBD
+  version: 96cc527ffff7034a12351df36f37a52a95c05fd1
   required: true
   load: conditional
   when: refine mode or structured questions needed
 - source: shared/persistent-task-state.md
-  version: 6b5ba1d26fa47851ce06882c878434be62d21f9f
+  version: 31106e203df483e6c927ad80bb246d639c5d4a3e
   required: true
   load: conditional
   when: generating task-state files
 - source: schemas/workflow_config.schema.json
-  version: TBD
+  version: 56413712d160ee543c3d1cc724edf8537c1c07ed
   required: true
   local: true
   load: conditional
   when: validating generated config
 - source: skills/contextsmith-workflow-developer/references/domain-templates/coding.yaml
-  version: TBD
+  version: 61e20dc9a0ee4340f7af68cc59b7ac4907d76be0
   required: true
   load: conditional
   local: true
   when: domain is coding
 - source: skills/contextsmith-workflow-developer/references/domain-templates/writing.yaml
-  version: TBD
+  version: 3bab5e9bb8a4b92566ba2f6e79263235398edd8f
   required: true
   load: conditional
   local: true
   when: domain is writing
 - source: skills/contextsmith-workflow-developer/references/domain-templates/research.yaml
-  version: TBD
+  version: 2610c57f9c811eada8545a287cd15599814e79ff
   required: true
   load: conditional
   local: true
   when: domain is research
 - source: skills/contextsmith-workflow-developer/references/domain-templates/migration.yaml
-  version: TBD
+  version: fe24b1412f3aa90cecaa1271e7cd7ce9ea7defe8
   required: true
   load: conditional
   local: true
   when: domain is migration
 - source: skills/contextsmith-workflow-developer/references/domain-templates/audit.yaml
-  version: TBD
+  version: eb722b9711cf82a264455ea525ead4c2d0372912
   required: true
   load: conditional
   local: true
   when: domain is audit
 - source: skills/contextsmith-workflow-developer/references/domain-templates/general.yaml
-  version: TBD
+  version: 3911774a2ef0ca799be3bc26ad0f2b00a4238856
   required: true
   load: conditional
   local: true

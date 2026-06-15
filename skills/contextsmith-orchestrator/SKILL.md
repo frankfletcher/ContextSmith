@@ -2,7 +2,7 @@
 name: contextsmith-orchestrator
 description: Execute workflow configs through a deterministic state machine loop, or run raw prompts/prompt files with full contract enforcement. Use for phased workflows, task-state handoffs, or any execution needing validation gates, self-audit, Ralph loops, and evidence tracking.
 metadata:
-  version: "2.0.0"
+  version: "2.2.0"
   package: ContextSmith
   target: local-open-weight-models
 ---

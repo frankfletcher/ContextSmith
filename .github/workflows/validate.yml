@@ -1,27 +1,54 @@
 name: Validate
 
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
-        run: pip install pyyaml
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[dev]
 
-      - name: Sync shared references (in-place for CI validation)
-        run: python scripts/sync_shared_refs.py --in-place --verbose
-
-      - name: Validate skills and manifests
+      - name: Validate skills
         run: python scripts/validate_skills.py
+
+      - name: Ruff check
+        run: ruff check orchestrator/ --select E,F,W,I
+
+      - name: Ruff format check
+        run: ruff format orchestrator/ --check
+
+      - name: Pytest
+        run: pytest tests/ -v
+
+      - name: Markdownlint
+        run: npx markdownlint-cli .agent_work/ orchestrator/ docs/ --ignore node_modules
+
+      - name: Changelog lint
+        run: python scripts/lint_changelog.py
+
+      - name: Version consistency
+        run: python scripts/validate_version_consistency.py

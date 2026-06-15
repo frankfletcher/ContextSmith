@@ -433,3 +433,47 @@ Low risk. STATUS.md, NEXT_PROMPT.md, DECISIONS.md, CONTEXT.md all provide clear 
 ### Recommendations
 
 - The project is complete. No further recommendations for the artifact schema standards scope.
+## Sub-phase 12.1: Orchestrator CLI packaging
+
+### A-F Rubric Grade: A
+
+| Criterion | Grade | Rationale |
+|-----------|-------|-----------|
+| **Clarity** | A | pyproject.toml changes are minimal and well-structured. The `[project.scripts]`, `[build-system]`, and `[tool.hatch.build.targets.wheel]` sections each have a single clear purpose. |
+| **Atomicity** | A | Single concern: making the orchestrator installable as a CLI. No scope creep into version consolidation, release pipeline, or other Phase 12 sub-phases. |
+| **Safety** | A | Only pyproject.toml was modified. No existing behavior changed, no data loss risk. All 423 existing tests pass. Both CLI entry points verified. |
+| **Testability** | A | Entry point presence verified via `uv run contextsmith-orchestrator --help`. Module access verified via `python -m orchestrator.cli --help`. Full test suite confirms no regressions. |
+| **Domain Fit** | A | Software-engineering domain: standard Python packaging with hatchling, follows pep621 conventions, matches the project's existing Python toolchain (uv, pytest, ruff). |
+| **Context Fit** | A | Stays within 16k context budget. No unnecessary references loaded. Changes are in the single file specified by NEXT_PROMPT.md. |
+## Phase 12: Packaging and Distribution — Final Audit
+
+- **Date**: 2026-06-15
+- **Phase**: Phase 12: Packaging and Distribution
+- **Status**: Complete
+
+### A-F Rubric
+
+| Criterion | Grade | Rationale |
+|-----------|-------|-----------|
+| **Clarity** | A | All 7 sub-phases have well-defined tasks with clear acceptance criteria. Scripts and configs are self-documenting. |
+| **Atomicity** | A | Each sub-phase covers a single bounded concern: packaging, distribution, adapter discovery, CI/CD, versioning, orchestrator commitment, complexity. No scope creep between sub-phases. |
+| **Safety** | A | All modifications preserve backward compatibility. Existing packaging pipeline unchanged (wheel added alongside, not replace). Existing adapter tests pass. Complexity refactor preserves all behavior (429 tests pass). |
+| **Testability** | A | 6 new adapter discovery tests. Full suite at 429 tests. Version consistency validator. Changelog linter. CI validate.yml with matrix testing across 3 Python versions. |
+| **Domain Fit** | A | Standard Python packaging (hatchling, build, PEP 621). Standard CI/CD (GitHub Actions). Standard pre-commit (ruff + pre-commit-hooks). Adapter discovery follows established `importlib.metadata.entry_points` pattern. |
+| **Context Fit** | A | Context budgets (8k-16k) appropriate for each sub-phase. No excessive reference loading. Changes confined to relevant files per sub-phase. |
+
+### Strengths
+
+- **Clean complexity refactor**: `run()` dropped from C(15) to B(8) by extracting two naturally bounded blocks. No C/D/E/F grades remain in orchestrator/.
+- **Adapter discovery migration**: Entry-point-based discovery is more extensible and standard-compliant, with graceful fallback for development environments.
+- **Version consolidation**: All 10 version sources (pyproject.toml, PACKAGE_SPEC.md, 8 skills) now consistently report v2.2.0.
+
+### Known Gaps
+
+- `test_release.sh` fails at the token budget `--strict` check (pre-existing, skills exceed budgets). Pipeline steps before and after are verified working.
+- markdownlint pre-existing errors across repo (skills/, AGENTS.md, docs/) unaffected by this phase.
+- `requires-python = ">=3.14"` remains restrictive — not addressed as it was outside NEXT_PROMPT.md scope.
+
+### All Phases Complete
+
+The artifact schema standards project is delivered across 12 phases and 28 sub-phases. 429 tests pass. All 8 skills validate. Ruff clean. Version consistent. Orchestrator complexity managed. CI/CD infrastructure in place.

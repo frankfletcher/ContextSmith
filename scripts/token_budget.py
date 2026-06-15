@@ -7,38 +7,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SKILL_BUDGETS = {
-    "contextsmith": 1000,
-    "contextsmith-agent-evaluator": 2100,
-    "contextsmith-skill-migrator": 2500,
-    "contextsmith-skill-engineer": 3400,
-    "contextsmith-instruction-engineer": 3600,
-    "contextsmith-prompt-engineer": 3800,
-    "contextsmith-run": 4000,
+    "contextsmith": 2200,
+    "contextsmith-agent-evaluator": 2500,
+    "contextsmith-skill-migrator": 2700,
+    "contextsmith-skill-engineer": 4100,
+    "contextsmith-instruction-engineer": 4200,
+    "contextsmith-prompt-engineer": 4600,
+    "contextsmith-orchestrator": 6400,
+    "contextsmith-workflow-developer": 1000,
 }
 
 COMMON_LOAD_SETS = {
-    "contextsmith-run:minimal": [
-        "skills/contextsmith-run/SKILL.md",
-        "skills/contextsmith-run/execution-contract-core.md",
-        "skills/contextsmith-run/evidence-ledger-core.md",
-        "shared/control-parameters-core.md",
-    ],
-    "contextsmith-run:ralph-validation": [
-        "skills/contextsmith-run/SKILL.md",
-        "skills/contextsmith-run/execution-contract-core.md",
-        "skills/contextsmith-run/evidence-ledger-core.md",
-        "shared/control-parameters-core.md",
-        "shared/ralph-loop.md",
-        "shared/evaluation-rubrics.md",
-    ],
-    "contextsmith-run:task-state": [
-        "skills/contextsmith-run/SKILL.md",
-        "skills/contextsmith-run/execution-contract-core.md",
-        "skills/contextsmith-run/evidence-ledger-core.md",
-        "shared/control-parameters-core.md",
-        "skills/contextsmith-run/task-state-execution.md",
-        "shared/persistent-task-state.md",
-    ],
     "prompt-engineer:manifest-core": [
         "skills/contextsmith-prompt-engineer/SKILL.md",
         "shared/control-parameters-core.md",
