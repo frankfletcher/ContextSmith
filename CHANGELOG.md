@@ -1,5 +1,41 @@
 # Changelog
 
+## v2.1.0
+
+**Released:** 2026-06-14
+
+### Added
+
+- Added artifact schema standards: `schemas/artifact_schemas.yaml` defines required and optional sections, content rules, and validation metadata for all 11 markdown artifact types (STATUS.md, PLAN.md, CONTEXT.md, PHASE_LOG.md, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, EXTRA_AUDIT.md, DECISIONS.md, ARTIFACTS.md, CHECKLIST.md, TASK.md, NEXT_PROMPT.md).
+- Added `state_reader._parse_phase_tree()` — three-level hierarchical parser for PLAN.md (### Phase, #### Sub-phase, - [x] Task) with flat-format backward compatibility and `current_subphase` in `read_status()`.
+- Added `validators.validate_phase_tree_structure()` — structural validation of PLAN.md hierarchy with status checking and task well-formedness.
+- Added `validators.validate_plan_phase_order()` — cross-reference PLAN.md phases against workflow config `phase_order`.
+- Added `_extract_subphase_budget()` to step compiler — extracts Context Budget metadata from sub-phase definitions for phase-level context allocation.
+- Added `_try_advance_subphase()` to orchestrator — auto-advances through pending sub-phases with dependency checking and STATUS.md updates.
+- Added `artifact_schemas` extension to `workflow_config.schema.json` — `ArtifactSchemaOverride` with `extend_base`, `required_sections`, `optional_sections`, and `additional_sections` for workflow-specific overrides.
+- Added `_build_artifact_overrides()` to validators — merges config-level schema overrides with base artifact schemas.
+- Added `docs/reference/ARTIFACT_SCHEMAS.md` — user-facing documentation for the schema registry, PLAN.md hierarchical format, STATUS.md sub-phase tracking, and the validation pipeline.
+- Added `tests/test_subphase_advancement.py` — 6 integration tests for sub-phase dispatch, completion detection, flat-plan compatibility, and dependency skipping.
+- Added 22 new tests across validators, state reader, and step compiler for phase tree parsing, structural validation, budget extraction, and plan–config cross-referencing (403 → 425 total).
+
+### Changed
+
+- **Phase plans now use hierarchical format** — `PLAN.md` defines phases with `###`, sub-phases with `####`, and tasks with `- [ ]` / `- [x]` checkboxes. Sub-phases carry Context Budget, Dependency, and Validation metadata.
+- `read_plan()` detects `###` headings and dispatches to `_parse_phase_tree()` automatically; flat checkbox format still supported.
+- `compile_step_contract()` accepts `current_subphase` and propagates it to `StepContract.subphase_name` and `subphase_context_budget`.
+- `_rewrite_status_content()` and `_update_status()` support `Current Sub-phase` field for tracking active sub-phase.
+- `_generate_next_prompt()` includes sub-phase name and task list from PLAN.md.
+- `validate_artifacts_with_schemas()` now reads both `section_requirements` and `artifact_schemas` config keys, merging overrides via `_build_artifact_overrides()`.
+- `schemas/workflow_config.schema.json` upgraded with `ArtifactSchemaOverride` `$def` and `artifact_schemas` property.
+- 9 orchestrator functions refactored from cyclomatic complexity C to ≤ B using radon-guided extraction.
+- All markdown tables in `docs/` standardized to spaced pipe separators (MD060 fix).
+
+### Notes
+
+- The project now has 425 passing tests, ruff lint and format clean, and all markdown files pass markdownlint.
+- Phase plans migrated from flat checkbox lists to hierarchical format with context budgets and validation metadata per sub-phase.
+- The `.new` file auto-merge mechanism is implemented in the orchestrator but not yet deployed as the production runtime; agents currently merge `.new` segments manually (see DECISIONS.md D12).
+
 ## v2.0.0
 
 **Released:** 2026-06-13

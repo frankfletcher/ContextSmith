@@ -3,52 +3,56 @@
 You are continuing work on the ContextSmith artifact schema standards task.
 
 ## Current Status
-- Phase: 9 of 10
-- Sub-phase: 9.1
+- Phase: 10 of 11
+- Sub-phase: 10.1
 - State: execute
 
 ## Sub-phase
-Sub-phase 9.1: Schema registry docs
+Sub-phase 10.1: Implementation plan audit
 
 ## Sub-phase Tasks
-- [ ] Write docs/reference/ARTIFACT_SCHEMAS.md
-- [ ] Document PLAN.md hierarchical format
-- [ ] Add examples of sub-phase structure
+- [ ] Run implementation plan audit
+- [ ] Fix any must-fix items
 
 ## Your Task
-Write user-facing documentation for the artifact schema registry. Create `docs/reference/ARTIFACT_SCHEMAS.md` documenting:
-- The purpose of the schema registry (`schemas/artifact_schemas.yaml`)
-- How schemas are structured (phase_tree content rule, required/optional sections)
-- PLAN.md hierarchical format (### Phase, #### Sub-phase, - [x] Task)
-- Examples of sub-phase structure with tasks, metadata, and completion tracking
-- STATUS.md Current Sub-phase optional section
-- How validation uses schemas (via `validators.validate_artifact_schema()`)
+Run the implementation plan audit across all phases of the artifact schema standards project. Review:
+
+1. Whether Phases 1-9 were delivered to spec
+2. Whether the implementation plan (PLAN.md) accurately reflects what was built
+3. Whether any must-fix gaps exist
+4. Whether the validation pipeline documents are consistent with the implementation
+
+Fix any must-fix items found during the audit. Record findings in the audit report.
 
 ## Input Files
 - STATUS.md: Current workflow state
-- PLAN.md: Phase plan with all 10 phases
-- CONTEXT.md: Project context
+- PLAN.md: Phase plan with all phases and tasks
+- CONTEXT.md: Project context and constraints
 - CHECKLIST.md: Task tracking
+- ARTIFACTS.md: Artifact inventory
+- PHASE_LOG.md: Phase history
+- EDUCATIONAL_REPORT.md: Per-phase educational reports
+- AUDIT_REPORT.md: Audit findings
+- DECISIONS.md: Design decisions
 - schemas/artifact_schemas.yaml: Artifact schema registry
-- orchestrator/validators.py: Schema loading and validation
-- orchestrator/state_reader.py: Plan/status parsing logic
-- shared/documentation-quality.md: Documentation quality reference
-- docs/contributing/documentation-review-checklist.md: Review criteria
-- docs/reference/VERSIONING.md: Existing doc for style reference
+- schemas/workflow_config.schema.json: Workflow config schema
+- orchestrator/validators.py: Validation functions
+- orchestrator/state_reader.py: State parsing
+- orchestrator/orchestrator.py: Main orchestrator
+- shared/implementation-plan-audit.md: Audit reference
+- shared/project-audit.md: Full project audit prompt
 
 ## Output Requirements
-- Create `docs/reference/ARTIFACT_SCHEMAS.md`
-- Document PLAN.md hierarchical format with examples
-- Use the project voice from docs/contributing/
-- Must pass markdownlint
+- Run the audit and record findings
+- Fix any must-fix items found
 - Update CHECKLIST.md
 - Create .new segment files for EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md
 
 ## Constraints
-- Context Budget: 24k
-- Do not modify orchestrator code or schemas
-- Follow existing doc style from docs/reference/VERSIONING.md
-- Must pass full validation suite on completion
+- Context Budget: 16k
+- Do not introduce new features or scope
+- Do not modify schemas or orchestrator code unless fixing a must-fix bug
+- Follow existing doc style
 
 ### REPORT FILES: USE `.new` SEGMENTS — BUT MERGE MANUALLY
 
@@ -58,14 +62,11 @@ The orchestrator (with `.new` auto-merging) is part of the planned build, NOT th
 2. **After writing**, manually merge the `.new` content into the parent file by appending.
 3. **Then remove** the `.new` file.
 
-This is a transitional requirement. See DECISIONS.md D12 for the full rationale.
-
 Write these `.new` segment files (and merge manually):
-
 - `EDUCATIONAL_REPORT.md.new` — new sub-phase explanation entry
 - `AUDIT_REPORT.md.new` — new audit rubric entry
 - `PHASE_LOG.md.new` — new phase log entry
-- `DECISIONS.md.new` — new decision entry
+- `DECISIONS.md.new` — new decision entry (if any)
 
 ## Ralph Loop Enforcement
 3 iterations required. Each is critique+fix. Do not skip or collapse.
@@ -78,8 +79,9 @@ Before closeout, verify:
 - Task state updated with compact facts
 
 ## Hard Stop
-Current phase is Phase 9: Documentation.
+Current phase is Phase 10: Final Audit and Validation.
 Do not proceed beyond it. Do not edit files outside this phase scope.
+Do not fix nice-to-have items — only must-fix.
 
 ## Expected Output Format
 

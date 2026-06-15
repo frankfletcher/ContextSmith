@@ -60,3 +60,15 @@
 - Reason: The orchestrator's `_merge_new_artifact_segments()` is implemented in `orchestrator/orchestrator.py` but the current production ContextSmith does not use the orchestrator. Agents using `.new` conventions will have orphaned segments unless they merge manually.
 - Impact: Contradiction — agents are directed to write `.new` files (to prepare for orchestrator adoption) but must also manually merge them (because the orchestrator isn't running). When the orchestrator ships, agents must stop manually merging. CONTEXT.md now documents this as a known constraint.
 - When to revisit: Remove this note and stop manual merging when the orchestrator is deployed as the production runtime (see PLAN.md Phase 5+).
+## D13: ARTIFACT_SCHEMAS.md Content Scope
+- **Decision**: Document all 6 required topics in a single reference file, with the validation pipeline documented in depth (loader → single-check → bulk-check → config override → phase-tree)
+- **Reason**: The schema registry is a cross-cutting concern — documentation that covers only the YAML format would leave users guessing how validation works. Including the pipeline makes the doc self-contained.
+- **Impact**: The document is more useful as a single reference but may need updating if the validation pipeline gains new functions
+
+## D14: Orchestrator Adoption Gate
+- **Decision**: Define the concrete condition for when orchestrator `.new` auto-merging activates and manual merging stops. The gate triggers when BOTH conditions are met:
+  1. The orchestrator's `_merge_new_artifact_segments()` has been exercised by at least one end-to-end integration test that verifies auto-merge replaces manual `cat >>` correctly.
+  2. A workflow config exists in the repo that routes through `orchestrator.run()` as the production entry point (not just unit-test invocation).
+- **Reason**: Vague conditions ("when the orchestrator ships" from D12) leave ambiguity. Agents need a checkable rule they can evaluate without asking. EITHER condition alone is insufficient — the code could work in tests but lack a real config, or a config could exist but the auto-merge path could be untested.
+- **Impact**: Until D14 gate passes, agents continue merging `.new` segments manually. After the gate fires, manual merging becomes a bug (the orchestrator handles it). D12 should be revisited when the gate fires — remove the "manually merge" instruction and remove D14 as resolved.
+- **When to revisit**: Check at the start of each phase. If both conditions are met, remove D14, update D12 to simply state "orchestrator handles merging", remove manual-merge instructions from NEXT_PROMPT.md templates, and stop appending in this session.

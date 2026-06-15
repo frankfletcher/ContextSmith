@@ -234,3 +234,5 @@ uvx radon mi orchestrator/ -s | grep -E " - [BCDEF] "
 **The gate is a backup.** Do not write code assuming you'll fix it after radon complains. Write it clean in one pass. If radon flags a function, do not just rename variables — extract, restructure, eliminate branches. Loop until the function is naturally ≤ B.
 
 For the full complexity prevention reference, see `shared/coding-standards.md`. For the gate procedure, see `shared/complexity-gate.md`.
+
+@RTK.md

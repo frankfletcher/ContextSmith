@@ -143,22 +143,22 @@
   - [x] Add test for backward compat with flat plan
 
 ### Phase 9: Documentation
-- Status: pending
+- Status: completed
 
 #### Sub-phase 9.1: Schema registry docs
-- Status: pending
+- Status: completed
 - Context Budget: 24k
 - Tasks:
-  - [ ] Write docs/reference/ARTIFACT_SCHEMAS.md
-  - [ ] Document PLAN.md hierarchical format
-  - [ ] Add examples of sub-phase structure
+  - [x] Write docs/reference/ARTIFACT_SCHEMAS.md
+  - [x] Document PLAN.md hierarchical format
+  - [x] Add examples of sub-phase structure
 
 #### Sub-phase 9.2: Changelog
-- Status: pending
+- Status: completed
 - Context Budget: 8k
 - Tasks:
-  - [ ] Update CHANGELOG.md
-  - [ ] Run markdownlint on all docs
+  - [x] Update CHANGELOG.md
+  - [x] Run markdownlint on all docs
 
 ### Phase 10: Final Audit and Validation
 - Status: pending

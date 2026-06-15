@@ -5,6 +5,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+import pytest
+
 CLI = Path(__file__).resolve().parent.parent / "runtime" / "cli.py"
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -158,9 +160,9 @@ class TestCliFail:
         assert "FAIL" in result.stdout
         assert "Missing required field: approval_gates" in result.stdout
 
-    def test_all_subcommands_fail_with_violation_text(self):
-        """Every subcommand outputs specific violation text on failure."""
-        fail_cases = [
+    @pytest.mark.parametrize(
+        ("cmd", "fixture", "expected"),
+        [
             (
                 "requirements",
                 "requirements_chain_missing_id.json",
@@ -191,13 +193,15 @@ class TestCliFail:
                 "domain_pack_missing_approval_gates.json",
                 "Missing required field: approval_gates",
             ),
-        ]
-        for cmd, fixture, expected in fail_cases:
-            result = _run_cli(cmd, str(FIXTURES / fixture))
-            assert result.returncode == 1, (
-                f"{cmd}: expected exit 1, got {result.returncode}"
-            )
-            assert expected in result.stdout, f"{cmd}: expected '{expected}' in output"
+        ],
+    )
+    def test_all_subcommands_fail_with_violation_text(self, cmd, fixture, expected):
+        """Every subcommand outputs specific violation text on failure."""
+        result = _run_cli(cmd, str(FIXTURES / fixture))
+        assert result.returncode == 1, (
+            f"{cmd}: expected exit 1, got {result.returncode}"
+        )
+        assert expected in result.stdout, f"{cmd}: expected '{expected}' in output"
 
 
 # --- File errors exit 2 ---

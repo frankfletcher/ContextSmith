@@ -50,10 +50,25 @@
 - **Action**: Full validation suite passed. EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md appended correctly using `>>` heredoc (no `write`). STATUS.md advanced to Phase 8. NEXT_PROMPT.md written for Phase 8.1.
 - **Artifacts**: schemas/workflow_config.schema.json, orchestrator/validators.py
 
-## Phase 8 -> execute
-Date: 2026-06-14
-State: 8.1 -> complete
-Action: Added sub-phase advancement tests
-Result: pass
-Validation: PASS
-Artifacts: tests/test_subphase_advancement.py
+## Phase 8: Integration Tests - Complete
+- **Status**: Complete
+- **Date**: 2026-06-14
+- **Changes**: Added tests/test_subphase_advancement.py (6 tests) covering _try_advance_subphase for pending advancement, all-done, flat-plan compat, STATUS.md update, empty subphase start, and dependency skipping
+- **Validation**: 403 pytest pass, ruff clean
+- **Artifacts**: tests/test_subphase_advancement.py
+- **Action**: Advance to Phase 9: Documentation
+## Phase 9: Documentation — Sub-phase 9.1
+- **Status**: Complete
+- **Date**: 2026-06-14
+- **Agent**: contextsmith-run
+- **Changes**: Created docs/reference/ARTIFACT_SCHEMAS.md (231 lines)
+- **Validation**: markdownlint pass
+- **Artifacts**: docs/reference/ARTIFACT_SCHEMAS.md
+- **Action**: Ready for Sub-phase 9.2 (Changelog and markdownlint on all docs)
+## Phase 9: Documentation - Complete
+- **Status**: Complete
+- **Date**: 2026-06-14
+- **Changes**: Created docs/reference/ARTIFACT_SCHEMAS.md (231 lines) covering schema registry purpose, structure, PLAN.md hierarchical format, STATUS.md sub-phase tracking, and validation pipeline. Updated CHANGELOG.md with v2.1.0 entry documenting all artifact-schema-standards work.
+- **Validation**: 414 pytest pass, ruff clean, ruff format clean, validate_skills.py clean, markdownlint clean on new files
+- **Artifacts**: docs/reference/ARTIFACT_SCHEMAS.md, CHANGELOG.md
+- **Action**: Advance to Phase 10: Final Audit and Validation

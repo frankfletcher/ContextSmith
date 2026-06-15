@@ -86,9 +86,7 @@ class TestHarnessRegistry:
 
     def test_get_adapter(self):
         """Test getting adapter by name."""
-        # Ensure adapters are discovered
-        if "generic" not in HarnessRegistry.list_available():
-            discover_adapters()
+        discover_adapters()
         adapter = HarnessRegistry.get("generic")
         assert adapter.name == "generic"
 
@@ -100,9 +98,7 @@ class TestHarnessRegistry:
 
     def test_detect_auto(self):
         """Test auto-detection finds generic adapter."""
-        # Ensure adapters are discovered
-        if "generic" not in HarnessRegistry.list_available():
-            discover_adapters()
+        discover_adapters()
         adapter = HarnessRegistry.get("auto")
         assert adapter.name == "generic"  # Generic always available
 
@@ -148,8 +144,9 @@ class TestGenericAdapter:
         adapter = GenericAdapter()
 
         # Create expected artifacts
-        for artifact in sample_contract.expected_outputs:
-            (temp_state_dir / artifact).write_text(f"Content of {artifact}")
+        result_path, status_path = sample_contract.expected_outputs
+        (temp_state_dir / result_path).write_text(f"Content of {result_path}")
+        (temp_state_dir / status_path).write_text(f"Content of {status_path}")
 
         result = adapter.execute(sample_contract, temp_state_dir)
 

@@ -674,6 +674,76 @@ class TestValidateArtifactsWithSchemas:
         result = validate_artifacts_with_schemas(state_dir, expected_outputs, config)
         assert result["passed"] is True
 
+    def test_artifact_schemas_override_adds_requirement(self):
+        """Test artifact_schemas config key adds required section via override."""
+        from orchestrator.validators import validate_artifacts_with_schemas
+
+        state_dir = FIXTURES_DIR / "task_state_valid"
+        expected_outputs = ["STATUS.md"]
+        config = {
+            "artifact_schemas": {
+                "STATUS.md": {
+                    "extend_base": True,
+                    "required_sections": ["Progress"],
+                }
+            }
+        }
+        result = validate_artifacts_with_schemas(state_dir, expected_outputs, config)
+        assert result["passed"] is True
+
+    def test_artifact_schemas_override_adds_new_section_causes_failure(self):
+        """Test artifact_schemas override for a section not in the fixture fails."""
+        from orchestrator.validators import validate_artifacts_with_schemas
+
+        state_dir = FIXTURES_DIR / "task_state_valid"
+        expected_outputs = ["STATUS.md"]
+        config = {
+            "artifact_schemas": {
+                "STATUS.md": {
+                    "extend_base": True,
+                    "required_sections": ["NonExistentSection"],
+                }
+            }
+        }
+        result = validate_artifacts_with_schemas(state_dir, expected_outputs, config)
+        assert result["passed"] is False
+        assert any("NonExistentSection" in f for f in result["failures"])
+
+    def test_artifact_schemas_override_replaces_requirement(self):
+        """Test artifact_schemas with extend_base=False replaces base requirements."""
+        from orchestrator.validators import validate_artifacts_with_schemas
+
+        state_dir = FIXTURES_DIR / "task_state_valid"
+        expected_outputs = ["STATUS.md"]
+        config = {
+            "artifact_schemas": {
+                "STATUS.md": {
+                    "extend_base": False,
+                    "required_sections": ["NonExistentSection"],
+                }
+            }
+        }
+        result = validate_artifacts_with_schemas(state_dir, expected_outputs, config)
+        assert result["passed"] is False
+        assert any("NonExistentSection" in f for f in result["failures"])
+
+    def test_artifact_schemas_replaces_no_match_required(self):
+        """When extend_base=False and required_sections match fixture, pass."""
+        from orchestrator.validators import validate_artifacts_with_schemas
+
+        state_dir = FIXTURES_DIR / "task_state_valid"
+        expected_outputs = ["STATUS.md"]
+        config = {
+            "artifact_schemas": {
+                "STATUS.md": {
+                    "extend_base": False,
+                    "required_sections": ["Current Phase", "Current State", "Next Action"],
+                }
+            }
+        }
+        result = validate_artifacts_with_schemas(state_dir, expected_outputs, config)
+        assert result["passed"] is True
+
 
 class TestValidatePhaseTreeStructure:
     """Tests for validate_phase_tree_structure."""

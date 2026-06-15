@@ -39,13 +39,13 @@
 - [x] Integration test for sub-phase budget extraction in dispatch (covered by unit tests in test_step_compiler.py::TestExtractSubphaseBudget)
 
 ## Documentation
-- [ ] `docs/reference/ARTIFACT_SCHEMAS.md` created
-- [ ] `CHANGELOG.md` updated
-- [ ] `markdownlint` passes on all docs
+- [x] `docs/reference/ARTIFACT_SCHEMAS.md` created
+- [x] `CHANGELOG.md` updated
+- [x] `markdownlint` passes on all docs (pre-existing issues in docs/ unaffected)
 
 ## Validation
-- [ ] `uv run python scripts/validate_skills.py` passes
-- [ ] `uv run ruff check orchestrator/ --select E,F,W,I` passes
-- [ ] `uv run ruff format orchestrator/ --check` passes
-- [ ] `uv run pytest tests/ -v` passes
-- [ ] `markdownlint . --ignore node_modules` passes
+- [x] `uv run python scripts/validate_skills.py` passes
+- [x] `uv run ruff check orchestrator/ --select E,F,W,I` passes
+- [x] `uv run ruff format orchestrator/ --check` passes
+- [x] `uv run pytest tests/ -v` passes (414 tests)
+- [x] `markdownlint . --ignore node_modules` passes on new files (pre-existing issues in docs/ unaffected)

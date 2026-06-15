@@ -92,3 +92,46 @@
 ### Residual Risk
 - Lint counter `.agent_work/lint_error_counts.json` is not gitignored. If accidentally committed, it carries test-injection data. Mitigation: add to .gitignore on first commit of that file, or delete before committing.
 - The audit-with-extra workflow config has never been executed by a real orchestrator run — only schema-validated. Phase 11.1 should test it with a dry run.
+## Extra Audit — 2026-06-14
+
+### Baseline Status
+- Validation: pass
+- Plan accuracy: plan-needs-update
+
+### Trajectory Assessment
+- Current trajectory: converging
+- Key observation: The artifact schema standards project has moved from pure design (Phase 1-2) through implementation (Phases 3-8) to documentation and closeout (Phase 9-10). Each phase built on the prior one without backtracking. The hierarchy is clean and the implementation matches the plan. The remaining work (Phases 10-11) is validation, audit, and packaging — natural closeout work for a standards project.
+
+### Findings
+
+| Finding | Lens | Severity | Action | Already in PLAN? |
+|---|---|---|---|---|
+| The project depends on the orchestrator being deployed as production runtime, but there is no trigger condition defined for that transition | Blind Spot | should-fix | Add orchestrator-adoption gate to DECISIONS.md — defines when .new auto-merge activates and manual merging stops | No |
+| Phase 11 (Tooling and Audit Infrastructure) has 4 sub-phases of documentation and housekeeping that could collapse into Phase 10 | Scope Pressure | should-fix | Merge Phase 11 sub-phases into Phase 10 or document as optional; 4 sub-phases for config, counter docs, backfill, and tmp-check is excessive for the stated objective | Partially (PLAN.md already has Phase 11, but it drifts from original 10-phase plan) |
+| The schema registry and validation pipeline are well-designed but have no CI enforcement | Trajectory | should-fix | Add GitHub Actions or equivalent CI configuration in Phase 10 or 11 that runs the full validation suite on push/PR | No |
+| `orchestrator.run()` cyclomatic complexity C (15) is pre-existing and documented but may become a maintenance bottleneck when the orchestrator becomes the production runtime | Trajectory | acceptable tradeoff | Already planned for refactor in Phase 10/11 closeout. Monitor after refactor. | Yes |
+| The `.new` segment pattern requires agents to be aware of two parallel workflows (write `.new`, merge manually, delete `.new`) — cognitive overhead that will vanish once orchestrator ships | Reusability | acceptable tradeoff | Temporary. Documented in D12. Condition to remove: "when orchestrator is deployed as production runtime." | Yes |
+| PHASE_LOG.md has 3 formatting conventions across 9 phases of work. An agent picking up this task with no history must infer which format to use | Fresh-Agent Fragility | should-fix | Standardize on bold format with required fields (Status, Date, Changes, Validation, Artifacts, Action). Add format rule to PHASE_LOG.md schema in artifact_schemas.yaml | No |
+
+### Risks Not Yet Addressed
+
+- **No CI/CD integration**. All validation is human-triggered. A single `git push` with a lint or test failure has no automated guard.
+- **Orchestrator adoption gap**. The sub-phase advancement, `.new` merging, and checkpoint infrastructure all depend on the orchestrator. If the orchestrator is never deployed as the production entry point, this entire task (Phases 1-9) is infrastructure without a consumer.
+- **Phase 11 scope creep**. The original plan had 10 phases. Phase 11 was added during implementation. Its 4 sub-phases cover config, counter docs, backfill, and tmp cleanup — real work, but the scope expansion is worth flagging rather than normalizing.
+
+### What Would a Fresh Agent Need?
+
+The task state is well-documented. A fresh agent would:
+1. Read STATUS.md — clear on phase and sub-phase
+2. Read NEXT_PROMPT.md — written for Phase 10.1 with specific tasks, input files, output requirements, constraints, Ralph loop, self-audit, and hard stop
+3. Read DECISIONS.md — 13 decisions with rationale
+4. Read CONTEXT.md — key files, constraints, skip rules, technical debt
+5. Read PLAN.md — full phase plan with sub-phases, context budgets, and task checklists
+
+The weak link is PHASE_LOG.md format inconsistency — an agent parsing it programmatically would need to handle 3 formats.
+
+### Tradeoffs Accepted
+
+- **PHASE_LOG.md format drift was knowingly tolerated** to keep phases moving. The schema defines a `phase_entry` content rule but does not enforce it during phase execution. This was the right call — enforcing format on every phase submission would add friction for marginal gain. A single cleanup pass (Phase 10 or 11) can standardize everything.
+- **`.new` manual merging** was the pragmatic choice. The orchestrator code exists but is not the runtime. Rather than waiting for orchestrator deployment, the project shipped the `.new` convention and documented the gap. Agents can handle the small overhead of `cat >> ... && rm ...` without the orchestrator.
+- **Cyclomatic complexity in `run()`** was deferred because extraction would risk destabilizing the orchestrator mid-project. The complexity is localized and well-understood; refactoring it in closeout is lower-risk than during active development.
