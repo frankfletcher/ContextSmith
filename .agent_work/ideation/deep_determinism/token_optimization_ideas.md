@@ -55,7 +55,7 @@ These sections are copy-pasted nearly verbatim across multiple skills. When any 
 | `## Priority Order` | 3 | ~21 |
 | `## Artifact Manifest Propagation` | 3 | ~30 |
 | Default parameter tables | 5 | ~40 |
-| **Total** |  | **~296** |
+| **Total** | | **~296** |
 
 ### Mechanism: Defer from SKILL.md to references
 

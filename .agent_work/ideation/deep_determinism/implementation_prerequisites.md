@@ -273,12 +273,14 @@ The user needs a clear path from "never used ContextSmith" to "running a workflo
 #### Python package
 
 Core should be installable as:
+
 ```bash
 pip install contextsmith          # universal core
 pip install contextsmith[opencode] # with OpenCode extras
 ```
 
 Or for development:
+
 ```bash
 git clone <repo>
 pip install -e .
@@ -458,7 +460,8 @@ Retries remaining: 2
 
 ### Problem
 
-The entire deterministic workflow stack assumes a valid workflow config already exists. There is no ideation on how a user's messy intent ("implement error recovery", "add a validation gate") becomes a structured, schema-validated workflow config. The `workflow-developer` skill is named in `system_components.md` but never designed. Without this, the system can only execute pre-built workflows — it cannot bootstrap itself from a prompt.
+The entire deterministic workflow stack assumes a valid workflow config already exists. There is no ideation on how a user's messy intent ("implement error recovery", "add a validation gate") becomes a structured, schema-validated workflow config. The `workflow-developer` skill is named in `system_components.md` but never designed. Without this,
+the system can only execute pre-built workflows — it cannot bootstrap itself from a prompt.
 
 ### Required Decisions
 
@@ -530,7 +533,8 @@ This means the orchestrator spec does not need to change. Only the `workflow-dev
 
 ### Problem
 
-The ideation assumes agents produce exactly the expected artifacts with expected content. In practice, agents are creative. They may produce output that is structurally valid (passes schema checks) but doesn't match the plan's expected structure, file set, or content shape. The current design has no protocol for handling this — it either accepts anything valid (drift) or rejects valid work (brittle).
+The ideation assumes agents produce exactly the expected artifacts with expected content. In practice, agents are creative. They may produce output that is structurally valid (passes schema checks) but doesn't match the plan's expected structure, file set, or content shape. The current design has no protocol for handling this — it either accepts
+anything valid (drift) or rejects valid work (brittle).
 
 ### Required Decisions
 
@@ -583,7 +587,8 @@ deviation:
 
 ### Problem
 
-The current design has a single "blocked" terminal state. There is no protocol for requesting human input mid-workflow, presenting options, or resuming after intervention. Real workflows get stuck on ambiguous decisions, policy questions, and edge cases the agent cannot resolve alone. Without a human escalation protocol, the workflow either dead-ends or the agent guesses, undermining determinism.
+The current design has a single "blocked" terminal state. There is no protocol for requesting human input mid-workflow, presenting options, or resuming after intervention. Real workflows get stuck on ambiguous decisions, policy questions, and edge cases the agent cannot resolve alone. Without a human escalation protocol, the workflow either dead-
+ends or the agent guesses, undermining determinism.
 
 ### Required Decisions
 
@@ -707,7 +712,8 @@ idempotency:
 
 ### Problem
 
-The entire ideation models execution as strictly sequential (one phase → one agent → one output). Many real workflows have independent phases that could run in parallel, or phases that depend on specific outputs from earlier phases (not just "the previous phase finished"). Without dependency resolution, the orchestrator either serializes everything (slow) or cannot express phase ordering that isn't linear.
+The entire ideation models execution as strictly sequential (one phase → one agent → one output). Many real workflows have independent phases that could run in parallel, or phases that depend on specific outputs from earlier phases (not just "the previous phase finished"). Without dependency resolution, the orchestrator either serializes everything
+(slow) or cannot express phase ordering that isn't linear.
 
 ### Required Decisions
 
@@ -829,7 +835,8 @@ run_comparison:
 
 ### Problem
 
-ContextSmith skills are pure instruction files (SKILL.md). They describe what a skill does for an agent, but they do not describe their workflow shape in machine-readable terms. The orchestrator has no way to ask "what phases does this skill require?" or "what are the step contracts for this skill's workflow?" Currently, workflow configs and skills are disconnected — the config hardcodes phase details that the skill already describes in prose. This duplication drifts over time and prevents dynamic skill integration.
+ContextSmith skills are pure instruction files (SKILL.md). They describe what a skill does for an agent, but they do not describe their workflow shape in machine-readable terms. The orchestrator has no way to ask "what phases does this skill require?" or "what are the step contracts for this skill's workflow?" Currently, workflow configs and skills
+are disconnected — the config hardcodes phase details that the skill already describes in prose. This duplication drifts over time and prevents dynamic skill integration.
 
 ### Required Decisions
 

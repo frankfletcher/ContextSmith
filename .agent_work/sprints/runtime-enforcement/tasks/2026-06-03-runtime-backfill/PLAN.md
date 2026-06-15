@@ -2,11 +2,12 @@
 
 # Important Note
 
-1. There are 2 PLAN.md files - make sure you know or have inferred which PLAN is being referred to at all times.  
+1. There are 2 PLAN.md files - make sure you know or have inferred which PLAN is being referred to at all times.
    1. the first one is the plan we are trying to match and is located here: /home/frank/00-Code/ContextSmith/.agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/PLAN.md
    2. The second one is the plan we are currently enacting, which backfills the codebase to match the reframing of runtime orchestration as a default/first-class mechanism for the ContextSmith skills.  That plan is located here:  /home/frank/00-Code/ContextSmith/.agent_work/sprints/runtime-enforcement/tasks/2026-06-03-runtime-backfill/PLAN.md
 
 ## Phase B0: Audit Scope
+
 **Goal:** Identify which artifacts currently frame the runtime and how they deviate from /home/frank/00-Code/ContextSmith/.agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/PLAN.md's "first-class, optional but default" framing.
 
 ```yaml
@@ -39,6 +40,7 @@ context_contract:
 - Deviations are specific and actionable.
 
 ## Phase B1: README.md Backfill
+
 **Goal:** Update README.md runtime framing to match PLAN.md.
 
 ```yaml
@@ -66,6 +68,7 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase B2: Runtime Enforcement Doc Backfill
+
 **Goal:** Update docs/workflows/RUNTIME_ENFORCEMENT.md to match PLAN.md framing.
 
 ```yaml
@@ -93,6 +96,7 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase B3: Quickstart Backfill
+
 **Goal:** Update docs/QUICKSTART.md if it frames the runtime in a way that deviates from PLAN.md.
 
 ```yaml
@@ -120,6 +124,7 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase B4: Examples Library Backfill
+
 **Goal:** Update docs/examples/EXAMPLES_LIBRARY.md if it frames the runtime in a way that deviates from PLAN.md.
 
 ```yaml
@@ -147,6 +152,7 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase B5: Workflow Docs Backfill
+
 **Goal:** Update CREATE_A_PLAN.md and BUILD_OR_IMPROVE_A_SKILL.md if they frame the runtime in a way that deviates from PLAN.md.
 
 ```yaml
@@ -174,6 +180,7 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase B6: Shared References Backfill
+
 **Goal:** Update shared/ references if they frame the runtime in a way that deviates from PLAN.md.
 
 ```yaml
@@ -201,6 +208,7 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase B7: SKILL.md Files Backfill
+
 **Goal:** Update SKILL.md files if they frame the runtime in a way that deviates from PLAN.md.
 
 ```yaml
@@ -228,6 +236,7 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase B8: Final Backfill Audit
+
 **Goal:** Verify all artifacts are aligned with PLAN.md framing.
 
 ```yaml

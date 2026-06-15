@@ -30,4 +30,5 @@
 - Missing `reference_manifest.yml` (handled with default version).
 
 ### Next Phase Preview
+
 Phase 7 will enhance `scripts/validate_skills.py` and create a GitHub Actions CI workflow to run validation on every push/PR.

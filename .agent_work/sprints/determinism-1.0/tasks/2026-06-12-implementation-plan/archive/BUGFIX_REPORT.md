@@ -79,7 +79,7 @@ Added protection system in orchestrator.py:
 ```python
 PROTECTED_FILES = {
     "AUDIT_REPORT.md",
-    "EDUCATIONAL_REPORT.md", 
+    "EDUCATIONAL_REPORT.md",
     "RESULT.json",
     "PHASE_LOG.md",  # Append-only by design
 }
@@ -90,12 +90,12 @@ def _is_protected_file(filename: str) -> bool:
 
 def _safe_write(path: Path, content: str, mode: str = "w") -> None:
     """Write to a file with protection for report files.
-    
+
     For protected files, always append. For other files, use the specified mode.
     """
     if _is_protected_file(path.name) and mode == "w":
         mode = "a"  # Force append for protected files
-    
+
     if mode == "w":
         path.write_text(content, encoding="utf-8")
     else:

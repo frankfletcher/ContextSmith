@@ -49,7 +49,8 @@
 ### Trajectory Assessment
 
 - Current trajectory: needs-course-correction — the artifact schema standards task has expanded beyond its original 10-phase plan into tooling infrastructure (lint counter, .new file merging, extra-audit state, shared audit references). The project is converging on a more reliable system, but the PLAN.md no longer reflects actual scope.
-- Key observation: The original PLAN.md ended at Phase 10 (Final Audit). The session added `shared/extra-audit.md`, `shared/project-audit.md`, `docs/workflows/EXTRA_AUDIT.md`, `scripts/lint_error_counter.py`, `STATE_EXTRA_AUDIT` in the orchestrator constants, and significant restructuring of AGENTS.md. These should be reflected as new phases or sub-phases if the project continues.
+- Key observation: The original PLAN.md ended at Phase 10 (Final Audit). The session added `shared/extra-audit.md`, `shared/project-audit.md`, `docs/workflows/EXTRA_AUDIT.md`, `scripts/lint_error_counter.py`, `STATE_EXTRA_AUDIT` in the orchestrator constants, and significant restructuring of AGENTS.md. These should be reflected as new phases or
+  b-phases if the project continues.
 
 ### Findings
 
@@ -64,7 +65,8 @@
 
 ### Risks Not Yet Addressed
 
-- PHASE_START_PROMPT.md and NEXT_PROMPT.md now reference `.new` files, but existing agents with cached knowledge of the old `>>` approach will clobber reports if not re-reading current instructions. Mitigation: the .new merging + auto-repair mechanism handles this, but the EXTRA_AUDIT.md I just wrote via `>>` will not be auto-recognized as a `.new` segment. The next orchestrator run will still merge it correctly via the append-only snapshot mechanism, not the .new mechanism.
+- PHASE_START_PROMPT.md and NEXT_PROMPT.md now reference `.new` files, but existing agents with cached knowledge of the old `>>` approach will clobber reports if not re-reading current instructions. Mitigation: the .new merging + auto-repair mechanism handles this, but the EXTRA_AUDIT.md I just wrote via `>>` will not be auto-recognized as a
+  new` segment. The next orchestrator run will still merge it correctly via the append-only snapshot mechanism, not the .new mechanism.
 - The extra-audit state (STATE_EXTRA_AUDIT) was added to constants.py but no workflow config file actually chains it after the baseline audit. The example in docs/workflows/EXTRA_AUDIT.md shows how, but no actual config exists.
 - The lint counter accumulates test injection data. There's no reset mechanism beyond manual deletion.
 
@@ -115,18 +117,19 @@
 ### Trajectory Assessment
 
 - Current trajectory: converging
-- Key observation: The artifact schema standards project has moved from pure design (Phase 1-2) through implementation (Phases 3-8) to documentation and closeout (Phase 9-10). Each phase built on the prior one without backtracking. The hierarchy is clean and the implementation matches the plan. The remaining work (Phases 10-11) is validation, audit, and packaging — natural closeout work for a standards project.
+- Key observation: The artifact schema standards project has moved from pure design (Phase 1-2) through implementation (Phases 3-8) to documentation and closeout (Phase 9-10). Each phase built on the prior one without backtracking. The hierarchy is clean and the implementation matches the plan. The remaining work (Phases 10-11) is validation,
+  dit, and packaging — natural closeout work for a standards project.
 
 ### Findings
 
 | Finding | Lens | Severity | Action | Already in PLAN? |
 | --- | --- | --- | --- | --- |
 | The project depends on the orchestrator being deployed as production runtime, but there is no trigger condition defined for that transition | Blind Spot | should-fix | Add orchestrator-adoption gate to DECISIONS.md — defines when .new auto-merge activates and manual merging stops | No |
-| Phase 11 (Tooling and Audit Infrastructure) has 4 sub-phases of documentation and housekeeping that could collapse into Phase 10 | Scope Pressure | should-fix | Merge Phase 11 sub-phases into Phase 10 or document as optional; 4 sub-phases for config, counter docs, backfill, and tmp-check is excessive for the stated objective | Partially (PLAN.md already has Phase 11, but it drifts from original 10-phase plan) |
+| Phase 11 has 4 sub-phases of doc and housekeeping that could collapse into Phase 10 | Scope Pressure | should-fix | Merge Phase 11 sub-phases into Phase 10 or document as optional; 4 sub-phases for config, counter docs, and backfill is excessive | Partially (PLAN.md has Phase 11, drifting from the original 10-phase plan) |
 | The schema registry and validation pipeline are well-designed but have no CI enforcement | Trajectory | should-fix | Add GitHub Actions or equivalent CI configuration in Phase 10 or 11 that runs the full validation suite on push/PR | No |
 | `orchestrator.run()` cyclomatic complexity C (15) is pre-existing and documented but may become a maintenance bottleneck when the orchestrator becomes the production runtime | Trajectory | acceptable tradeoff | Already planned for refactor in Phase 10/11 closeout. Monitor after refactor. | Yes |
 | The `.new` segment pattern requires agents to be aware of two parallel workflows (write `.new`, merge manually, delete `.new`) — cognitive overhead that will vanish once orchestrator ships | Reusability | acceptable tradeoff | Temporary. Documented in D12. Condition to remove: "when orchestrator is deployed as production runtime." | Yes |
-| PHASE_LOG.md has 3 formatting conventions across 9 phases of work. An agent picking up this task with no history must infer which format to use | Fresh-Agent Fragility | should-fix | Standardize on bold format with required fields (Status, Date, Changes, Validation, Artifacts, Action). Add format rule to PHASE_LOG.md schema in artifact_schemas.yaml | No |
+| PHASE_LOG.md has 3 formatting conventions across 9 phases. A fresh agent must infer which format to use | Fresh-Agent Fragility | should-fix | Standardize on bold format with required fields (Status, Date, Changes, Validation, Artifacts, Action). Add format rule to PHASE_LOG.md schema in `artifact_schemas.yaml` | No |
 
 ### Risks Not Yet Addressed
 
@@ -155,17 +158,19 @@ The weak link is PHASE_LOG.md format inconsistency — an agent parsing it progr
 ## Extra Audit — 2026-06-15
 
 ### Baseline Status
+
 - Validation: pass
 - Plan accuracy: plan-is-current
 
 ### Trajectory Assessment
+
 - **Current trajectory**: converging
 - **Key observation**: Phases 1–9 built core infrastructure in clean dependency order. Phase 10 validated everything. Phase 11 is closeout — tooling, config validation, backfill, cleanup. One final phase of loose-end tying, then ship. No rescoping needed.
 
 ### Findings
 
 | Finding | Lens | Severity | Action | Already in PLAN? |
-|---------|------|----------|--------|-----------------|
+| --- | --- | --- | --- | --- |
 | Orchestrator is the largest silent dependency — entire sub-phase mechanism dead code if never deployed | Dependency Surface | must-fix (decision) | Commit to orchestrator-as-runtime with target date, or scrap auto-merge and formalize manual merge as permanent | No |
 | No CI pipeline — test failures only surface at next agent run | Blind Spot | should-fix | Add minimal CI (GitHub Actions with pytest + ruff) or accept as risk | No |
 | NEXT_PROMPT.md staleness risk — manually written prompts can fall out of sync with STATUS.md | Blind Spot | should-fix | Detect NEXT_PROMPT.md vs STATUS.md mismatch on load; regenerate if stale | No |

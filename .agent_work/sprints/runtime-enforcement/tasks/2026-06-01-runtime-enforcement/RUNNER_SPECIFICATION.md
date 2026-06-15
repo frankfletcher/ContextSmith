@@ -56,6 +56,7 @@ The Runner is a read-only CLI tool that provides orchestration support for Conte
 **Usage**: `python -m runtime.cli next-gate <task_dir>`
 
 **Output**: JSON with the following structure:
+
 ```json
 {
   "phase": "Phase 5E",

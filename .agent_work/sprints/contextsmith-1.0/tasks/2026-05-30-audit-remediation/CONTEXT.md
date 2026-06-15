@@ -1,6 +1,7 @@
 # Context: ContextSmith v1.5.1 Audit Remediation
 
 ## File Map
+
 | File | Phase | Action |
 | ------ | ------- | -------- |
 | `skills/local-model-prompt-engineer/SKILL.md` | 1 | Extract lines 113-135 to shared reference |
@@ -34,4 +35,5 @@ python scripts/validate_skills.py
 ```
 
 ## Branch
+
 `fix_context_budget`

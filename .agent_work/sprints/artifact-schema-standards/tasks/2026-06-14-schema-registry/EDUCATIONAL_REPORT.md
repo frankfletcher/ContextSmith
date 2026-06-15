@@ -37,6 +37,7 @@
 ## Sub-phase 8.1: Sub-phase advancement test
 
 ### What was done
+
 Added 5 tests in `tests/test_subphase_advancement.py` covering `_try_advance_subphase`:
 
 - **test_advance_to_next_pending_subphase**: Verifies function returns `EXIT_CONTINUE` and sets `step_contract.subphase_name` when a pending sub-phase follows a completed one.
@@ -57,12 +58,16 @@ Added 5 tests in `tests/test_subphase_advancement.py` covering `_try_advance_sub
 This sub-phase created user-facing documentation for the artifact schema registry — the reference that ties together the schema YAML file, the hierarchical PLAN.md format, and the validation pipeline.
 
 ### Original Strengths
+
 The phase tree content rule in `artifact_schemas.yaml` was well-designed: it defined heading levels, metadata requirements, and status values for all three hierarchy levels. The schema was complete but undocumented from a user perspective — only implementors who read the YAML directly could understand the structure.
 
 ### Original Weaknesses
-No user-facing documentation existed for the schema registry. Developers had to read the raw YAML file, the validator code, and the state reader code to understand how PLAN.md format, STATUS.md tracking, and validation connected. The `validate_artifact_schema()`, `load_artifact_schemas()`, and `validate_phase_tree_structure()` functions existed but their roles weren't explained anywhere accessible.
+
+No user-facing documentation existed for the schema registry. Developers had to read the raw YAML file, the validator code, and the state reader code to understand how PLAN.md format, STATUS.md tracking, and validation connected. The `validate_artifact_schema()`, `load_artifact_schemas()`, and `validate_phase_tree_structure()` functions existed
+but their roles weren't explained anywhere accessible.
 
 ### Changes Made
+
 Created `docs/reference/ARTIFACT_SCHEMAS.md` with:
 
 - Schema purpose and field reference table
@@ -76,7 +81,9 @@ Created `docs/reference/ARTIFACT_SCHEMAS.md` with:
 - Validation modes (strict vs relaxed)
 
 ### Why This Improves
-The documentation now serves as a single reference for anyone writing or maintaining task-state artifacts. A developer can understand the PLAN.md format, the STATUS.md sub-phase tracking, and the validation pipeline without reading YAML, Python, or test files. The doc also documents the extension mechanism (config overrides), which was previously implicit in the code.
+
+The documentation now serves as a single reference for anyone writing or maintaining task-state artifacts. A developer can understand the PLAN.md format, the STATUS.md sub-phase tracking, and the validation pipeline without reading YAML, Python, or test files. The doc also documents the extension mechanism (config overrides), which was previously
+implicit in the code.
 
 ### Remaining Risks or Assumptions
 
@@ -86,6 +93,7 @@ The documentation now serves as a single reference for anyone writing or maintai
 ## Sub-phase 10.1: Implementation plan audit
 
 ### What was done
+
 Ran a full implementation plan audit across all 11 phases of the artifact schema standards project. Reviewed Phases 1-9 against the actual implementation in orchestator code, schemas, tests, and documentation.
 
 ### Original Strengths
@@ -104,6 +112,7 @@ Ran a full implementation plan audit across all 11 phases of the artifact schema
 - No end-to-end integration test for `validate_artifacts_with_schemas()` with `artifact_schemas` config overrides (the override wiring is unit-tested but not pipeline-tested)
 
 ### Changes Made
+
 None — no must-fix items found. All deliverables exist at their expected locations with expected content:
 
 - `schemas/artifact_schemas.yaml`: All 11 artifact types defined with content rules ✅
@@ -123,7 +132,9 @@ None — no must-fix items found. All deliverables exist at their expected locat
 - `CHANGELOG.md`: Updated with v2.1.0 entry ✅
 
 ### Why This Is Solid
-The plan-driven development approach worked well here. Each phase had clear deliverables and the codebase matches the plan with no omissions and no scope creep. The `artifact_schemas.yaml` schema registry served as a single source of truth that all phases referenced consistently. The `.new` file merge protocol and the D12/D14 orchestrator-gap decisions demonstrate disciplined handling of a known infrastructure gap.
+
+The plan-driven development approach worked well here. Each phase had clear deliverables and the codebase matches the plan with no omissions and no scope creep. The `artifact_schemas.yaml` schema registry served as a single source of truth that all phases referenced consistently. The `.new` file merge protocol and the D12/D14 orchestrator-gap
+decisions demonstrate disciplined handling of a known infrastructure gap.
 
 ### Remaining Risks or Assumptions
 
@@ -133,6 +144,7 @@ The plan-driven development approach worked well here. Each phase had clear deli
 ## Sub-phase 10.2: Full validation
 
 ### What was done
+
 Executed all 5 validation commands specified in PLAN.md Sub-phase 10.2:
 
 1. **validate_skills.py** — Validated all 8 skills (contextsmith, agent-evaluator, instruction-engineer, orchestrator, prompt-engineer, skill-engineer, skill-migrator, workflow-developer). All pass metadata, line count, and reference checks.
@@ -141,9 +153,11 @@ Executed all 5 validation commands specified in PLAN.md Sub-phase 10.2:
 
 3. **ruff format --check** — 14 files already formatted. No formatting changes needed.
 
-4. **pytest** — 423 passed, 0 failed (increased from 414 in Phase 9 — Phase 8's integration tests account for the difference). All test classes pass: state reader, validator, step compiler, sub-phase advancement, determinism, checkpoint, state consistency, append-only, artifact validation, phase tree, plan/order cross-ref, artifact schemas overrides.
+4. **pytest** — 423 passed, 0 failed (increased from 414 in Phase 9 — Phase 8's integration tests account for the difference). All test classes pass: state reader, validator, step compiler, sub-phase advancement, determinism, checkpoint, state consistency, append-only, artifact validation, phase tree, plan/order cross-ref, artifact schemas
+   rrides.
 
-5. **markdownlint (piped to lint counter)** — All errors are pre-existing in files outside task-state scope: skills/ references (MD060 table style, MD012 multiple blanks), test fixtures (MD022/MD032 heading/list spacing), AGENTS.md (MD022/MD032 from different heading/list conventions), CHANGELOG.md (MD013 long lines from pre-existing entries), CLAUDE.md (MD022/MD031 from RTK doc block style), and tmp/ scratch files. No errors in task-state files, orchestrator code, or schemas.
+5. **markdownlint (piped to lint counter)** — All errors are pre-existing in files outside task-state scope: skills/ references (MD060 table style, MD012 multiple blanks), test fixtures (MD022/MD032 heading/list spacing), AGENTS.md (MD022/MD032 from different heading/list conventions), CHANGELOG.md (MD013 long lines from pre-existing entries),
+   UDE.md (MD022/MD031 from RTK doc block style), and tmp/ scratch files. No errors in task-state files, orchestrator code, or schemas.
 
 ### Key observations
 

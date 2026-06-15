@@ -17,10 +17,13 @@
 - Phase 6: `scripts/test_release.sh` created — 74 integration tests covering full pipeline, zip contents, SHA-256 checksums, bundle contents, installation, idempotent re-install, and installed checksum verification. All tests pass stably.
 
 ## In Progress
+
 (None)
 
 ## Next Action
+
 Sprint complete. Consider: CHANGELOG update, final validation run.
 
 ## Blockers
+
 (None)

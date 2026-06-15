@@ -205,7 +205,8 @@ The orchestrator and harness communicate through the `HarnessAdapter.execute()` 
 
 ### Review and validation: Same structured envelope
 
-Review results and validation results are merged into a single `HarnessResult` structure. The orchestrator does not distinguish between "review failed" and "validation failed" at the protocol level — both produce `status: "fail"` with different `reason` fields. The workflow config's state transitions distinguish the two by which state produced the result.
+Review results and validation results are merged into a single `HarnessResult` structure. The orchestrator does not distinguish between "review failed" and "validation failed" at the protocol level — both produce `status: "fail"` with different `reason` fields. The workflow config's state transitions distinguish the two by which state produced the
+result.
 
 ---
 

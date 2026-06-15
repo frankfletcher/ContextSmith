@@ -88,6 +88,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 - `residual_risk` — domain-specific risk disclosures
 
 **Example:**
+
 ```json
 {
   "artifact_type": "domain_pack",
@@ -134,6 +135,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 - `timestamp` — ISO 8601 timestamp or `pending`
 
 **Example:**
+
 ```json
 {
   "artifact_type": "evidence_ledger",
@@ -168,6 +170,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 - `residual_risk` — risk disclosure for high-risk actions, or `none`
 
 **Example:**
+
 ```json
 {
   "artifact_type": "approval_record",
@@ -203,6 +206,7 @@ Define the six artifact types used across all domains. Each artifact is a compac
 - `status` — one of `passed`, `failed`, `blocked`, `waived_by_user`
 
 **Example:**
+
 ```json
 {
   "artifact_type": "phase_closeout",

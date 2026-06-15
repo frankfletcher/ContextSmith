@@ -61,7 +61,8 @@
 ## 2026-06-02: Phase 0 Packaging Discovery Complete
 
 - Completed: Inspected all packaging scripts (`build_release.py`, `package_skill.sh`, `sync_shared_refs.py`, `token_budget.py`, `install_skill.sh`), two reference manifests, skill directory structures, and release bundle staging behavior.
-- Key findings: (1) packaging is manifest-driven — only `reference_manifest.yml`-declared files ship; (2) no file-type filtering — `.py`, `.yml`, `.json` can ship if declared; (3) `reference_manifest.yml` itself is excluded from zips; (4) skill-root local files land under `references/`, not at original path; (5) release bundle stages selectively (README, CHANGELOG, docs, SKILL.md + synced refs only); (6) install script verifies sha256 checksums from `MANIFEST.json`.
+- Key findings: (1) packaging is manifest-driven — only `reference_manifest.yml`-declared files ship; (2) no file-type filtering — `.py`, `.yml`, `.json` can ship if declared; (3) `reference_manifest.yml` itself is excluded from zips; (4) skill-root local files land under `references/`, not at original path; (5) release bundle stages selectively
+  (README, CHANGELOG, docs, SKILL.md + synced refs only); (6) install script verifies sha256 checksums from `MANIFEST.json`.
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. `python scripts/build_release.py --package --dry-run` completed.
 - Blockers: None.
 - Next: Phase 0.5 runtime surface decision (human/frontier review).
@@ -116,7 +117,8 @@
 
 ## 2026-06-02: Phase 1B.5 Approval Record Schema Complete
 
-- Completed: Defined approval record schema with ten required fields (id, requirement_ids, action, side_effect_tier, requester, approver, status, timestamp, evidence_id, residual_risk), four optional fields (domain, denial_reason, waiver_notes, expires_at), status semantics table, three-step travel purchase example (requested -> approved/denied), 12 validation rules, and deferred YAML documentation.
+- Completed: Defined approval record schema with ten required fields (id, requirement_ids, action, side_effect_tier, requester, approver, status, timestamp, evidence_id, residual_risk), four optional fields (domain, denial_reason, waiver_notes, expires_at), status semantics table, three-step travel purchase example (requested -> approved/denied),
+  12 validation rules, and deferred YAML documentation.
 - Artifact: `APPROVAL_RECORD_SCHEMA.md` created in this task directory.
 - Validation: All three JSON examples parse as valid JSON. Travel purchase example shows approval remains `requested` or `denied` unless explicit user approval exists. Schema is domain-neutral and compact (146 lines).
 - Ralph: 2 iterations. Iteration 1: clarified evidence_id field description, added timestamp constraint for denied status, added not_required status rule. Iteration 2: no material defects, no-op by evidence.
@@ -125,7 +127,8 @@
 
 ## 2026-06-02: Phase 1C Domain Pack Schema Complete
 
-- Completed: Defined domain pack schema with seven required fields (domain, triggers, required_artifacts, validation_gates, approval_gates, external_action_boundaries, residual_risk), two optional fields (example_good_closeout, example_blocked_closeout), structured validation_gates and external_action_boundaries schemas, six starter domain packs (software_engineering, writing_editing, research_summary, scheduling, travel_purchase, general_fallback), good/blocked closeout examples, 10 validation rules, and deferred YAML documentation.
+- Completed: Defined domain pack schema with seven required fields (domain, triggers, required_artifacts, validation_gates, approval_gates, external_action_boundaries, residual_risk), two optional fields (example_good_closeout, example_blocked_closeout), structured validation_gates and external_action_boundaries schemas, six starter domain packs
+  (software_engineering, writing_editing, research_summary, scheduling, travel_purchase, general_fallback), good/blocked closeout examples, 10 validation rules, and deferred YAML documentation.
 - Artifact: `DOMAIN_PACK_SCHEMA.md` created in this task directory.
 - Validation: All 10 JSON examples parse as valid JSON. All six starter domain packs present. Each domain pack fits on one screen. No new dependencies required. Schema is consistent with universal artifact vocabulary from Phase 1A.
 - Ralph: 2 iterations. Iteration 1: fixed rule 9 (blocked actions don't need approval gate entries). Iteration 2: no material defects, no-op by evidence.
@@ -135,7 +138,8 @@
 ## 2026-06-02: Phase 1D Architecture Review Gate Complete
 
 - Completed: Reviewed Phases 1A-1C schemas against four review questions. All four pass.
-- Findings: (1) Universal applicability confirmed across coding, scheduling, travel, writing, research, and fallback. (2) Approval boundaries explicit; one correction: software_engineering starter pack missing `deploy_staging` in `approval_gates` (rule 9 violation). (3) Small-model emit feasible; documentation gap: `phase_contract` and `evidence_ledger` lack dedicated schema files. (4) Validators deterministic; design note: validator core must distinguish structural checks from content checks (`artifact_check`, `user_confirmation` are non-deterministic).
+- Findings: (1) Universal applicability confirmed across coding, scheduling, travel, writing, research, and fallback. (2) Approval boundaries explicit; one correction: software_engineering starter pack missing `deploy_staging` in `approval_gates` (rule 9 violation). (3) Small-model emit feasible; documentation gap: `phase_contract` and
+  `evidence_ledger` lack dedicated schema files. (4) Validators deterministic; design note: validator core must distinguish structural checks from content checks (`artifact_check`, `user_confirmation` are non-deterministic).
 - Evidence: Updated `DECISIONS.md` with Decision 18 (review findings) and Decision 19 (Phase 2A authorization).
 - Validation: Design review only — no source files edited per Phase 1D constraints.
 - Ralph: 2 iterations. Iteration 1: no material defects. Iteration 2: no-op by evidence.
@@ -144,7 +148,8 @@
 
 ## 2026-06-02: Phase 2A Minimal Validator Core Complete
 
-- Completed: Implemented `runtime/validator.py` with 6 validators (`validate_requirements_chain`, `validate_phase_contract`, `validate_evidence_ledger`, `validate_approval_record`, `validate_phase_closeout`, `validate_domain_pack`) and cross-artifact `validate_workflow()`. Created `runtime/__init__.py`, 13 test fixtures in `tests/fixtures/`, and 26 pytest tests in `tests/test_validator.py`. Applied Phase 1C correction to `DOMAIN_PACK_SCHEMA.md` (renamed `deploy_to_production` to `deploy_production` in software_engineering approval_gates).
+- Completed: Implemented `runtime/validator.py` with 6 validators (`validate_requirements_chain`, `validate_phase_contract`, `validate_evidence_ledger`, `validate_approval_record`, `validate_phase_closeout`, `validate_domain_pack`) and cross-artifact `validate_workflow()`. Created `runtime/__init__.py`, 13 test fixtures in `tests/fixtures/`, and
+  26 pytest tests in `tests/test_validator.py`. Applied Phase 1C correction to `DOMAIN_PACK_SCHEMA.md` (renamed `deploy_to_production` to `deploy_production` in software_engineering approval_gates).
 - Validator result shape: `{"passed": bool, "violations": list[str], "warnings": list[str]}`.
 - Domain-pack rule 9 enforcement: `requires_approval` actions in `external_action_boundaries` must have corresponding `approval_gates` entries.
 - Cross-artifact consistency: `validate_workflow()` checks evidence_ids and requirement_id references across artifacts.
@@ -164,7 +169,8 @@
 
 ## 2026-06-02: Phase 2C CLI Adapter Complete
 
-- Completed: Created `runtime/cli.py` with argparse-based CLI. 6 subcommands (`requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`), each taking a single positional artifact path. Exit codes: 0 (passed), 1 (validation failed), 2 (usage/file-read error). Compact output format with `PASS`/`FAIL` prefix, violations, and warnings. `--help` works for CLI and each subcommand. Added 25 pytest tests in `tests/test_cli.py` covering help (8 tests), passing fixtures (6), failing fixtures (6), file errors (3), and programmatic API (3).
+- Completed: Created `runtime/cli.py` with argparse-based CLI. 6 subcommands (`requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`), each taking a single positional artifact path. Exit codes: 0 (passed), 1 (validation failed), 2 (usage/file-read error). Compact output format with `PASS`/`FAIL` prefix, violations, and
+  warnings. `--help` works for CLI and each subcommand. Added 25 pytest tests in `tests/test_cli.py` covering help (8 tests), passing fixtures (6), failing fixtures (6), file errors (3), and programmatic API (3).
 - Import strategy: CLI prepends project root to `sys.path` to support both `python runtime/cli.py` and `python -m runtime.cli` execution paths.
 - Validation: All 57 pytest tests pass (32 validator + 25 CLI). `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
 - Ralph: 2 iterations. Iteration 1: fixed import path for direct script execution by adding sys.path prepend. Iteration 2: no material defects, no-op by evidence.
@@ -173,9 +179,12 @@
 
 ## 2026-06-02: Phase 2D Pytest Fixture Tests Complete
 
-- Completed: Expanded test coverage from 57 to 81 tests (+24). Added 17 fixtures and 24 tests covering: wrong artifact_type for 4 validators, enum validation (side_effect_tier, validation_method), empty source detection, non-boolean verified/objective_met, approval_record status/approver/timestamp consistency (requested, denied, approved), high-risk residual_risk requirement, cross-artifact workflow validation (orphan evidence_ids, orphan requirement_ids, partial artifacts, all-invalid), warnings presence for 3 validators, YAML file rejection, CLI warnings display, and all-subcommands violation text verification.
+- Completed: Expanded test coverage from 57 to 81 tests (+24). Added 17 fixtures and 24 tests covering: wrong artifact_type for 4 validators, enum validation (side_effect_tier, validation_method), empty source detection, non-boolean verified/objective_met, approval_record status/approver/timestamp consistency (requested, denied, approved),
+  high-risk residual_risk requirement, cross-artifact workflow validation (orphan evidence_ids, orphan requirement_ids, partial artifacts, all-invalid), warnings presence for 3 validators, YAML file rejection, CLI warnings display, and all-subcommands violation text verification.
 - Bug fix: `runtime/validator.py:85` — `not isinstance(data["source"], str)` corrected to `isinstance(data["source"], str)` for empty source detection.
-- Fixtures added: `requirements_chain_empty_source.json`, `requirements_chain_wrong_artifact_type.json`, `requirements_chain_invalid_side_effect_tier.json`, `requirements_chain_invalid_validation_method.json`, `phase_contract_wrong_artifact_type.json`, `evidence_ledger_wrong_artifact_type.json`, `evidence_ledger_nonbool_verified.json`, `approval_record_wrong_artifact_type.json`, `approval_record_requested_bad_state.json`, `approval_record_denied_no_approver.json`, `approval_record_highrisk_no_risk.json`, `phase_closeout_wrong_artifact_type.json`, `phase_closeout_nonbool_objective_met.json`, `requirements_chain_orphan.json`, `evidence_ledger_orphan_requirement.json`, `phase_closeout_orphan_evidence.json`, `requirements_chain_invalid.yml`.
+- Fixtures added: `requirements_chain_empty_source.json`, `requirements_chain_wrong_artifact_type.json`, `requirements_chain_invalid_side_effect_tier.json`, `requirements_chain_invalid_validation_method.json`, `phase_contract_wrong_artifact_type.json`, `evidence_ledger_wrong_artifact_type.json`, `evidence_ledger_nonbool_verified.json`,
+  `approval_record_wrong_artifact_type.json`, `approval_record_requested_bad_state.json`, `approval_record_denied_no_approver.json`, `approval_record_highrisk_no_risk.json`, `phase_closeout_wrong_artifact_type.json`, `phase_closeout_nonbool_objective_met.json`, `requirements_chain_orphan.json`, `evidence_ledger_orphan_requirement.json`,
+    `phase_closeout_orphan_evidence.json`, `requirements_chain_invalid.yml`.
 - Validation: All 81 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
 - Ralph: 2 iterations. Iteration 1: no material defects. Iteration 2: no-op by evidence.
 - Blockers: None.
@@ -183,7 +192,8 @@
 
 ## 2026-06-02: Phase 2E Installed-Workflow Smoke Test Complete
 
-- Completed: Proved the validator can be called from a staged/installed workflow path. Staged `contextsmith-run` skill via `sync_shared_refs.py`, copied `runtime/validator.py`, `runtime/cli.py`, and `runtime/__init__.py` into `.agent_work/staged_skills/contextsmith-run/runtime/`, then invoked the CLI from the staged path. Both `--help` and artifact validation (PASS and FAIL cases) succeed from the staged directory.
+- Completed: Proved the validator can be called from a staged/installed workflow path. Staged `contextsmith-run` skill via `sync_shared_refs.py`, copied `runtime/validator.py`, `runtime/cli.py`, and `runtime/__init__.py` into `.agent_work/staged_skills/contextsmith-run/runtime/`, then invoked the CLI from the staged path. Both `--help` and
+  artifact validation (PASS and FAIL cases) succeed from the staged directory.
 - Evidence: CLI help, domain_pack PASS (valid fixture), domain_pack FAIL (invalid_domain fixture) all work from staged path. No packaging redesign required — runtime files can ship via per-skill manifest entries (Decision 8).
 - Fallback note: Manual copy to staging simulates manifest-driven sync. For production, declare runtime files in each skill's `reference_manifest.yml` as `local: true` entries.
 - Validation: All 81 pytest tests pass. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes.
@@ -286,13 +296,15 @@
 - Completed: Audited all six starter domain packs against PLAN.md specifications, Phase 1C schema, and Rule 9 approval boundary alignment.
 - Verdict: PASS. All six packs are schema-compliant, compact (52-58 lines), approval-boundary-aligned, and fully validated.
 - Evidence: `PHASE_3_AUDIT.md` created with detailed findings. 96 pytest tests pass. `validate_skills.py` passes. `token_budget.py --strict` passes. CLI validation passes for all six runtime packs.
-- Observations: (1) `check_type: "command"` in software_engineering is structural-only (field presence), not command execution — correct by design for Phase 3 data-only packs. (2) `approval_record` in all `required_artifacts` is consistent but potentially unnecessary for purely local domains. (3) Optional `example_good_closeout`/`example_blocked_closeout` absent from runtime packs — acceptable per schema, would aid small-model emit guidance.
+- Observations: (1) `check_type: "command"` in software_engineering is structural-only (field presence), not command execution — correct by design for Phase 3 data-only packs. (2) `approval_record` in all `required_artifacts` is consistent but potentially unnecessary for purely local domains. (3) Optional
+  `example_good_closeout`/`example_blocked_closeout` absent from runtime packs — acceptable per schema, would aid small-model emit guidance.
 - Blockers: None.
 - Next: Phase 4A (ContextSmith-Run Pilot Integration).
 
 ## 2026-06-02: Phase 4A ContextSmith-Run Pilot Integration Complete
 
-- Completed: Updated `contextsmith-run` SKILL.md with runtime-checkable artifact integration. Added "Runtime Validators" subsection to Validation Gate section (compact CLI reference table), "Runtime Artifacts" subsection to Evidence Ledger section, and runtime validation step (step 9) to Execution Workflow. Updated `reference_manifest.yml` with 10 local entries for runtime files (validator.py, cli.py, __init__.py, 6 domain pack JSON files).
+- Completed: Updated `contextsmith-run` SKILL.md with runtime-checkable artifact integration. Added "Runtime Validators" subsection to Validation Gate section (compact CLI reference table), "Runtime Artifacts" subsection to Evidence Ledger section, and runtime validation step (step 9) to Execution Workflow. Updated `reference_manifest.yml` with 10
+  local entries for runtime files (validator.py, cli.py, __init__.py, 6 domain pack JSON files).
 - SKILL.md: 328 lines, 3979 tokens (within 4000 budget). Integration is minimal and compact — points to runtime artifacts and validator gates without pasting full schemas.
 - Manifest: 10 new local entries with `version: local` (acceptable sentinel for untracked local files). After `sync_shared_refs.py`, local files flatten to `references/` (documented Phase 0 behavior, not a Phase 4A concern).
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed (3979/4000). `python -m pytest tests/ -v` passed (96 tests).
@@ -304,7 +316,8 @@
 
 ## 2026-06-02: Phase 4B Thin-Skill Writing Guide Complete
 
-- Completed: Created `THIN_SKILL_WRITING_GUIDE.md` with five thin-skill patterns (point to runtime artifacts, reference validator gates, use manifest for shipped files, add a step not a section, stay within token budgets), a practical checklist, a Phase 4A integration example with concrete line counts, and a "when thin is not enough" escalation path.
+- Completed: Created `THIN_SKILL_WRITING_GUIDE.md` with five thin-skill patterns (point to runtime artifacts, reference validator gates, use manifest for shipped files, add a step not a section, stay within token budgets), a practical checklist, a Phase 4A integration example with concrete line counts, and a "when thin is not enough" escalation
+  path.
 - Artifact: `THIN_SKILL_WRITING_GUIDE.md` created in this task directory (113 lines).
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (96 tests).
 - Ralph: 2 iterations. Iteration 1: added concrete budget target (500 lines, 4000 tokens) to checklist. Iteration 2: no material defects, no-op by evidence.
@@ -363,7 +376,8 @@
 ## 2026-06-02: Phase 6B Harness Adapter Design Complete (Re-run)
 
 - Completed: Re-executed Phase 6B with Ralph=2. Verified HARNESS_ADAPTER_DESIGN.md against phase requirements: 7 gates with full documentation, capability matrix, enforcement classifications, key findings, integration points, and packaging notes. Design correctly identifies hard-blocking opportunities without modifying user-level config.
-- Ralph loop: 2 iterations. Iteration 1: identified 3 design-quality defects for carry-forward to Phase 6C — (1) Gate 2 circular validation: wrapping shell could block validation commands, (2) Gate 7 classification mismatch: "Deterministic-only" label conflicts with "Custom tool" mechanism, (3) custom tool bypass gap: missing analysis for alternative tool names and aliases. Iteration 2: no-op by evidence; all 7 gates verified with required fields, stop rule respected, no unsupported claims.
+- Ralph loop: 2 iterations. Iteration 1: identified 3 design-quality defects for carry-forward to Phase 6C — (1) Gate 2 circular validation: wrapping shell could block validation commands, (2) Gate 7 classification mismatch: "Deterministic-only" label conflicts with "Custom tool" mechanism, (3) custom tool bypass gap: missing analysis for
+  alternative tool names and aliases. Iteration 2: no-op by evidence; all 7 gates verified with required fields, stop rule respected, no unsupported claims.
 - Validation: Design phase — no source files edited. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes. `python -m pytest tests/ -v` passes (204 tests).
 - Blockers: None. Ralph iteration 1 defects documented as Phase 6C carry-forward.
 - Carry forward: Gate 2 circular validation, Gate 7 classification correction, and custom tool bypass analysis should be addressed in Phase 6C implementation.
@@ -373,8 +387,10 @@
 ## 2026-06-02: Phase 6A/6B Audit and A-Level Fixes Complete
 
 - Completed: Ran full A-F rubric audit against both Phase 6A (MCP Adapter Design) and Phase 6B (Harness Adapter Design) using contextsmith-agent-evaluator references (`implementation-plan-audit.md`, `phase-code-review.md`, `persistent-task-state.md`). Initial grades: 6A=B+, 6B=B. Applied targeted fixes to raise both to A-level.
-- Phase 6A fixes: (1) Added explicit dispatch registry mapping table with 8 tools, (2) Designed `validate_all` batch validation tool with JSON schema, (3) Specified path resolution rules (absolute preferred, relative resolved, symlink safety, escape rejection), (4) Added tool versioning to output schema for API stability, (5) Added implementation test strategy with 6 test categories (dispatch registry, error format, JSON-RPC compliance, path resolution, batch validation, wrapper patterns).
-- Phase 6B fixes: (1) Resolved Gate 2 circular validation risk with shell whitelist mechanism, (2) Corrected Gate 7 classification from "Custom tool" to "Structural validator — deterministic-only", (3) Added custom tool bypass analysis table with shell deny trade-off evaluation and mitigation strategy, (4) Recorded Ralph loop iteration history in design document, (5) Specified packaging manifest entries with YAML examples, (6) Added gate priority ordering for Phase 6C implementation, (7) Added implementation test strategy with 4 test categories (gate integration, bypass detection, policy compliance, domain pack integration).
+- Phase 6A fixes: (1) Added explicit dispatch registry mapping table with 8 tools, (2) Designed `validate_all` batch validation tool with JSON schema, (3) Specified path resolution rules (absolute preferred, relative resolved, symlink safety, escape rejection), (4) Added tool versioning to output schema for API stability, (5) Added implementation
+  test strategy with 6 test categories (dispatch registry, error format, JSON-RPC compliance, path resolution, batch validation, wrapper patterns).
+- Phase 6B fixes: (1) Resolved Gate 2 circular validation risk with shell whitelist mechanism, (2) Corrected Gate 7 classification from "Custom tool" to "Structural validator — deterministic-only", (3) Added custom tool bypass analysis table with shell deny trade-off evaluation and mitigation strategy, (4) Recorded Ralph loop iteration history in
+  design document, (5) Specified packaging manifest entries with YAML examples, (6) Added gate priority ordering for Phase 6C implementation, (7) Added implementation test strategy with 4 test categories (gate integration, bypass detection, policy compliance, domain pack integration).
 - Post-audit grades: Phase 6A=A, Phase 6B=A. All must-fix items resolved. All suggested improvements applied.
 - Validation: Design documents edited; no source files changed. `python scripts/validate_skills.py` passes. `python scripts/token_budget.py --strict` passes. `python -m pytest tests/ -v` passes (204 tests).
 - Blockers: None.
@@ -384,7 +400,9 @@
 
 ## 2026-06-03: Phase 7A User Documentation Map Complete
 
-- Completed: Designed user-facing documentation path before writing any documentation pages. Created `USER_DOCS_MAP.md` with: (1) documentation inventory of all existing pages with status and assessment, (2) reader journey (README -> quickstart -> choose-a-workflow -> detailed how-to -> reference), (3) primary user jobs mapped to entry points and supporting docs, (4) user-facing vs agent-facing classification for all pages, (5) table-of-contents requirements for substantial files, (6) website-readiness constraints (stable headings, clear page purpose, self-contained examples, no chat-only context), (7) phase assignments for 7B through 7G, (8) runtime enforcement feature labeling (implemented/active development/design only).
+- Completed: Designed user-facing documentation path before writing any documentation pages. Created `USER_DOCS_MAP.md` with: (1) documentation inventory of all existing pages with status and assessment, (2) reader journey (README -> quickstart -> choose-a-workflow -> detailed how-to -> reference), (3) primary user jobs mapped to entry points and
+  supporting docs, (4) user-facing vs agent-facing classification for all pages, (5) table-of-contents requirements for substantial files, (6) website-readiness constraints (stable headings, clear page purpose, self-contained examples, no chat-only context), (7) phase assignments for 7B through 7G, (8) runtime enforcement feature labeling
+    (implemented/active development/design only).
 - Identified gaps: 8 documentation gaps including runtime enforcement user guide, domain packs guide, Next Prompt Compiler guide, recovery/troubleshooting guide, "create a plan" walkthrough, "run with enforcement" walkthrough, non-coding examples, and runner guide.
 - Identified duplication issue: several files exist at both `docs/` root and in subdirectories (e.g., `docs/AGENTS_MD_GUIDE.md` and `docs/workflows/AGENTS_MD_GUIDE.md`).
 - Artifact: `USER_DOCS_MAP.md` created in this task directory.
@@ -397,7 +415,8 @@
 
 ## 2026-06-03: Phase 7B README Refresh Complete
 
-- Completed: Rewrote `README.md` to follow the reader journey from Phase 7A documentation map. Added pain point section ("When an agent runs a multi-step task, requirements get lost..."), benefit bullets ("What You Get"), sub-skills routing table, runtime enforcement section with honest feature labeling (Available vs Active development), documentation routing table, and table of contents. Removed generic AI marketing language and repeated contrastive constructions.
+- Completed: Rewrote `README.md` to follow the reader journey from Phase 7A documentation map. Added pain point section ("When an agent runs a multi-step task, requirements get lost..."), benefit bullets ("What You Get"), sub-skills routing table, runtime enforcement section with honest feature labeling (Available vs Active development),
+  documentation routing table, and table of contents. Removed generic AI marketing language and repeated contrastive constructions.
 - Artifact: `README.md` refreshed (142 lines -> ~130 lines, reorganized for reader journey).
 - Validation: `python scripts/validate_skills.py` passed. Documentation style checklist passes: pain point clear, benefits concrete, runtime features labeled honestly, no contrastive patterns, links route correctly, TOC present.
 - Ralph: 2 iterations. Iteration 1: added missing TOC (required by USER_DOCS_MAP.md for files with 5+ sections). Iteration 2: no material defects, no-op by evidence.
@@ -419,7 +438,8 @@
 
 ## 2026-06-03: Phase 7D Runtime Workflow Docs Complete
 
-- Completed: Created `docs/workflows/RUNTIME_ENFORCEMENT.md` — a runtime-workflow user guide covering all 8 required user tasks: create an implementation plan, choose a domain, run one phase at a time, validate a phase, read evidence and phase closeout, fix a failed gate, resume from NEXT_PROMPT.md, and know when human approval is required. Includes TOC, enforcement levels table, quickstart reference, feature labeling (implemented/active development), and non-coding examples with expected outputs.
+- Completed: Created `docs/workflows/RUNTIME_ENFORCEMENT.md` — a runtime-workflow user guide covering all 8 required user tasks: create an implementation plan, choose a domain, run one phase at a time, validate a phase, read evidence and phase closeout, fix a failed gate, resume from NEXT_PROMPT.md, and know when human approval is required.
+  Includes TOC, enforcement levels table, quickstart reference, feature labeling (implemented/active development), and non-coding examples with expected outputs.
 - Artifact: `docs/workflows/RUNTIME_ENFORCEMENT.md` (291 lines).
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. Documentation style checklist passes: practical tone, concrete examples, no marketing language, honest feature labeling, TOC present, all 8 tasks covered, non-coding examples included.
 - Ralph: 2 iterations. Iteration 1: added quickstart reference to intro, added expected output sections to all 3 non-coding examples. Iteration 2: no material defects, no-op by evidence.
@@ -430,7 +450,8 @@
 
 ## 2026-06-03: Phase 7E Use-Case Workflow Docs Complete
 
-- Completed: Created 2 use-case workflow docs: `docs/workflows/CREATE_A_PLAN.md` (step-by-step plan creation workflow) and `docs/workflows/BUILD_OR_IMPROVE_A_SKILL.md` (skill engineering workflow). Updated `docs/workflows/README.md` with new entries. 3 remaining starter workflows (run task-state handoff, schedule with approval gates, compare travel options) deferred to later phases.
+- Completed: Created 2 use-case workflow docs: `docs/workflows/CREATE_A_PLAN.md` (step-by-step plan creation workflow) and `docs/workflows/BUILD_OR_IMPROVE_A_SKILL.md` (skill engineering workflow). Updated `docs/workflows/README.md` with new entries. 3 remaining starter workflows (run task-state handoff, schedule with approval gates, compare
+  travel options) deferred to later phases.
 - Artifacts: `docs/workflows/CREATE_A_PLAN.md`, `docs/workflows/BUILD_OR_IMPROVE_A_SKILL.md`, `docs/workflows/README.md` (updated).
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. Self-audit passes: project voice, user-facing, concrete examples, honest labeling, no marketing language, stable headings, external actions marked, max 2 pages enforced.
 - Ralph: 2 iterations. Iteration 1: added Next Prompt Compiler reference to CREATE_A_PLAN.md validation section; added budget fix guidance to BUILD_OR_IMPROVE_A_SKILL.md. Iteration 2: no material defects, no-op by evidence.
@@ -441,7 +462,8 @@
 
 ## 2026-06-03: Phase 7F Examples Library Complete
 
-- Completed: Created `docs/examples/EXAMPLES_LIBRARY.md` with 3 examples: (1) Task-State Run — using contextsmith-run with NEXT_PROMPT.md handoff, (2) Domain Pack Validation — using validator CLI with domain packs, (3) Failure and Recovery — recovery procedure when a phase fails validation. 5 additional example types deferred to a later batch. All examples labeled as implemented, show expected outputs, and avoid synthetic claims about unimplemented tooling.
+- Completed: Created `docs/examples/EXAMPLES_LIBRARY.md` with 3 examples: (1) Task-State Run — using contextsmith-run with NEXT_PROMPT.md handoff, (2) Domain Pack Validation — using validator CLI with domain packs, (3) Failure and Recovery — recovery procedure when a phase fails validation. 5 additional example types deferred to a later batch. All
+  examples labeled as implemented, show expected outputs, and avoid synthetic claims about unimplemented tooling.
 - Artifact: `docs/examples/EXAMPLES_LIBRARY.md` (176 lines).
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. Self-audit passes: project voice, practical and copyable, expected outputs and recovery paths, honest labeling, no marketing language, stable headings, max 3 examples enforced.
 - Ralph: 2 iterations. Iteration 1: no material defects found. Iteration 2: no-op by evidence.
@@ -452,7 +474,8 @@
 
 ## 2026-06-03: Phase 7G Documentation Quality Audit Complete
 
-- Completed: Audited 6 docs (README.md, QUICKSTART.md, RUNTIME_ENFORCEMENT.md, CREATE_A_PLAN.md, BUILD_OR_IMPROVE_A_SKILL.md, EXAMPLES_LIBRARY.md) against documentation review checklist. All 6 docs PASS. Applied 3 targeted fixes for material defects: (1) QUICKSTART.md 30-min path coherence — Step 2 now audits AGENTS.md instead of IMPLEMENTATION_PLAN.md, (2) README.md directory links changed to point to README.md files, (3) RUNTIME_ENFORCEMENT.md "quickstart" changed to link `../QUICKSTART.md`.
+- Completed: Audited 6 docs (README.md, QUICKSTART.md, RUNTIME_ENFORCEMENT.md, CREATE_A_PLAN.md, BUILD_OR_IMPROVE_A_SKILL.md, EXAMPLES_LIBRARY.md) against documentation review checklist. All 6 docs PASS. Applied 3 targeted fixes for material defects: (1) QUICKSTART.md 30-min path coherence — Step 2 now audits AGENTS.md instead of
+  IMPLEMENTATION_PLAN.md, (2) README.md directory links changed to point to README.md files, (3) RUNTIME_ENFORCEMENT.md "quickstart" changed to link `../QUICKSTART.md`.
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed.
 - Ralph: 2 iterations. Iteration 1: no additional defects found. Iteration 2: no-op by evidence.
 - Blockers: None.
@@ -462,7 +485,9 @@
 
 ## 2026-06-03: Phase 8A Rollout Scope Selection Complete
 
-- Completed: Created rollout matrix for all 7 ContextSmith skills. Classified: `contextsmith` (skipped — meta-skill router), `contextsmith-run` (selected — already integrated in Phase 4A), `contextsmith-prompt-engineer` (selected — Decision 4 pilot candidate, Phase 8B target), `contextsmith-skill-engineer` (deferred — Phase 8C+), `contextsmith-skill-migrator` (deferred — Phase 8C+), `contextsmith-instruction-engineer` (deferred — Phase 8C+), `contextsmith-agent-evaluator` (deferred — Phase 8C+). Phase 8B target count: 1 skill (`contextsmith-prompt-engineer`). ISSUE-1 resolution path: Option 3 (extend `sync_shared_refs.py` to preserve directory structure for `local: true` entries).
+- Completed: Created rollout matrix for all 7 ContextSmith skills. Classified: `contextsmith` (skipped — meta-skill router), `contextsmith-run` (selected — already integrated in Phase 4A), `contextsmith-prompt-engineer` (selected — Decision 4 pilot candidate, Phase 8B target), `contextsmith-skill-engineer` (deferred — Phase 8C+),
+  `contextsmith-skill-migrator` (deferred — Phase 8C+), `contextsmith-instruction-engineer` (deferred — Phase 8C+), `contextsmith-agent-evaluator` (deferred — Phase 8C+). Phase 8B target count: 1 skill (`contextsmith-prompt-engineer`). ISSUE-1 resolution path: Option 3 (extend `sync_shared_refs.py` to preserve directory structure for `local: true`
+    entries).
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed.
 - Ralph: 2 iterations. Iteration 1: no material defects. Iteration 2: no-op by evidence.
 - Blockers: None for Phase 8A. ISSUE-1 remains for Phase 8B.
@@ -472,7 +497,8 @@
 
 ## 2026-06-03: Phase 8B Bounded Per-Skill Rollout (ISSUE-1 Resolved, Integration Complete)
 
-- Completed: Resolved ISSUE-1 (packaging flattening) by fixing `sync_shared_refs.py` to preserve directory structure for `local: true` entries. Added `--repo-root` CLI option for test isolation. Created 3 regression tests in `tests/test_sync_shared_refs.py`. Integrated runtime into `contextsmith-prompt-engineer`: updated `reference_manifest.yml` with 10 runtime file entries, added runtime validation section (step 8) to SKILL.md, increased token budget from 3600 to 3800.
+- Completed: Resolved ISSUE-1 (packaging flattening) by fixing `sync_shared_refs.py` to preserve directory structure for `local: true` entries. Added `--repo-root` CLI option for test isolation. Created 3 regression tests in `tests/test_sync_shared_refs.py`. Integrated runtime into `contextsmith-prompt-engineer`: updated `reference_manifest.yml`
+  with 10 runtime file entries, added runtime validation section (step 8) to SKILL.md, increased token budget from 3600 to 3800.
 - ISSUE-1 fix: `sync_shared_refs.py` now uses relative source path for `local: true` entries instead of `src_path.name`. Runtime files (`runtime/validator.py`) → `references/runtime/validator.py`. Skill-local files (`skills/<skill>/file.md`) → `references/file.md` (flat, correct).
 - Validation: `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (207 tests). CLI validation 6/6 PASS. Dry-run sync confirms correct routing.
 - Blockers: None.
@@ -482,7 +508,8 @@
 
 ## 2026-06-03: Runtime Framing Elevated
 
-- Completed: Elevated runtime reinforcement/orchestration to "first-class, optional but default" throughout PLAN.md. Updated: Architecture Direction, Enforcement Levels, Phase 4B (Thin-Skill Writing Guide key message), Phase 5D (Runner Specification), Phase 6A (MCP Integration Design), Phase 6B (Harness Integration Design), Phase 8A (Rollout Scope Selection), Phase 8B (Bounded Per-Skill Rollout), Phase 8B1-8B4 (per-skill rollout goals), Phase 9 (Final Closeout Audit), and Plan Completion Criteria.
+- Completed: Elevated runtime reinforcement/orchestration to "first-class, optional but default" throughout PLAN.md. Updated: Architecture Direction, Enforcement Levels, Phase 4B (Thin-Skill Writing Guide key message), Phase 5D (Runner Specification), Phase 6A (MCP Integration Design), Phase 6B (Harness Integration Design), Phase 8A (Rollout Scope
+  Selection), Phase 8B (Bounded Per-Skill Rollout), Phase 8B1-8B4 (per-skill rollout goals), Phase 9 (Final Closeout Audit), and Plan Completion Criteria.
 - Created: Backfill task `2026-06-03-runtime-backfill/` with Phase B0-B8 to align codebase artifacts with updated PLAN.md framing.
 - Validation: PLAN.md framing is now consistent across all sections.
 - Blockers: None.
@@ -511,127 +538,156 @@
 - Next: Phase 8B3 (Skill-Migrator Runtime Integration)
 
 ## Phase 8B3 (Skill-Migrator Runtime Integration) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
-Updated `contextsmith-skill-migrator/reference_manifest.yml` with 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs). Updated `contextsmith-skill-migrator/SKILL.md` with runtime validation section (step 8). No token budget change needed (2097/2500 tokens). `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (207 tests). Self-audit: PASS. Ralph loop: 2 iterations, both no-op by evidence.
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+Updated `contextsmith-skill-migrator/reference_manifest.yml` with 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs). Updated `contextsmith-skill-migrator/SKILL.md` with runtime validation section (step 8). No token budget change needed (2097/2500 tokens). `python scripts/validate_skills.py` passed (7 skills OK). `python
+scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (207 tests). Self-audit: PASS. Ralph loop: 2 iterations, both no-op by evidence.
 
 Next: Phase 8B4 (Agent-Evaluator Runtime Integration).
 
 ## Phase 8B4 (Agent-Evaluator Runtime Integration) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
-Updated `contextsmith-agent-evaluator/reference_manifest.yml` with 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs). Updated `contextsmith-agent-evaluator/SKILL.md` with runtime validation section (step 8). Increased token budget from 1900 to 2100 (SKILL.md at 1968/2100 tokens). `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (207 tests). Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 added missing notes fields to manifest entries, iteration 2 no-op by evidence.
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+Updated `contextsmith-agent-evaluator/reference_manifest.yml` with 10 runtime file entries (validator.py, cli.py, __init__.py, 6 domain packs). Updated `contextsmith-agent-evaluator/SKILL.md` with runtime validation section (step 8). Increased token budget from 1900 to 2100 (SKILL.md at 1968/2100 tokens). `python scripts/validate_skills.py` passed
+(7 skills OK). `python scripts/token_budget.py --strict` passed. `python -m pytest tests/ -v` passed (207 tests). Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 added missing notes fields to manifest entries, iteration 2 no-op by evidence.
 
 Next: Phase B0 (Runtime Framing Backfill Audit) or Phase 8C.1 (Run Task-State Handoff Workflow Doc).
 
 ## Phase 8C.1 (Run Task-State Handoff Workflow Doc) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
-Created `docs/workflows/RUN_TASK_STATE_HANDOFF.md` (99 lines, under 130 limit) — step-by-step workflow guide for resuming ContextSmith tasks from NEXT_PROMPT.md handoffs using contextsmith-run. Updated `docs/workflows/README.md` with new entry. Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md pattern: TOC, When to Use, Inputs, numbered steps, Expected Artifacts table, Common Failure Modes table. `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 added EXAMPLES_LIBRARY.md cross-reference, iteration 2 no-op by evidence.
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+Created `docs/workflows/RUN_TASK_STATE_HANDOFF.md` (99 lines, under 130 limit) — step-by-step workflow guide for resuming ContextSmith tasks from NEXT_PROMPT.md handoffs using contextsmith-run. Updated `docs/workflows/README.md` with new entry. Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md pattern: TOC, When to Use, Inputs, numbered
+steps, Expected Artifacts table, Common Failure Modes table. `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 added EXAMPLES_LIBRARY.md cross-reference, iteration 2 no-op by evidence.
 
 Next: Phase 8C.2 (Schedule with Approval Gates Workflow Doc) or Phase B0 (Runtime Framing Backfill Audit).
 
 ## Phase 8C.2 (Schedule with Approval Gates Workflow Doc) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
-Created `docs/workflows/SCHEDULE_WITH_APPROVAL_GATES.md` (95 lines, under 130 limit) — step-by-step workflow guide for scheduling tasks that require human approval gates using ContextSmith runtime enforcement. Updated `docs/workflows/README.md` with new entry. Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md pattern with approval gate specifics from `shared/side-effect-matrix.md`: TOC, When to Use, Inputs, numbered steps (Define Approval Boundaries, Invoke with Gates, Review Actions, Approve/Reject, Validate), Expected Artifacts table, Common Failure Modes table. `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed (contextsmith-run WARN but acceptable). Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 refined example prompt and added file paths to expected artifacts, iteration 2 no-op by evidence.
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+Created `docs/workflows/SCHEDULE_WITH_APPROVAL_GATES.md` (95 lines, under 130 limit) — step-by-step workflow guide for scheduling tasks that require human approval gates using ContextSmith runtime enforcement. Updated `docs/workflows/README.md` with new entry. Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md pattern with approval gate
+specifics from `shared/side-effect-matrix.md`: TOC, When to Use, Inputs, numbered steps (Define Approval Boundaries, Invoke with Gates, Review Actions, Approve/Reject, Validate), Expected Artifacts table, Common Failure Modes table. `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed
+  (contextsmith-run WARN but acceptable). Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 refined example prompt and added file paths to expected artifacts, iteration 2 no-op by evidence.
 
 Next: Phase 8C.3 (Compare Travel Options Workflow Doc) or Phase B0 (Runtime Framing Backfill Audit).
 
 ## Phase 8C.3 (Compare Travel Options Workflow Doc) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, 1 fix applied.
 
-Created `docs/workflows/COMPARE_TRAVEL_OPTIONS.md` (106 lines, under 130 limit) — step-by-step workflow guide for comparing travel options (flights, hotels, trains) without making purchases, using ContextSmith runtime enforcement. Updated `docs/workflows/README.md` with new entry. Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md pattern with travel/purchase domain specifics from `shared/side-effect-matrix.md`: TOC, When to Use, Inputs, numbered steps (Define Constraints, Invoke with Travel Domain, Review Options, Validate No External Actions, Finalize with Evidence), Expected Artifacts table, Common Failure Modes table. `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed (contextsmith-run WARN but acceptable). Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 removed stale EXAMPLES_LIBRARY.md cross-reference to deferred example, iteration 2 no-op by evidence.
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, 1 fix applied.
+
+Created `docs/workflows/COMPARE_TRAVEL_OPTIONS.md` (106 lines, under 130 limit) — step-by-step workflow guide for comparing travel options (flights, hotels, trains) without making purchases, using ContextSmith runtime enforcement. Updated `docs/workflows/README.md` with new entry. Follows CREATE_A_PLAN.md / BUILD_OR_IMPROVE_A_SKILL.md pattern with
+travel/purchase domain specifics from `shared/side-effect-matrix.md`: TOC, When to Use, Inputs, numbered steps (Define Constraints, Invoke with Travel Domain, Review Options, Validate No External Actions, Finalize with Evidence), Expected Artifacts table, Common Failure Modes table. `python scripts/validate_skills.py` passed (7 skills OK). `python
+  scripts/token_budget.py --strict` passed (contextsmith-run WARN but acceptable). Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 removed stale EXAMPLES_LIBRARY.md cross-reference to deferred example, iteration 2 no-op by evidence.
 
 Next: Phase 8C.4 (Prompt Engineering Example) or Phase B0 (Runtime Framing Backfill Audit).
 
 ## Phase 8C.4 (Prompt Engineering Example) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
-Added Example 4 (Prompt Engineering) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern: Status (Implemented), Scenario (create a model-aware prompt for a specific task), Input (task description, target model profile, domain), Prompt (invoke contextsmith-prompt-engineer with --target-profile, --domain, --ralph flags), What happens (7 numbered steps: classify request, check prompt-control feasibility, select references, build prompt package, run Ralph loop, audit, deliver), Expected output (Engineering Metadata, System Prompt, User Prompt Template, Context Strategy, Validation and Test Plan, Ralph Summary, Risks), Recovery (adjust parameters and re-run). Removed prompt engineering from Deferred Examples section. Updated TOC. `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 no material defects, iteration 2 no-op by evidence.
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+Added Example 4 (Prompt Engineering) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern: Status (Implemented), Scenario (create a model-aware prompt for a specific task), Input (task description, target model profile, domain), Prompt (invoke contextsmith-prompt-engineer with --target-profile, --domain, --ralph flags), What
+happens (7 numbered steps: classify request, check prompt-control feasibility, select references, build prompt package, run Ralph loop, audit, deliver), Expected output (Engineering Metadata, System Prompt, User Prompt Template, Context Strategy, Validation and Test Plan, Ralph Summary, Risks), Recovery (adjust parameters and re-run). Removed
+  prompt engineering from Deferred Examples section. Updated TOC. `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 no material defects, iteration 2 no-op by evidence.
 
 Next: Phase 8C.5 (Implementation Plan Creation Example) or Phase B0 (Runtime Framing Backfill Audit).
 
 ## Phase 8C.5 (Implementation Plan Creation Example) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
-Verified Example 5 (Implementation Plan Creation) in `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern: Status (Implemented), Scenario (create a phased implementation plan with validation gates), Input (project description, scope, target model profile), Prompt (invoke contextsmith-instruction-engineer with --target-profile, --domain, --ralph flags), What happens (7 numbered steps: classify instruction target, inspect repo, scan safeguards, detect coding standards, build phased plan, create task-state files, run Ralph loop), Expected output (Detected Project Profile, Changes Made, Safeguards Reused/Strengthened/Added, Validation Notes, Ralph Summary, Remaining Risks, Files Written), Recovery (adjust scope or phasing granularity). Deferred Examples section correctly excludes implementation plan creation (3 remain: plan audit, meeting scheduling, travel comparison). `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 no material defects, iteration 2 no-op by evidence.
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+Verified Example 5 (Implementation Plan Creation) in `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern: Status (Implemented), Scenario (create a phased implementation plan with validation gates), Input (project description, scope, target model profile), Prompt (invoke contextsmith-instruction-engineer with --target-profile,
+--domain, --ralph flags), What happens (7 numbered steps: classify instruction target, inspect repo, scan safeguards, detect coding standards, build phased plan, create task-state files, run Ralph loop), Expected output (Detected Project Profile, Changes Made, Safeguards Reused/Strengthened/Added, Validation Notes, Ralph Summary, Remaining Risks,
+  Files Written), Recovery (adjust scope or phasing granularity). Deferred Examples section correctly excludes implementation plan creation (3 remain: plan audit, meeting scheduling, travel comparison). `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. Self-audit: PASS. Ralph loop: 2
+    iterations, iteration 1 no material defects, iteration 2 no-op by evidence.
 
 Next: Phase 8C.6 (Plan Audit Example) or Phase B0 (Runtime Framing Backfill Audit).
 
 ## Phase 8C.6 (Plan Audit Example) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
 Added Example 6 (Plan Audit) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with contextsmith-agent-evaluator invocation for auditing implementation plans. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. Ralph loop: 2 iterations, both no-op by evidence.
 
 Next: Phase 8C.7 (Meeting Scheduling Example).
 
 ## Phase 8C.7 (Meeting Scheduling Example) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
 Added Example 7 (Meeting Scheduling) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with scheduling domain pack and approval gates. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. Ralph loop: 2 iterations, both no-op by evidence.
 
 Next: Phase 8C.8 (Travel Comparison Example).
 
 ## Phase 8C.8 (Travel Comparison Example) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
 Added Example 8 (Travel Comparison) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with travel_purchase domain pack. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. Ralph loop: 2 iterations, both no-op by evidence.
 
 Next: Phase 8C.9 (Skill Migration Example).
 
 ## Phase 8C.9 (Skill Migration Example) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
 Added Example 9 (Skill Migration) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with contextsmith-skill-migrator invocation. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. Ralph loop: 2 iterations, both no-op by evidence.
 
 Next: Phase 8C.10 (Custom Domain Pack Example).
 
 ## Phase 8C.10 (Custom Domain Pack Example) — 2026-06-03
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, no material defects.
+
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, no material defects.
 
 Added Example 10 (Custom Domain Pack) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern with validator CLI for custom domain pack creation. `python scripts/validate_skills.py` passed. `python scripts/token_budget.py --strict` passed. Ralph loop: 2 iterations, both no-op by evidence.
 
 Next: Phase 8C.11 (Agent Evaluation Example).
 
 ## Phase 8C.11 (Agent Evaluation Example) — 2026-06-04
-**Status:** COMPLETE
-**Result:** PASS — all validations green, Ralph loop 2 iterations, 1 fix applied.
 
-Added Example 11 (Agent Evaluation) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern: Status (Implemented), Scenario (evaluate an agent workflow for small-model reliability and context safety), Input (AGENTS.md file, target model profile), Prompt (invoke contextsmith-agent-evaluator with --target-profile, --domain, --ralph flags), What happens (7 numbered steps: classify artifact as AGENTS.md in audit-only mode, select target profile and detect domain, inspect against rubric criteria, check for duplicates/conflicts/interoperability, grade A-F, run Ralph loop, deliver report), Expected output (Summary Grade, Strengths, Weaknesses, A-F Rubric table, Loop/Git/Context Safety, Domain-Specific Risks, Duplicate/Conflicting Instructions, High-Risk Issues, Suggested Next Action), Recovery (update workflow and re-run, use --education-level deep for detailed breakdown). Updated TOC. Updated Deferred Examples section to note all starter examples are now implemented. `python scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 added audit-only mode clarification to step 1, iteration 2 no-op by evidence.
+__Status:__ COMPLETE
+__Result:__ PASS — all validations green, Ralph loop 2 iterations, 1 fix applied.
+
+Added Example 11 (Agent Evaluation) to `docs/examples/EXAMPLES_LIBRARY.md`. Follows established example pattern: Status (Implemented), Scenario (evaluate an agent workflow for small-model reliability and context safety), Input (AGENTS.md file, target model profile), Prompt (invoke contextsmith-agent-evaluator with --target-profile, --domain,
+--ralph flags), What happens (7 numbered steps: classify artifact as AGENTS.md in audit-only mode, select target profile and detect domain, inspect against rubric criteria, check for duplicates/conflicts/interoperability, grade A-F, run Ralph loop, deliver report), Expected output (Summary Grade, Strengths, Weaknesses, A-F Rubric table,
+  Loop/Git/Context Safety, Domain-Specific Risks, Duplicate/Conflicting Instructions, High-Risk Issues, Suggested Next Action), Recovery (update workflow and re-run, use --education-level deep for detailed breakdown). Updated TOC. Updated Deferred Examples section to note all starter examples are now implemented. `python
+    scripts/validate_skills.py` passed (7 skills OK). `python scripts/token_budget.py --strict` passed. Self-audit: PASS. Ralph loop: 2 iterations, iteration 1 added audit-only mode clarification to step 1, iteration 2 no-op by evidence.
 
 Next: Phase B0 (Runtime Framing Backfill Audit) or task closeout.
 
 ## Phase 9 (Final Closeout Audit) — 2026-06-04
-**Status:** COMPLETE
-**Result:** PASS — all 8 audit checks pass, Ralph loop 2 iterations, 1 fix applied.
 
-**Audit checks:**
+__Status:__ COMPLETE
+__Result:__ PASS — all 8 audit checks pass, Ralph loop 2 iterations, 1 fix applied.
 
-1. **Universal protocol**: 6 domain packs cover coding (`software_engineering`, 56 lines), writing (`writing_editing`, 55), research (`research_summary`, 53), scheduling (`scheduling`, 56), travel/purchase (`travel_purchase`, 58), fallback (`general_fallback`, 52). All under 60 lines. ✅
-2. **Small-model phases atomic**: Phase budgets stayed within 25-45k estimates for implementation phases. Discovery baseline recorded at 78k (documented as warning). No phase exceeded context budget without recording it. ✅
-3. **Domain packs compact**: All 6 packs 52-58 lines. ✅
-4. **Pytest passes**: 207/207 pass. Fixed 4 failing tests in `test_runner.py` (subprocess calls used system Python 3.9 instead of venv Python 3.12; changed to `sys.executable`). ✅
-5. **Skills thinner**: 7/7 skills within budgets. `contextsmith-run` at 4093/4000 (WARN, 2.3% over — cosmetic, within 500-line limit). All others OK. ✅
-6. **Enforcement levels correctly labeled**: README.md, RUNTIME_ENFORCEMENT.md, PLAN.md all use same four labels: Deterministic validation, Orchestrated workflow enforcement, Harness hard blocking, Human approval. Tables match. ✅
-7. **Runtime framed as "first-class, default, opt-out"**: README.md:76, RUNTIME_ENFORCEMENT.md:3, QUICKSTART.md:48, PLAN.md:38 all carry the framing. ✅
-8. **No hard enforcement claims exceed evidence**: HARNESS_ADAPTER_DESIGN.md correctly labels only Gate 4 as hard-blocked. README and RUNTIME_ENFORCEMENT.md label MCP/harness as "Active development". ✅
+__Audit checks:__
 
-**Validation**: `python -m pytest tests/ -v` (207 pass), `python scripts/validate_skills.py` (7/7 OK), `python scripts/token_budget.py --strict` (all OK, 1 WARN).
-**Ralph loop**: 2 iterations. Iteration 1: fixed 4 failing subprocess tests in `test_runner.py` (Python version mismatch). Iteration 2: no-op by evidence.
-**Blockers**: None.
-**Carry forward**: Task is complete. All phases through Phase 9 and Phase B0 are done.
-**Do not carry forward**: Raw audit output, test failure details, or intermediate grep results.
-**Next**: Task closeout.
+1. __Universal protocol__: 6 domain packs cover coding (`software_engineering`, 56 lines), writing (`writing_editing`, 55), research (`research_summary`, 53), scheduling (`scheduling`, 56), travel/purchase (`travel_purchase`, 58), fallback (`general_fallback`, 52). All under 60 lines. ✅
+2. __Small-model phases atomic__: Phase budgets stayed within 25-45k estimates for implementation phases. Discovery baseline recorded at 78k (documented as warning). No phase exceeded context budget without recording it. ✅
+3. __Domain packs compact__: All 6 packs 52-58 lines. ✅
+4. __Pytest passes__: 207/207 pass. Fixed 4 failing tests in `test_runner.py` (subprocess calls used system Python 3.9 instead of venv Python 3.12; changed to `sys.executable`). ✅
+5. __Skills thinner__: 7/7 skills within budgets. `contextsmith-run` at 4093/4000 (WARN, 2.3% over — cosmetic, within 500-line limit). All others OK. ✅
+6. __Enforcement levels correctly labeled__: README.md, RUNTIME_ENFORCEMENT.md, PLAN.md all use same four labels: Deterministic validation, Orchestrated workflow enforcement, Harness hard blocking, Human approval. Tables match. ✅
+7. __Runtime framed as "first-class, default, opt-out"__: README.md:76, RUNTIME_ENFORCEMENT.md:3, QUICKSTART.md:48, PLAN.md:38 all carry the framing. ✅
+8. __No hard enforcement claims exceed evidence__: HARNESS_ADAPTER_DESIGN.md correctly labels only Gate 4 as hard-blocked. README and RUNTIME_ENFORCEMENT.md label MCP/harness as "Active development". ✅
+
+__Validation__: `python -m pytest tests/ -v` (207 pass), `python scripts/validate_skills.py` (7/7 OK), `python scripts/token_budget.py --strict` (all OK, 1 WARN).
+__Ralph loop__: 2 iterations. Iteration 1: fixed 4 failing subprocess tests in `test_runner.py` (Python version mismatch). Iteration 2: no-op by evidence.
+__Blockers__: None.
+__Carry forward__: Task is complete. All phases through Phase 9 and Phase B0 are done.
+__Do not carry forward__: Raw audit output, test failure details, or intermediate grep results.
+__Next__: Task closeout.

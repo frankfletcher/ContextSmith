@@ -1,6 +1,7 @@
 # ContextSmith v1.5.1 Audit Remediation - Implementation Plan
 
 ## Overview
+
 Address 5 audit findings (2 medium, 3 low severity) from v1.5.1 audit report. Each phase is a single atomic action with explicit inputs, outputs, and validation.
 
 ## Context Budget
@@ -10,6 +11,7 @@ Address 5 audit findings (2 medium, 3 low severity) from v1.5.1 audit report. Ea
 - Mode: guided/deep, education: deep, Ralph loop: 2 iterations
 
 ## Phase 0: Baseline Validation
+
 **Objective:** Confirm current state before changes.
 
 **Inputs:**
@@ -57,6 +59,7 @@ context_contract:
 ---
 
 ## Phase 1: Extract Context Budget Section (Finding #1)
+
 **Objective:** Extract lines 113-135 from SKILL.md into `shared/targeted-context-length.md`, reducing SKILL.md to ~269 lines.
 
 **Inputs:**
@@ -83,6 +86,7 @@ context_contract:
 **Validation:** SKILL.md <= 269 lines, validation passes, git commit created.
 
 **Context Contract:**
+
 ```yaml
 context_contract:
   required_files:
@@ -107,6 +111,7 @@ context_contract:
 ---
 
 ## Phase 2: Add ML-Heavy Phase Type (Finding #2)
+
 **Objective:** Add "ml-heavy" phase type to `shared/targeted-context-length.md` with 80k token budget.
 
 **Inputs:**
@@ -129,6 +134,7 @@ context_contract:
 **Validation:** ml-heavy row present in phase types table, validation passes.
 
 **Context Contract:**
+
 ```yaml
 context_contract:
   required_files:
@@ -152,6 +158,7 @@ context_contract:
 ---
 
 ## Phase 3: Create Minimal Behavioral Contracts (Finding #3)
+
 **Objective:** Create `shared/minimal-behavioral-contracts.md` with model-specific behavioral guidance. DO NOT append to `shared/behavioral-contracts.md`.
 
 **Inputs:**
@@ -178,6 +185,7 @@ context_contract:
 **Validation:** New file exists, cross-reference present, validation passes.
 
 **Context Contract:**
+
 ```yaml
 context_contract:
   required_files:
@@ -201,6 +209,7 @@ context_contract:
 ---
 
 ## Phase 4: Parameterize Hardcoded Context Budget (Finding #4)
+
 **Objective:** Replace hardcoded "64k" in `shared/phased-planning.md` with configurable `{{CONTEXT_BUDGET}}` variable.
 
 **Inputs:**
@@ -224,6 +233,7 @@ context_contract:
 **Validation:** No hardcoded "64k" remains, `{{CONTEXT_BUDGET}}` present with comment, validation passes.
 
 **Context Contract:**
+
 ```yaml
 context_contract:
   required_files:
@@ -247,6 +257,7 @@ context_contract:
 ---
 
 ## Phase 5: Add Tool Forecast Realism to Audit Checklist (Finding #5)
+
 **Objective:** Add "Tool forecast realism" row to `shared/implementation-plan-audit.md` checklist.
 
 **Inputs:**
@@ -269,6 +280,7 @@ context_contract:
 **Validation:** New row present in checklist, validation passes.
 
 **Context Contract:**
+
 ```yaml
 context_contract:
   required_files:
@@ -292,6 +304,7 @@ context_contract:
 ---
 
 ## Phase 6: Update CHANGELOG and Final Validation
+
 **Objective:** Document all changes in CHANGELOG.md and run final validation.
 
 **Inputs:**
@@ -303,6 +316,7 @@ context_contract:
 
 1. Read `CHANGELOG.md` to find current version section
 2. Add v1.5.2 entry with all 5 fixes:
+
    ```
 
    ## v1.5.2 (2026-05-30)
@@ -313,7 +327,9 @@ context_contract:
    - Create minimal behavioral contracts for small model compliance
    - Parameterize hardcoded 64k context budget in phased-planning.md
    - Add tool forecast realism row to implementation plan audit checklist
+
    ```
+
 3. Run `python scripts/validate_skills.py`
 4. Verify all SKILL.md files are under 500 lines
 5. Commit: `git add -A && git commit -m "chore: update CHANGELOG for v1.5.2 audit remediation"`
@@ -328,6 +344,7 @@ context_contract:
 **Validation:** CHANGELOG updated, validation passes, all SKILL.md files <= 500 lines.
 
 **Context Contract:**
+
 ```yaml
 context_contract:
   required_files:
@@ -352,6 +369,7 @@ context_contract:
 ---
 
 ## Self-Audit (Honest Grading)
+
 | Criterion | Grade | Justification |
 | ----------- | ------- | --------------- |
 | Task-state integration | B | Phase debriefs are templates, not enforced. Executor must remember to fill them. |
@@ -364,6 +382,7 @@ context_contract:
 ---
 
 ## Fresh Session Guidance
+
 If resuming in a new session:
 
 1. Read this PLAN.md first
@@ -375,6 +394,7 @@ If resuming in a new session:
 ---
 
 ## Shared Reference Sync Check
+
 After editing any `shared/` file, check whether per-skill copies in `skills/*/references/` need updating:
 
 - `skills/local-model-prompt-engineer/references/targeted-context-length.md` - update if Phase 2 changes
@@ -387,6 +407,7 @@ If a per-skill copy exists and the shared file changed, update the copy to match
 ---
 
 ## Task State Updates
+
 After completing each phase, update:
 
 1. `.agent_work/sprints/contextsmith-1.0/tasks/2026-05-30-audit-remediation/STATUS.md` - mark phase complete

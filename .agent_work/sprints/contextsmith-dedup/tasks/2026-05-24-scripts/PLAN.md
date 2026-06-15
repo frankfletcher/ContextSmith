@@ -65,6 +65,7 @@ git diff --stat             # compact file list
 - Project conventions: matches `CONTEXT.md` skip rules, uses pathlib not string paths, no new dependencies
 
 **Step 4 — Classify each finding:**
+
 | Label | Meaning |
 | --- | --- |
 | `MUST FIX` | Breaks correctness, validation, or safety. Phase is NOT complete until fixed. |
@@ -77,6 +78,7 @@ git diff --stat             # compact file list
 **Step 6 — Re-run the phase's narrowest validation.** Confirm the fix did not regress. Re-run only the validation commands listed in the phase, not the full pipeline.
 
 **Step 7 — Record review in `PHASE_LOG.md`:**
+
 ```markdown
 
 ## Phase N Code Review
@@ -89,6 +91,7 @@ git diff --stat             # compact file list
 - NOTES: <list or "none">
 - Improvements applied: <what was fixed in step 5>
 - Remaining risks: <what is still known to be imperfect>
+
 ```
 
 ---
@@ -102,26 +105,33 @@ After the phase review, write one education report per phase. This is separate f
 **Where:** `reports/phase-N-education.md` under the task state directory.
 
 **Template (defined in P2, reproduced here for completeness):**
+
 ```markdown
 
 ## Phase N — What You Need to Know
 
 ### What Changed
+
 (new files, modified files — one line each)
 
 ### Design Decisions
+
 (alternatives considered and reason for each choice — 1-2 sentences per decision)
 
 ### Trade-Offs
+
 (what was sacrificed for simplicity, speed, or maintainability — 1-2 sentences)
 
 ### Key Lessons
+
 (1 concept or pattern reusable beyond this project)
 
 ### Edge Cases Not Handled
+
 (1-3 bullet points of known gaps)
 
 ### Next Phase Preview
+
 (one sentence: what the next phase builds, why it depends on this phase)
 ```
 
@@ -140,6 +150,7 @@ The Ralph loop rule applies to the deep phase review, not to the phase's primary
 **Rule:** Re-iterate on the phase's deliverables only if it **materially improves a graded weakness**. Do not re-iterate for cosmetic polish, minor style, or "just in case" refactoring.
 
 **Decision matrix:**
+
 | If... | Then... |
 | --- | --- |
 | Any `MUST FIX` found | Re-iterate. Fix all MUST FIX. Then stop. |
@@ -160,6 +171,7 @@ At the end of every phase, before updating STATUS.md to "complete," run this che
 3. [ ] Education report written to `reports/phase-N-education.md` (Protocol B).
 4. [ ] `STATUS.md` updated: phase marked complete, next phase listed, blockers recorded.
 5. [ ] `NEXT_PROMPT.md` rewritten for the next phase. Format:
+
    ```markdown
 
    ## Resume Prompt
@@ -171,6 +183,7 @@ At the end of every phase, before updating STATUS.md to "complete," run this che
    Blockers: <list or "none">
    Start by reading STATUS.md, CONTEXT.md, and PLAN.md Phase <N+1>.
    ```
+
 6. [ ] If scope, constraints, or decisions changed, update `TASK.md` or `DECISIONS.md`.
 7. [ ] `git status --short` reviewed. Unstaged work from this phase is expected. No unrelated files are modified.
 
@@ -181,6 +194,7 @@ Only after all 7 items are checked: mark STATUS.md complete and begin the next p
 ## Phase 1: Repo Inspection and State Setup
 
 ### Goal
+
 Capture complete repository state, initialize task state files, and verify all assumptions.
 
 ### Inputs
@@ -228,6 +242,7 @@ Capture complete repository state, initialize task state files, and verify all a
 5. `help.md` file differences recorded.
 
 ### Stop Condition
+
 All task state files written. All repo verification checks pass. `STATUS.md` shows P1 complete and P2 as next phase.
 
 ### Do Not Carry Forward
@@ -239,6 +254,7 @@ All task state files written. All repo verification checks pass. `STATUS.md` sho
 ## Phase 2: Manifest Specification + First Skill Manifest
 
 ### Goal
+
 Create `reference_manifest.yml` for `local-model-prompt-engineer` with correct blob hashes. The complete YAML with placeholder hashes is provided below — the implementor fills in real hashes using the helper script.
 
 ### Inputs
@@ -596,6 +612,7 @@ references:
 ```bash
 python -c "import yaml; yaml.safe_load(open('skills/local-model-prompt-engineer/reference_manifest.yml'))"
 ```
+
 - No YAML parse errors.
 - No `<PASTE-HASH>` placeholders remain (all replaced with real hashes).
 - Total entries: 53. No duplicate sources.
@@ -605,12 +622,15 @@ python -c "import yaml; yaml.safe_load(open('skills/local-model-prompt-engineer/
 - `skills/local-model-prompt-engineer/reference_manifest.yml` — created and validated
 
 ### Validation
+
 ```bash
 python -c "import yaml; yaml.safe_load(open('skills/local-model-prompt-engineer/reference_manifest.yml'))" && echo "OK"
 ```
+
 - YAML parses. No placeholders. 53 entries.
 
 ### Stop Condition
+
 Manifest created with all hashes filled. `STATUS.md` shows P2 complete.
 
 ### Do Not Carry Forward
@@ -626,21 +646,27 @@ Use this template for ALL phase education reports (P2 through P8). Write to `rep
 ## Phase N — What You Need to Know
 
 ### What Changed
+
 (new files, modified files — one line each)
 
 ### Design Decisions
+
 (alternatives considered and reason for each choice — 1-2 sentences per decision)
 
 ### Trade-Offs
+
 (what was sacrificed for simplicity, speed, or maintainability — 1-2 sentences)
 
 ### Key Lessons
+
 (1 concept or pattern reusable beyond this project)
 
 ### Edge Cases Not Handled
+
 (1-3 bullet points of known gaps)
 
 ### Next Phase Preview
+
 (one sentence: what the next phase builds, why it depends on this phase)
 ```
 
@@ -666,6 +692,7 @@ Use this template for ALL phase education reports (P2 through P8). Write to `rep
 **Record review in `PHASE_LOG.md`.**
 
 ### Deep Education-Level Report (P2)
+
 Write to `reports/phase-2-education.md` using the template above.
 
 ---
@@ -673,6 +700,7 @@ Write to `reports/phase-2-education.md` using the template above.
 ## Phase 3: All Remaining Skill Manifests
 
 ### Goal
+
 Create `reference_manifest.yml` for the remaining 4 skills. Handle `help.md` relocation for all 5 skills (move from `references/` to skill root).
 
 ### Inputs
@@ -709,6 +737,7 @@ For each of the 5 skills:
 1. Read `skills/<skill>/references/help.md` — note the content.
 2. Write identical content to `skills/<skill>/help.md` (skill root).
 3. Compute the blob hash of the NEW `skills/<skill>/help.md` using the same helper from P2:
+
    ```bash
    python -c "
    import hashlib
@@ -717,6 +746,7 @@ For each of the 5 skills:
    print(h)
    "
    ```
+
 4. Update the `help.md` entry's `version` in that skill's manifest to the computed hash.
 5. Do NOT delete `references/help.md` — that happens in P5.
 
@@ -737,6 +767,7 @@ For each manifest:
 - 5 `help.md` files moved from `references/` to skill roots
 
 ### Validation
+
 ```bash
 for skill in local-model-prompt-engineer local-model-skill-engineer local-model-skill-migrator local-model-instruction-engineer local-model-agent-evaluator; do
   python -c "
@@ -751,10 +782,12 @@ print(f'$skill: OK — {len(data[\"references\"])} references')
 "
 done
 ```
+
 - All 5 manifests parse and validate.
 - All 5 skill roots contain `help.md` (moved).
 
 ### Stop Condition
+
 All 5 manifests created and validated. `help.md` moved to all 5 skill roots. `STATUS.md` shows P3 complete.
 
 ### Do Not Carry Forward
@@ -778,6 +811,7 @@ All 5 manifests created and validated. `help.md` moved to all 5 skill roots. `ST
 **Record review in `PHASE_LOG.md`.**
 
 ### Deep Education-Level Report (P3)
+
 Write to `reports/phase-3-education.md` using the P2 education report template.
 
 ---
@@ -785,6 +819,7 @@ Write to `reports/phase-3-education.md` using the P2 education report template.
 ## Phase 4: Sync Script
 
 ### Goal
+
 Create `scripts/sync_shared_refs.py` that reads manifests, copies shared files into `references/`, and handles local files. Verify with `--dry-run` and full sync against existing copies.
 
 ### Inputs
@@ -804,6 +839,7 @@ Create `scripts/sync_shared_refs.py` that reads manifests, copies shared files i
 #### 4a. Script Skeleton and Argument Parsing
 
 Create the script with `argparse`:
+
 ```python
 #!/usr/bin/env python3
 """sync_shared_refs.py — Populate skill references/ from shared/ via manifests."""
@@ -963,17 +999,21 @@ def main():
 - `scripts/sync_shared_refs.py` — created, tested, byte-for-byte verified
 
 ### Validation
+
 ```bash
 
 # 1. Dry-run reports correct file list
+
 python scripts/sync_shared_refs.py --dry-run --skill local-model-prompt-engineer | wc -l
 
 # Expect: 53 lines (one per file)
 
 # 2. Full sync runs without error
+
 python scripts/sync_shared_refs.py --verbose
 
 # 3. Byte-for-byte comparison
+
 for skill in skills/*/; do
   for f in shared/**/*.md; do
     rel=$(echo "$f" | sed 's|^shared/||')
@@ -982,12 +1022,15 @@ for skill in skills/*/; do
 done
 
 # 4. Idempotent — second run skips all
+
 python scripts/sync_shared_refs.py --verbose 2>&1 | grep -c "SKIP"
 
 # Expect: 260 (5 skills x 52 shared) if all skipped
+
 ```
 
 ### Stop Condition
+
 Sync script runs, produces byte-identical output to existing copies, idempotent on second run, handles error cases gracefully. `STATUS.md` shows P4 complete.
 
 ### Do Not Carry Forward
@@ -1028,6 +1071,7 @@ Sync script runs, produces byte-identical output to existing copies, idempotent 
 **Record review in `PHASE_LOG.md`.**
 
 ### Deep Education-Level Report (P4)
+
 Write to `reports/phase-4-education.md` using the P2 education report template.
 
 ---
@@ -1035,6 +1079,7 @@ Write to `reports/phase-4-education.md` using the P2 education report template.
 ## Phase 5: Sync Verification, Copy Removal, and .gitignore
 
 ### Goal
+
 Verify sync reproduces existing copies byte-for-byte, then safely remove all committed copies from `skills/*/references/` and add `.gitignore` rules. This is the irreversible transition phase — execution order is critical.
 
 ### Inputs
@@ -1058,6 +1103,7 @@ Verify sync reproduces existing copies byte-for-byte, then safely remove all com
 
 1. Run `python scripts/sync_shared_refs.py --verbose` to populate references from manifests.
 2. For each skill, for each shared file, diff the newly synced copy against the original committed copy:
+
    ```bash
    for skill in local-model-prompt-engineer local-model-skill-engineer local-model-skill-migrator local-model-instruction-engineer local-model-agent-evaluator; do
      for f in shared/**/*.md; do
@@ -1068,6 +1114,7 @@ Verify sync reproduces existing copies byte-for-byte, then safely remove all com
      done
    done
    ```
+
 3. Verify `help.md` copies: compare `skills/$skill/references/help.md` against `skills/$skill/help.md` (the moved file from P3).
 4. If ANY diff output: **STOP. Do not proceed.** Record the mismatched files in `PHASE_LOG.md`. Inspect the sync script for the bug. Fix the discrepancy. Re-run verification from step 5a-1. **Do NOT delete copies until 100% match.**
 
@@ -1076,9 +1123,11 @@ Verify sync reproduces existing copies byte-for-byte, then safely remove all com
 **Only after 5a passes completely.**
 
 For each of the 5 skills:
+
 ```bash
 
 # Keep the references/ directory, remove all contents
+
 for skill in skills/*/; do
   find "$skill/references" -mindepth 1 -delete
 done
@@ -1087,15 +1136,18 @@ done
 This deletes all files and subdirectories under `references/` but keeps the `references/` directory itself.
 
 Verify deletion:
+
 ```bash
 find skills/*/references -type f | wc -l
 
 # Expected: 0
+
 ```
 
 #### 5c. Create .gitkeep Placeholders
 
 For each skill:
+
 ```bash
 for skill in skills/*/; do
   touch "$skill/references/.gitkeep"
@@ -1107,9 +1159,11 @@ This ensures the `references/` directory is preserved in git even though all con
 #### 5d. Add .gitignore Rules
 
 Append to `.gitignore`:
+
 ```
 
 # Generated reference files — populated by scripts/sync_shared_refs.py
+
 skills/*/references/
 !skills/*/references/.gitkeep
 ```
@@ -1124,6 +1178,7 @@ Explanation:
 ```bash
 git status --short skills/*/references/
 ```
+
 Expected output: Only `.gitkeep` files should appear as untracked/modified (or nothing, if already tracked).
 Actual reference files should NOT appear.
 
@@ -1132,9 +1187,11 @@ Actual reference files should NOT appear.
 ```bash
 python scripts/sync_shared_refs.py --verbose
 ```
+
 Expected: All files copied to `references/`. No errors.
 
 Then verify the repopulated files match shared:
+
 ```bash
 for skill in skills/*/; do
   for f in shared/**/*.md; do
@@ -1143,6 +1200,7 @@ for skill in skills/*/; do
   done
 done
 ```
+
 Expected: zero diffs.
 
 ### Outputs
@@ -1153,24 +1211,29 @@ Expected: zero diffs.
 - Verified sync re-population
 
 ### Validation
+
 ```bash
 
 # 1. No committed copies remain
+
 find skills/*/references -name '*.md' | wc -l
 
 # Expected: 0
 
 # 2. .gitkeep files exist
+
 find skills/*/references -name '.gitkeep' | wc -l
 
 # Expected: 5
 
 # 3. .gitignore has the rules
+
 grep -c "skills/\*/references/" .gitignore
 
 # Expected: 1
 
 # 4. After sync, all references are populated and byte-identical
+
 python scripts/sync_shared_refs.py --verbose
 
 # All COPY, no errors
@@ -1185,10 +1248,12 @@ done
 # Expected: no output (all identical)
 
 # 5. validate_skills.py still passes
+
 python scripts/validate_skills.py
 ```
 
 ### Stop Condition
+
 All copies deleted. `.gitignore` active. Sync re-populates identical content. `validate_skills.py` passes. `STATUS.md` shows P5 complete.
 
 ### Do Not Carry Forward
@@ -1221,6 +1286,7 @@ All copies deleted. `.gitignore` active. Sync re-populates identical content. `v
 **Record review in `PHASE_LOG.md`.**
 
 ### Deep Education-Level Report (P5)
+
 Write to `reports/phase-5-education.md` using the P2 education report template.
 
 ---
@@ -1228,6 +1294,7 @@ Write to `reports/phase-5-education.md` using the P2 education report template.
 ## Phase 6: Package Script
 
 ### Goal
+
 Create `scripts/package_skill.sh` that produces a self-contained zip of a skill with populated references, suitable for standalone distribution.
 
 ### Inputs
@@ -1307,12 +1374,14 @@ if [ -f "$ZIP_NAME" ]; then
 fi
 
 # Check for zip command
+
 if ! command -v zip &> /dev/null; then
     echo "ERROR: zip command not found. Install zip to use this script."
     exit 1
 fi
 
 # Zip the skill directory, excluding the manifest
+
 zip -r "$ZIP_NAME" "$SKILL_DIR/" \
     -x "${SKILL_DIR}/reference_manifest.yml" \
     -x "${SKILL_DIR}/references/.gitkeep"
@@ -1329,11 +1398,13 @@ echo "Packaged $ZIP_NAME ($FILE_COUNT files)"
 #### 6e. Verify the Zip Contents
 
 For each skill:
+
 ```bash
 ./scripts/package_skill.sh local-model-prompt-engineer
 unzip -l dist/local-model-prompt-engineer-1.0.0.zip | head -20
 
 # Verify: SKILL.md is present, references/ contains expected files, manifest is NOT present
+
 ```
 
 Check specific files:
@@ -1350,29 +1421,36 @@ Check specific files:
 - `scripts/package_skill.sh` — created, tested
 
 ### Validation
+
 ```bash
 
 # 1. Package script runs without error
+
 ./scripts/package_skill.sh local-model-prompt-engineer
 
 # Expected: "Packaged dist/local-model-prompt-engineer-1.0.0.zip (N files)"
 
 # 2. Zip contains SKILL.md
+
 unzip -l dist/local-model-prompt-engineer-1.0.0.zip | grep "SKILL.md"
 
 # 3. Zip does NOT contain manifest
+
 unzip -l dist/local-model-prompt-engineer-1.0.0.zip | grep "reference_manifest.yml" && echo "FAIL" || echo "PASS"
 
 # 4. Zip contains key reference files
+
 unzip -l dist/local-model-prompt-engineer-1.0.0.zip | grep "git-safety.md"
 unzip -l dist/local-model-prompt-engineer-1.0.0.zip | grep "help.md"
 unzip -l dist/local-model-prompt-engineer-1.0.0.zip | grep "model-profiles/qwen36.md"
 
 # 5. Test with missing skill (error case)
+
 ./scripts/package_skill.sh nonexistent-skill && echo "FAIL" || echo "PASS"
 ```
 
 ### Stop Condition
+
 Package script works for all 5 skills. Zips contain expected content. Error cases handled. `STATUS.md` shows P6 complete.
 
 ### Do Not Carry Forward
@@ -1405,6 +1483,7 @@ Package script works for all 5 skills. Zips contain expected content. Error case
 **Record review in `PHASE_LOG.md`.**
 
 ### Deep Education-Level Report (P6)
+
 Write to `reports/phase-6-education.md` using the P2 education report template.
 
 ---
@@ -1412,6 +1491,7 @@ Write to `reports/phase-6-education.md` using the P2 education report template.
 ## Phase 7: Validation Enhancement and CI Workflow
 
 ### Goal
+
 Enhance `scripts/validate_skills.py` to check manifests, and create `.github/workflows/validate.yml` for CI. The CI pipeline syncs references then validates.
 
 ### Inputs
@@ -1592,6 +1672,7 @@ jobs:
 2. Temporarily break a manifest (remove a source file, add duplicate entry, change skill name) and verify validation catches it.
 3. Verify all existing checks still work (SKILL.md validation, line counts, refs/ existence).
 4. Run the full validation from a clean state:
+
    ```bash
    rm -rf skills/*/references/*
    python scripts/sync_shared_refs.py --verbose
@@ -1604,32 +1685,40 @@ jobs:
 - `.github/workflows/validate.yml` — created
 
 ### Validation
+
 ```bash
 
 # 1. Normal validation passes
+
 python scripts/validate_skills.py
 
 # Expected: all skills OK, no errors, exit code 0
 
 # 2. Validation catches broken manifests
+
 # (manual test: temporarily corrupt a manifest and re-run)
+
 python scripts/validate_skills.py
 
 # Expected: ERROR for corrupted skill
 
 # 3. Workflow file is valid YAML
+
 python -c "import yaml; yaml.safe_load(open('.github/workflows/validate.yml'))"
 
 # Expected: no error
 
 # 4. Workflow references correct script paths
+
 grep "sync_shared_refs.py" .github/workflows/validate.yml
 grep "validate_skills.py" .github/workflows/validate.yml
 
 # Expected: both found
+
 ```
 
 ### Stop Condition
+
 Validation script enhanced and tested. CI workflow created and valid. `STATUS.md` shows P7 complete.
 
 ### Do Not Carry Forward
@@ -1660,6 +1749,7 @@ Validation script enhanced and tested. CI workflow created and valid. `STATUS.md
 **Record review in `PHASE_LOG.md`.**
 
 ### Deep Education-Level Report (P7)
+
 Write to `reports/phase-7-education.md` using the P2 education report template.
 
 ---
@@ -1667,6 +1757,7 @@ Write to `reports/phase-7-education.md` using the P2 education report template.
 ## Phase 8: End-to-End Validation, Documentation, and Handoff
 
 ### Goal
+
 Perform a full integration test. Create `CONTRIBUTING.md`. Produce final educational report and handoff artifacts.
 
 ### Inputs
@@ -1692,38 +1783,47 @@ Run the complete pipeline from a simulated fresh clone:
 ```bash
 
 # Step 1: Simulate fresh clone by removing all generated references
+
 find skills/*/references -mindepth 1 -not -name '.gitkeep' -delete
 
 # Step 2: Verify references/ is empty (only .gitkeep)
+
 find skills/*/references -type f
 
 # Expected: 5 .gitkeep files only
 
 # Step 3: Run sync to populate
+
 python scripts/sync_shared_refs.py --verbose
 
 # Step 4: Verify all files populated
+
 find skills/*/references -name '*.md' | wc -l
 
 # Expected: 265 (5 skills x 53 files)
 
 # Step 5: Run validation
+
 python scripts/validate_skills.py
 
 # Expected: exit 0, all skills OK
 
 # Step 6: Package each skill
+
 for skill in local-model-prompt-engineer local-model-skill-engineer local-model-skill-migrator local-model-instruction-engineer local-model-agent-evaluator; do
   ./scripts/package_skill.sh "$skill"
 done
 
 # Step 7: Inspect one zip
+
 unzip -l dist/local-model-prompt-engineer-1.0.0.zip | wc -l
 
 # Expected: SKILL.md + 53 reference files = 54 files
+
 # (plus 2 header/footer lines from unzip -l)
 
 # Step 8: Byte-for-byte check: extract zip and compare references against shared/
+
 mkdir -p /tmp/zip-test
 unzip -o dist/local-model-prompt-engineer-1.0.0.zip -d /tmp/zip-test
 for f in shared/**/*.md; do
@@ -1733,6 +1833,7 @@ for f in shared/**/*.md; do
 done
 
 # Expected: no output (all match)
+
 ```
 
 #### 8b. Check All Files Created by Sync Are Git-Ignored
@@ -1740,6 +1841,7 @@ done
 ```bash
 git status --short skills/*/references/
 ```
+
 Expected: Only `.gitkeep` files appear. No `.md` files.
 
 #### 8c. Create CONTRIBUTING.md
@@ -1772,17 +1874,25 @@ Create a concise `CONTRIBUTING.md` documenting the new development workflow:
 4. Run sync and validation.
 
 ### Packaging a skill for distribution
+
 ```bash
+
 ./scripts/package_skill.sh <skill-name>
+
 ```
 
 ### Validation
+
 ```bash
+
 python scripts/validate_skills.py
+
 ```
 
 ### CI
+
 All PRs to `main` run `sync_shared_refs.py` then `validate_skills.py`. Failures block merge.
+
 ```
 
 #### 8d. Production Readiness Checklist
@@ -1817,18 +1927,22 @@ Walk through and confirm:
 - `STATUS.md` — updated to P8 complete
 
 ### Validation
+
 ```bash
 
 # Full pipeline test (same as 8a)
+
 find skills/*/references -mindepth 1 -not -name '.gitkeep' -delete
 python scripts/sync_shared_refs.py --verbose && \
 python scripts/validate_skills.py && \
 ./scripts/package_skill.sh local-model-prompt-engineer && \
 echo "=== ALL CHECKS PASSED ==="
 ```
+
 Expected: "ALL CHECKS PASSED" with exit code 0.
 
 ### Stop Condition
+
 Integration test passes. All artifacts created. Handoff files written. Project complete.
 
 ### Do Not Carry Forward
@@ -1856,6 +1970,7 @@ Integration test passes. All artifacts created. Handoff files written. Project c
 **Record review in `PHASE_LOG.md`.**
 
 ### Deep Education-Level Report (P8)
+
 Write to `reports/phase-8-education.md` using the P2 education report template. This is the **project-level summary** covering architecture, decisions, lessons learned, and maintenance guidance.
 
 ---
@@ -1863,39 +1978,51 @@ Write to `reports/phase-8-education.md` using the P2 education report template. 
 ## Appendix: Edge Case Catalog
 
 ### E1: Missing Manifest
+
 **Behavior:** Sync skips the skill with a warning. Validation warns but does not error. This allows gradual adoption — a skill can be added to manifests later.
 
 ### E2: Invalid YAML in Manifest
+
 **Behavior:** Sync reports error and skips the skill. Validation reports error. CI fails.
 
 ### E3: Source File Does Not Exist (Required)
+
 **Behavior:** Sync reports error for that entry, continues with remaining entries. Validation reports error. CI fails.
 
 ### E4: Source File Does Not Exist (Optional)
+
 **Behavior:** Sync skips that entry with a warning. Sync continues. Validation warns. CI passes (warnings are non-fatal).
 
 ### E5: Non-shared/ Source Without local:true
+
 **Behavior:** Sync reports error. Validation reports error. CI fails.
 
 ### E6: Duplicate Source in Manifest
+
 **Behavior:** Validation reports error, but sync copies the first occurrence and ignores duplicates (may cause subtle bugs). Treat as error.
 
 ### E7: Shared File Renamed
+
 **Behavior:** Manifest `source` points to old path. Sync reports error (file not found). Developer must update manifest.
 
 ### E8: New Shared File Added
+
 **Behavior:** No manifest references it yet. Sync does nothing. Validation does nothing. Developer must add it to manifests. This is normal — not every shared file is needed by every skill.
 
 ### E9: Skill Root Does Not Exist
+
 **Behavior:** Sync script iterates `skills_dir.iterdir()` — nonexistent skill is simply not found. Package script checks and errors.
 
 ### E10: zip Command Not Installed
+
 **Behavior:** Package script exits with error message. CI does not run package script, so this only affects local development.
 
 ### E11: Script Invoked from Wrong Directory
+
 **Behavior:** `REPO_ROOT = Path(__file__).resolve().parents[1]` ensures all paths resolve relative to the script location, not CWD. This is handled.
 
 ### E12: Destination Is a Directory
+
 **Behavior:** If `references/model-profiles/` is a directory but the source is also a directory, this is a problem. Sync script does not handle directory destinations — only files. The existing structure has no directory-to-directory copies, so this is not a current concern.
 
 ---
@@ -1960,6 +2087,7 @@ shared/usage-patterns.md
 ```
 
 Plus one local entry per skill:
+
 ```
 skills/<skill>/help.md  (local: true)
 ```

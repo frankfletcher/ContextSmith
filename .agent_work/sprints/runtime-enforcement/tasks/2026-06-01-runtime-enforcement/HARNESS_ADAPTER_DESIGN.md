@@ -9,11 +9,13 @@
 - version: 1.0.0
 
 ## Purpose
+
 Design a harness adapter for opencode that maps ContextSmith runtime validation gates to opencode's native control mechanisms. This is a design-only phase — no source files edited, no config modified.
 
 ## Opencode Capabilities Analysis
 
 ### Permissions System (allow/ask/deny)
+
 | Capability | Description | Hard Block? |
 | --- | --- | --- |
 | Tool allow | Tool can be used without restriction | No (permissive) |
@@ -23,12 +25,14 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 | Agent-level overrides | Per-agent permission rules | Yes |
 
 ### Policies (Experimental)
+
 | Policy | Description | Status |
 | --- | --- | --- |
 | provider.use | Restrict which providers can be used | Experimental |
 | Custom policies | Not yet supported | N/A |
 
 ### Custom Tools
+
 | Capability | Description | Hard Block? |
 | --- | --- | --- |
 | Override built-in tools | Replace `edit`, `read`, `write`, `shell` with custom implementations | Yes (can intercept and block) |
@@ -37,6 +41,7 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 ## Harness Capability Matrix
 
 ### Gate 1: Phase Boundary Enforcement
+
 | Field | Value |
 | --- | --- |
 | Trigger point | Agent attempts to proceed to next phase |
@@ -45,9 +50,10 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 | Pass behavior | Allow write to task-state files |
 | Fail behavior | Block write, return violation message |
 | Bypass limitations | Agent can use raw bash commands to write files |
-| Classification | **Orchestrated** (not hard-blocked) |
+| Classification | __Orchestrated__ (not hard-blocked) |
 
 ### Gate 2: Validation Command Execution
+
 | Field | Value |
 | --- | --- |
 | Trigger point | Phase closeout requires validation commands |
@@ -56,10 +62,11 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 | Pass behavior | Allow phase closeout |
 | Fail behavior | Block closeout, require validation first |
 | Bypass limitations | Agent can skip closeout and proceed |
-| Classification | **Orchestrated** (not hard-blocked) |
-| Circular validation risk | **RESOLVED**: The shell wrapper maintains a whitelist of validation commands (from `CONTEXT.md` validation_commands list). Whitelisted commands bypass the pre-validation check, allowing the agent to run `pytest`, `validate_skills.py`, and other validation commands without triggering the gate. Non-whitelisted shell commands are intercepted. This prevents the wrapper from blocking the very commands needed to satisfy the gate. |
+| Classification | __Orchestrated__ (not hard-blocked) |
+| Circular validation risk | __RESOLVED__: Shell wrapper whitelists validation commands from CONTEXT.md. Whitelisted commands bypass the pre-validation check, allowing agent to run `pytest`, `validate_skills.py`, etc. without triggering the gate. Non-whitelisted shell commands are intercepted, preventing blocking of needed commands. |
 
 ### Gate 3: Artifact Validation
+
 | Field | Value |
 | --- | --- |
 | Trigger point | Agent creates or modifies runtime artifacts |
@@ -68,9 +75,10 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 | Pass behavior | Allow write |
 | Fail behavior | Block write, return violations |
 | Bypass limitations | Agent can use raw bash commands |
-| Classification | **Orchestrated** (not hard-blocked) |
+| Classification | __Orchestrated__ (not hard-blocked) |
 
 ### Gate 4: External Action Approval
+
 | Field | Value |
 | --- | --- |
 | Trigger point | Agent attempts external_write or irreversible action |
@@ -79,9 +87,10 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 | Pass behavior | Allow tool use |
 | Fail behavior | Deny tool use, require human approval |
 | Bypass limitations | None if tools are denied |
-| Classification | **Hard-blocked** (via tool deny) |
+| Classification | __Hard-blocked__ (via tool deny) |
 
 ### Gate 5: Domain-Specific Constraints
+
 | Field | Value |
 | --- | --- |
 | Trigger point | Agent operates in a specific domain |
@@ -90,9 +99,10 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 | Pass behavior | Allow action |
 | Fail behavior | Block action, return domain-specific violation |
 | Bypass limitations | Agent can ignore domain pack |
-| Classification | **Orchestrated** (not hard-blocked) |
+| Classification | __Orchestrated__ (not hard-blocked) |
 
 ### Gate 6: Evidence Ledger Requirements
+
 | Field | Value |
 | --- | --- |
 | Trigger point | Phase closeout requires evidence |
@@ -101,9 +111,10 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 | Pass behavior | Allow closeout |
 | Fail behavior | Block closeout, require evidence |
 | Bypass limitations | Agent can skip closeout |
-| Classification | **Orchestrated** (not hard-blocked) |
+| Classification | __Orchestrated__ (not hard-blocked) |
 
 ### Gate 7: Requirements Chain Traceability
+
 | Field | Value |
 | --- | --- |
 | Trigger point | Agent claims requirement satisfied |
@@ -112,23 +123,25 @@ Design a harness adapter for opencode that maps ContextSmith runtime validation 
 | Pass behavior | Requirements chain has valid structure with evidence_ids and phase_ids |
 | Fail behavior | Validator returns violations; agent must correct artifact before closeout |
 | Bypass limitations | Agent can claim requirement satisfied without creating a valid artifact |
-| Classification | **Deterministic-only** (structural validation) — corrected from "Custom tool" to clarify this gate relies on structural validation of the requirements_chain artifact, not on intercepting agent actions. The validator checks that evidence_ids and phase_ids are present and referenced, but cannot enforce truthfulness of agent claims. |
+| Classification | __Deterministic-only__ (structural validation) — corrected from "Custom tool" to clarify this gate relies on structural validation of the requirements_chain artifact, not on intercepting agent actions. The validator checks that evidence_ids and phase_ids are present but cannot enforce truthfulness of agent claims. |
 
 ## Enforcement Classification Summary
 
 | Classification | Gates | Description |
 | --- | --- | --- |
-| **Hard-blocked** | Gate 4 | Tool deny prevents action entirely |
-| **Orchestrated** | Gates 1, 2, 3, 5, 6 | Custom tools can intercept and block, but agent can bypass |
-| **Deterministic-only** | Gate 7 | Structural validation only, no enforcement |
-| **Human approval** | Gate 4 (ask mode) | Requires user confirmation |
+| __Hard-blocked__ | Gate 4 | Tool deny prevents action entirely |
+| __Orchestrated__ | Gates 1, 2, 3, 5, 6 | Custom tools can intercept and block, but agent can bypass |
+| __Deterministic-only__ | Gate 7 | Structural validation only, no enforcement |
+| __Human approval__ | Gate 4 (ask mode) | Requires user confirmation |
 
 ## Key Findings
 
 ### Hard Blocking Is Limited
+
 Opencode's permissions system can hard-block specific tools (e.g., deny `shell`, `write`, `edit`), but cannot conditionally block based on validation results. The `ask` mode requires human approval but doesn't integrate with our validator.
 
 ### Custom Tools Can Intercept
+
 Custom tool overrides for `edit`, `read`, `write`, and `shell` can wrap the built-in tools with validation logic. This allows us to:
 
 1. Check validation before allowing the action
@@ -136,6 +149,7 @@ Custom tool overrides for `edit`, `read`, `write`, and `shell` can wrap the buil
 3. Block the action if validation fails
 
 ### Bypass Limitations
+
 Even with custom tools, the agent can:
 
 1. Use raw bash commands to write files
@@ -154,16 +168,18 @@ The "raw bash bypass" applies to Gates 1, 3, and 5. Evaluating whether denying `
 | Agent uses Python `-c` | Blocks Python shell invocations | Closes scripting bypass | Blocks legitimate one-liners |
 | Agent uses built-in `write`/`edit` tools | Custom tool intercepts | Already handled by Gates 1, 3 | No additional trade-off |
 
-**Conclusion**: Denying `shell` would close the raw bash bypass but also block validation command execution (Gate 2). The recommended approach is to keep `shell` available with the whitelisted validation commands from Gate 2, and accept that the raw bash bypass exists for Gates 1, 3, and 5. This is consistent with the orchestrated (not hard-blocked) classification. Agents operating outside the orchestrated workflow can bypass these gates by design.
+__Conclusion__: Denying `shell` would close the raw bash bypass but also block validation command execution (Gate 2). The recommended approach is to keep `shell` available with the whitelisted validation commands from Gate 2, and accept that the raw bash bypass exists for Gates 1, 3, and 5. This is consistent with the orchestrated (not
+hard-blocked) classification. Agents operating outside the orchestrated workflow can bypass these gates by design.
 
-**Mitigation**: The runner's `next_gate()` command provides visibility into which gates are satisfied. Human reviewers can use this to detect bypass attempts. Gate 4 (external action approval) remains hard-blocked via tool deny, providing a safety net for irreversible actions.
+__Mitigation__: The runner's `next_gate()` command provides visibility into which gates are satisfied. Human reviewers can use this to detect bypass attempts. Gate 4 (external action approval) remains hard-blocked via tool deny, providing a safety net for irreversible actions.
 
 ### Recommended Approach
+
 Given the bypass limitations, the recommended approach is:
 
-1. **Gate 4 (External Action Approval)**: Use tool deny/ask for hard blocking of risky actions
-2. **Gates 1-3, 5-6**: Use custom tool overrides for orchestrated validation
-3. **Gate 7**: Rely on deterministic structural validation only
+1. __Gate 4 (External Action Approval)__: Use tool deny/ask for hard blocking of risky actions
+2. __Gates 1-3, 5-6__: Use custom tool overrides for orchestrated validation
+3. __Gate 7__: Rely on deterministic structural validation only
 
 This aligns with Decision 1 (hybrid enforcement) and Decision 10 (full stack first slice).
 
@@ -183,6 +199,7 @@ This aligns with Decision 1 (hybrid enforcement) and Decision 10 (full stack fir
 ```
 
 ### Validation Dispatch
+
 ```python
 def contextsmith_write(path: str, content: str) -> dict:
 
@@ -203,6 +220,7 @@ def contextsmith_write(path: str, content: str) -> dict:
 ```
 
 ### Domain Pack Integration
+
 ```python
 def get_domain_pack(domain: str) -> dict:
 
@@ -220,9 +238,11 @@ def check_action_allowed(domain: str, action: str) -> bool:
 ## Packaging Notes
 
 ### Per-Skill Distribution
+
 The harness adapter files should be declared in each skill's `reference_manifest.yml`:
 
 ```yaml
+
 - name: harness_adapter.py
 
   local: true
@@ -239,24 +259,26 @@ The harness adapter files should be declared in each skill's `reference_manifest
 After `sync_shared_refs.py`, these flatten to `references/harness_adapter.py` and `references/harness_config.json`. This is expected behavior (Phase 0 packaging fact). Resolution of ISSUE-1 is deferred to Phase 8B.
 
 ### ISSUE-1 Consideration
+
 The packaging flattening issue (ISSUE-1) affects harness adapter files. After sync, `runtime/harness_adapter.py` becomes `references/harness_adapter.py`, breaking module imports. Resolution options from DECISIONS.md should be applied.
 
 ## Gate Priority Ordering
 
 For Phase 6C implementation, gates should be implemented in this order:
 
-1. **Gate 4 (External Action Approval)** — highest priority; uses existing tool deny/ask mechanisms; provides hard blocking for irreversible actions
-2. **Gate 3 (Artifact Validation)** — medium priority; wraps existing validator functions; provides structured feedback on artifact quality
-3. **Gate 1 (Phase Boundary)** — medium priority; prevents phase advancement without validation; relies on custom tool overrides
-4. **Gate 2 (Validation Commands)** — medium priority; requires whitelist implementation; depends on Gate 1 for phase context
-5. **Gate 5 (Domain-Specific Constraints)** — lower priority; domain pack integration; builds on Gate 3 infrastructure
-6. **Gate 6 (Evidence Ledger)** — lower priority; closeout gate; depends on Gate 1 for phase context
-7. **Gate 7 (Requirements Traceability)** — lowest priority; structural validation only; no enforcement mechanism needed
+1. __Gate 4 (External Action Approval)__ — highest priority; uses existing tool deny/ask mechanisms; provides hard blocking for irreversible actions
+2. __Gate 3 (Artifact Validation)__ — medium priority; wraps existing validator functions; provides structured feedback on artifact quality
+3. __Gate 1 (Phase Boundary)__ — medium priority; prevents phase advancement without validation; relies on custom tool overrides
+4. __Gate 2 (Validation Commands)__ — medium priority; requires whitelist implementation; depends on Gate 1 for phase context
+5. __Gate 5 (Domain-Specific Constraints)__ — lower priority; domain pack integration; builds on Gate 3 infrastructure
+6. __Gate 6 (Evidence Ledger)__ — lower priority; closeout gate; depends on Gate 1 for phase context
+7. __Gate 7 (Requirements Traceability)__ — lowest priority; structural validation only; no enforcement mechanism needed
 
 ## Ralph Loop Iteration History
 
-- **Iteration 1**: Identified 3 design-quality defects: (1) Gate 2 circular validation: wrapping shell could block validation commands — resolved with whitelist mechanism, (2) Gate 7 classification mismatch: "Deterministic-only" label conflicts with "Custom tool" mechanism — corrected to structural validator, (3) custom tool bypass gap: missing analysis for alternative tool names and aliases — resolved with bypass analysis table and mitigation strategy.
-- **Iteration 2**: No material defects. All 7 gates verified with required fields. Stop rule respected. No unsupported claims.
+- __Iteration 1__: Identified 3 design-quality defects: (1) Gate 2 circular validation: wrapping shell could block validation commands — resolved with whitelist mechanism, (2) Gate 7 classification mismatch: "Deterministic-only" label conflicts with "Custom tool" mechanism — corrected to structural validator, (3) custom tool bypass gap: missing
+  analysis for alternative tool names and aliases — resolved with bypass analysis table and mitigation strategy.
+- __Iteration 2__: No material defects. All 7 gates verified with required fields. Stop rule respected. No unsupported claims.
 
 ## Implementation Test Strategy
 
@@ -287,8 +309,8 @@ Phase 6C implementation must include these test categories:
 - Unknown domain falls back to `general_fallback` pack.
 - Missing domain pack returns error with pack name in message.
 
-**Test file**: `tests/test_harness_adapter.py` (estimated 25-35 tests).
-**Validation command**: `python -m pytest tests/test_harness_adapter.py -v`
+__Test file__: `tests/test_harness_adapter.py` (estimated 25-35 tests).
+__Validation command__: `python -m pytest tests/test_harness_adapter.py -v`
 
 ## Validation State
 
@@ -296,7 +318,7 @@ Phase 6C implementation must include these test categories:
 - `python scripts/validate_skills.py` passes
 - `python scripts/token_budget.py --strict` passes
 - `python -m pytest tests/ -v` passes (204 tests)
-- **Audit fixes applied**: Gate 2 circular validation resolved (whitelist), Gate 7 classification corrected (structural validator), bypass analysis added, Ralph loop history recorded, packaging manifest entries specified, gate priority ordering defined, implementation test strategy added.
+- __Audit fixes applied__: Gate 2 circular validation resolved (whitelist), Gate 7 classification corrected (structural validator), bypass analysis added, Ralph loop history recorded, packaging manifest entries specified, gate priority ordering defined, implementation test strategy added.
 
 ## Next Steps
 

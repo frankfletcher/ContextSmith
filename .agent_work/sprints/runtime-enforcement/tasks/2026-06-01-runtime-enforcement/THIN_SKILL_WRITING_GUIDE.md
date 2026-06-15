@@ -22,6 +22,7 @@ A thin skill is a routing contract, not an instruction manual. The SKILL.md tell
 ```markdown
 
 ## Validation Gate
+
 When `runtime/` is available, use `python -m runtime.cli <subcommand> <artifact.json>`.
 Subcommands: `requirements`, `phase-contract`, `evidence`, `approval`, `closeout`, `domain-pack`.
 ```
@@ -47,6 +48,7 @@ The validator owns the rules. The skill owns the instruction to call it.
 **After (thin):** Declare files in `reference_manifest.yml`. The packaging scripts use the manifest.
 
 ```yaml
+
 - source: runtime/validator.py
 
   version: local
@@ -62,7 +64,9 @@ When integrating a new capability, add a single execution step rather than a mul
 **Phase 4A example:** Added step 9 to the Execution Workflow:
 
 ```markdown
+
 9. When runtime validators are available, validate emitted artifacts with `python -m runtime.cli` before proceeding.
+
 ```
 
 One line. The validator handles the rest.

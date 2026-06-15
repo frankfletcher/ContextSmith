@@ -32,29 +32,37 @@ Reason: Prevents scope creep in the current phase while evolving the plan with d
 ## 2026-06-13: Phase 6 — Collapse + Determinism Hardening
 
 ### contextsmith-run deletion
+
 Deleted skills/contextsmith-run/ after absorbing all 18 sections and 8 local refs into the orchestrator skill. Router updated, all dangling refs in shared/, docs/, AGENTS.md, PACKAGE_SPEC.md, README.md updated.
 
 ### Version 2.0.0 applied
+
 All 7 surviving skills stamped to 2.0.0. This is the project-level version mandated by Phase 5.5e.
 
 ### Append-only auto-repair
+
 Orchestrator now snapshots EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, PHASE_LOG.md, and DECISIONS.md before harness dispatch. If the agent overwrites, the orchestrator prepends original content back. This protects the append-only contract from agent mistakes.
 
 ### Exit code expansion
+
 Exit codes 0-5 provide distinct signals for callers:
 
 - 0: done, 1: blocked, 2: continue, 3: config error, 4: state inconsistency, 5: internal error
 
 ### Pre-dispatch counter check
+
 Counter check moved to before adapter.execute() as a fast-fail optimization. The transition resolver still checks counters as a second layer. This prevents unnecessary agent dispatch when max_retries is already reached.
 
 ### validation_mode sources of truth
+
 validation_mode appears in 3 places: StepContract dataclass, workflow_config.schema.json StateDefinition, and orchestrator.py _execute_and_validate_step branch. All 3 must be kept in sync.
 
 ### RESULT.json fallback scope
+
 Fallback is backward-compatible only. Phase 6e ensured no pre-orchestrator RESULT.json-absent directories exist in active use, but the fallback protects against the edge case.
 
 ### model_pin field
+
 model_pin is in schema now but the step_compiler already reads it. The full pipeline (schema → step_compiler → StepContract → harness adapter) is now complete. Before this phase, model_pin was settable only through StepContract directly.
 
 ## 2026-06-14: Phase 9 — Final Validation and Lock
@@ -63,7 +71,7 @@ model_pin is in schema now but the step_compiler already reads it. The full pipe
 
 All 9 phases (with approximately 45 sub-phases) of the Deep Determinism project are complete. The project transformed ContextSmith from a collection of standalone skills into a deterministic workflow execution system centered on the orchestrator module.
 
-### Key outcomes:
+### Key Outcomes
 
 - **Orchestrator** (`orchestrator/`) — 12 Python files, state machine with configurable transitions, checkpoint management, harness adapters (OpenCode + generic), comprehensive validation
 - **8 skills** at version 2.0.0 — project-level versioning, contextsmith-run removed, orchestrator and workflow-developer added
@@ -73,7 +81,9 @@ All 9 phases (with approximately 45 sub-phases) of the Deep Determinism project 
 - **Documentation** — comprehensive CHANGELOG, per-phase educational reports, A-F rubric audits, artifact templates extracted
 
 ### staged_skills/
-`.agent_work/staged_skills/` contains 13 pre-existing skill copies including contextsmith-run. These are user assets created by the contextsmith-skill-migrator tool during earlier development. They are not part of the Deep Determinism project artifacts and were left untouched. If cleanup is desired, the entire `.agent_work/staged_skills/` directory can be removed as the canonical skills live in `skills/`.
+
+`.agent_work/staged_skills/` contains 13 pre-existing skill copies including contextsmith-run, created by the contextsmith-skill-migrator tool. They are not part of the Deep Determinism project artifacts. If cleanup is desired, the entire directory can be removed as canonical skills live in `skills/`.
 
 ### No release tag
+
 ContextSmith is a skill package, not a deployable artifact. Version 2.0.0 is stamped on all 7 surviving SKILL.md files. No git tag was created.

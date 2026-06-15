@@ -225,6 +225,7 @@ Without this layer, the orchestrator would be tightly coupled to OpenCode, makin
 ```python
 
 # base.py
+
 @dataclass
 class StepContract:
     step_id: str
@@ -260,25 +261,25 @@ class HarnessAdapter(ABC):
     @property
     @abstractmethod
     def name(self) -> str: ...
-    
+
     @abstractmethod
     def validate_environment(self) -> list[str]: ...
-    
+
     @abstractmethod
     def execute(self, contract: StepContract, state_dir: Path) -> HarnessResult: ...
-    
+
     @abstractmethod
     def cancel(self, step_id: str) -> bool: ...
-    
+
     def get_capabilities(self) -> dict: ...
 
 class HarnessRegistry:
     @classmethod
     def register(cls, adapter_class: type[HarnessAdapter]) -> None: ...
-    
+
     @classmethod
     def get(cls, name: str) -> HarnessAdapter: ...
-    
+
     @classmethod
     def list_available(cls) -> list[str]: ...
 ```
@@ -312,12 +313,15 @@ from orchestrator.adapters import discover_adapters
 from orchestrator.adapters.base import HarnessRegistry
 
 # Discover all adapters
+
 discover_adapters()
 
 # Get adapter by name
+
 adapter = HarnessRegistry.get("generic")  # or "opencode"
 
 # Check environment
+
 errors = adapter.validate_environment()
 if errors:
     print(f"Adapter not ready: {errors}")
@@ -544,7 +548,7 @@ def validate_state_consistency(
     status: dict, checkpoint: dict, config: dict
 ) -> list[str]:
     """Validate consistency between STATUS.md, checkpoint.json, and workflow config.
-    
+
     Checks:
 
     1. STATUS.md current_phase matches checkpoint current_phase
@@ -862,10 +866,10 @@ Phase 5.5 fixes all pre-conditions for Phase 6 (the collapse phase):
 
 ## What Was Done
 
-- Cataloged contextsmith-run SKILL.md: 342 lines, 18 sections (Runtime Contract, Supported Inputs, Control Parameters, Local-Model Execution Rules, Domain Routing, Interaction Modes, Execution Contract Compiler, Preflight Gate, Reference Selection, Execution Workflow, Task-State Execution, Validation Gate, Self-Audit Gate, Ralph Loop Enforcement, Evidence Ledger, Completion Criteria, Failure Handling, Required Output, Artifact Manifest)
+- Cataloged contextsmith-run SKILL.md: 342 lines, 18 sections: Runtime Contract, Supported Inputs, Control Parameters, Local-Model Rules, Domain Routing, Interaction Modes, Execution Contract, Preflight Gate, Reference Selection, Execution Workflow, Task-State Execution, Validation, Self-Audit, Ralph Loop, Evidence, Completion, Output, Manifest
 - Cataloged 8 local-only references (804 total lines): execution-contract-core.md (47), execution-contract.md (72), evidence-ledger-core.md (37), evidence-ledger.md (61), domain-packs.md (397), interaction-refinement.md (77), task-state-execution.md (68), help.md (45)
 - read reference_manifest.yml — 40 reference entries
-- Identified shared ref gap: orchestrator is missing ~25 shared refs that run had (control-parameters, artifact-manifest, behavioral-contracts, interaction-modes, domain-intent, source-artifact-boundary, context-management, targeted-context-length, model-capability-tiers, model-profiles, git-hygiene, output-location, phased-planning, implementation-plan-audit, phase-code-review, education-levels, documentation-quality, coding-standards, ui-standards, 6 domain-profiles, structured-questioning)
+- Identified shared ref gap: orchestrator is missing ~25 shared refs that run had (control-parameters, artifact-manifest, interaction-modes, domain-intent, source-artifact-boundary, context-management, targeted-context-length, model-capability-tiers, model-profiles, output-location, phased-planning, coding-standards, 6 domain-profiles)
 
 ## Why It Matters
 
@@ -884,6 +888,7 @@ Phase 5.5 fixes all pre-conditions for Phase 6 (the collapse phase):
 # Educational Report: Phase 6 — Collapse + Determinism Hardening
 
 ## What Was Done
+
 Phase 6 completed all 17 sub-phases (6a-6q) implementing the collapse of contextsmith-run into the orchestrator and hardening determinism.
 
 ### Sub-phase 6a: Juice contextsmith-run (read-only)
@@ -893,7 +898,7 @@ Phase 6 completed all 17 sub-phases (6a-6q) implementing the collapse of context
 
 ### Sub-phase 6b: Enhance orchestrator SKILL.md
 
-- Rewrote orchestrator SKILL.md to absorb all run patterns: Supported Inputs, Runtime Contract, Control Parameters, Local-Model Rules, Domain Routing, Interaction Modes, Execution Contract Compiler, Preflight Gate, Reference Selection, full 14-step Execution Workflow, Task-State Execution, Validation Gate (two-layer), Self-Audit Gate, Ralph Loop Enforcement, Evidence Ledger, Completion Criteria, Failure Handling, Required Output format, Artifact Manifest
+- Rewrote orchestrator SKILL.md to absorb all run patterns: Supported Inputs, Runtime Contract, Control Parameters, Local-Model Rules, Domain Routing, Interaction Modes, Execution Contract, Preflight Gate, Reference Selection, 14-step Execution Workflow, Task-State Execution, Validation, Self-Audit, Ralph Loop, Evidence, Completion, Output format
 - Kept existing orchestrator loop, state determination, artifact validation, transition resolution, retry logic, termination, artifact templates, harness companions
 - Kept heavy reference content (domain-packs.md 397 lines) as separate reference files
 
@@ -917,9 +922,9 @@ Phase 6 completed all 17 sub-phases (6a-6q) implementing the collapse of context
 - Updated docs: QUICKSTART.md, WHICH_SKILL.md, RUN_TASK_STATE_HANDOFF.md, COMPARE_TRAVEL_OPTIONS.md, RUNTIME_ENFORCEMENT.md, SCHEDULE_WITH_APPROVAL_GATES.md, EXAMPLES_LIBRARY.md
 - Applied version 2.0.0 to all 7 surviving skills
 
-### Sub-phase 6f: __main__.py
+### Sub-phase 6f: `__main__.py`
 
-- Created orchestrator/__main__.py (python -m orchestrator entry point)
+- Created `orchestrator/__main__.py` (python -m orchestrator entry point)
 
 ### Sub-phase 6g: Append validation
 
@@ -949,7 +954,9 @@ Phase 6 completed all 17 sub-phases (6a-6q) implementing the collapse of context
 - Added retry counter check before dispatch: if retries >= max_retries, skip and EXIT_BLOCKED
 
 ### Sub-phase 6l: timeout_s (pre-existing in schema and step_compiler)
+
 ### Sub-phase 6m: model_pin added to schema, step_compiler already reads it
+
 ### Sub-phase 6n: ralph_max_cycles (pre-existing in schema and step_compiler)
 
 ### Sub-phase 6p: RESULT.json fallback
@@ -964,7 +971,8 @@ Phase 6 completed all 17 sub-phases (6a-6q) implementing the collapse of context
 - Paragraph already in SKILL.md from 6b rewrite
 
 ## Why It Matters
-The collapse completes the architecture unification: one orchestrator skill handles all execution (workflow configs, raw prompts, task-state handoffs) instead of splitting across run + orchestrator. The 10 hardening sub-phases close determinism gaps that existed in the data model but were never wired to the execution loop — validation modes, crash evidence, distinct exit codes, pre-dispatch gates, and explicit transition authority.
+
+The collapse completes the architecture unification: one orchestrator skill handles all execution (workflow configs, raw prompts, task-state handoffs) instead of splitting across run + orchestrator. The 10 hardening sub-phases close determinism gaps that existed in the data model but were never wired to the execution loop.
 
 ## For Small Models
 
@@ -1113,16 +1121,19 @@ The test suite follows three patterns established in earlier phases:
 ```python
 
 # Unit test pattern: import function, call with fixture, assert
+
 from orchestrator.state_reader import read_status
 status = read_status(FIXTURES_DIR / "task_state_valid")
 assert status["current_phase"] is not None
 
 # Integration test pattern: create temp state dir, run orchestrator, assert exit code
+
 state_dir = _make_temp_state_dir({...})
 code = run(config_path="config.yaml", state_dir=str(state_dir), dry_run=True)
 assert code == EXIT_CONTINUE
 
 # Append-only test: snapshot file, overwrite, verify repair
+
 _snapshot_append_only_files(state_dir)
 file_path.write_text("Overwritten content")
 repairs = _verify_and_repair_append_only_files(state_dir)
@@ -1157,11 +1168,13 @@ Phase 7:
 ```python
 
 # orchestrator/validators.py — fixed compare method
+
 def validate_append_only(file_path, original_prefix, check_bytes=512):
     current = file_path.read_bytes()[:check_bytes]
     return current.startswith(original_prefix[:check_bytes])  # was ==
 
 # orchestrator/orchestrator.py — validation mode builders
+
 def _build_validation_strict(harness_passed, file_validation, all_failures):
     return {"passed": harness_passed and file_validation["passed"], ...}
 
@@ -1191,6 +1204,7 @@ def _apply_result_fallback(harness_result, step_contract, state_dir):
 Phase 8 completed 4 sub-phases covering documentation cleanup and polish:
 
 ### Phase 8a: Trim orchestrator SKILL.md
+
 **What:** Extracted inline artifact templates (STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md, RESULT.json, checkpoint.json — ~81 lines) from the SKILL.md into a dedicated `references/artifact-templates.md` file. Replaced with a compact reference table.
 
 **Why:** The SKILL.md was 572 lines, exceeding the 500-line target. Long skills increase token usage and cognitive load for local models. The extracted templates are still loadable on demand via the manifest.
@@ -1198,13 +1212,15 @@ Phase 8 completed 4 sub-phases covering documentation cleanup and polish:
 **How:** Created `references/artifact-templates.md` with all 6 template formats. Updated SKILL.md: replaced RESULT.json section (15→3 lines), Checkpoint.json section (24→3 lines), Artifact Templates section (81→6 lines). Added entry to reference_manifest.yml. Result: 468 lines (−104).
 
 ### Phase 8b: Fix schema deprecation
+
 **What:** Updated both `schemas/workflow_config.schema.json` and `schemas/agent_config.schema.json` from JSON Schema draft-07 to 2020-12.
 
 **Why:** The draft-07 metaschema URI produces deprecation warnings in modern JSON Schema validators. 2020-12 is the current stable version.
 
-**How:** Changed `$schema` URI from `https://json-schema.org/draft-07/schema#` to `https://json-schema.org/draft/2020-12/schema`. Renamed `definitions` keyword to `$defs` (2020-12 replaces `definitions` with `$defs`). Updated all `$ref` paths from `#/definitions/` to `#/$defs/`. Validated all fixtures: valid configs pass, invalid configs fail with correct errors.
+**How:** Changed `$schema` URI from draft-07 to 2020-12. Renamed `definitions` keyword to `$defs`. Updated all `$ref` paths from `#/definitions/` to `#/$defs/`. Validated all fixtures: valid configs pass, invalid configs fail with correct errors.
 
 ### Phase 8c: Update user-facing docs
+
 **What:** Ran markdownlint across docs/, fixed all 15 files with MD060 table-column-style errors.
 
 **Why:** Table header separator rows used compact format (`|---|---|`) which violates markdownlint MD060 rule. The rule requires spaced pipes (`| --- | --- | --- |`).
@@ -1212,6 +1228,7 @@ Phase 8 completed 4 sub-phases covering documentation cleanup and polish:
 **How:** Fixed 15 files: CONTROL_PARAMETERS.md, EXAMPLES_LIBRARY.md, IMPLEMENTATION_PLAN_AUDIT.md, QUICKSTART.md, reference/CONTROL_PARAMETERS.md, RELEASE_PROCESS.md, TEST_QUALITY_AUDIT.md, and 8 workflow files. All table separator rows now use `| --- | --- | --- |` convention. Result: 0 remaining MD060 issues.
 
 ### Phase 8d: CHANGELOG entry
+
 **What:** Wrote comprehensive v2.0.0 CHANGELOG entry covering Phases 5.5-8.
 
 **Why:** The changelog tracks all user-facing changes. v2.0.0 is a major version bump reflecting the Deep Determinism project (contextsmith-run removal, orchestrator addition, determinism hardening, append-only protection).

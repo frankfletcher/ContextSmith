@@ -1,7 +1,9 @@
 # Task: Runtime Framing Backfill
 
 ## Objective
-Backfill all runtime framing changes made to /home/frank/00-Code/ContextSmith/.agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/PLAN.md into the actual codebase artifacts. /home/frank/00-Code/ContextSmith/.agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/PLAN.md now positions runtime reinforcement/orchestration as "first-class, optional but default." Codebase artifacts must match.
+
+Backfill all runtime framing changes made to /home/frank/00-Code/ContextSmith/.agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/PLAN.md into the actual codebase artifacts. /home/frank/00-Code/ContextSmith/.agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/PLAN.md now positions runtime
+  reinforcement/orchestration as "first-class, optional but default." Codebase artifacts must match.
 
 ## Scope
 

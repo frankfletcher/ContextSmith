@@ -44,7 +44,8 @@
 
 **Phased Planning - Phase Structure:** Each phase MUST include: goal, inputs, likely files/directories, explicit tasks, testing/validation steps, outputs/artifacts, validation checks, stop condition, handoff notes.
 
-**Phased Planning - 12-Step Closeout:** (1) Update STATUS.md, (2) Check off PLAN.md items, (3) Record durable decisions in DECISIONS.md, (4) Record changed files in ARTIFACTS.md, (5) Add compact notes to PHASE_LOG.md, (6) Write carry-forward and do-not-carry-forward notes, (7) Update NEXT_PROMPT.md, (8) Run phase compression and update CONTEXT.md, (9) Run validation checks — if any fail, set STATUS to "Blocked" and exit, (10) Run implementation plan audit for next phase — if fails, set STATUS to "Blocked" and exit, (11) Include test quality audit for coding work, (12) If stop condition met, set STATUS to "Completed" and exit.
+**Phased Planning - 12-Step Closeout:** (1) Update STATUS.md, (2) Check off PLAN.md items, (3) Record durable decisions in DECISIONS.md, (4) Record changed files in ARTIFACTS.md, (5) Add compact notes to PHASE_LOG.md, (6) Write carry-forward and do-not-carry-forward notes, (7) Update NEXT_PROMPT.md, (8) Run phase compression and update CONTEXT.md,
+(9) Run validation checks — if any fail, set STATUS to "Blocked" and exit, (10) Run implementation plan audit for next phase — if fails, set STATUS to "Blocked" and exit, (11) Include test quality audit for coding work, (12) If stop condition met, set STATUS to "Completed" and exit.
 
 **Loop Safety - Prevention Rules:** Do not execute identical consecutive tool calls. If the same command or edit fails twice, stop and change strategy. Recovery menu: correct, narrow, inspect, substitute, escalate.
 

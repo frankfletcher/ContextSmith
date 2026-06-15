@@ -21,7 +21,8 @@ The `artifact_schemas` property and `ArtifactSchemaOverride` definition use desc
 
 ### Atomicity: A
 
-The change is scoped to a single concern: adding an artifact override mechanism to the workflow config schema. It does not touch validators, tests, or other phases. Each field in the override block has a single, well-defined responsibility. The `additional_sections` field is somewhat redundant with `extend_base: true`, but it provides a simpler atomic API for the common case of adding sections without understanding merge mechanics.
+The change is scoped to a single concern: adding an artifact override mechanism to the workflow config schema. It does not touch validators, tests, or other phases. Each field in the override block has a single, well-defined responsibility. The `additional_sections` field is somewhat redundant with `extend_base: true`, but it provides a simpler
+atomic API for the common case of adding sections without understanding merge mechanics.
 
 ### Safety: A
 
@@ -120,11 +121,11 @@ Plan accuracy: plan-needs-update (Phase 8 closeout format inconsistency, Phase 1
 
 | Finding | Severity | Location | Already in PLAN? | Note |
 | --- | --- | --- | --- | --- |
-| PHASE_LOG.md has 3 different formats across entries | should-fix | PHASE_LOG.md lines 1-74 | No | Phase 1-6 use `- Status:`, Phase 7+8 use `-**Status**:`, Phase 8 entry uses compact style without date/status fields, Phase 9 uses bold style. Schema at `artifact_schemas.yaml` defines `phase_entry` content rule with `required_fields: [Status, Date]` — Phase 8 entry violates this. Future phases should standardize on bold format with Status, Date, Changes, Action, Validation, Artifacts. |
-| Phase 10 and 11 were added after original 10-phase plan | acceptable tradeoff | PLAN.md | Yes (Phase 10, 11 exist) | Phase 10 (Final Audit and Validation) and Phase 11 (Tooling and Audit Infrastructure) expand scope from the original plan. Most Phase 11 sub-phases (extra-audit config, lint counter, backfill) could merge into Phase 10 or be documented as non-code tasks. Acceptable given real-world discovery. |
+| PHASE_LOG.md has 3 different formats across entries | should-fix | PHASE_LOG.md lines 1-74 | No | Phase 1-6 use `- Status:`; Phase 7+8 use `**Status**:`. Phase 8 entry is compact without date/status fields. Schema requires `required_fields: [Status, Date]`. Future phases should standardize on bold format. |
+| Phase 10 and 11 were added after original 10-phase plan | acceptable tradeoff | PLAN.md | Yes (Phases 10, 11 exist) | Phase 10 (Final Audit and Validation) and Phase 11 (Tooling and Audit Infrastructure) expand scope from original plan. Most Phase 11 sub-phases (extra-audit config, lint counter, backfill) could merge into Phase 10. |
 | `orchestrator.orchestrator.run()` cyclomatic complexity C (15) pre-existing | acceptable tradeoff | orchestrator/orchestrator.py | Yes (Phase 10/11) | Documented in CONTEXT.md as technical debt to refactor before final closeout. Not blocking. |
-| No integration test for `validate_artifacts_with_schemas()` with `artifact_schemas` config overrides | should-fix | orchestrator/validators.py | No | Phase 2 added `_build_artifact_overrides()` and `validate_artifacts_with_schemas()` but no test verifies the config override → schema merge → validation pipeline end-to-end. Existing tests cover `section_requirements` path and unit-test `_build_artifact_overrides` in isolation, but the full override wiring path is untested. |
-| `.new` segment auto-merge exists in orchestrator but is not deployed | acceptable tradeoff | orchestrator/orchestrator.py (PROTECTED_FILES, _merge_new_artifact_segments) | Yes (D12) | Documented in DECISIONS.md D12. Agents must merge manually until the orchestrator is the production runtime. Known gap, no action needed now. |
+| No integration test for `validate_artifacts_with_schemas()` with config overrides | should-fix | orchestrator/validators.py | No | Phase 2 added `_build_artifact_overrides()` and `validate_artifacts_with_schemas()` but no test covers config override through schema merge to validation. Existing tests unit-test `_build_artifact_overrides` alone. |
+| `.new` segment auto-merge exists in orchestrator but is not deployed | acceptable tradeoff | orchestrator/orchestrator.py (`PROTECTED_FILES`, `_merge_new_artifact_segments`) | Yes (D12) | Documented in DECISIONS.md D12. Agents must merge manually until the orchestrator is the production runtime. Known gap, no action needed now. |
 | `CHANGELOG.md` pre-existing markdownlint issues | acceptable tradeoff | CHANGELOG.md (lines 200, 238, 261) | No | Pre-existing long line (MD013) and multiple blank lines (MD012) from older versions. Not introduced by this task scope. |
 | `docs/` has widespread pre-existing markdownlint issues | acceptable tradeoff | docs/ (EXAMPLES_LIBRARY.md, QUICKSTART.md, etc.) | No | MD031 (blanks-around-fences) and MD032 (blanks-around-lists) across many docs/ files. Separate cleanup task, not blocking. |
 | No test verifies `ralph_max_cycles` enforcement in orchestrator dispatch | future-phase | orchestrator/orchestrator.py | No | Ralph loop is implemented and tested in step_compiler but orchestrator's loop dispatch is only tested indirectly through integration tests. Could be added to Phase 10.2 or as a follow-up. |
@@ -142,7 +143,8 @@ Plan accuracy: plan-needs-update (Phase 8 closeout format inconsistency, Phase 1
 
 ### Risks Not Yet Addressed
 
-1. **Orchestrator gap**: The entire `.new` segment workflow and sub-phase advancement mechanism depends on the orchestrator being the production runtime. If the orchestrator is never deployed, these artifacts become dead weight. The project should define a concrete trigger for orchestrator adoption (e.g., "switch to orchestrator runtime when workflow config has more than 3 states").
+1. **Orchestrator gap**: The entire `.new` segment workflow and sub-phase advancement mechanism depends on the orchestrator being the production runtime. If the orchestrator is never deployed, these artifacts become dead weight. The project should define a concrete trigger for orchestrator adoption (e.g., "switch to orchestrator runtime when
+   kflow config has more than 3 states").
 2. **PHASE_LOG.md format drift**: Three different formats in the same file will cause confusion for any agent or human trying to parse it programmatically. The schema defines a standard; the entries should converge.
 3. **CI/CD validation not tested**: All validation commands run locally. There is no CI pipeline (GitHub Actions, etc.) that enforces these checks on PR. A single `uv run pytest` failure in the task state does not protect against regressions across agents.
 
@@ -161,6 +163,7 @@ Plan accuracy: plan-needs-update (Phase 8 closeout format inconsistency, Phase 1
 - **Auditor**: opencode agent (contextsmith-run)
 
 ### Overall Recommendation
+
 **ship** — No must-fix items found. Plan is accurate, implementation matches specification, validation pipeline is consistent.
 
 ### A-F Rubric
@@ -184,9 +187,10 @@ Plan accuracy: plan-needs-update (Phase 8 closeout format inconsistency, Phase 1
 | `orchestrator.orchestrator.run()` has C(15) complexity | acceptable tradeoff | orchestrator/orchestrator.py lines 852-960 | Yes (CONTEXT.md) | Pre-existing debt. Extracting sub-phase dispatch and checkpoint handling would reduce it. Documented for Phase 10/11 refactor. |
 | No end-to-end test for config override pipeline | should-fix | tests/test_validators.py | No | `_build_artifact_overrides()` and `validate_artifacts_with_schemas()` are unit-tested separately but no test exercises the full config→override→validation pipeline with a real config. |
 | No test for `ralph_max_cycles` enforcement in orchestrator dispatch | future-phase | orchestrator/orchestrator.py | No | Ralph loop is implemented in step_compiler but orchestrator loop dispatch is only tested indirectly via integration tests. |
-| `.new` segment auto-merge code exists but is not deployed | acceptable tradeoff | orchestrator/orchestrator.py (PROTECTED_FILES, _merge_new_artifact_segments) | Yes (D12, D14) | Known gap. Automerging code works but orchestrator is not the production runtime. |
+| `.new` segment auto-merge code exists but is not deployed | acceptable tradeoff | orchestrator/orchestrator.py (`PROTECTED_FILES`, `_merge_new_artifact_segments`) | Yes (D12, D14) | Known gap. Automerging code works but orchestrator is not the production runtime. |
 
 ### Must Fix Before Execution
+
 None.
 
 ### Strengths
@@ -209,7 +213,9 @@ None.
 3. Add end-to-end integration test for `validate_artifacts_with_schemas()` with config overrides.
 
 ### Small-Model Execution Notes
-This project was designed for local/small-model execution from the start. Every sub-phase is dispatchable from STATUS.md + NEXT_PROMPT.md without chat history. The 3-level hierarchy (Phase → Sub-phase → Task) provides fine-grained execution units. Context budgets fit within 64k windows even for larger sub-phases. The orchestrator ensures fresh-session dispatch per sub-phase, which is ideal for small models that struggle with long context.
+
+This project was designed for local/small-model execution from the start. Every sub-phase is dispatchable from STATUS.md + NEXT_PROMPT.md without chat history. The 3-level hierarchy (Phase → Sub-phase → Task) provides fine-grained execution units. Context budgets fit within 64k windows even for larger sub-phases. The orchestrator ensures
+fresh-session dispatch per sub-phase, which is ideal for small models that struggle with long context.
 
 ## Sub-phase 10.2: Full validation
 

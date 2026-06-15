@@ -57,7 +57,7 @@
 ## D10: RESULT.json Removed from PROTECTED_FILES
 
 - Decision: Remove RESULT.json from the PROTECTED_FILES set in orchestrator.py
-- Reason: PROTECTED_FILES causes _safe_write to force append mode. RESULT.json is written fresh each phase by the agent via the harness adapter (not via _safe_write), so the protection was misleading dead code. Keeping it creates risk if someone later uses _safe_write with RESULT.json — it would append instead of overwrite.
+- Reason: PROTECTED_FILES causes `_safe_write` to force append mode. RESULT.json is written fresh each phase by the agent via the harness adapter (not via `_safe_write`), so the protection was misleading dead code. Keeping it creates risk if someone later uses `_safe_write` with RESULT.json — it would append instead of overwrite.
 - Impact: No behavioral change. The agent continues to write RESULT.json directly. The protection set now contains only true append-only files.
 
 ## D11: extend_base Defaults to True for artifact_schemas Overrides

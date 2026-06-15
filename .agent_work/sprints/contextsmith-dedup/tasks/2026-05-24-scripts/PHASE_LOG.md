@@ -87,7 +87,7 @@
 - Overall: pass (with note about manifest formatting)
 - MUST FIX: none
 - SHOULD FIX: none
-- NOTES: 
+- NOTES:
   - 265 committed copies deleted (expected)
   - 5 .gitkeep files added (expected)
   - .gitignore rules working correctly (only .gitkeep tracked)
@@ -121,7 +121,7 @@
 - Overall: pass
 - MUST FIX: none
 - SHOULD FIX: none
-- NOTES: 
+- NOTES:
   - Manifest validation checks for structure, duplicates, and file existence.
   - CI workflow runs sync before validation.
   - No linting added to CI (per plan constraints).
@@ -135,7 +135,7 @@
 - Overall: pass
 - MUST FIX: none
 - SHOULD FIX: none
-- NOTES: 
+- NOTES:
   - CONTRIBUTING.md created with comprehensive guidelines.
   - `.gitignore` updated to exclude `dist/`.
   - CONTRIBUTING.md fixed to remove `requirements.txt` reference and linting mention.

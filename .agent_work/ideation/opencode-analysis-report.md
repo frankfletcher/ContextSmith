@@ -5,7 +5,8 @@
 
 ## Executive Summary
 
-The highest-value pieces are **Custom Tools**, **Plugins**, and the **orchestrator** itself. OpenCode should be the runtime layer that executes one bounded step at a time. The orchestrator should own state, retries, transitions, and checkpoints. Commands are just launchers, agents are just role-specific executors, and MCP/ACP are lower-priority integration surfaces.
+The highest-value pieces are **Custom Tools**, **Plugins**, and the **orchestrator** itself. OpenCode should be the runtime layer that executes one bounded step at a time. The orchestrator should own state, retries, transitions, and checkpoints. Commands are just launchers, agents are just role-specific executors, and MCP/ACP are lower-priority
+integration surfaces.
 
 ## How the Pieces Fit
 

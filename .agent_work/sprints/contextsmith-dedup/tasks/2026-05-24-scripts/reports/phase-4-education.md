@@ -1,6 +1,7 @@
 ## Phase 4 — What You Need to Know
 
 ### What Changed
+
 Created `scripts/sync_shared_refs.py` to populate `references/` directories from `shared/` via manifests.
 
 ### Design Decisions
@@ -16,6 +17,7 @@ Created `scripts/sync_shared_refs.py` to populate `references/` directories from
 - **No cleanup**: The script does not delete existing files in `references/`; cleanup is deferred to Phase 5.
 
 ### Key Lessons
+
 **Manifest-driven synchronization** is a powerful pattern for managing derived artifacts. By declaring dependencies explicitly in YAML, you enable automated, reproducible population of generated directories without manual intervention.
 
 ### Edge Cases Not Handled
@@ -24,4 +26,5 @@ Created `scripts/sync_shared_refs.py` to populate `references/` directories from
 - **Empty directory creation**: The script creates `references/` subdirectories as needed, but does not remove obsolete directories (future work).
 
 ### Next Phase Preview
+
 Phase 5 will verify that the sync script reproduces existing copies byte-for-byte, then safely delete the 265 committed copies from `skills/*/references/` and add `.gitignore` rules to prevent accidental commits.

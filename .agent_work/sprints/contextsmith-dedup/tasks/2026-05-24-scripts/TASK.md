@@ -1,6 +1,7 @@
 # TASK.md — ContextSmith Reference Deduplication Artifacts
 
 ## Objective
+
 Eliminate 260+ duplicated reference file copies across 5 skills by replacing them with a manifest-driven sync system that:
 
 1. Defines dependencies explicitly (`reference_manifest.yml` per skill)

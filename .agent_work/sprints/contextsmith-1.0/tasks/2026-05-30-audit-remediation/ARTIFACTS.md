@@ -21,4 +21,5 @@
 - 494e472 - chore: update CHANGELOG for v1.5.2 audit remediation
 
 ## Phase 5 Note
+
 Finding #5 (Tool forecast realism) was already addressed in implementation-plan-audit.md - criterion exists in rubric (line 17) and output format table (line 69). No change needed.

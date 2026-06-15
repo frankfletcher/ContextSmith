@@ -9,6 +9,7 @@ All 3 scoped artifacts have been updated with canonical PLAN.md framing.
 - **QUICKSTART.md**: "Next 30 Minutes" section reworded — runtime enforcement framed as standard execution path
 
 ## Validation
+
 All phases pass `python scripts/validate_skills.py`.
 
 ## Remaining Artifacts (No Changes Needed)

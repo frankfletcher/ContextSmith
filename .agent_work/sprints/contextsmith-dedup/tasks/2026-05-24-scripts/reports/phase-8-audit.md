@@ -17,6 +17,7 @@
 - CONTRIBUTING.md mentions "linting" in CI checks, but CI workflow only runs validation (no linting step).
 
 ## A-F Rubric
+
 | Dimension | Grade | Reason | Recommended Fix |
 | ----------- | ------- | -------- | ----------------- |
 | Small-model atomicity | A | CONTRIBUTING.md is compact, phase is atomic. | - |

@@ -125,35 +125,35 @@ The state machine is defined in the workflow config's `states` section. Each sta
 | init | state dir missing | plan | Create default state files first |
 | plan | plan valid | execute | Plan passes checklist schema |
 | plan | plan invalid | plan (retry) | Max retries from config |
-| plan | max retries | blocked |  |
+| plan | max retries | blocked | |
 | execute | output valid | audit | If audit gate required |
 | execute | output valid | validate | If no audit gate |
 | execute | output valid | ralph_critique | If ralph_review gate but no audit |
 | execute | output valid | closeout | If no gates remain |
 | execute | output invalid | execute (retry) | Artifacts missing or schema-invalid |
-| execute | max retries | blocked |  |
+| execute | max retries | blocked | |
 | audit | pass | validate | If validate gate required |
 | audit | pass | ralph_critique | If ralph_review gate required |
 | audit | pass | closeout | If no remaining gates |
 | audit | fail | fix | Issues found |
 | audit | unstructured output | audit (retry) | No structured result |
-| audit | max retries | blocked |  |
+| audit | max retries | blocked | |
 | fix | always | audit | Fix routes back to audit to verify the fix. Some workflows may skip fix and route audit fail → execute (retry phase) directly; that is valid when the workflow config defines it. |
 | fix | max retries | blocked | Count toward the audit-fix loop budget |
 | validate | all checks pass | ralph_critique | If ralph_review gate required |
 | validate | all checks pass | closeout | If no remaining gates |
 | validate | any check fails | execute (retry) | Go back to fix the implementation |
 | validate | any check fails | fix | If the phase allows fixing without full retry |
-| validate | max retries | blocked |  |
+| validate | max retries | blocked | |
 | ralph_critique | critique valid + cycles < max | ralph_revise | Normal cycle |
 | ralph_critique | critique valid + cycles >= max | closeout | Max cycles reached, move on |
 | ralph_critique | critique invalid | ralph_revise | Even invalid critique triggers revise |
 | ralph_critique | max cycles exceeded | blocked | Safety catch |
 | ralph_revise | always | ralph_critique | Loop counter increments after revise |
-| ralph_revise | max retries | blocked |  |
+| ralph_revise | max retries | blocked | |
 | closeout | closeout valid | done | All required outputs exist |
 | closeout | closeout invalid | closeout (retry) | Missing SUMMARY.md or NEXT_PROMPT.md |
-| closeout | max retries | blocked |  |
+| closeout | max retries | blocked | |
 
 ### Transition Resolution Pseudocode
 

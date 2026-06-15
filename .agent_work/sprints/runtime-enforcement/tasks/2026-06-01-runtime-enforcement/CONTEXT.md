@@ -18,6 +18,7 @@
 - Pytest is pre-approved by the current user. YAML/PyYAML is not needed for the first runtime slice.
 
 ## Files to Inspect in Phase 0
+
 | Path | Purpose |
 | --- | --- |
 | `scripts/build_release.py` | Determine release packaging flow |
@@ -31,6 +32,7 @@
 | `CHANGELOG.md` | User-facing changes if implementation modifies behavior |
 
 ## Candidate Runtime Concepts
+
 | Concept | Runtime Role |
 | --- | --- |
 | Universal protocol | Shared requirements, phase, evidence, approval, and closeout artifacts |
@@ -59,9 +61,11 @@
 - Do not describe orchestrated runner behavior as hard enforcement; it only enforces workflows that opt into the runner.
 - Do not continue after a blocked phase until the recovery procedure updates STATUS.md, PHASE_LOG.md, ARTIFACTS.md, and NEXT_PROMPT.md.
 - Do not execute Phase 8B unless Phase 8A names an exact target count and exact skill or skills.
-- Do not execute Phase 8B until ISSUE-1 is resolved: packaging flattening breaks runtime module paths. `sync_shared_refs.py` flattens `local: true` files into `references/`, stripping directory structure. Phase 4A manifest declares `runtime/validator.py`, `runtime/cli.py`, `runtime/__init__.py`, and `runtime/domain_packs/*.json` as local entries. After sync, these become `references/validator.py`, `references/cli.py`, etc., breaking `python -m runtime.cli`. Four resolution options documented in DECISIONS.md.
+- Do not execute Phase 8B until ISSUE-1 is resolved: packaging flattening breaks runtime module paths. `sync_shared_refs.py` flattens `local: true` files into `references/`, stripping directory structure. Phase 4A manifest declares `runtime/validator.py`, `runtime/cli.py`, `runtime/__init__.py`, and `runtime/domain_packs/*.json` as local entries.
+  After sync, these become `references/validator.py`, `references/cli.py`, etc., breaking `python -m runtime.cli`. Four resolution options documented in DECISIONS.md.
 - Do not let the Next Prompt Compiler execute phases or invoke models; it only generates safe handoff prompts.
-- Phase 5B risk (from Phase 5A): the 12-section output template may produce prompts exceeding small-model context for complex phases. Phase 5B must test compiler output against actual task-state fixtures and verify generated prompt size fits within the target profile's usable context budget. If oversized, the compiler should support an `--compact` flag that omits education notes and collapses the phase contract to stop_rule + validation commands only.
+- Phase 5B risk (from Phase 5A): the 12-section output template may produce prompts exceeding small-model context for complex phases. Phase 5B must test compiler output against actual task-state fixtures and verify generated prompt size fits within the target profile's usable context budget. If oversized, the compiler should support an `--compact`
+  flag that omits education notes and collapses the phase contract to stop_rule + validation commands only.
 
 ## Phase 7A Documentation Map Facts (2026-06-03)
 
@@ -69,7 +73,7 @@
 - Documentation inventory: 14 root-level docs, 8 workflow docs, 3 concept docs, 4 reference docs, 2 contributing docs.
 - Identified 8 documentation gaps: runtime enforcement user guide, domain packs guide, Next Prompt Compiler guide, recovery/troubleshooting guide, "create a plan" walkthrough, "run with enforcement" walkthrough, non-coding examples, runner guide.
 - Identified duplication issue: several files exist at both `docs/` root and in subdirectories (e.g., `docs/AGENTS_MD_GUIDE.md` and `docs/workflows/AGENTS_MD_GUIDE.md`).
-- Reader journey: README -> QUICKSTART -> WHICH_SKILL -> workflows/<specific> -> reference/ -> concepts/.
+- Reader journey: README -> QUICKSTART -> WHICH_SKILL -> workflows/\<specific> -> reference/ -> concepts/.
 - Runtime enforcement labeling: implemented (validator CLI, 6 domain packs, Next Prompt Compiler, Runner skeleton, contextsmith-run pilot), active development (MCP adapter design, Harness adapter design), design only (orchestrated runner full implementation, cross-harness benchmarks, automated behavioral tests).
 
 ## Phase 7B README Refresh Facts (2026-06-03)
@@ -165,7 +169,7 @@
 1. Syncs references via `sync_shared_refs.py --skill <name>` into `.agent_work/staged_skills/<name>/`
 2. Generates `MANIFEST.json` (sha256 checksums for every staged file)
 3. Zips from staging, excluding `reference_manifest.yml` and `references/.gitkeep`
-4. **Zip contents**: `SKILL.md`, `MANIFEST.json`, and all manifest-declared references under `references/`
+4. __Zip contents__: `SKILL.md`, `MANIFEST.json`, and all manifest-declared references under `references/`
 5. Skill-root local files (e.g., `execution-contract.md`) are NOT included unless declared as `local: true` in the manifest — they end up under `references/`, not at the skill root
 6. Evidence: `package_skill.sh:48-121`, `sync_shared_refs.py:43-111`
 
@@ -174,7 +178,7 @@
 1. Stages `README.md`, `CHANGELOG.md`, `docs/`, and `skills/<name>/SKILL.md` into `.agent_work/release_bundle/`
 2. Runs `sync_shared_refs.py --all --staging-dir <bundle>/skills/` to populate references
 3. Walks entire staging tree into `contextsmith-release.zip`
-4. **Bundle contents**: top-level files, all docs, SKILL.md + synced references for each skill
+4. __Bundle contents__: top-level files, all docs, SKILL.md + synced references for each skill
 5. Evidence: `build_release.py:256-345`
 
 ### Staging sync behavior (`sync_shared_refs.py`)
@@ -184,35 +188,39 @@
 - Non-local sources must start with `shared/` (line 66-68)
 - Local sources (`local: true`) copy by basename into `references/` (line 86-88)
 - Non-local sources preserve subdirectory structure under `references/` (line 90-91)
-- **Does NOT copy arbitrary files** — only manifest-declared references
+- __Does NOT copy arbitrary files__ — only manifest-declared references
 - No file-type filtering: any file declared in the manifest can be copied
 - Evidence: `sync_shared_refs.py:28-113`
 
 ### Can runtime files ship?
+
 | File type | Can ship? | How |
 | --- | --- | --- |
 | Executable `.py` / `.sh` | Yes, if added to `reference_manifest.yml` | Declare as `local: true` (skill-root) or `shared/` source |
 | YAML schemas (`.yml`) | Yes, if added to manifest | Same mechanism |
 | Fixtures (`.yml`, `.json`) | Yes, if added to manifest | Same mechanism |
 | Domain packs (`.yml`) | Yes, if added to manifest | Same mechanism |
-| `reference_manifest.yml` itself | **Excluded** from zip | `package_skill.sh:119` explicitly excludes it |
+| `reference_manifest.yml` itself | __Excluded__ from zip | `package_skill.sh:119` explicitly excludes it |
 
 ### Key constraint
+
 The sync script is manifest-driven, not directory-driven. Any new file type (`.py`, `.yml`, `.json`) must be explicitly declared in each skill's `reference_manifest.yml` to ship. There is no wildcard or directory-sweep behavior.
 
 ### Separate runtime package likely needed?
+
 The manifest mechanism can carry runtime files, but adding Python executables and YAML schemas to every skill's manifest would be repetitive. A separate `contextsmith-runtime` package (or a `shared/runtime/` directory with its own manifest) would avoid duplication. This is a Phase 0.5 decision.
 
 ### Phase 0.5 Decisions (2026-06-02)
 
-- **Decision 1**: Hybrid enforcement — repo validation AND installed-skill enforcement.
-- **Decision 4**: Pilot skills — `contextsmith-run` and `contextsmith-prompt-engineer`.
-- **Decision 6**: Small model enabled for everything; frontier model optional.
-- **Decision 8**: Per-skill manifest entries — runtime files declared in each skill's `reference_manifest.yml`, same as shared references.
-- **Decision 9**: stdlib-only JSON for the first runtime slice; YAML/PyYAML deferred.
-- **Decision 10**: Full stack first slice — CLI + MCP + runner + harness + domain packs, incremental testing OK.
+- __Decision 1__: Hybrid enforcement — repo validation AND installed-skill enforcement.
+- __Decision 4__: Pilot skills — `contextsmith-run` and `contextsmith-prompt-engineer`.
+- __Decision 6__: Small model enabled for everything; frontier model optional.
+- __Decision 8__: Per-skill manifest entries — runtime files declared in each skill's `reference_manifest.yml`, same as shared references.
+- __Decision 9__: stdlib-only JSON for the first runtime slice; YAML/PyYAML deferred.
+- __Decision 10__: Full stack first slice — CLI + MCP + runner + harness + domain packs, incremental testing OK.
 
 ## Phase Token Budgets (Actuals)
+
 | Phase | Estimated | Actual | Notes |
 | --- | --- | --- | --- |
 | Phase 0 | 40k-60k | 78k | Discovery: 4-8 reads, 1 dry-run, 0 edits. Exceeded due to accumulated system/AGENTS.md/PLAN.md overhead. Use as baseline for discovery phases. |
@@ -245,7 +253,8 @@ The manifest mechanism can carry runtime files, but adding Python executables an
 - Capability matrix covers: tool allow/ask/deny permissions, experimental policies, custom tool overrides for `edit`/`read`/`write`/`shell`.
 - Key finding: opencode can hard-block destructive git operations via tool deny policy. Other gates require orchestrated enforcement or human approval.
 - Key finding: advisory-only enforcement is sufficient for most gates; hard blocking only needed for side-effect tier 3+ actions.
-- Ralph loop: 2 iterations. Iteration 1 identified 3 design-quality defects for carry-forward: (1) Gate 2 circular validation: wrapping shell could block validation commands, (2) Gate 7 classification mismatch: "Deterministic-only" label conflicts with "Custom tool" mechanism, (3) custom tool bypass gap: missing analysis for alternative tool names and aliases. Iteration 2: no-op by evidence.
+- Ralph loop: 2 iterations. Iteration 1 identified 3 design-quality defects for carry-forward: (1) Gate 2 circular validation: wrapping shell could block validation commands, (2) Gate 7 classification mismatch: "Deterministic-only" label conflicts with "Custom tool" mechanism, (3) custom tool bypass gap: missing analysis for alternative tool names
+  and aliases. Iteration 2: no-op by evidence.
 - Design does not modify user-level config or claim unsupported hard blocking.
 - Packaging notes: `runtime/harness_config.json` would need manifest declaration for distribution.
 - ISSUE-1 (packaging flattening) remains unresolved; blocks Phase 8B rollout.

@@ -21,12 +21,15 @@ Before starting, set up the development environment:
 ```bash
 
 # Install uv (if not already installed)
+
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Sync dependencies and create .venv
+
 uv sync
 
 # Verify dependencies
+
 uv run python -c "import jsonschema; print('jsonschema OK')"
 uv run python -c "import yaml; print('PyYAML OK')"
 uv run python -c "import pytest; print('pytest OK')"
@@ -83,6 +86,7 @@ Every phase must append its audit findings to `AUDIT_REPORT.md`. Never overwrite
 # Audit Report: <Phase Name>
 
 ## Summary
+
 <one-line conclusion>
 
 ## Findings
@@ -92,6 +96,7 @@ Every phase must append its audit findings to `AUDIT_REPORT.md`. Never overwrite
   - Fix: <how>
 
 ## Overall Verdict
+
 pass / fail / conditional-pass
 ```
 
@@ -102,22 +107,28 @@ For each phase, run these commands to validate:
 ```bash
 
 # Validate skills
+
 uv run python scripts/validate_skills.py
 
 # Lint and format Python code
+
 uv run ruff check orchestrator/ --select E,F,W,I
 uv run ruff format orchestrator/ --check
 
 # Validate Markdown formatting
+
 markdownlint .agent_work/ orchestrator/ docs/ --ignore node_modules
 
 # Run tests
+
 uv run pytest tests/ -v
 
 # Validate orchestrator module
+
 uv run python -c "from orchestrator import run; print('import OK')"
 
 # Validate adapters
+
 uv run python -c "from orchestrator.adapters.base import HarnessAdapter; print('adapters OK')"
 ```
 
@@ -158,6 +169,7 @@ Follow existing test conventions in `tests/`:
 ```python
 
 # tests/test_orchestrator_state.py
+
 import pytest
 from pathlib import Path
 from orchestrator.state_reader import read_status, read_plan
@@ -183,9 +195,11 @@ Validators return lists of strings in this format:
 ```python
 
 # Success
+
 return []
 
 # Failure
+
 return ["Missing required file: STATUS.md"]
 return ["Missing required section '## Current Phase' in STATUS.md"]
 return ["File is empty: PLAN.md"]
@@ -257,6 +271,7 @@ cat >> .agent_work/sprints/determinism-1.0/tasks/.../EDUCATIONAL_REPORT.md << 'R
 # Educational Report: <Phase Name>
 
 ## What Was Done
+
 ...
 REPORT
 ```
@@ -317,18 +332,23 @@ The `>>` operator appends. The `'REPORT'` heredoc delimiter (quoted) prevents va
 3. <Step 3 of the algorithm>
 
 ### Key Function Signatures
+
 ```python
+
 def function1(arg1: str, arg2: int) -> dict:
     """What it does, what it returns."""
-    
+
 def function2(arg1: Path) -> list[str]:
     """What it does, what it returns."""
+
 ```
 
 ### Data Flow
 
 ```
+
 <input> → <processing> → <output>
+
 ```
 
 ### For Small Models
@@ -336,6 +356,7 @@ def function2(arg1: Path) -> list[str]:
 - <Concrete example of how to use this code>
 - <Common mistakes to avoid>
 - <What to check if something goes wrong>
+
 ````
 
 ## Rollback Instructions
@@ -888,7 +909,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 
 ### Sub-phase 5.5b: Replace HARD STOP with .phase_gate flag pattern
 
-**Task:** Replace the "HARD STOP — DO NOT EXECUTE IN CURRENT SESSION" text with a `.phase_gate` flag file mechanism. NEXT_PROMPT.md instead reads: "Wait for .phase_gate_ready at <task-dir>/.phase_gate before executing. Do NOT proceed without this file."
+**Task:** Replace the "HARD STOP — DO NOT EXECUTE IN CURRENT SESSION" text with a `.phase_gate` flag file mechanism. NEXT_PROMPT.md instead reads: "Wait for .phase_gate_ready at `task-dir`/.phase_gate before executing. Do NOT proceed without this file."
 
 **Steps:**
 
@@ -988,7 +1009,8 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 
 **Steps:**
 
-1. Read contextsmith-run SKILL.md sections — Runtime Contract, Supported Inputs, Control Parameters, Local-Model Execution Rules, Domain Routing, Interaction Modes, Execution Contract Compiler, Preflight Gate, Reference Selection, Execution Workflow, Task-State Execution, Validation Gate, Self-Audit Gate, Ralph Loop, Evidence Ledger, Completion Criteria, Failure Handling, Required Output, Artifact Manifest
+1. Read contextsmith-run SKILL.md sections: Runtime Contract, Supported Inputs, Control Parameters, Local-Model Rules, Domain Routing, Interaction Modes, Execution Contract, Preflight Gate, Reference Selection, Execution Workflow, Task-State Execution, Validation Gate, Self-Audit Gate, Ralph Loop, Evidence Ledger, Completion, Failure Handling,
+  Output, Manifest
 2. Read 8 local-only references: execution-contract-core.md, execution-contract.md, evidence-ledger-core.md, evidence-ledger.md, domain-packs.md, interaction-refinement.md, task-state-execution.md, help.md
 3. Read reference_manifest.yml for reference mapping
 4. Identify shared refs run has but orchestrator doesn't
@@ -1236,7 +1258,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 
 **Validation:** `python scripts/validate_skills.py` passes. Full repo grep for "contextsmith-run" returns nothing. Tests pass.
 
-### Sub-phase 6f: Create orchestrator __main__.py
+### Sub-phase 6f: Create `orchestrator/__main__.py`
 
 **Task:** Make the orchestrator runnable as `python -m orchestrator`. This completes the "Python always available" path — the code entry point alongside the skill entry point.
 
@@ -1359,6 +1381,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Steps:**
 
 1. Add to `orchestrator/constants.py`:
+
    ```python
    EXIT_DONE = 0
    EXIT_BLOCKED = 1
@@ -1367,6 +1390,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    EXIT_STATE_INCONSISTENCY = 4
    EXIT_INTERNAL_ERROR = 5
    ```
+
 2. In `orchestrator/orchestrator.py`, wire each error path to its distinct code:
    - Config load/schema validation failure → `EXIT_CONFIG_ERROR`
    - State consistency check failure (STATUS.md vs checkpoint mismatch) → `EXIT_STATE_INCONSISTENCY`
@@ -1548,22 +1572,25 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
 **Steps:**
 
 1. In `orchestrator/orchestrator.py`, above `resolve_next_state()`, add a docstring block:
+
    ```python
    def resolve_next_state(...):
        """Deterministic state transition.
-       
+
        The orchestrator owns all state transitions. The agent's RESULT.json
        provides evidence of completion (status, artifacts), but the orchestrator
        alone decides the next state by matching transition conditions from the
        workflow config against that evidence.
-       
+
        Rule: Agent output is evidence, not authority. The agent never chooses
        its next state. If no transition condition matches, the orchestrator
        transitions to 'blocked', not to whatever the agent requested.
        """
    ```
+
 2. Verify the current `resolve_next_state()` implementation already follows this rule (it reads transitions from config, not from RESULT.json). If it references `result.next_action` for transition decisions, change it to only use the workflow config's transition list.
 3. Add a paragraph to `skills/contextsmith-orchestrator/SKILL.md` under Transition Resolution:
+
    ```markdown
    **Agent output is evidence, not authority.** The RESULT.json status tells
    the orchestrator whether the phase completed, but the orchestrator alone
@@ -1572,6 +1599,7 @@ Do NOT re-read PLAN.md unless the plan itself needs updating.
    transition condition matches the RESULT.json status and artifact state,
    the orchestrator transitions to `blocked`.
    ```
+
 4. Add test case to `tests/test_orchestrator_integration.py`:
    - Agent returns RESULT.json with `next_action: "done"` but config has more phases → orchestrator continues to next phase, does not stop
    - Agent returns RESULT.json with `status: "fail"` but transition condition is `pass` for next state → orchestrator resolves based on config, not agent hint
@@ -1905,9 +1933,11 @@ The following were identified during Phase 6 completion review and should be add
 **Goal:** Finalize user-facing docs, trim orchestrator SKILL.md, fix schema deprecation.
 
 ### Sub-phase 8a: Trim orchestrator SKILL.md
+
 Move the full artifact templates (STATUS.md, PHASE_LOG.md, CHECKLIST.md, NEXT_PROMPT.md examples) to `references/artifact-templates.md`. Reference them from the SKILL.md with a short table. This should bring the SKILL.md under 500 lines.
 
 ### Sub-phase 8b: Fix schema deprecation
+
 Update `$schema` in `schemas/workflow_config.schema.json` from `draft-07` to `https://json-schema.org/draft/2020-12/schema` if compatible. Update metaschema URI. Test all fixtures still validate.
 
 ### Sub-phase 8c: Update user-facing docs
@@ -1917,6 +1947,7 @@ Update `$schema` in `schemas/workflow_config.schema.json` from `draft-07` to `ht
 - Update EXAMPLES_LIBRARY.md with orchestrator examples (contextsmith-run → orchestrator migration notes)
 
 ### Sub-phase 8d: CHANGELOG entry
+
 Write a comprehensive CHANGELOG.md entry covering:
 
 - contextsmith-run removed, all execution via contextsmith-orchestrator
@@ -1931,9 +1962,11 @@ Write a comprehensive CHANGELOG.md entry covering:
 **Goal:** Run full validation suite one final time, produce final status artifacts.
 
 ### Sub-phase 9a: Full validation pass
+
 Run: `ruff check`, `ruff format --check`, `validate_skills.py`, `pytest`, `markdownlint`. Fix any remaining issues.
 
 ### Sub-phase 9b: Final self-audit
+
 Audit all phases 1-9 against the A-F rubric. Verify every expected_output from every sub-phase exists and is non-empty.
 
 ### Sub-phase 9c: Project closeout

@@ -39,12 +39,15 @@ All dependencies available
 ```bash
 
 # Install uv (if not already installed)
+
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Sync dependencies and create .venv
+
 uv sync
 
 # Run validation
+
 uv run python scripts/validate_skills.py
 uv run ruff check orchestrator/ --select E,F,W,I
 uv run ruff format orchestrator/ --check
@@ -61,12 +64,15 @@ uv run pytest tests/ -v
 ```bash
 
 # Install uv (if not already installed)
+
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Sync dependencies and create .venv
+
 uv sync
 
 # Verify dependencies
+
 uv run python -c "import jsonschema; print('jsonschema OK')"
 uv run python -c "import yaml; print('PyYAML OK')"
 uv run python -c "import pytest; print('pytest OK')"
@@ -78,19 +84,24 @@ uv run ruff --version
 ```bash
 
 # Validate skills
+
 uv run python scripts/validate_skills.py
 
 # Lint and format Python code
+
 uv run ruff check orchestrator/ --select E,F,W,I
 uv run ruff format orchestrator/ --check
 
 # Run tests
+
 uv run pytest tests/ -v
 
 # Validate orchestrator module
+
 uv run python -c "from orchestrator import run; print('import OK')"
 
 # Validate adapters
+
 uv run python -c "from orchestrator.adapters.base import HarnessAdapter; print('adapters OK')"
 ```
 

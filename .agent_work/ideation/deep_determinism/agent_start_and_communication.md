@@ -536,6 +536,7 @@ opencode run --agent contextsmith-auditor --file NEXT_PROMPT.md --format json
 ```
 
 The agent config controls step limits:
+
 ```yaml
 ---
 description: Audits prompts, skills, and agent artifacts for reliability

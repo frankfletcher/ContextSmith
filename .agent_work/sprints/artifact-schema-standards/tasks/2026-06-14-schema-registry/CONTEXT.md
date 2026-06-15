@@ -1,9 +1,11 @@
 # CONTEXT.md
 
 ## Project
+
 ContextSmith orchestrator - artifact schema standards
 
 ## Task Directory
+
 .agent_work/sprints/artifact-schema-standards/tasks/2026-06-14-schema-registry
 
 ## Key Files
@@ -27,7 +29,8 @@ ContextSmith orchestrator - artifact schema standards
 - Must preserve append-only semantics for PHASE_LOG.md, EDUCATIONAL_REPORT.md, AUDIT_REPORT.md, DECISIONS.md
 - Must not break existing workflows
 - Must pass all validation commands
-- **NOTE**: The current runtime ContextSmith does not include the orchestrator. The `.new` file auto-merge mechanism is part of the planned orchestrator (Phase 5+) and is NOT available in the current version. Agents must merge `.new` segments manually. The plan tracks this as a known gap — when the orchestrator ships, agents must stop manually merging and let the orchestrator handle it.
+- **NOTE**: The current runtime ContextSmith does not include the orchestrator. The `.new` file auto-merge mechanism is part of the planned orchestrator (Phase 5+) and is NOT available in the current version. Agents must merge `.new` segments manually. The plan tracks this as a known gap — when the orchestrator ships, agents must stop manually
+  rging and let the orchestrator handle it.
 
 ## Technical Debt
 
@@ -48,4 +51,5 @@ ContextSmith orchestrator - artifact schema standards
 - Do not remove existing validation functions (deprecate instead)
 
 ## Harness
+
 opencode

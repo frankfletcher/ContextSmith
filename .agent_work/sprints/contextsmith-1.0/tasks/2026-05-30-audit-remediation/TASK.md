@@ -1,6 +1,7 @@
 # Task: ContextSmith v1.5.1 Audit Remediation
 
 ## Objective
+
 Address 5 audit findings from v1.5.1 audit report by modifying shared references and SKILL.md files.
 
 ## Scope

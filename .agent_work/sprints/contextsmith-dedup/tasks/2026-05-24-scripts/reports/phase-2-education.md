@@ -24,4 +24,5 @@
 - None for this phase; relocation handled in Phase 3.
 
 ### Next Phase Preview
+
 Phase 3 will create manifests for remaining 4 skills and relocate help.md files to skill roots.

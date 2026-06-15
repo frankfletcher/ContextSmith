@@ -86,6 +86,7 @@ Every downstream artifact inherits from its parent. Children can inherit, narrow
 **Skill-specific flags:** Each of the 5 skills has additional flags (e.g., `--prompt-file` for prompt-engineer, `--skills-dir` for migrator).
 
 **Current defaults in generated artifacts (6 params only):**
+
 | Parameter | Default | Description |
 | ----------- | --------- | ------------- |
 | `--mode` | `guided` | Interaction mode |
@@ -122,14 +123,22 @@ Every downstream artifact inherits from its parent. Children can inherit, narrow
 
 **Prompt Engineer outputs:**
 
-- Prompt package (14-section template): Engineering Metadata, Assumptions, Target Model/Harness, Domain/Intent, Prompt-Control Feasibility, Context Strategy, Interaction Mode, System Prompt, User Prompt Template, Examples, Validation/Test Plan, Loop/Git/File Safety, Persistent Task State, Subagent Delegation, Runtime Recommendations, Educational Change Report
+- Prompt package (14-section template): Engineering Metadata, Assumptions, Target Model/Harness,
+  Domain/Intent, Prompt-Control Feasibility, Context Strategy, Interaction Mode, System Prompt,
+  User Prompt Template, Examples, Validation/Test Plan, Loop/Git/File Safety, Persistent Task
+  State, Subagent Delegation, Runtime Recommendations, Educational Change Report
 - Required report: Original Strengths/Weaknesses, Changes Made, Why Improved, A-F Grades, Remaining Risks, Files Written, Non-Execution Check
 
 **Implementation plan phases (from `phased-planning.md`):** Each phase MUST include goal, inputs, likely files/directories, explicit tasks, testing/validation steps, unit/integration tests, outputs/artifacts, validation checks, stop condition, handoff notes.
 
-**Phase closeout (12-step procedure):** Update STATUS.md, PLAN.md, DECISIONS.md, ARTIFACTS.md, PHASE_LOG.md; write carry-forward/do-not-carry-forward; update NEXT_PROMPT.md; run phase compression and update CONTEXT.md; run validation checks (block on failure); run implementation plan audit for next phase (block on failure); include test quality audit for coding work (block on failure); check stop condition.
+**Phase closeout (12-step procedure):** Update STATUS.md, PLAN.md, DECISIONS.md, ARTIFACTS.md,
+PHASE_LOG.md; write carry-forward/do-not-carry-forward; update NEXT_PROMPT.md; run phase
+compression and update CONTEXT.md; run validation checks (block on failure); run implementation
+plan audit for next phase (block on failure); include test quality audit for coding work (block on
+failure); check stop condition.
 
 **Persistent task state files (9 total):**
+
 ```
 .agent_work/sprints/<sprint>/tasks/<YYYY-MM-DD-slug>/
 ├── TASK.md          # objective, scope, constraints, success criteria
@@ -191,13 +200,24 @@ Every generated artifact includes this block after the title, before any other c
 
 **Phase Granularity:** Phase count must scale with complexity. Prefer 6-20 phases for large tasks. For `targeted_context_length <= 32k`, prefer more smaller phases. Each phase must fit within the context window.
 
-**12-Step Phase Closeout:** (1) Update STATUS.md, (2) Check off PLAN.md items, (3) Record durable decisions in DECISIONS.md, (4) Record changed files/commands in ARTIFACTS.md, (5) Add compact notes to PHASE_LOG.md, (6) Write carry-forward and do-not-carry-forward notes, (7) Update NEXT_PROMPT.md, (8) Run phase compression and update CONTEXT.md for next phase, (9) Run validation checks — if any fail, set STATUS to "Blocked" and exit, (10) Run implementation plan audit for next phase — if fails, set STATUS to "Blocked" and exit, (11) Include test quality audit for coding work — if fails, set STATUS to "Blocked" and exit, (12) If stop condition met, set STATUS to "Completed" and exit.
+**12-Step Phase Closeout:** (1) Update STATUS.md, (2) Check off PLAN.md items, (3) Record durable
+decisions in DECISIONS.md, (4) Record changed files/commands in ARTIFACTS.md, (5) Add compact notes
+to PHASE_LOG.md, (6) Write carry-forward and do-not-carry-forward notes, (7) Update NEXT_PROMPT.md,
+(8) Run phase compression and update CONTEXT.md for next phase, (9) Run validation checks — if any
+fail, set STATUS to "Blocked" and exit, (10) Run implementation plan audit for next phase — if
+fails, set STATUS to "Blocked" and exit, (11) Include test quality audit for coding work — if
+fails, set STATUS to "Blocked" and exit, (12) If stop condition met, set STATUS to "Completed" and
+exit.
 
 **Implementation Plan Audit Gates:** Before executing each phase, grade the next-phase plan on: phase granularity, atomicity, context fit, validation strength, task-state integration, handoff quality, test strategy. Block on failure.
 
-**Test Quality Requirements:** Tests must cover baseline use cases, realistic edge cases, failure modes (invalid input, missing data, bad state), and changed behavior. Assertions must be specific enough to catch wrong behavior. Avoid: tests that only check imports, tests that only check "no throw", mocking the method being tested, asserting on implementation details instead of user-visible behavior.
+**Test Quality Requirements:** Tests must cover baseline use cases, realistic edge cases, failure modes (invalid input, missing data, bad state), and changed behavior. Assertions must be specific enough to catch wrong behavior. Avoid: tests that only check imports, tests that only check "no throw", mocking the method being tested, asserting on
+implementation details instead of user-visible behavior.
 
-**Loop Safety Rules:** Do not execute identical consecutive tool calls. If same command/edit fails twice, stop and change strategy (correct/narrow/inspect/substitute/escalate). Maximum 1 retry per exact failing action, 2 related attempts per strategy, 3 total recovery attempts before requesting human input. After an edit, verify the file changed. Do not repeat no-op edits.
+**Loop Safety Rules:** Do not execute identical consecutive tool calls. If same command/edit fails
+twice, stop and change strategy (correct/narrow/inspect/substitute/escalate). Maximum 1 retry per
+exact failing action, 2 related attempts per strategy, 3 total recovery attempts before requesting
+human input. After an edit, verify the file changed. Do not repeat no-op edits.
 
 **Task State Hygiene:** Do not paste full files, logs, transcripts, or model reasoning into state files. Store summaries, paths, commands, evidence anchors, decisions, and validation results.
 
@@ -305,7 +325,7 @@ Pre-extracted contract summaries for each of the ~30 most relevant references. E
 | `small-context-workflows` | Fresh session pattern: load 6 files (TASK, STATUS, CHECKLIST, DECISIONS, CONTEXT, NEXT_PROMPT), not full chat. More phases for tighter context |
 | `context-management` | Context budget allocation: reserve space for tool results and output. Reading order matters. Evidence anchors for re-anchoring |
 | `targeted-context-length` | Optimize for stated budget, not advertised max. Affects verbosity, phase count, example count, report size |
-| `instruction-precedence` | 9-level priority hierarchy: (1) user's current explicit request, (2) safety boundaries, (3) project/repo evidence, (4) existing repo instructions, (5) target model constraints, (6) domain-specific requirements, (7) external skill artifacts, (8) optional style preferences, (9) generic best practices. Never average conflicts |
+| `instruction-precedence` | 9-level priority hierarchy: (1) user's current explicit request, (2) safety boundaries, (3) project/repo evidence, (4) existing repo instructions, (5) target model constraints, (6) domain-specific requirements, (7) external skill artifacts, (8) optional style preferences, (9) generic best practices. No averaging |
 | `instruction-deduplication` | Scan existing instructions before adding new ones. Merge policy: preserve clear/specific/correct, strengthen vague, consolidate duplicates, add missing. Token-bloat guard |
 | `engineering-metadata` | YAML metadata schema with 8 recommended fields. Record targeted context length when provided |
 | `output-location` | Canonical output paths under `.agent_work/`. Iterations subdirectory for Ralph loop |

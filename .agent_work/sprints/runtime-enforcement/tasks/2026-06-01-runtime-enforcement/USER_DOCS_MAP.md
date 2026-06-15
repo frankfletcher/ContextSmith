@@ -12,6 +12,7 @@
 ## 1. Documentation Inventory
 
 ### Existing User-Facing Docs
+
 | File | Purpose | Status | Assessment |
 | ------ | --------- | -------- | ------------ |
 | `README.md` | Landing page, capabilities, quick commands, installation | Exists | Needs refresh: reorganize for reader journey, add runtime enforcement section, update project status |
@@ -25,6 +26,7 @@
 | `docs/RUNTIME_STABILITY.md` | Runtime enforcement overview | Exists | New feature; needs user-facing framing |
 
 ### Existing Workflow Docs (`docs/workflows/`)
+
 | File | Purpose | Status |
 | ------ | --------- | -------- |
 | `docs/workflows/README.md` | Workflows index | Exists |
@@ -37,6 +39,7 @@
 | `docs/workflows/RUNTIME_STABILITY.md` | Runtime stability workflow | Exists |
 
 ### Existing Concept Docs (`docs/concepts/`)
+
 | File | Purpose | Status |
 | ------ | --------- | -------- |
 | `docs/concepts/README.md` | Concepts index | Exists |
@@ -44,6 +47,7 @@
 | `docs/concepts/RALPH_LOOP.md` | Ralph improvement loop | Exists |
 
 ### Existing Reference Docs (`docs/reference/`)
+
 | File | Purpose | Status |
 | ------ | --------- | -------- |
 | `docs/reference/README.md` | Reference index | Exists |
@@ -52,12 +56,14 @@
 | `docs/reference/VERSIONING.md` | Version history and policy | Exists |
 
 ### Contributing Docs (`docs/contributing/`)
+
 | File | Purpose | Audience |
 | ------ | --------- | ---------- |
 | `docs/contributing/documentation-style.md` | Voice and style guide | Contributors |
 | `docs/contributing/documentation-review-checklist.md` | Quality review criteria | Contributors |
 
 ### Identified Gaps
+
 | Gap | Priority | Phase Assignment |
 | ----- | ---------- | ------------------ |
 | Runtime enforcement user guide (what it is, how to use CLI/MCP) | High | Phase 7D |
@@ -70,6 +76,7 @@
 | Runner and orchestrated workflow guide | Low | Phase 7E (deferred if runner not yet complete) |
 
 ### Duplication Issue
+
 Several files exist at both `docs/` root and in subdirectories (e.g., `docs/AGENTS_MD_GUIDE.md` and `docs/workflows/AGENTS_MD_GUIDE.md`). This needs resolution in Phase 7B+ — either consolidate to one location per file or clarify the distinction between root-level summaries and subdirectory deep-dives.
 
 ---
@@ -78,19 +85,29 @@ Several files exist at both `docs/` root and in subdirectories (e.g., `docs/AGEN
 
 ```
 README.md
+
   |  |
+
   v
 docs/QUICKSTART.md  (fastest path to first value)
+
   |  |
+
   v
 docs/WHICH_SKILL.md  (choose a workflow)
+
   |  |
+
   v
 docs/workflows/<specific-workflow>.md  (detailed how-to)
+
   |  |
+
   v
 docs/reference/  (parameter reference, versioning)
+
   |  |
+
   v
 docs/concepts/  (model profiles, Ralph loop, etc.)
 ```
@@ -159,6 +176,7 @@ Every substantial Markdown file (more than 5 sections) should include a table of
 - [Section 2](#section-2)
   - [Subsection 2.1](#subsection-21)
 - [Section 3](#section-3)
+
 ```
 
 **Files that need TOC added:** `README.md`, `docs/QUICKSTART.md`, `docs/USER_GUIDE.md`, `docs/USER_MANUAL.md`, `docs/RUNTIME_STABILITY.md`, and any workflow doc exceeding 5 sections.

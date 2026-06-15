@@ -14,6 +14,7 @@
 - Backfill task is to align codebase artifacts with /home/frank/00-Code/ContextSmith/.agent_work/sprints/runtime-enforcement/tasks/2026-06-01-runtime-enforcement/PLAN.md framing.
 
 ## Files to Inspect
+
 | Path | Purpose |
 | --- | --- |
 | PLAN.md (2026-06-01-runtime-enforcement) | Canonical framing reference |

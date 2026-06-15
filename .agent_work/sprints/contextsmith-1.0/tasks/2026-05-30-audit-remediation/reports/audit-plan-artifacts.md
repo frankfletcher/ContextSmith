@@ -11,7 +11,8 @@
 
 ## Summary Grade: A-
 
-The audit-remediation plan is well-structured, small-model-executable, and addresses all 5 audit findings from the v1.5.1 audit report. Task state artifacts are complete and follow the canonical `.agent_work/sprints/.../tasks/.../` layout. The plan improved significantly from the pre-audit version (which graded B+). Primary remaining issues are incomplete context contracts (missing phased-planning YAML fields) and a Phase 3 contradiction between "read-only" inputs and "modify" actions.
+The audit-remediation plan is well-structured, small-model-executable, and addresses all 5 audit findings from the v1.5.1 audit report. Task state artifacts are complete and follow the canonical `.agent_work/sprints/.../tasks/.../` layout. The plan improved significantly from the pre-audit version (which graded B+). Primary remaining issues are
+incomplete context contracts (missing phased-planning YAML fields) and a Phase 3 contradiction between "read-only" inputs and "modify" actions.
 
 ---
 
@@ -33,7 +34,7 @@ The audit-remediation plan is well-structured, small-model-executable, and addre
 
 | Severity | Issue |
 | ---------- | ------- |
-| **Medium** | Context contracts are incomplete. They include `required_files`, `required_knowledge`, and `estimated_tokens`, but are missing the phased-planning YAML fields: `targeted_context_length`, `usable_phase_budget`, `tool_output_reserve`, `phase_type`, `expected_tool_calls`, `max_tool_calls_before_compaction`, `fresh_session_after_phase`, `stop_if_forecast_exceeded`. |
+| **Medium** | Context contracts are incomplete. They include `required_files`, `required_knowledge`, `estimated_tokens`, but are missing phased-planning YAML fields: `targeted_context_length`, `usable_phase_budget`, `tool_output_reserve`, `phase_type`, `expected_tool_calls`, `fresh_session_after_phase`. |
 | **Medium** | Phase 3 has a contradiction: Inputs say `shared/behavioral-contracts.md` is "read-only, do not modify", but Actions step 2 says "Add cross-reference in `shared/behavioral-contracts.md`". This will confuse the executor. |
 | **Low** | No explicit rollback/recovery procedure if a phase fails. Per-phase commits enable rollback, but the plan doesn't say what to do if validation fails. |
 | **Low** | Phase closeout doesn't follow the full 12-step phased-planning closeout. Missing: phase compression, implementation plan audit for next phase, test quality audit (not applicable here), and "Blocked" status update on failure. |
@@ -79,7 +80,8 @@ The audit-remediation plan is well-structured, small-model-executable, and addre
 
 ## Duplicate or Conflicting Instructions
 
-- **Phase 3 contradiction**: Inputs say `shared/behavioral-contracts.md` is "read-only, do not modify", but Actions step 2 says "Add cross-reference in `shared/behavioral-contracts.md`". This is a conflict that will confuse the executor. Fix: change Inputs to "read for context, modify to add cross-reference only" or clarify that "read-only" means "do not modify existing content, only append cross-reference".
+- **Phase 3 contradiction**: Inputs say `shared/behavioral-contracts.md` is "read-only, do not modify", but Actions step 2 says "Add cross-reference in `shared/behavioral-contracts.md`". This is a conflict that will confuse the executor. Fix: change Inputs to "read for context, modify to add cross-reference only" or clarify that "read-only" means
+  o not modify existing content, only append cross-reference".
 
 ---
 

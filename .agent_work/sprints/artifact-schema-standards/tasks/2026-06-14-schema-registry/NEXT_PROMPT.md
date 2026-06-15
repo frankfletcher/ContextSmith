@@ -9,6 +9,7 @@ You are continuing work on the ContextSmith artifact schema standards task.
 - State: execute
 
 ## Sub-phase
+
 Sub-phase 11.1: Extra-audit workflow config
 
 ## Sub-phase Tasks
@@ -18,6 +19,7 @@ Sub-phase 11.1: Extra-audit workflow config
 - [ ] Test with dry run
 
 ## Your Task
+
 The `.contextsmith/audit-with-extra.json` workflow config already exists. It chains `audit_current_phase` → `extra_audit` with read-only permissions. Your job is to:
 
 1. **Validate** the config against `schemas/workflow_config.schema.json` — at minimum check that it satisfies the schema (all required fields, valid transitions, valid phase_order, valid domain enum).
@@ -67,9 +69,11 @@ Write these `.new` segment files (and merge manually):
 - `DECISIONS.md.new` — new decision entry (if any)
 
 ## Ralph Loop Enforcement
+
 3 iterations required. Each is critique+fix. Do not skip or collapse.
 
 ## Self-Audit
+
 Before closeout, verify:
 
 - Original phase goal satisfied or blocker recorded
@@ -78,6 +82,7 @@ Before closeout, verify:
 - Task state updated with compact facts
 
 ## Hard Stop
+
 Current phase is Phase 11: Tooling and Audit Infrastructure.
 Do not proceed beyond it. Do not edit files outside this phase scope.
 Do not fix nice-to-have items — only must-fix.
@@ -87,14 +92,18 @@ Do not fix nice-to-have items — only must-fix.
 ```
 
 ## Result
+
 [summary of changes]
 
 ## Evidence
+
 [list of files modified]
 
 ## Validation
+
 [validation checks performed and results]
 
 ## Risks / Next Action
+
 [any risks or blockers, next sub-phase]
 ```

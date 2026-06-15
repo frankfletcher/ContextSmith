@@ -426,24 +426,24 @@ Keep separate descriptive skill names; ContextSmith is the package/repo brand.
 Current core skills:
 
 1. `local-model-prompt-engineer`
-   
+
    - Creates, improves, audits, and packages prompts for local/open-weight models and broader model capability tiers.
 
 2. `local-model-skill-engineer`
-   
+
    - Creates, converts, improves, audits, and packages `SKILL.md`-based skills while preserving source behavior and adapting for local/smaller models or selected profiles.
 
 3. `local-model-skill-migrator`
-   
+
    - Recursively audits, stages, and migrates skill directories safely with backups, staging, manifests, reports, and apply-after-approval.
 
 4. `local-model-instruction-engineer`
-   
+
    - Creates, optimizes, and audits AGENTS.md and equivalent repo/agent instruction files.
    - Should default to guided/human-in-loop for AGENTS.md because it is high-impact.
 
 5. `local-model-agent-evaluator`
-   
+
    - Audit-only diagnosis for prompts, skills, AGENTS.md, implementation plans, tests, runtime setups, and documentation quality.
 
 Possible future skills:

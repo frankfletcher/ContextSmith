@@ -19,6 +19,7 @@
 - **Content verification**: We verified that help.md content matches between old and new locations (byte-for-byte) but did not delete the old copies yet (per phase plan).
 
 ### Key Lessons
+
 **Manifest-driven dependency management** is a powerful pattern for eliminating duplication. Instead of copying 52 files × 5 skills = 260 files, we maintain:
 
 - 1 canonical source (`shared/` directory)
@@ -34,4 +35,5 @@ This reduces storage, simplifies updates (change once in `shared/`), and enables
 3. **References/ directory state**: After relocation, `references/` still contains the old help.md copies. Phase 5 will clean this up.
 
 ### Next Phase Preview
+
 Phase 4 creates `scripts/sync_shared_refs.py` — a Python script that reads manifests and copies shared files into `skills/*/references/`. This depends on Phase 3 completing all manifests, ensuring the sync script has complete dependency information for all 5 skills.

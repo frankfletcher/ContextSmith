@@ -7,7 +7,8 @@
 
 ## Executive Summary
 
-The highest-impact opportunities for determinism are **Custom Tools** and **Plugins**, but the bigger architectural answer is the **orchestrator**: a script that owns state, retries, checkpoints, and transitions. OpenCode agents are best treated as leaf executors inside that orchestration layer. **Commands** are useful launchers, while **ACP** and **MCP** are transport/integration layers rather than determinism mechanisms.
+The highest-impact opportunities for determinism are **Custom Tools** and **Plugins**, but the bigger architectural answer is the **orchestrator**: a script that owns state, retries, checkpoints, and transitions. OpenCode agents are best treated as leaf executors inside that orchestration layer. **Commands** are useful launchers, while **ACP** and
+**MCP** are transport/integration layers rather than determinism mechanisms.
 
 ---
 

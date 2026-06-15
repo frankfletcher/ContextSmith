@@ -35,13 +35,16 @@ pytest tests/ -v
 ```bash
 
 # Validate skills
+
 python scripts/validate_skills.py
 
 # Lint and format Python code
+
 ruff check orchestrator/ --select E,F,W,I
 ruff format orchestrator/ --check
 
 # Run tests
+
 pytest tests/ -v
 ```
 

@@ -62,6 +62,7 @@ context_contract:
   validation_output_reserve: reserve room for validation summaries and audit notes
   compaction_trigger: summarize include/exclude behavior for each packaging path
   stop_rule: stop if packaging behavior conflicts across scripts
+
 ~~~
 
 ## Questions To Answer
@@ -161,7 +162,7 @@ If blocked:
 
 Return this format:
 
-````markdown
+~~~markdown
 
 ## Phase 0 Result
 
@@ -169,6 +170,7 @@ Return this format:
 - one-sentence summary
 
 ## Packaging Facts
+
 | Area | Finding | Evidence |
 | --- | --- | --- |
 | Individual skill zip | ... | `path:line` or command |
@@ -201,6 +203,7 @@ Return this format:
 - Raw output avoided in task state: yes|no
 
 ## Deep Education Notes
+
 Explain briefly:
 
 - why Phase 0 is discovery-only;
@@ -209,6 +212,6 @@ Explain briefly:
 - what the next reviewer should decide.
 
 ## Hard Stop
-I stopped after Phase 0. Phase 0.5 requires user/human/frontier review before continuing.
-````
 
+I stopped after Phase 0. Phase 0.5 requires user/human/frontier review before continuing.
+~~~

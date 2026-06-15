@@ -13,9 +13,11 @@
 - behavioral_contract: Keep work resumable from files; do not rely on chat memory; validate with evidence before reporting completion.
 
 ## Objective
+
 Plan the work needed to make ContextSmith skill behavior more deterministic at runtime after skills are installed and used outside this repository.
 
 ## Problem Statement
+
 Current runtime enforcement is mostly instruction-based. Installed skills ship as `SKILL.md`, `help.md`, `reference_manifest.yml`, and `references/`, so user-facing behavior depends on the model reading and following natural-language obligations. Repository-local validators check package structure but do not enforce behavior during real skill use.
 
 ## Scope

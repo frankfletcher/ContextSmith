@@ -20,6 +20,7 @@
 - **Manual .gitkeep addition**: The .gitkeep files needed to be force-added rather than automatically tracked, which is a minor workflow complication
 
 ### Key Lessons
+
 **Gitignore precedence and pattern matching**: The order and specificity of .gitignore patterns matter greatly. A pattern like `skills/*/references/` matches the directory and everything inside it, which requires negation patterns like `!skills/*/references/.gitkeep` to override. Understanding this precedence is crucial for managing generated directories.
 
 ### Edge Cases Not Handled
@@ -28,4 +29,5 @@
 - If a skill's `references/` directory is completely deleted, the sync script will recreate it with all required files
 
 ### Next Phase Preview
+
 Phase 6 will create `scripts/package_skill.sh` to package skills with populated references into standalone zip files for distribution.

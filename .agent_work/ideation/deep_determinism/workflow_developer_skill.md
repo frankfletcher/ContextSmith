@@ -153,6 +153,7 @@ permissions: read-only (audit), edit (implement), read-only (validate)
 ```
 
 **Writing:**
+
 ```yaml
 phases: load_context → draft → review → revise → close
 gates: review
@@ -160,6 +161,7 @@ permissions: edit (draft), read-only (review), edit (revise)
 ```
 
 **Research:**
+
 ```yaml
 phases: load_context → research → synthesize → audit → close
 gates: audit
@@ -167,6 +169,7 @@ permissions: read-only (research), edit (synthesize), read-only (audit)
 ```
 
 **Migration:**
+
 ```yaml
 phases: load_context → plan_migration → execute_migration → validate → close
 gates: validate
@@ -174,6 +177,7 @@ permissions: read-only (plan), edit (execute), read-only (validate)
 ```
 
 **Audit:**
+
 ```yaml
 phases: load_context → audit_output → report → close
 gates: audit

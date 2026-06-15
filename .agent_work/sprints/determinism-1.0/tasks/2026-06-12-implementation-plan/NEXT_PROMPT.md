@@ -2,7 +2,7 @@
 
 **Status:** All 9 phases (including all sub-phases) are complete. Validation suite clean.
 
-### Final Project State
+## Final Project State
 
 | Metric | Value |
 | -------- | ------- |
@@ -16,12 +16,12 @@
 | Schemas | Both at 2020-12 |
 | Git status | Clean |
 
-### What Was Done
+## What Was Done
 
 - **Phase 9a:** Full validation pass — all 7 commands clean
 - **Phase 9b:** Final self-audit — A-F rubric assessment, all expected outputs verified present and non-empty
 - **Phase 9c:** Project closeout — git clean, staged_skills cataloged, .phase_gate removed, final DECISIONS.md entry written
 
-### No Further Action Required
+## No Further Action Required
 
-This is a terminal state. No agent should execute further work on this task without explicit user instruction. 
+This is a terminal state. No agent should execute further work on this task without explicit user instruction.

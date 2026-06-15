@@ -9,7 +9,8 @@
 
 ## Summary Grade: B+
 
-The v1.5.1 context-budget changes are a strong, coherent addition that meaningfully improves context-risk management across the package. The forecast-then-compact pattern is well-designed and consistently propagated. Primary remaining risks are instruction bloat in the prompt-engineer SKILL.md and the absence of explicit data-science/ML safeguard content in the new context-budget references.
+The v1.5.1 context-budget changes are a strong, coherent addition that meaningfully improves context-risk management across the package. The forecast-then-compact pattern is well-designed and consistently propagated. Primary remaining risks are instruction bloat in the prompt-engineer SKILL.md and the absence of explicit data-science/ML safeguard
+content in the new context-budget references.
 
 ---
 
@@ -67,7 +68,8 @@ The v1.5.1 context-budget changes are a strong, coherent addition that meaningfu
 
 ## Domain-Specific Risks
 
-- **Data science/ML**: The new context-budget references are coding-centric. ML training phases produce different tool-output profiles (long stdout, large artifact files, batch eval logs) that don't fit the current reserve percentages. Recommend adding an `ml-heavy` phase type to `phased-planning.md` context_contract with adjusted reserves (e.g., 60-75% for training output).
+- **Data science/ML**: The new context-budget references are coding-centric. ML training phases produce different tool-output profiles (long stdout, large artifact files, batch eval logs) that don't fit the current reserve percentages. Recommend adding an `ml-heavy` phase type to `phased-planning.md` context_contract with adjusted reserves (e.g.,
+60-75% for training output).
 - **No other domain-specific gaps detected** for the scope of this change.
 
 ---

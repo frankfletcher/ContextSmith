@@ -22,13 +22,13 @@
 
 - Status: Complete
 - Date: 2026-06-14
-- Changes: Added subphase_name and subphase_context_budget to StepContract; added _extract_subphase_budget() to step_compiler.py
+- Changes: Added subphase_name and subphase_context_budget to StepContract; added `_extract_subphase_budget()` to step_compiler.py
 
 ## Phase 5: Orchestrator Sub-phase Advancement
 
 - Status: Complete
 - Date: 2026-06-14
-- Changes: Added _try_advance_subphase(), _find_phase_in_plan(), _find_first_subphase(); updated _rewrite_status_content, _update_status, _generate_next_prompt for sub-phase support
+- Changes: Added `_try_advance_subphase()`, `_find_phase_in_plan()`, `_find_first_subphase()`; updated `_rewrite_status_content`, `_update_status`, `_generate_next_prompt` for sub-phase support
 
 ## Phase 6: Unit Test Coverage
 
@@ -46,7 +46,7 @@
 
 - **Status**: Complete
 - **Date**: 2026-06-14
-- **Changes**: Added artifact_schemas property + ArtifactSchemaOverride definition to schemas/workflow_config.schema.json. Wired artifact_schemas config to validators.py via _build_artifact_overrides().
+- **Changes**: Added artifact_schemas property + ArtifactSchemaOverride definition to schemas/workflow_config.schema.json. Wired artifact_schemas config to validators.py via `_build_artifact_overrides()`.
 - **Action**: Schema-level extension mechanism for workflow-specific section overrides on top of base schemas
 - **Validation**: JSON Schema valid (Draft 2020-12), backward compat with existing configs, override configs validated, 403 pytest pass
 - **Artifacts**: schemas/workflow_config.schema.json

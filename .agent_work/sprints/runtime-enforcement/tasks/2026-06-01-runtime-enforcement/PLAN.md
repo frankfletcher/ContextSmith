@@ -22,11 +22,13 @@
 - side_effect_tier: planning-only for this task; implementation phases may create source, tests, and task artifacts after approval boundaries are checked
 
 ## Purpose
+
 Create an implementation path for runtime enforcement that works for many skill, agent, and prompt use cases, not only coding.
 
 The system should let a user create a plan, run one bounded phase at a time, validate that the requirements chain is preserved, and stop or repair when evidence is missing.
 
 ## Core Principle
+
 Do not trust a small model to carry a sweeping architecture in memory.
 
 Instead:
@@ -38,18 +40,20 @@ Instead:
 - human approval gates remain explicit for irreversible or external actions.
 
 ## Architecture Direction
+
 Runtime reinforcement and orchestration is a first-class ContextSmith tool. It is the default execution path — users get validation, gate enforcement, and phase progression automatically — but it is opt-out, not mandatory. A workflow can skip runtime checks, but the standard path goes through them.
 
 Build a `contextsmith-runtime` layer with one validator core and integration surfaces:
 
-- **Universal protocol:** machine-readable requirements, phase contracts, evidence, approval, and closeout artifacts.
-- **Domain packs:** small validation profiles for software, writing, research, scheduling, travel, business, education, and general fallback.
-- **CLI:** portable validator and runner commands. Primary interface for standalone use and scripting.
-- **MCP integration:** structured tool calls around the same validator core. Enables agent-side validation.
-- **Orchestrated runner:** sequential gate loop that controls prompt flow. Default execution mode for multi-phase workflows.
-- **Harness integration:** hard-blocking enforcement where the harness supports it. Elevates orchestrated gates to hard blocks.
+- __Universal protocol:__ machine-readable requirements, phase contracts, evidence, approval, and closeout artifacts.
+- __Domain packs:__ small validation profiles for software, writing, research, scheduling, travel, business, education, and general fallback.
+- __CLI:__ portable validator and runner commands. Primary interface for standalone use and scripting.
+- __MCP integration:__ structured tool calls around the same validator core. Enables agent-side validation.
+- __Orchestrated runner:__ sequential gate loop that controls prompt flow. Default execution mode for multi-phase workflows.
+- __Harness integration:__ hard-blocking enforcement where the harness supports it. Elevates orchestrated gates to hard blocks.
 
 ## Enforcement Levels
+
 Use these labels everywhere. Do not blur them. Orchestrated workflow enforcement is the default — workflows go through it unless explicitly opted out. Deterministic validation is the foundation. Harness hard blocking elevates gates where the harness supports it. Human approval remains explicit for irreversible actions.
 
 | Level | Meaning | Example |
@@ -60,6 +64,7 @@ Use these labels everywhere. Do not blur them. Orchestrated workflow enforcement
 | Human approval | A person must approve an irreversible, costly, private, or high-risk action. | Booking airfare or sending calendar invites. |
 
 ## Universal Use Cases
+
 The protocol must support more than coding:
 
 | Domain | Example | Required gates |
@@ -85,6 +90,7 @@ The protocol must support more than coding:
 - Track actual token usage per phase. Record in `PHASE_LOG.md`. Use as data for future budgeting.
 
 ## Phase Contract Template
+
 Each phase must include this compact contract:
 
 ```yaml
@@ -99,7 +105,7 @@ context_contract:
   stop_rule: when to stop instead of widening scope
 ```
 
-**Budgeting notes:**
+__Budgeting notes:__
 
 - Phase 0 actual: 78k tokens for a discovery phase (4-8 reads, 1 dry-run, 0 edits). Use as baseline for discovery phases that read multiple files and produce task-state artifacts.
 - `usable_phase_budget` should be a numeric estimate, not just `small` or `moderate`.
@@ -110,6 +116,7 @@ context_contract:
 - Tool-heavy phases must run in a fresh session. Never chain multiple implementation phases in one session.
 
 ## Required Phase Closeout
+
 Every phase, including read-only design phases, must close with a compact debrief. Update all files that changed in relevance; do not paste raw logs.
 
 Required closeout fields:
@@ -130,6 +137,7 @@ Required debrief content:
 - residual risk: what remains uncertain and who must decide.
 
 ## Recovery Procedure
+
 Use this when a phase fails validation, exceeds scope, or cannot self-correct safely.
 
 1. Stop phase execution. Do not widen scope or start the next phase.
@@ -141,6 +149,7 @@ Use this when a phase fails validation, exceeds scope, or cannot self-correct sa
 7. Do not mark completion until the blocker is resolved by evidence or explicitly waived by the user.
 
 ## Documentation Requirements
+
 Runtime enforcement changes the project architecture, source code, skill operation model, and user workflows. Documentation is part of the implementation, not an afterthought.
 
 User-facing documentation must:
@@ -160,7 +169,8 @@ Documentation should make ContextSmith feel useful, approachable, and enjoyable 
 Documentation should focus on how to use ContextSmith. Mention architecture only when it helps a user choose the right workflow, understand an output, or avoid a mistake.
 
 ## Phase 0: Packaging Discovery
-**Goal:** Verify how installed skills and release bundles can carry runtime code, metadata, and references.
+
+__Goal:__ Verify how installed skills and release bundles can carry runtime code, metadata, and references.
 
 ```yaml
 context_contract:
@@ -173,7 +183,7 @@ context_contract:
   stop_rule: stop if packaging behavior conflicts across scripts
 ```
 
-**Inputs:**
+__Inputs:__
 
 - `scripts/build_release.py`
 - `scripts/package_skill.sh`
@@ -182,7 +192,7 @@ context_contract:
 - `skills/*/reference_manifest.yml`
 - `PACKAGE_SPEC.md` read-only unless approval is given
 
-**Actions:**
+__Actions:__
 
 1. Inspect package and release scripts.
 2. Record what individual skill zips include.
@@ -190,18 +200,19 @@ context_contract:
 4. Record whether executable runtime files, YAML schemas, and fixtures can ship.
 5. Record any approval needed before changing package design.
 
-**Outputs:**
+__Outputs:__
 
 - Packaging facts in `CONTEXT.md`.
 - Open packaging decisions in `DECISIONS.md`.
 
-**Validation:**
+__Validation:__
 
 - Every claim cites exact file paths or commands inspected.
 - No source behavior is changed.
 
 ## Phase 0.5: Runtime Distribution, Dependency, and Surface Decision
-**Goal:** Decide the runtime distribution model, dependency policy, and first implementation slice before any validator implementation begins.
+
+__Goal:__ Decide the runtime distribution model, dependency policy, and first implementation slice before any validator implementation begins.
 
 ```yaml
 context_contract:
@@ -214,7 +225,7 @@ context_contract:
   stop_rule: stop if the distribution model requires package design changes, a dependency not already approved, user-level config edits, or an unresolved runtime install assumption
 ```
 
-**Required decisions:**
+__Required decisions:__
 
 1. Distribution model:
    - per-skill manifest entries for runtime files;
@@ -225,30 +236,33 @@ context_contract:
    - PyYAML-backed YAML with explicit approval/install path;
    - dual JSON/YAML support where YAML is optional and failure messages name the missing dependency.
 3. First-slice runtime surfaces:
-- CLI validator only.
-- CLI validator plus domain packs.
-- CLI validator plus orchestrated runner.
+
+   - CLI validator only.
+   - CLI validator plus domain packs.
+   - CLI validator plus orchestrated runner.
+
 - CLI plus MCP adapter.
 - CLI plus harness adapter.
 
-**Default recommendation:** Start with CLI validator plus universal protocol plus one or two domain packs. The runner, MCP, and harness integration surfaces are default runtime capabilities, not optional add-ons — but they can be incrementally tested after the core checks are proven.
+__Default recommendation:__ Start with CLI validator plus universal protocol plus one or two domain packs. The runner, MCP, and harness integration surfaces are default runtime capabilities, not optional add-ons — but they can be incrementally tested after the core checks are proven.
 
-**Education:** This prevents a small model from trying to implement every runtime surface at once. The core must be stable before the default runtime surfaces multiply behavior.
+__Education:__ This prevents a small model from trying to implement every runtime surface at once. The core must be stable before the default runtime surfaces multiply behavior.
 
-**Outputs:**
+__Outputs:__
 
 - Decision entry in `DECISIONS.md`.
 - Distribution model, runtime dependency policy, and narrowed first-slice scope in `STATUS.md` and `NEXT_PROMPT.md`.
 - Explicit `Phase 1A authorized: yes|no` statement with reason.
 
-**Validation:**
+__Validation:__
 
 - Decision matrix compares at least the three distribution options above.
 - Dependency policy states whether PyYAML is required, optional, or avoided for the first slice.
 - No implementation phase starts until Phase 0.5 records the chosen distribution model and authorization result.
 
 ## Phase 1A: Universal Artifact Vocabulary
-**Goal:** Define the small set of artifact names used across all domains.
+
+__Goal:__ Define the small set of artifact names used across all domains.
 
 ```yaml
 context_contract:
@@ -261,7 +275,7 @@ context_contract:
   stop_rule: stop if more than six artifact types are needed
 ```
 
-**Artifacts to define:**
+__Artifacts to define:__
 
 - `requirements_chain`
 - `phase_contract`
@@ -270,20 +284,21 @@ context_contract:
 - `approval_record`
 - `phase_closeout`
 
-**Actions:**
+__Actions:__
 
 1. Create a compact schema note under this task directory.
 2. For each artifact, define purpose, required fields, and one tiny example.
 3. Keep examples domain-neutral.
 
-**Validation:**
+__Validation:__
 
 - No artifact requires hidden reasoning.
 - Each artifact can be represented as YAML or JSON.
 - Each artifact is reusable for coding, scheduling, travel, writing, and research.
 
 ## Phase 1B: Requirements Chain Schema
-**Goal:** Define how original requirements trace through phases and evidence.
+
+__Goal:__ Define how original requirements trace through phases and evidence.
 
 ```yaml
 context_contract:
@@ -296,7 +311,7 @@ context_contract:
   stop_rule: stop if trace model needs complex graph logic
 ```
 
-**Required fields:**
+__Required fields:__
 
 - requirement id
 - source text or source path
@@ -307,14 +322,15 @@ context_contract:
 - evidence ids that prove it
 - status: pending, passed, blocked, waived_by_user
 
-**Education:** This is what prevents the model from satisfying only the current prompt while forgetting earlier requirements.
+__Education:__ This is what prevents the model from satisfying only the current prompt while forgetting earlier requirements.
 
-**Validation:**
+__Validation:__
 
 - Example traces one requirement from task request to phase output to validation evidence.
 
 ## Phase 1B.5: Approval Record Schema
-**Goal:** Define explicit approval records for irreversible, external, private, costly, or high-risk actions.
+
+__Goal:__ Define explicit approval records for irreversible, external, private, costly, or high-risk actions.
 
 ```yaml
 context_contract:
@@ -327,7 +343,7 @@ context_contract:
   stop_rule: stop if approval records try to automate external actions instead of documenting authorization
 ```
 
-**Required fields:**
+__Required fields:__
 
 - approval id
 - linked requirement ids
@@ -340,13 +356,14 @@ context_contract:
 - evidence id or source note
 - residual risk disclosure for high-risk actions
 
-**Validation:**
+__Validation:__
 
 - Example shows travel purchase approval remains `requested` or `denied` unless explicit user approval exists.
 - No approval record implies permission for external action without evidence.
 
 ## Phase 1C: Domain Pack Schema
-**Goal:** Define small domain-specific rule packs without making the core domain-specific.
+
+__Goal:__ Define small domain-specific rule packs without making the core domain-specific.
 
 ```yaml
 context_contract:
@@ -359,7 +376,7 @@ context_contract:
   stop_rule: stop if a domain pack needs custom code before the generic fields are defined
 ```
 
-**Required fields:**
+__Required fields:__
 
 - domain name
 - triggers
@@ -371,7 +388,7 @@ context_contract:
 - example good closeout
 - example blocked closeout
 
-**Starter domain packs:**
+__Starter domain packs:__
 
 - `software_engineering`
 - `writing_editing`
@@ -380,13 +397,14 @@ context_contract:
 - `travel_purchase`
 - `general_fallback`
 
-**Validation:**
+__Validation:__
 
 - Each starter domain pack fits on one screen.
 - No domain pack requires new dependencies.
 
 ## Phase 1D: Architecture Review Gate
-**Goal:** Review Phases 1A-1C before implementation begins.
+
+__Goal:__ Review Phases 1A-1C before implementation begins.
 
 ```yaml
 context_contract:
@@ -399,19 +417,20 @@ context_contract:
   stop_rule: stop if universal protocol does not support non-coding domains
 ```
 
-**Review questions:**
+__Review questions:__
 
 1. Can the schema support coding, scheduling, travel, writing, research, and fallback tasks?
 2. Are approval boundaries explicit for external actions?
 3. Can a small model emit the artifacts without carrying long instructions?
 4. Are validators deterministic enough to implement simply?
 
-**Validation:**
+__Validation:__
 
 - Approved, or corrections are recorded before implementation.
 
 ## Phase 2A: Minimal Validator Core
-**Goal:** Implement the smallest validator core that checks structure, required fields, and status values.
+
+__Goal:__ Implement the smallest validator core that checks structure, required fields, and status values.
 
 ```yaml
 context_contract:
@@ -425,7 +444,7 @@ context_contract:
   stop_rule: stop if implementation conflicts with the Phase 0.5 distribution or dependency policy, or if it needs an unapproved dependency
 ```
 
-**Actions:**
+__Actions:__
 
 1. Create the runtime validator module in the location approved by Phase 0.5.
 2. Implement parsing according to the Phase 0.5 dependency policy; do not assume YAML support unless that decision explicitly approved it.
@@ -436,7 +455,7 @@ context_contract:
 7. Implement `validate_phase_closeout(path)`.
 8. Return `{"passed": bool, "violations": list, "warnings": list}` from every public validator.
 
-**Validation:**
+__Validation:__
 
 - Module imports successfully.
 - Each public validator returns the expected result shape for a tiny valid fixture.
@@ -444,7 +463,8 @@ context_contract:
 - Parser behavior matches the Phase 0.5 dependency policy, including clear errors for unsupported file formats or missing optional dependencies.
 
 ## Phase 2B: Domain Pack Validator
-**Goal:** Add generic validation for domain pack files.
+
+__Goal:__ Add generic validation for domain pack files.
 
 ```yaml
 context_contract:
@@ -458,19 +478,20 @@ context_contract:
   stop_rule: stop if implementation tries to encode domain-specific business logic in the core
 ```
 
-**Actions:**
+__Actions:__
 
 1. Implement `validate_domain_pack(path)`.
 2. Check required fields and allowed side-effect tiers.
 3. Do not implement custom scheduling/travel/business logic yet.
 
-**Validation:**
+__Validation:__
 
 - Good starter domain pack passes.
 - Missing approval gates fail for high-risk domains such as travel purchase.
 
 ## Phase 2C: CLI Adapter
-**Goal:** Add a small CLI around the validator core.
+
+__Goal:__ Add a small CLI around the validator core.
 
 ```yaml
 context_contract:
@@ -484,7 +505,7 @@ context_contract:
   stop_rule: stop if CLI grows beyond validator dispatch and output formatting
 ```
 
-**Subcommands:**
+__Subcommands:__
 
 - `requirements`
 - `phase-contract`
@@ -493,20 +514,21 @@ context_contract:
 - `closeout`
 - `domain-pack`
 
-**Exit codes:**
+__Exit codes:__
 
 - `0`: passed
 - `1`: validation failed
 - `2`: usage or file-read error
 
-**Validation:**
+__Validation:__
 
 - `--help` works.
 - A passing fixture exits `0`.
 - A failing fixture exits `1` and lists exact violations.
 
 ## Phase 2D: Pytest Fixture Tests
-**Goal:** Test validator behavior with small positive and negative fixtures.
+
+__Goal:__ Test validator behavior with small positive and negative fixtures.
 
 ```yaml
 context_contract:
@@ -520,9 +542,9 @@ context_contract:
   stop_rule: stop if tests become broad integration tests or require dependencies beyond pytest
 ```
 
-**Pytest status:** pre-approved by current user.
+__Pytest status:__ pre-approved by current user.
 
-**Fixtures:**
+__Fixtures:__
 
 - good and bad `requirements_chain`
 - good and bad `phase_contract`
@@ -531,7 +553,7 @@ context_contract:
 - good and bad `phase_closeout`
 - good and bad `domain_pack`
 
-**Validation:**
+__Validation:__
 
 - `python -m pytest tests/ -v` passes.
 - Negative tests assert specific violation text.
@@ -539,7 +561,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes if skill or reference files changed.
 
 ## Phase 2E: Installed-Workflow Smoke Test
-**Goal:** Prove the validator can be called from an installed or staged workflow, not only repo-local assumptions.
+
+__Goal:__ Prove the validator can be called from an installed or staged workflow, not only repo-local assumptions.
 
 ```yaml
 context_contract:
@@ -553,20 +576,21 @@ context_contract:
   stop_rule: stop if packaging must change before the smoke test is meaningful; record fallback path instead of redesigning packaging
 ```
 
-**Actions:**
+__Actions:__
 
 1. Use the packaging facts from Phase 0.
 2. Stage or package the minimal runtime artifacts if safe.
 3. Invoke the validator from the staged path or record why unavailable.
 4. If packaging cannot carry runtime files, document one fallback path: separate runtime package, repo-level CLI install, or generated artifact-only validation.
 
-**Validation:**
+__Validation:__
 
 - Evidence shows the command works outside normal source-file assumptions, or a blocker is recorded.
 - If blocked, `STATUS.md`, `PHASE_LOG.md`, `ARTIFACTS.md`, and `NEXT_PROMPT.md` name the fallback path and required decision.
 
 ## Phase 3A: General Fallback Domain Pack
-**Goal:** Create the smallest domain pack that works for any prompt, skill, or agent task.
+
+__Goal:__ Create the smallest domain pack that works for any prompt, skill, or agent task.
 
 ```yaml
 context_contract:
@@ -580,7 +604,7 @@ context_contract:
   stop_rule: stop if domain pack becomes a long instruction file
 ```
 
-**Required gates:**
+__Required gates:__
 
 - requirement trace exists
 - phase contract exists
@@ -589,10 +613,11 @@ context_contract:
 - approval record exists for external actions
 - final claims do not exceed evidence
 
-**Education:** This is the universal safety net for unknown domains.
+__Education:__ This is the universal safety net for unknown domains.
 
 ## Phase 3B: Software Engineering Domain Pack
-**Goal:** Create a compact software domain pack.
+
+__Goal:__ Create a compact software domain pack.
 
 ```yaml
 context_contract:
@@ -606,7 +631,7 @@ context_contract:
   stop_rule: stop if this duplicates full coding standards
 ```
 
-**Required gates:**
+__Required gates:__
 
 - changed files listed
 - project validation command run or blocker recorded
@@ -615,7 +640,8 @@ context_contract:
 - destructive git operations forbidden without approval
 
 ## Phase 3C: Scheduling Domain Pack
-**Goal:** Create a compact scheduling domain pack.
+
+__Goal:__ Create a compact scheduling domain pack.
 
 ```yaml
 context_contract:
@@ -629,7 +655,7 @@ context_contract:
   stop_rule: stop if calendar APIs or external sending are implemented here
 ```
 
-**Required gates:**
+__Required gates:__
 
 - participants known
 - time zones resolved or blocker recorded
@@ -639,7 +665,8 @@ context_contract:
 - final invite/message evidence if sent
 
 ## Phase 3D: Travel/Purchase Domain Pack
-**Goal:** Create a compact high-risk external-action domain pack.
+
+__Goal:__ Create a compact high-risk external-action domain pack.
 
 ```yaml
 context_contract:
@@ -653,7 +680,7 @@ context_contract:
   stop_rule: stop if purchase automation is implied without explicit approval controls
 ```
 
-**Required gates:**
+__Required gates:__
 
 - dates, airports, passenger count, and constraints recorded
 - price source and timestamp recorded
@@ -662,7 +689,8 @@ context_contract:
 - residual risk disclosure required because fares and policies may change
 
 ## Phase 3E: Writing/Editing Domain Pack
-**Goal:** Create a compact writing and editing domain pack.
+
+__Goal:__ Create a compact writing and editing domain pack.
 
 ```yaml
 context_contract:
@@ -676,7 +704,7 @@ context_contract:
   stop_rule: stop if writing guidance becomes a style manual instead of validation gates
 ```
 
-**Required gates:**
+__Required gates:__
 
 - source material or user intent preserved
 - audience, tone, and format recorded or blocker noted
@@ -685,7 +713,8 @@ context_contract:
 - user approval required before sending, publishing, or representing text as final externally
 
 ## Phase 3F: Research Summary Domain Pack
-**Goal:** Create a compact research and source-summary domain pack.
+
+__Goal:__ Create a compact research and source-summary domain pack.
 
 ```yaml
 context_contract:
@@ -699,7 +728,7 @@ context_contract:
   stop_rule: stop if research validation requires live browsing, citation scraping, or complex evidence scoring
 ```
 
-**Required gates:**
+__Required gates:__
 
 - sources listed with paths or URLs
 - unsupported claims flagged or removed
@@ -708,7 +737,8 @@ context_contract:
 - external publication or submission requires approval
 
 ## Phase 3G: Domain Pack Review Gate
-**Goal:** Review starter domain packs before adding more domains.
+
+__Goal:__ Review starter domain packs before adding more domains.
 
 ```yaml
 context_contract:
@@ -721,14 +751,15 @@ context_contract:
   stop_rule: stop if domain packs are too verbose for small models
 ```
 
-**Validation:**
+__Validation:__
 
 - Each domain pack is compact.
 - Each separates deterministic validation from approval and external action boundaries.
 - General fallback can handle unknown domains.
 
 ## Phase 4A: ContextSmith-Run Pilot Integration
-**Goal:** Update only `contextsmith-run` to emit or request runtime-checkable artifacts.
+
+__Goal:__ Update only `contextsmith-run` to emit or request runtime-checkable artifacts.
 
 ```yaml
 context_contract:
@@ -742,21 +773,22 @@ context_contract:
   stop_rule: stop if SKILL.md approaches 450 lines, integration needs more than 2 edits, validation output is verbose, or integration duplicates validator logic
 ```
 
-**Actions:**
+__Actions:__
 
 1. Keep SKILL.md thin.
 2. Point to runtime artifacts and validator gates.
 3. Do not paste full schemas into SKILL.md if references or generated artifacts can hold them.
 4. If context rises above budget, stop after drafting the integration note and move validation to a fresh session.
 
-**Validation:**
+__Validation:__
 
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
 - Runtime validator tests pass.
 
 ## Phase 4B: Thin-Skill Writing Guide
-**Goal:** Write a short guide explaining how external validators change skill authoring.
+
+__Goal:__ Write a short guide explaining how external validators change skill authoring.
 
 ```yaml
 context_contract:
@@ -769,10 +801,11 @@ context_contract:
   stop_rule: stop if guide becomes broader than one page
 ```
 
-**Key message:** Skills should become thin runtime contracts plus routing instructions. The runtime is the default execution path — validators own pass/fail rules, runners own sequencing, and harnesses elevate gates to hard blocks where possible. Skills opt out of the runtime; they don't opt in.
+__Key message:__ Skills should become thin runtime contracts plus routing instructions. The runtime is the default execution path — validators own pass/fail rules, runners own sequencing, and harnesses elevate gates to hard blocks where possible. Skills opt out of the runtime; they don't opt in.
 
 ## Phase 5A: Next Prompt Compiler Specification
-**Goal:** Specify a small tool that compiles the current phase into a detailed small-model execution prompt.
+
+__Goal:__ Specify a small tool that compiles the current phase into a detailed small-model execution prompt.
 
 ```yaml
 context_contract:
@@ -786,9 +819,9 @@ context_contract:
   stop_rule: stop if compiler design tries to run the model or execute the phase
 ```
 
-**Purpose:** The compiler turns task state into `NEXT_PROMPT.md` and optional `PHASE_<N>_SMALL_MODEL_PROMPT.md` files. It does not run the model. It prepares safe handoffs.
+__Purpose:__ The compiler turns task state into `NEXT_PROMPT.md` and optional `PHASE_<N>_SMALL_MODEL_PROMPT.md` files. It does not run the model. It prepares safe handoffs.
 
-**Inputs:**
+__Inputs:__
 
 - `STATUS.md`
 - current phase block in `PLAN.md`
@@ -797,7 +830,7 @@ context_contract:
 - `DECISIONS.md`
 - optional phase-specific artifacts
 
-**Required generated prompt sections:**
+__Required generated prompt sections:__
 
 - artifact manifest
 - mission and hard phase boundary
@@ -813,14 +846,15 @@ context_contract:
 - hard stop before the next phase
 - deep education notes for the human operator
 
-**Validation:**
+__Validation:__
 
 - Compiler spec proves it can generate the Phase 0 prompt shape without nested Markdown fence issues.
 - Generated prompt includes validation, audit, closeout, recovery, and hard-stop sections.
 - Generated prompt does not ask the small model to make broad architecture decisions.
 
 ## Phase 5B: Next Prompt Compiler Implementation
-**Goal:** Implement the smallest read-only compiler command that generates detailed phase prompts from task state.
+
+__Goal:__ Implement the smallest read-only compiler command that generates detailed phase prompts from task state.
 
 ```yaml
 context_contract:
@@ -834,7 +868,7 @@ context_contract:
   stop_rule: stop if implementation tries to invoke a model, mutate source code, or advance phases
 ```
 
-**Actions:**
+__Actions:__
 
 1. Implement a CLI command such as `next-prompt` or equivalent per Phase 0.5 distribution decision.
 2. Read the current phase from `STATUS.md` and `PLAN.md`.
@@ -843,7 +877,7 @@ context_contract:
 5. Use safe Markdown fences: prefer `~~~` for inner code blocks and four-backtick fences for Markdown templates.
 6. Do not run the phase and do not call any model.
 
-**Validation:**
+__Validation:__
 
 - Generated Phase 0 prompt includes all required sections.
 - Generated prompt renders cleanly as Markdown.
@@ -851,7 +885,8 @@ context_contract:
 - Pytest covers at least one good task-state fixture and one missing-phase fixture.
 
 ## Phase 5C: Next Prompt Compiler Tests
-**Goal:** Test prompt generation, phase boundaries, and Markdown formatting.
+
+__Goal:__ Test prompt generation, phase boundaries, and Markdown formatting.
 
 ```yaml
 context_contract:
@@ -865,7 +900,7 @@ context_contract:
   stop_rule: stop if tests require dependencies beyond pytest
 ```
 
-**Required tests:**
+__Required tests:__
 
 - Good Phase 0 fixture generates a prompt with mission, read order, validation, audit, closeout, recovery, and hard stop.
 - Missing current phase fails with a clear violation.
@@ -873,14 +908,15 @@ context_contract:
 - Generated prompt has balanced Markdown fences.
 - Generated prompt includes deep education notes when requested.
 
-**Validation:**
+__Validation:__
 
 - `python -m pytest tests/ -v` passes.
 - `python scripts/validate_skills.py` passes if skill files changed.
 - `python scripts/token_budget.py --strict` passes if skill or reference files changed.
 
 ## Phase 5D: Orchestrated Runner Specification
-**Goal:** Specify the default execution mode for multi-phase workflows. The runner is optional but default — workflows go through it unless explicitly opted out.
+
+__Goal:__ Specify the default execution mode for multi-phase workflows. The runner is optional but default — workflows go through it unless explicitly opted out.
 
 ```yaml
 context_contract:
@@ -893,7 +929,7 @@ context_contract:
   stop_rule: stop if runner is described as hard enforcement without harness support
 ```
 
-**Runner loop:**
+__Runner loop:__
 
 1. Read task state.
 2. Select current phase and domain pack.
@@ -904,10 +940,11 @@ context_contract:
 7. Retry up to configured limit.
 8. Advance only on evidence or record blocker.
 
-**Education:** The runner is the default execution path because it controls workflow order and enforces validation gates. It is not hard enforcement — users can opt out and bypass it — but it is the standard path.
+__Education:__ The runner is the default execution path because it controls workflow order and enforces validation gates. It is not hard enforcement — users can opt out and bypass it — but it is the standard path.
 
 ## Phase 5E: Runner Skeleton
-**Goal:** Implement the smallest CLI runner skeleton if Phase 5D is approved.
+
+__Goal:__ Implement the smallest CLI runner skeleton if Phase 5D is approved.
 
 ```yaml
 context_contract:
@@ -921,21 +958,22 @@ context_contract:
   stop_rule: stop if runner needs live model API, MCP, or harness integration
 ```
 
-**Actions:**
+__Actions:__
 
 1. Implement read-only commands first, such as `plan-status` and `next-gate`.
 2. Implement validation dispatch to the existing CLI validator.
 3. Reuse the Next Prompt Compiler when producing phase handoffs.
 4. Do not automate model invocation yet.
 
-**Validation:**
+__Validation:__
 
 - Good task-state fixture reports next gate.
 - Bad fixture reports exact missing artifacts.
 - Pytest covers pass/fail runner behavior.
 
 ## Phase 6A: MCP Integration Design
-**Goal:** Extend the first-class runtime to agents via MCP tools. The runtime validator core is reused, not duplicated.
+
+__Goal:__ Extend the first-class runtime to agents via MCP tools. The runtime validator core is reused, not duplicated.
 
 ```yaml
 context_contract:
@@ -948,7 +986,7 @@ context_contract:
   stop_rule: stop if MCP design duplicates validation logic
 ```
 
-**Tools:**
+__Tools:__
 
 - `validate_requirements`
 - `validate_phase_contract`
@@ -959,7 +997,8 @@ context_contract:
 - `next_gate`
 
 ## Phase 6B: Harness Integration Design
-**Goal:** Elevate default runtime enforcement to hard blocks where the harness supports it, without modifying user-level config.
+
+__Goal:__ Elevate default runtime enforcement to hard blocks where the harness supports it, without modifying user-level config.
 
 ```yaml
 context_contract:
@@ -973,14 +1012,15 @@ context_contract:
   stop_rule: stop before modifying opencode config or claiming unsupported hard blocking
 ```
 
-**Validation:**
+__Validation:__
 
 - Capability matrix labels every gate as hard-blocked, orchestrated, deterministic-only, or human approval.
 - Positive completion criterion: every proposed harness gate includes trigger point, enforcement mechanism, validator input, pass behavior, fail behavior, and bypass limitation.
 - If no hard-blocking path exists, phase completes with an advisory-only matrix and no config changes.
 
 ## Phase 7A: User Documentation Map
-**Goal:** Design the user-facing documentation path before writing pages.
+
+__Goal:__ Design the user-facing documentation path before writing pages.
 
 ```yaml
 context_contract:
@@ -994,7 +1034,7 @@ context_contract:
   stop_rule: stop if docs scope becomes a website implementation project
 ```
 
-**Inputs:**
+__Inputs:__
 
 - `README.md`
 - `docs/`
@@ -1003,7 +1043,7 @@ context_contract:
 - `shared/documentation-quality.md`
 - Implemented and planned runtime features from prior phases, labeled by user-visible status.
 
-**Actions:**
+__Actions:__
 
 1. Inventory existing docs and identify pages to update or create.
 2. Define the reader path: README -> quickstart -> choose-a-workflow -> examples -> detailed how-to -> reference.
@@ -1012,18 +1052,19 @@ context_contract:
 5. Define table-of-contents requirements for every substantial Markdown file.
 6. Record website-readiness constraints: stable headings, clear page purpose, examples that can become website sections, and no hidden chat-only context.
 
-**Outputs:**
+__Outputs:__
 
 - User documentation map in `ARTIFACTS.md` or a task artifact referenced from `ARTIFACTS.md`.
 - Updated `NEXT_PROMPT.md` naming the first documentation edit phase.
 
-**Validation:**
+__Validation:__
 
 - Documentation map covers first-value path, use-case lookup, examples, recovery help, and reference details.
 - No documentation implementation begins before the map is approved.
 
 ## Phase 7B: README Refresh
-**Goal:** Update `README.md` so it sells ContextSmith clearly and routes users into the documentation.
+
+__Goal:__ Update `README.md` so it sells ContextSmith clearly and routes users into the documentation.
 
 ```yaml
 context_contract:
@@ -1037,7 +1078,7 @@ context_contract:
   stop_rule: stop if README rewrite needs broad product positioning decisions not settled in Phase 7A
 ```
 
-**Actions:**
+__Actions:__
 
 1. Keep the README catchy, practical, and concrete.
 2. Explain the pain point in user terms: long agent tasks lose requirements, skip validation, or become hard to resume.
@@ -1046,7 +1087,7 @@ context_contract:
 5. Make README a launchpad to deeper docs.
 6. Avoid generic AI copy and repeated contrastive constructions.
 
-**Validation:**
+__Validation:__
 
 - New users can identify one useful first action in under one minute.
 - README links to quickstart, examples, concepts, workflows, and reference docs.
@@ -1054,7 +1095,8 @@ context_contract:
 - Documentation style checklist passes.
 
 ## Phase 7C: Quickstart And Time-To-First-Value Docs
-**Goal:** Create or update quickstart material so users can try ContextSmith quickly.
+
+__Goal:__ Create or update quickstart material so users can try ContextSmith quickly.
 
 ```yaml
 context_contract:
@@ -1068,7 +1110,7 @@ context_contract:
   stop_rule: stop if quickstart depends on unimplemented commands or runtime features
 ```
 
-**Required content:**
+__Required content:__
 
 - What to install.
 - Which skill to use first.
@@ -1080,14 +1122,15 @@ context_contract:
 - A visible `5-minute path` for the quickest useful workflow.
 - A visible `next 30 minutes` path for users ready to create a reusable task-state plan.
 
-**Validation:**
+__Validation:__
 
 - Quickstart has a table of contents.
 - Every command or skill invocation is factual for the current repo state.
 - The first useful workflow is short and clearly marked.
 
 ## Phase 7D: How To Use Runtime Workflows
-**Goal:** Create or update one runtime-workflow user guide without widening into the full examples library.
+
+__Goal:__ Create or update one runtime-workflow user guide without widening into the full examples library.
 
 ```yaml
 context_contract:
@@ -1101,7 +1144,7 @@ context_contract:
   stop_rule: stop if usage instructions depend on unimplemented commands, unclear feature status, more than one substantial doc edit, or more than five source/doc reads
 ```
 
-**Required user tasks:**
+__Required user tasks:__
 
 - Create an implementation plan.
 - Choose a domain or fallback workflow.
@@ -1112,7 +1155,7 @@ context_contract:
 - Resume from `NEXT_PROMPT.md`.
 - Know when human approval is required.
 
-**Concepts to define only as needed:**
+__Concepts to define only as needed:__
 
 - Requirements chain.
 - Domain pack.
@@ -1120,7 +1163,7 @@ context_contract:
 - Phase closeout.
 - Enforcement levels.
 
-**Validation:**
+__Validation:__
 
 - File has a table of contents.
 - Enforcement levels are accurately labeled.
@@ -1130,7 +1173,8 @@ context_contract:
 - If the workflow guide needs multiple pages, record the split in `ARTIFACTS.md` and stop after the first page.
 
 ## Phase 7E: Use-Case Workflow Docs
-**Goal:** Add a bounded first batch of use-case workflow docs.
+
+__Goal:__ Add a bounded first batch of use-case workflow docs.
 
 ```yaml
 context_contract:
@@ -1144,7 +1188,7 @@ context_contract:
   stop_rule: stop if more than two workflow pages are attempted in one phase, or if any workflow depends on unimplemented tooling without an explicit planned/illustrative label
 ```
 
-**Starter workflows:**
+__Starter workflows:__
 
 - Create a small-model implementation plan.
 - Run a task-state handoff with validation.
@@ -1152,7 +1196,7 @@ context_contract:
 - Schedule a meeting with approval gates.
 - Compare travel options without purchasing.
 
-**Validation:**
+__Validation:__
 
 - Each workflow has a table of contents.
 - Each workflow includes inputs, commands or prompts, expected artifacts, validation, and common failure modes.
@@ -1160,7 +1204,8 @@ context_contract:
 - Remaining workflow ideas are recorded as deferred, not attempted in the same phase.
 
 ## Phase 7F: Examples Library
-**Goal:** Add a bounded first batch of examples that users can copy, adapt, and compare.
+
+__Goal:__ Add a bounded first batch of examples that users can copy, adapt, and compare.
 
 ```yaml
 context_contract:
@@ -1174,7 +1219,7 @@ context_contract:
   stop_rule: stop if more than three examples are attempted, examples become synthetic claims about unimplemented tooling, or examples need more than two edited files
 ```
 
-**Example types:**
+__Example types:__
 
 - Prompt engineering.
 - Implementation plan creation.
@@ -1185,7 +1230,7 @@ context_contract:
 - Travel comparison.
 - Failure and recovery.
 
-**Validation:**
+__Validation:__
 
 - Examples are labeled as implemented, planned, or illustrative.
 - Examples reduce cognitive load by showing expected outputs, not only inputs.
@@ -1193,7 +1238,8 @@ context_contract:
 - Deferred examples are listed for a later batch instead of expanding this phase.
 
 ## Phase 7G: Documentation Quality Audit
-**Goal:** Review README and documentation before rollout.
+
+__Goal:__ Review README and documentation before rollout.
 
 ```yaml
 context_contract:
@@ -1207,7 +1253,7 @@ context_contract:
   stop_rule: stop if docs imply runtime features are complete when they are planned only
 ```
 
-**Audit checks:**
+__Audit checks:__
 
 - README still sells ContextSmith and explains the pain point clearly.
 - README routes users into further docs.
@@ -1221,7 +1267,8 @@ context_contract:
 - Documentation reduces cognitive load and time to first value.
 
 ## Phase 8A: Rollout Scope Selection
-**Goal:** Decide which skills should have the first-class runtime enabled first. The runtime is the default execution path for rolled-out skills.
+
+__Goal:__ Decide which skills should have the first-class runtime enabled first. The runtime is the default execution path for rolled-out skills.
 
 ```yaml
 context_contract:
@@ -1235,26 +1282,27 @@ context_contract:
   stop_rule: stop if rollout exceeds two skills
 ```
 
-**Actions:**
+__Actions:__
 
 1. List every skill as `selected`, `deferred`, or `skipped` with one-line reason.
 2. Select an exact rollout target count: `0`, `1`, or `2` skills.
 3. Name the exact skill or skills for Phase 8B.
 4. If more skills seem eligible, record them as deferred; do not expand Phase 8B.
 
-**Outputs:**
+__Outputs:__
 
 - Rollout matrix in `ARTIFACTS.md` or a task artifact referenced from `ARTIFACTS.md`.
 - `STATUS.md` and `NEXT_PROMPT.md` naming the exact Phase 8B target skill or stating no rollout is approved.
 
-**Validation:**
+__Validation:__
 
 - Matrix explains selected, deferred, and skipped skills.
 - No skill files edited in this phase.
 - Phase 8B target count is explicit and is not greater than two.
 
 ## Phase 8B: Bounded Per-Skill Rollout
-**Goal:** Enable the first-class runtime for the exact skill or skills selected in Phase 8A. The runtime is the default execution path for rolled-out skills.
+
+__Goal:__ Enable the first-class runtime for the exact skill or skills selected in Phase 8A. The runtime is the default execution path for rolled-out skills.
 
 ```yaml
 context_contract:
@@ -1268,20 +1316,20 @@ context_contract:
   stop_rule: stop after the Phase 8A target batch; do not start additional skills without a new Phase 8A selection
 ```
 
-**Inputs:**
+__Inputs:__
 
 - Exact target skill or skills from Phase 8A.
 - Pilot integration evidence from Phase 4A.
 - Thin-skill writing guide from Phase 4B.
 - Documentation quality audit from Phase 7G.
 
-**Actions:**
+__Actions:__
 
 1. Edit only the Phase 8A target skill or skills.
 2. If two skills were selected and the first skill raises context or validation risk, stop after the first and update Phase 8A/`NEXT_PROMPT.md`.
 3. Do not start any deferred skill in this phase.
 
-**Validation:**
+__Validation:__
 
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
@@ -1290,7 +1338,8 @@ context_contract:
 - `ARTIFACTS.md` and `PHASE_LOG.md` list exact changed files and validation evidence.
 
 ## Phase 8B1: Skill-Engineer Runtime Integration
-**Goal:** Make the first-class runtime available to `contextsmith-skill-engineer` following the Phase 8B pattern. The runtime is the default execution path for this skill.
+
+__Goal:__ Make the first-class runtime available to `contextsmith-skill-engineer` following the Phase 8B pattern. The runtime is the default execution path for this skill.
 
 ```yaml
 context_contract:
@@ -1304,14 +1353,14 @@ context_contract:
   stop_rule: stop if SKILL.md approaches 500 lines, integration needs more than 3 edits, or validation output is verbose
 ```
 
-**Actions:**
+__Actions:__
 
 1. Add 10 runtime file entries to `skills/contextsmith-skill-engineer/reference_manifest.yml` (validator.py, cli.py, __init__.py, 6 domain packs).
 2. Add compact runtime validation section to `skills/contextsmith-skill-engineer/SKILL.md` following thin-skill pattern.
 3. Update token budget in `scripts/token_budget.py` if needed.
 4. Run validation commands.
 
-**Validation:**
+__Validation:__
 
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
@@ -1319,7 +1368,8 @@ context_contract:
 - Dry-run sync confirms correct routing.
 
 ## Phase 8B2: Skill-Migrator Runtime Integration
-**Goal:** Make the first-class runtime available to `contextsmith-skill-migrator` following the Phase 8B pattern. The runtime is the default execution path for this skill.
+
+__Goal:__ Make the first-class runtime available to `contextsmith-skill-migrator` following the Phase 8B pattern. The runtime is the default execution path for this skill.
 
 ```yaml
 context_contract:
@@ -1333,14 +1383,14 @@ context_contract:
   stop_rule: stop if SKILL.md approaches 500 lines, integration needs more than 3 edits, or validation output is verbose
 ```
 
-**Actions:**
+__Actions:__
 
 1. Add 10 runtime file entries to `skills/contextsmith-skill-migrator/reference_manifest.yml`.
 2. Add compact runtime validation section to `skills/contextsmith-skill-migrator/SKILL.md`.
 3. Update token budget if needed.
 4. Run validation commands.
 
-**Validation:**
+__Validation:__
 
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
@@ -1348,7 +1398,8 @@ context_contract:
 - Dry-run sync confirms correct routing.
 
 ## Phase 8B3: Instruction-Engineer Runtime Integration
-**Goal:** Make the first-class runtime available to `contextsmith-instruction-engineer` following the Phase 8B pattern. The runtime is the default execution path for this skill.
+
+__Goal:__ Make the first-class runtime available to `contextsmith-instruction-engineer` following the Phase 8B pattern. The runtime is the default execution path for this skill.
 
 ```yaml
 context_contract:
@@ -1362,14 +1413,14 @@ context_contract:
   stop_rule: stop if SKILL.md approaches 500 lines, integration needs more than 3 edits, or validation output is verbose
 ```
 
-**Actions:**
+__Actions:__
 
 1. Add 10 runtime file entries to `skills/contextsmith-instruction-engineer/reference_manifest.yml`.
 2. Add compact runtime validation section to `skills/contextsmith-instruction-engineer/SKILL.md`.
 3. Update token budget if needed.
 4. Run validation commands.
 
-**Validation:**
+__Validation:__
 
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
@@ -1377,7 +1428,8 @@ context_contract:
 - Dry-run sync confirms correct routing.
 
 ## Phase 8B4: Agent-Evaluator Runtime Integration
-**Goal:** Make the first-class runtime available to `contextsmith-agent-evaluator` following the Phase 8B pattern. The runtime is the default execution path for this skill.
+
+__Goal:__ Make the first-class runtime available to `contextsmith-agent-evaluator` following the Phase 8B pattern. The runtime is the default execution path for this skill.
 
 ```yaml
 context_contract:
@@ -1391,14 +1443,14 @@ context_contract:
   stop_rule: stop if SKILL.md approaches 500 lines, integration needs more than 3 edits, or validation output is verbose
 ```
 
-**Actions:**
+__Actions:__
 
 1. Add 10 runtime file entries to `skills/contextsmith-agent-evaluator/reference_manifest.yml`.
 2. Add compact runtime validation section to `skills/contextsmith-agent-evaluator/SKILL.md`.
 3. Update token budget if needed.
 4. Run validation commands.
 
-**Validation:**
+__Validation:__
 
 - `python scripts/validate_skills.py` passes.
 - `python scripts/token_budget.py --strict` passes.
@@ -1406,7 +1458,8 @@ context_contract:
 - Dry-run sync confirms correct routing.
 
 ## Phase 8C.1: Run Task-State Handoff Workflow Doc
-**Goal:** Create a workflow doc for running a task-state handoff with validation. Docs should reflect the actual rolled-out skill behavior.
+
+__Goal:__ Create a workflow doc for running a task-state handoff with validation. Docs should reflect the actual rolled-out skill behavior.
 
 ```yaml
 context_contract:
@@ -1420,7 +1473,7 @@ context_contract:
   stop_rule: stop if more than one workflow page is attempted, or if workflow depends on unimplemented tooling
 ```
 
-**Content:**
+__Content:__
 
 - When to use task-state handoffs vs. single-prompt tasks.
 - How to structure `NEXT_PROMPT.md` for handoff.
@@ -1428,7 +1481,7 @@ context_contract:
 - Reading phase closeout and deciding to continue or stop.
 - Expected artifacts and validation evidence.
 
-**Validation:**
+__Validation:__
 
 - File has a table of contents.
 - Workflow includes inputs, commands, expected artifacts, validation, and common failure modes.
@@ -1436,7 +1489,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.2: Schedule with Approval Gates Workflow Doc
-**Goal:** Create a non-coding workflow doc for scheduling with approval gates.
+
+__Goal:__ Create a non-coding workflow doc for scheduling with approval gates.
 
 ```yaml
 context_contract:
@@ -1450,7 +1504,7 @@ context_contract:
   stop_rule: stop if more than one workflow page is attempted, or if workflow implies calendar API access
 ```
 
-**Content:**
+__Content:__
 
 - Collecting participants, time zones, and availability constraints.
 - Using the scheduling domain pack for validation.
@@ -1458,7 +1512,7 @@ context_contract:
 - Evidence requirements: candidate slots, user approval, sent confirmation.
 - Common failure modes: missing time zones, unavailable participants, skipped approval.
 
-**Validation:**
+__Validation:__
 
 - File has a table of contents.
 - External actions clearly require human approval.
@@ -1466,7 +1520,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.3: Compare Travel Options Workflow Doc
-**Goal:** Create a non-coding workflow doc for travel comparison without purchasing.
+
+__Goal:__ Create a non-coding workflow doc for travel comparison without purchasing.
 
 ```yaml
 context_contract:
@@ -1480,7 +1535,7 @@ context_contract:
   stop_rule: stop if more than one workflow page is attempted, or if workflow implies booking capability
 ```
 
-**Content:**
+__Content:__
 
 - Recording dates, airports, passenger count, and constraints.
 - Using the travel_purchase domain pack for validation.
@@ -1489,7 +1544,7 @@ context_contract:
 - Residual risk disclosure: fares and policies may change.
 - Common failure modes: missing price timestamps, unstated constraints, implied booking capability.
 
-**Validation:**
+__Validation:__
 
 - File has a table of contents.
 - No purchase, payment, or irreversible action without explicit user approval.
@@ -1497,7 +1552,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.4: Prompt Engineering Example
-**Goal:** Add a prompt engineering example to the examples library.
+
+__Goal:__ Add a prompt engineering example to the examples library.
 
 ```yaml
 context_contract:
@@ -1511,7 +1567,7 @@ context_contract:
   stop_rule: stop if more than one example is attempted, or if example becomes synthetic
 ```
 
-**Content:**
+__Content:__
 
 - Scenario: create a model-aware prompt with targeted context length and domain-specific guidance.
 - Input: task description, target model profile, domain pack.
@@ -1519,7 +1575,7 @@ context_contract:
 - Expected output: structured prompt with context budget, validation gates, and Ralph loop.
 - How to judge success: prompt fits target budget, includes required sections, passes validation.
 
-**Validation:**
+__Validation:__
 
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
@@ -1527,7 +1583,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.5: Implementation Plan Creation Example
-**Goal:** Add an implementation plan creation example to the examples library.
+
+__Goal:__ Add an implementation plan creation example to the examples library.
 
 ```yaml
 context_contract:
@@ -1541,7 +1598,7 @@ context_contract:
   stop_rule: stop if more than one example is attempted, or if example becomes synthetic
 ```
 
-**Content:**
+__Content:__
 
 - Scenario: generate a phased implementation plan with validation gates for a small project.
 - Input: project description, constraints, target profile.
@@ -1549,7 +1606,7 @@ context_contract:
 - Expected output: PLAN.md with phase contracts, context budgets, and stop rules.
 - How to judge success: plan stays atomic, phases are small-model executable, validation gates are explicit.
 
-**Validation:**
+__Validation:__
 
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
@@ -1557,7 +1614,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.6: Plan Audit Example
-**Goal:** Add a plan audit example to the examples library.
+
+__Goal:__ Add a plan audit example to the examples library.
 
 ```yaml
 context_contract:
@@ -1571,7 +1629,7 @@ context_contract:
   stop_rule: stop if more than one example is attempted, or if example becomes synthetic
 ```
 
-**Content:**
+__Content:__
 
 - Scenario: review an implementation plan for completeness and small-model reliability.
 - Input: existing PLAN.md, target profile.
@@ -1579,7 +1637,7 @@ context_contract:
 - Expected output: audit report with grades, strengths, weaknesses, and recommendations.
 - How to judge success: audit catches real issues, recommendations are actionable, grades are justified.
 
-**Validation:**
+__Validation:__
 
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
@@ -1587,7 +1645,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.7: Meeting Scheduling Example
-**Goal:** Add a meeting scheduling example to the examples library.
+
+__Goal:__ Add a meeting scheduling example to the examples library.
 
 ```yaml
 context_contract:
@@ -1601,7 +1660,7 @@ context_contract:
   stop_rule: stop if more than one example is attempted, or if example implies calendar API access
 ```
 
-**Content:**
+__Content:__
 
 - Scenario: schedule a cross-timezone meeting with approval gates.
 - Input: participants, time zones, duration, preferred dates.
@@ -1609,7 +1668,7 @@ context_contract:
 - Expected output: candidate slots, approval request, sent confirmation evidence.
 - How to judge success: time zones resolved, approval obtained before sending, evidence recorded.
 
-**Validation:**
+__Validation:__
 
 - Example is labeled as implemented.
 - No external calendar API calls implied.
@@ -1617,7 +1676,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.8: Travel Comparison Example
-**Goal:** Add a travel comparison example to the examples library.
+
+__Goal:__ Add a travel comparison example to the examples library.
 
 ```yaml
 context_contract:
@@ -1631,7 +1691,7 @@ context_contract:
   stop_rule: stop if more than one example is attempted, or if example implies booking capability
 ```
 
-**Content:**
+__Content:__
 
 - Scenario: compare flight options for a business trip without purchasing.
 - Input: dates, airports, passenger count, budget constraint.
@@ -1639,7 +1699,7 @@ context_contract:
 - Expected output: comparison table with prices, fees, refund terms, residual risk disclosure.
 - How to judge success: prices timestamped, fees disclosed, no booking implied, approval required for purchase.
 
-**Validation:**
+__Validation:__
 
 - Example is labeled as implemented.
 - No purchase, payment, or irreversible action implied.
@@ -1647,7 +1707,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.9: Skill Migration Example
-**Goal:** Add a skill migration example to the examples library.
+
+__Goal:__ Add a skill migration example to the examples library.
 
 ```yaml
 context_contract:
@@ -1661,7 +1722,7 @@ context_contract:
   stop_rule: stop if more than one example is attempted, or if example becomes synthetic
 ```
 
-**Content:**
+__Content:__
 
 - Scenario: migrate an existing skill for small-model compatibility with target-profile metadata.
 - Input: existing SKILL.md, target profile (e.g., generic-local).
@@ -1669,7 +1730,7 @@ context_contract:
 - Expected output: migrated SKILL.md with model profiles, context-aware workflows, and loop safety.
 - How to judge success: skill passes validation, stays under line budget, preserves source behavior.
 
-**Validation:**
+__Validation:__
 
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
@@ -1677,7 +1738,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.10: Custom Domain Pack Example
-**Goal:** Add a custom domain pack creation example to the examples library.
+
+__Goal:__ Add a custom domain pack creation example to the examples library.
 
 ```yaml
 context_contract:
@@ -1691,7 +1753,7 @@ context_contract:
   stop_rule: stop if more than one example is attempted, or if example becomes a style manual
 ```
 
-**Content:**
+__Content:__
 
 - Scenario: create a custom domain pack for a new use case (e.g., education/lesson planning).
 - Input: domain name, triggers, required artifacts, validation gates, approval boundaries.
@@ -1699,7 +1761,7 @@ context_contract:
 - Expected output: compact JSON domain pack that passes structural validation.
 - How to judge success: pack is compact, separates deterministic checks from approval gates, passes validator.
 
-**Validation:**
+__Validation:__
 
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
@@ -1707,7 +1769,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 8C.11: Agent Evaluation Example
-**Goal:** Add an agent evaluation example to the examples library.
+
+__Goal:__ Add an agent evaluation example to the examples library.
 
 ```yaml
 context_contract:
@@ -1721,7 +1784,7 @@ context_contract:
   stop_rule: stop if more than one example is attempted, or if example becomes synthetic
 ```
 
-**Content:**
+__Content:__
 
 - Scenario: evaluate an agent workflow for small-model reliability and context safety.
 - Input: AGENTS.md or agent workflow file, target profile.
@@ -1729,7 +1792,7 @@ context_contract:
 - Expected output: evaluation report with grades, strengths, weaknesses, loop safety assessment.
 - How to judge success: evaluation catches real issues, grades are justified, recommendations are actionable.
 
-**Validation:**
+__Validation:__
 
 - Example is labeled as implemented.
 - Example shows expected output, not only input.
@@ -1737,7 +1800,8 @@ context_contract:
 - `python scripts/token_budget.py --strict` passes.
 
 ## Phase 9: Final Closeout Audit
-**Goal:** Verify the implementation remains universal, small-model executable, and honest about enforcement limits.
+
+__Goal:__ Verify the implementation remains universal, small-model executable, and honest about enforcement limits.
 
 ```yaml
 context_contract:
@@ -1750,7 +1814,7 @@ context_contract:
   stop_rule: stop if validation evidence is incomplete or hard enforcement claims exceed evidence
 ```
 
-**Audit checks:**
+__Audit checks:__
 
 - Universal protocol supports coding, writing, research, scheduling, travel/purchase, and fallback.
 - Small-model phases stayed atomic.

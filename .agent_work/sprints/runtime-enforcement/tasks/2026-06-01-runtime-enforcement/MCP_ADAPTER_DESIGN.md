@@ -169,6 +169,7 @@ _TOOL_REGISTRY = {
 Each tool has a thin wrapper that converts MCP arguments to Python function arguments:
 
 ```python
+
 def _wrap_validate_requirements(args: dict) -> dict:
     from runtime.validator import validate_requirements_chain
     return validate_requirements_chain(args["path"])
@@ -193,6 +194,7 @@ def _wrap_compile_next_prompt(args: dict) -> dict:
 def _wrap_next_gate(args: dict) -> dict:
     from runtime.runner import next_gate
     return next_gate(args.get("task_dir", ".") or ".")
+
 ```
 
 ## Server Integration
@@ -204,6 +206,7 @@ The MCP adapter supports two hosting modes:
 Uses the `mcp` Python package (if installed) to create a standard MCP server:
 
 ```python
+
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("contextsmith-runtime")
@@ -212,6 +215,7 @@ mcp = FastMCP("contextsmith-runtime")
 def validate_requirements(path: str) -> dict:
     """Validate a requirements_chain artifact."""
     ...
+
 ```
 
 ### Mode 2: Stdlib JSON-RPC (fallback)
@@ -229,6 +233,7 @@ The MCP adapter itself has no new dependencies. It imports from existing runtime
 An optional batch validation tool reduces tool call volume for multi-artifact phases:
 
 ```json
+
 {
   "name": "validate_all",
   "description": "Validate multiple artifacts in a single call. Returns per-artifact results and overall pass/fail.",
@@ -250,11 +255,13 @@ An optional batch validation tool reduces tool call volume for multi-artifact ph
     "required": ["artifacts"]
   }
 }
+
 ```
 
 Output shape:
 
 ```json
+
 {
   "passed": true,
   "results": [
@@ -262,6 +269,7 @@ Output shape:
   ],
   "summary": {"total": 3, "passed": 3, "failed": 0}
 }
+
 ```
 
 The `validate_all` tool is implemented as a wrapper that calls individual validator functions sequentially and aggregates results. It does not introduce new validation logic. Agents may still call individual tools for targeted validation.
@@ -278,6 +286,7 @@ All `path` and `task_dir` arguments follow these rules:
 Implementation:
 
 ```python
+
 from pathlib import Path
 
 def _resolve_path(path_str: str, workspace_root: Path | None = None) -> Path:

@@ -19,7 +19,7 @@ Let's break down the sync system because it's a pattern you'll see often:
 
 **The Problem**: We have 5 skills, each needing 52 shared reference files. Without automation, you'd have 260 copies to maintain!
 
-**The Solution**: 
+**The Solution**:
 
 1. **Single Source of Truth**: All shared files live in `shared/`.
 2. **Manifest File**: Each skill has a `reference_manifest.yml` listing its dependencies.

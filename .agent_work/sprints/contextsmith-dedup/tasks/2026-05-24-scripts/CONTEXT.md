@@ -35,6 +35,7 @@ ContextSmith/
 - Do NOT run git add/commit/push without approval
 
 ## Shared File Blob Hashes (Reference Table)
+
 | File | Blob Hash |
 | --- | --- |
 | shared/coding-standards.md | 14484e29d3eec2cb591f8f1aeb1dbfa3a36b9a4b |

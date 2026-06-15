@@ -713,6 +713,7 @@ Step 5: The resulting phase_order and states dict are the "resolved workflow."
 
 Baseline phase_order: `[A, B, C, D]`
 Overlay:
+
 ```yaml
 add_steps:
 

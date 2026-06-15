@@ -170,7 +170,8 @@
 
 ### Changes Made
 
-- Created `docs/RELEASE_PROCESS.md` (~150 lines): prerequisites, quick release command, 5-step checklist with verification commands, single-skill packaging section, installation script documentation, custom output directory, and 7-item troubleshooting section covering dirty tree, validation failure, missing commands, checksum mismatch, overwrite warnings, backup cleanup, and macOS coreutils
+- Created `docs/RELEASE_PROCESS.md` (~150 lines): prerequisites, quick release command, 5-step checklist with verification commands, single-skill packaging section, installation script documentation, custom output directory, and 7-item troubleshooting section covering dirty tree, validation failure, missing commands, checksum mismatch, overwrite
+  rnings, backup cleanup, and macOS coreutils
 - Updated `README.md` installation section: replaced minimal `cp -r` block with two-tier install (quick copy for existing users, recommended package-based install with `build_release.py --package` and `install_all.sh`)
 - Updated `CHANGELOG.md` Unreleased: added "Added" entries for build_release.py, install_skill.sh, install_all.sh, and RELEASE_PROCESS.md; added "Changed" entries for sync_shared_refs.py --update-manifests, package_skill.sh hardening, and README update
 

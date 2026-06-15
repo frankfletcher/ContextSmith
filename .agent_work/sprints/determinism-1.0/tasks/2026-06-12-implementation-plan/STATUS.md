@@ -1,9 +1,11 @@
 # Status
 
 ## Current Phase
+
 project_complete
 
 ## Current State
+
 done
 
 ## Progress

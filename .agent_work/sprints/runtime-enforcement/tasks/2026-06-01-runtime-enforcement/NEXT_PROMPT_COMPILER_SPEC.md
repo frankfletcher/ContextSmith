@@ -42,6 +42,7 @@ The compiler generates a `NEXT_PROMPT.md` with these sections in order:
 - target_profile: <from PLAN.md artifact manifest or default qwen36>
 - parent_plan: PLAN.md
 - version: 1.0.0
+
 ```
 
 ### 2. Mission
@@ -59,7 +60,8 @@ Ordered list of files the executor should read first. Derived from:
 
 ### 4. Phase Contract
 
-Extracted from the PLAN.md phase `context_contract` YAML block. For small-model prompts, include only the fields the executor needs to self-regulate: `usable_phase_budget`, `expected_tool_calls`, `stop_rule`, and `validation_output_reserve`. Omit `executor`, `phase_type`, and `compaction_trigger` (these are compiler concerns, not executor concerns). This keeps the generated prompt compact.
+Extracted from the PLAN.md phase `context_contract` YAML block. For small-model prompts, include only the fields the executor needs to self-regulate: `usable_phase_budget`, `expected_tool_calls`, `stop_rule`, and `validation_output_reserve`. Omit `executor`, `phase_type`, and `compaction_trigger` (these are compiler concerns, not executor
+concerns). This keeps the generated prompt compact.
 
 ### 5. Actions
 
@@ -69,10 +71,10 @@ Numbered list of concrete actions from the PLAN.md phase `## Actions` section. E
 
 | Allowed | Disallowed |
 | --- | --- |
-| <from phase actions> | <from phase stop_rule> |
-| <from CONTEXT.md validation commands> | editing files outside workspace |
-|  | proceeding to next phase |
-|  | invoking models |
+| \<from phase actions> | \<from phase stop_rule> |
+| \<from CONTEXT.md validation commands> | editing files outside workspace |
+| | proceeding to next phase |
+| | invoking models |
 
 Disallowed actions are derived from the phase `stop_rule`, CONTEXT.md constraints, and the universal hard-stop rule (no phase advancement).
 
@@ -103,6 +105,7 @@ If validation fails or the phase cannot complete:
 2. Set `STATUS.md` to `Blocked` with the failed gate and exact reason.
 3. Add a `PHASE_LOG.md` entry with attempted action and validation result.
 4. Write `NEXT_PROMPT.md` for human/frontier review with at most three options: fix, narrow scope, or abandon.
+
 ```
 
 Derived from PLAN.md's `## Recovery Procedure` section.
@@ -120,6 +123,7 @@ Before closeout, verify:
 - Side-effect boundaries respected
 - Task state updated with compact facts
 - No broad architecture decisions made without evidence
+
 ```
 
 Derived from the domain pack's self-audit lens (defaults to `general_fallback` if domain unspecified).
@@ -129,12 +133,19 @@ Derived from the domain pack's self-audit lens (defaults to `general_fallback` i
 ```markdown
 
 ## Result
+
 ## Evidence
+
 ## Self-Audit
+
 ## Ralph Summary
+
 ## Validation
+
 ## Declared vs Enforced
+
 ## Risks / Next Action
+
 ```
 
 Standardized output format for the executor's final response.
@@ -156,11 +167,11 @@ When the PLAN.md phase includes an `## Education` section, the compiler extracts
 
 ## Template Rendering Rules
 
-1. **Markdown fence safety**: Use `~~~` for inner code blocks within the generated prompt. Use four-backtick fences (````) for Markdown template blocks. This prevents nested fence collisions.
-2. **No nested execution instructions**: The compiler never generates instructions that tell the executor to run another phase or invoke a model.
-3. **Concrete file paths**: All file references use paths relative to the task directory. No relative navigation like "the file above" or "see earlier".
-4. **Compact facts only**: The generated prompt carries forward decisions, constraints, and commands. It does not carry raw output, search results, or resolved dead ends.
-5. **Phase isolation**: The prompt only references the current phase's actions and validation. Prior phases appear only as context in the read order.
+1. __Markdown fence safety__: Use `~~~` for inner code blocks within the generated prompt. Use four-backtick fences (````) for Markdown template blocks. This prevents nested fence collisions.
+2. __No nested execution instructions__: The compiler never generates instructions that tell the executor to run another phase or invoke a model.
+3. __Concrete file paths__: All file references use paths relative to the task directory. No relative navigation like "the file above" or "see earlier".
+4. __Compact facts only__: The generated prompt carries forward decisions, constraints, and commands. It does not carry raw output, search results, or resolved dead ends.
+5. __Phase isolation__: The prompt only references the current phase's actions and validation. Prior phases appear only as context in the read order.
 
 ## Compiler CLI Interface
 
